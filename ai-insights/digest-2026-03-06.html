@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 6, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Friday, March 6, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>OpenAI ships GPT-5.3 Instant with a 27% hallucination reduction, while Q1 2026 logs an unprecedented 255+ model releases across major labs. MCP crosses 97 million monthly SDK downloads as Chrome 146 Canary ships built-in WebMCP, turning billions of web pages into agent-accessible tools. The FTC faces a March 11 deadline to clarify how antitrust law applies to AI, a move that could preempt dozens of state AI laws. Hyperscaler capex is on track to blow past $600B this year — up 36% YoY — with 75% earmarked for AI infrastructure. And Ayar Labs and MatX each raised $500M rounds to tackle the data center bottleneck from opposite ends: photonic interconnects and custom LLM silicon.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">🧠</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://openai.com/news/">OpenAI Launches GPT-5.3 Instant — 27% Fewer Hallucinations</a></h3>
+    <p class="story-meta"><span class="source">OpenAI / LLM Stats</span> · Mar 5 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">GPT-5.3 Instant cuts hallucination rates by 26.8% on web-grounded tasks and 19.7% on internal knowledge vs. prior models. OpenAI also positions it as a stronger creative writing partner — better at immersive prose without sacrificing task clarity. GPT-5.2 Instant gets a 3-month sunset (retiring June 3, 2026). This lands amid an extraordinary Q1 that's already seen 255+ model releases across major labs, including Gemini 3.1 Pro, Claude Opus 4.6, Grok 4.20, Qwen 3.5, and DeepSeek V4.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The hallucination reduction is the headline number for production agent builders — fewer guardrail failures means fewer costly human-in-the-loop interventions. If you're running GPT-5.2 Instant in any pipeline, start migration planning now; June 3 is a hard cutoff.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/new-ai-model-releases-news-march-2026/">MiniMax M2.5 Rivals Claude Opus 4.6 at a Fraction of the Cost</a></h3>
+    <p class="story-meta"><span class="source">MiniMax / Mean CEO</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">MiniMax's M2.5 is being praised as a legitimate frontier challenger, with benchmarks rivaling Anthropic's Claude Opus 4.6 at significantly lower API pricing. Five new models from Tencent, Alibaba, Baidu, and ByteDance also shipped this month. The Chinese AI ecosystem is now releasing frontier-competitive models within weeks of Western labs, not months.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Cost arbitrage on frontier-quality inference is real. If you're building agents or products where margin matters, M2.5 deserves a benchmark run against your production workloads. The pricing gap could be transformative for high-volume use cases.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://nvidianews.nvidia.com/news/nvidia-releases-new-physical-ai-models-as-global-partners-unveil-next-generation-robots">NVIDIA Isaac GR00T N1.6 — Open VLA Model for Humanoid Robots</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA Newsroom</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">NVIDIA released Isaac GR00T N1.6, an open reasoning vision-language-action model purpose-built for humanoid robots, enabling full body control with contextual reasoning via Cosmos Reason. Franka Robotics, NEURA Robotics, and Humanoid are already building on GR00T workflows, while Salesforce uses Agentforce + Cosmos Reason for robotic video analysis.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">🤖</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://dev.to/alexmercedcoder/ai-weekly-claude-code-dominates-mcp-goes-mainstream-week-of-march-5-2026-15af">MCP Hits 97M+ Monthly Downloads — Chrome Ships Built-In WebMCP</a></h3>
+    <p class="story-meta"><span class="source">DEV Community / Clarifai</span> · Mar 5 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Model Context Protocol's Python and TypeScript SDKs have surpassed 97 million monthly downloads. Chrome 146 Canary now ships with built-in WebMCP, meaning billions of web pages can function as structured tools for AI agents out of the box. Since Anthropic donated MCP to the Linux Foundation's Agentic AI Foundation in December, founding members include AWS, Google, Microsoft, Cloudflare, OpenAI, Block, and others.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> WebMCP in Chrome is the inflection point — every website becomes a potential agent tool without custom integration. If you're building agent infrastructure, this massively expands the surface area of what agents can interact with natively. The three-layer stack is crystallizing: MCP (tool connectivity) → A2A (agent coordination) → NIST (security/identity).</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.integrate.io/blog/best-mcp-gateways-and-ai-agent-security-tools/">MCP Gateways Emerge as Critical Enterprise Infrastructure</a></h3>
+    <p class="story-meta"><span class="source">Integrate.io / MintMCP</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">As AI agents move from chatbots to autonomous business systems, MCP gateways have become essential middleware. MintMCP Gateway offers one-click deployment with OAuth and SOC 2 Type II governance. Peta Core provides zero-trust architecture — storing API credentials in an encrypted vault and issuing short-lived tokens to agents instead of raw keys. Security Boulevard flagged quantum security risks specific to MCP deployments, arguing that long-lived agent contexts in healthcare and finance are vulnerable to harvest-now-decrypt-later attacks.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">💰</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/record-setting-global-funding-february-2026-openai-anthropic/">February 2026 Startup Funding Hits $189B Record — AI Mega-Rounds Dominate</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase News</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Global startup funding hit $189 billion in February, a new all-time record driven almost entirely by AI mega-rounds. OpenAI closed a $110B round at a $730B pre-money valuation anchored by Amazon ($50B), Nvidia ($30B), and SoftBank ($30B). This follows OpenAI's earlier $30B Series G at $380B. Frontier AI labs are now valued on par with nation-state economies.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The capital concentration in frontier labs is unprecedented. $110B for a single company means the incumbents are building moats through sheer capital deployment — compute, talent, and distribution. The message for startups: differentiate on vertical application, not model capability.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">Ayar Labs ($500M) and MatX ($500M) Tackle the Data Center Bottleneck</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Two $500M raises from opposite angles: Ayar Labs (MIT spinout, $3.8B valuation) is building silicon-photonic chips to replace copper interconnects in data centers with light-speed data transfer. MatX is designing custom chip architectures purpose-built for LLM workloads, with its Series B led by Jane Street and Situational Awareness. Both reflect a market consensus that GPU-centric data centers need fundamental rethinking.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://intellizence.com/insights/startup-funding/the-weeks-5-biggest-funding-deals-major-surge-across-ai-with-110b-openai-funding/">Google Acquires Form Energy for $1B — Iron-Air Batteries for AI Power</a></h3>
+    <p class="story-meta"><span class="source">Intellizence</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Google paid $1 billion for Form Energy, which produces iron-air batteries capable of 100 hours of continuous power delivery. The deal signals that hyperscalers are moving beyond lobbying for grid upgrades and investing directly in energy solutions for the AI infrastructure buildout. The U.S. already faces an 11 GW data center capacity shortfall.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">🛡️</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.bakerbotts.com/thought-leadership/publications/2026/march/march-2026-federal-deadlines-that-will-reshape-the-ai-regulatory-landscape">March Federal Deadlines Will Reshape AI Regulation</a></h3>
+    <p class="story-meta"><span class="source">Baker Botts / King &amp; Spalding</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Three critical deadlines hit this month under Trump's December 2025 executive order on AI. By March 11, the FTC must issue a policy statement on how antitrust law applies to AI, including when state laws requiring alteration of truthful AI outputs are preempted. The Commerce Department must publish an evaluation of burdensome state AI laws by the same date. By March 16, the FCC must explore federal reporting standards for AI models that would preempt state requirements. The Colorado AI Act remains on track for June 30.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The March 11 FTC deadline is the one to watch — it will clarify whether the federal government is going to actively preempt state-by-state AI regulation. If you're deploying AI products across states, the compliance landscape could simplify dramatically or fragment further depending on these rulings.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.holisticai.com/blog/ai-regulation-in-2026-navigating-an-uncertain-landscape">Vietnam's National AI Law Takes Effect — Global Compliance Wave Continues</a></h3>
+    <p class="story-meta"><span class="source">Holistic AI / Slaughter and May</span> · Mar 1 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Vietnam's national AI law went live March 1, 2026, joining the EU AI Act (high-risk rules expected August 2026), Colorado's AI Act (June 30, 2026), and a growing patchwork of state-level requirements. The era of AI self-regulation is officially ending — multi-layered, legally mandated governance frameworks are now the norm across every major jurisdiction.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">📊</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://futurumgroup.com/insights/ai-capex-2026-the-690b-infrastructure-sprint/">Hyperscaler Capex on Track for $600B+ in 2026 — 75% AI-Focused</a></h3>
+    <p class="story-meta"><span class="source">Futurum Group / Goldman Sachs / IEEE</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Big Five hyperscalers (Amazon, Google, Microsoft, Meta, Oracle) are projected to spend $602 billion in capex in 2026, up 36% year-over-year. Approximately $450 billion (75%) is earmarked for AI-specific infrastructure. Hyperscalers now spend 45-57% of revenue on capex — ratios unthinkable for tech companies just two years ago. They raised $108B in debt in 2025 alone, with projections of $1.5 trillion in total debt issuance ahead.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> $450B in AI infrastructure spend means enormous downstream opportunity for anyone building on cloud AI. Capacity is being absorbed as fast as it's deployed, and inference workloads are scaling as AI moves from experimentation to production. The compute supply constraint is real — plan your scaling assumptions accordingly.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/01/02/in-2026-ai-will-move-from-hype-to-pragmatism/">Apple's Reimagined Siri Debuts with Gemini-Powered On-Screen Awareness</a></h3>
+    <p class="story-meta"><span class="source">Apple / TechCrunch</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Apple's completely rebuilt Siri is arriving via iOS 26.4, powered by Google's 1.2 trillion parameter Gemini model running on Apple's Private Cloud Compute. The assistant gains on-screen awareness and context-aware capabilities — reading what's on your display and acting on it. Samsung plans to double Gemini-equipped devices to 800 million by year-end, making Gemini the most widely distributed AI model in consumer hardware.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p><strong>Curated for Jason</strong> · AI-first businesses, agents &amp; infrastructure</p>
+  <p>Generated March 6, 2026</p>
+  <p class="sources">Sources: OpenAI, LLM Stats, Crunchbase News, DEV Community, NVIDIA Newsroom, Baker Botts, Futurum Group, Goldman Sachs, IEEE ComSoc, Integrate.io, MintMCP, AI Funding Tracker, Holistic AI, TechCrunch, Mean CEO</p>
+</div>
+
+</div>
+</body>
+</html>
