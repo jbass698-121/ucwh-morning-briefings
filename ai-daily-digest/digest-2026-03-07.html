@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 7, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Saturday, March 7, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>DeepSeek V4 is on the verge of release — a 1-trillion-parameter multimodal model built on Chinese silicon that could reshape inference cost assumptions globally. MCP's security surface is becoming a boardroom-level concern: 30 CVEs in 60 days and a newly identified "overthinking loop" attack capable of amplifying token consumption by 142× are forcing the industry's hand. NIST made its first formal move on agent interoperability standards, with an RFI deadline of March 9. Block's CEO announced layoffs of 4,000+ employees — 40% of the company — directly attributing the cuts to AI efficiency gains, the most high-profile workforce displacement event yet. And March 11 looms as a pivotal regulatory moment: the FTC must issue its AI preemption guidance, potentially simplifying or further fragmenting the patchwork of state AI laws facing every builder in this space.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">🧠</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.pymnts.com/artificial-intelligence-2/2026/deepseek-poised-to-unveil-latest-ai-model/">DeepSeek V4 Imminent — 1 Trillion Parameters, Built on Chinese Silicon</a></h3>
+    <p class="story-meta"><span class="source">PYMNTS / LLM Stats</span> · Mar 7 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">DeepSeek's V4 release is imminent, featuring multimodal text, image, and video capabilities built around a trillion-parameter architecture — yet using only 32 billion active parameters per token, fewer than V3. Crucially, V4 was optimized with Chinese chipmakers Huawei and Cambricon, signaling a maturing Chinese AI hardware ecosystem independent of Nvidia. The release aligns with China's Two Sessions political event, giving it significant symbolic weight as a demonstration of domestic AI self-sufficiency.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> V4 could be the most cost-competitive frontier-class multimodal model yet. If the efficiency numbers hold — 1T parameters on 32B active — it may deliver Opus-tier reasoning at dramatically lower inference costs. Worth queuing up for benchmark testing the day it drops, especially for video-heavy use cases.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://manifold.markets/prismatic/march-2026-ai-model-releases">Grok 4.20 Ships Multi-Agent Parallel Architecture — Full Version Still in Training</a></h3>
+    <p class="story-meta"><span class="source">Manifold / Mean CEO</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">xAI's Grok 4.20 introduces a genuinely novel architecture: four AI agents running in parallel rather than a single monolithic model. The API isn't open yet and the full version is still in training, but analysts note this represents a structural departure from scaling laws-era design. If the multi-agent approach delivers better performance-per-token at Q2 launch, it could shift benchmarks and pricing assumptions across the tier.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://llm-stats.com/ai-news">Ai2 OLMo Hybrid: Fully Open 7B Model Achieves 2× Data Efficiency</a></h3>
+    <p class="story-meta"><span class="source">LLM Stats / Allen Institute</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The Allen Institute for AI released OLMo Hybrid, a 7B-parameter fully open model combining transformer attention with linear recurrent layers. It matches OLMo 3 accuracy on MMLU benchmarks using 49% fewer tokens — effectively doubling data efficiency. As a fully open model (weights, training data, code), it also serves the open-source community differently from "open weight" releases from commercial labs.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">🤖</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://securityboulevard.com/2026/03/model-context-protocol-mcp-security-risks/">MCP Security Crisis: 30 CVEs in 60 Days, Overthinking Loop Attacks Identified</a></h3>
+    <p class="story-meta"><span class="source">Security Boulevard / Adversa AI</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Security researchers have filed 30 CVEs against MCP implementations in just 60 days, with 38% of 500+ scanned servers completely lacking authentication. A newly documented attack class — "overthinking loops" — exploits malicious MCP tool servers to amplify token consumption up to 142.4× and spike latency, creating severe denial-of-wallet risk for production agent deployments. Claude Desktop Extensions were flagged as a specific vector: high-privilege MCP server execution enables chaining of low-risk tools to potential zero-click RCE via malicious calendar invites.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> If you're deploying agents in production with MCP tool access, this is not a theoretical risk. Token amplification attacks directly hit your unit economics. Audit your MCP server authentication posture now, and review any third-party MCP servers for trust assumptions before the next release cycle.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://thenewstack.io/5-key-trends-shaping-agentic-development-in-2026/">NIST Launches AI Agent Standards Initiative — Federal Government Enters the Protocol Stack</a></h3>
+    <p class="story-meta"><span class="source">NIST / The New Stack</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The National Institute of Standards and Technology launched its AI Agent Standards Initiative on February 17 with an RFI deadline of March 9, marking the first time the U.S. federal government has intervened in setting interoperability standards for AI agents. The initiative covers three areas: industry-led standards, open-source protocol development, and agent security research. The timing coincides with Google's A2A protocol surpassing 100 enterprise supporters and Chrome shipping WebMCP — the protocol wars are real enough to demand federal involvement.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Federal standards participation is how protocols win long-term. NIST's entry signals that MCP and A2A are competing for a government-blessed baseline, not just developer mindshare. Builders should watch which frameworks NIST cites — that's likely to signal which protocol stack becomes the default for regulated industries and government contracts.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://dev.to/alexmercedcoder/ai-weekly-claude-code-dominates-mcp-goes-mainstream-week-of-march-5-2026-15af">Claude Code Overtakes GitHub Copilot as Most-Used AI Coding Tool</a></h3>
+    <p class="story-meta"><span class="source">DEV Community</span> · Mar 5 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">A landmark developer survey published March 3 found that Claude Code has become the most-used AI coding tool, overtaking both GitHub Copilot and Cursor in just eight months since its May 2025 launch. Analysts attribute the shift to agentic file editing, deep terminal integration, and MCP extensibility — use cases where token-for-token coding accuracy matters less than end-to-end task completion. The survey underlines that the coding tool market is not consolidating around the first mover.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">💰</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/">Basis Raises $100M Series B at $1.15B Valuation — AI Agents for Accountants</a></h3>
+    <p class="story-meta"><span class="source">Mean CEO / Accel / Crunchbase</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Basis, which builds AI agent infrastructure specifically for accounting workflows, closed a $100M Series B at a $1.15 billion valuation led by Accel with participation from Google Ventures and Khosla Ventures. The raise reflects a broader vertical AI investment thesis: purpose-built agents for high-value professional workflows can command premium valuations even at early revenue stages. The accounting sector is increasingly treated as an early-proof-point for knowledge worker AI automation.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">SMACK Technologies Raises $32M to Build Defense-Focused Frontier AI Lab</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">SMACK Technologies announced $32 million to stand up what it describes as a "frontier AI lab" with a defense focus — building large-scale models trained exclusively on military-domain data: intelligence analysis, logistics, and autonomous systems. Defense-specific AI investment is accelerating as the DoD seeks capabilities that general-purpose frontier models cannot reliably deliver due to security and domain specificity constraints.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">🛡️</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.transparencycoalition.ai/news/ai-legislative-update-march6-2026">March 11 FTC Deadline: Will Federal Law Preempt State AI Regulations?</a></h3>
+    <p class="story-meta"><span class="source">Transparency Coalition / Baker Donelson</span> · Mar 6 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Four days from now, the FTC faces a presidential deadline to issue a policy statement on how the FTC Act applies to AI — including when federal law preempts state requirements that mandate AI output alterations. The Commerce Department faces the same March 11 deadline to identify "burdensome" state AI laws for referral to the DOJ's AI Litigation Task Force. Colorado's AI Act remains on track for June 30 activation, creating pressure on this federal guidance to arrive on schedule.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> March 11 could meaningfully simplify — or complicate — AI compliance for every product deployed across multiple states. If the FTC signals aggressive federal preemption, the nightmare scenario of 50-state AI compliance requirements may ease. Watch this closely before investing further in state-specific compliance infrastructure.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.nbcnews.com/politics/politics-news/2026-new-laws-states-elections-midterms-ai-obamacare-aca-paid-leave-rcna247602">Oregon Chatbot Safety Bill SB 1546 Passes — Heads to Governor's Desk</a></h3>
+    <p class="story-meta"><span class="source">NBC News / Transparency Coalition</span> · Mar 6 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Oregon's SB 1546 won final approval and was sent to the governor, requiring operators of AI chatbots to implement strong protections for minors. Separately, House Republicans advanced a federal kids' online safety package that would require AI chatbot disclosure, mandatory breaks after 3 hours of continuous use, and bars on bots impersonating licensed professionals such as therapists or doctors. Children's safety is emerging as the most politically durable AI regulation trigger in the U.S., advancing on both state and federal tracks simultaneously.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">📊</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://edition.cnn.com/2026/03/02/business/ai-tech-jobs-layoffs">Block Lays Off 40% of Workforce — CEO Directly Credits AI Efficiency Gains</a></h3>
+    <p class="story-meta"><span class="source">CNN Business</span> · Mar 2 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Block CEO Jack Dorsey announced layoffs of more than 4,000 employees — nearly 40% of the company's total headcount — explicitly citing AI tools that rendered the affected roles "superfluous." Block's stock surged 15%+ on the news. This is the most direct and large-scale public attribution of AI-driven workforce reduction by a major U.S. company to date, setting a precedent for how boards and executives may frame future cost-cutting tied to AI adoption.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Block's move will be studied and replicated. The market rewarded a 40% headcount cut with a 15% stock gain — that ratio is a clear signal to other CFOs. If you're building AI automation for enterprise workflows, expect a new procurement urgency from companies under similar shareholder pressure. If you're deploying AI agents internally, start documenting productivity gains with board-ready metrics.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techstartups.com/2026/03/06/top-tech-news-today-march-6-2026/">Foxconn Revenue Up 21.6% on Nvidia AI Server Demand — Supply Chain Signals Strong</a></h3>
+    <p class="story-meta"><span class="source">Tech Startups / Foxconn</span> · Mar 6 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Foxconn (Hon Hai) reported revenue growth of 21.6% in the first two months of 2026, driven primarily by surging demand for Nvidia-based AI infrastructure servers. The number confirms that hyperscaler capex commitments (projected at $602B for 2026) are translating into real purchase orders flowing through the AI supply chain. Companies earlier in the stack — contract manufacturers, photonic interconnects, custom silicon — are benefiting from AI infrastructure demand independent of model-layer competition.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.huawei.com/en/news/2026/3/mwc-ai-native-framework-solution">GSMA Launches Open Telco AI — Argues GPT-5, Gemini, Claude Can't Speak Telco</a></h3>
+    <p class="story-meta"><span class="source">GSMA / Huawei / InfoQ</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The GSMA announced the Open Telco AI initiative at MWC 2026, arguing that general-purpose frontier models including GPT-5, Gemini 3.1 Pro, and Claude are fundamentally inadequate for telecom-specific tasks: network data interpretation, automated operations, and infrastructure fault analysis. The initiative is developing domain-specific models that "speak telco." This mirrors what's happening in legal, medical, and defense sectors — verticals are increasingly deciding that fine-tuned domain models outperform universal ones for high-stakes operational tasks.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p><strong>Curated for Jason</strong> · AI-first businesses, agents &amp; infrastructure</p>
+  <p>Generated March 7, 2026</p>
+  <p class="sources">Sources: 1. PYMNTS 2. LLM Stats 3. Manifold 4. Allen Institute for AI 5. Security Boulevard 6. Adversa AI 7. The New Stack 8. NIST 9. DEV Community 10. Mean CEO 11. Crunchbase 12. AI Funding Tracker 13. Transparency Coalition 14. Baker Donelson 15. NBC News 16. CNN Business 17. Tech Startups 18. Foxconn / Hon Hai 19. GSMA / Huawei</p>
+</div>
+
+</div>
+</body>
+</html>
