@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tommy's Express - Weekly Report - Week 10</title>
+
+<style>
+  body { font-family: Arial, Helvetica, sans-serif; color: #222; margin: 0; padding: 0; background: #f5f5f5; }
+  .container { max-width: 800px; margin: 0 auto; background: #fff; }
+  .header { background: #8B0000; color: #fff; padding: 28px 32px 20px; text-align: center; }
+  .header h1 { margin: 0 0 4px; font-size: 24px; letter-spacing: 0.5px; }
+  .header .subtitle { font-size: 16px; color: #ffcccc; margin: 0; }
+  .header .week { font-size: 13px; color: #ffaaaa; margin-top: 6px; }
+  .content { padding: 24px 32px; }
+  h2 { color: #8B0000; font-size: 18px; border-bottom: 2px solid #8B0000; padding-bottom: 4px; margin-top: 32px; }
+  h3 { color: #333; font-size: 15px; margin-top: 20px; margin-bottom: 8px; }
+  p { font-size: 14px; line-height: 1.5; color: #333; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 13px; }
+  th { background: #8B0000; color: #fff; padding: 8px 10px; text-align: center; font-weight: 600; font-size: 12px; }
+  td { padding: 6px 10px; text-align: center; border-bottom: 1px solid #e0e0e0; }
+  td.label { text-align: left; font-weight: 600; color: #333; }
+  td.total { font-weight: 700; }
+  .best { background: #C6EFCE !important; }
+  .warn { background: #FFC7CE !important; }
+  .totals-row td { font-weight: 700; border-top: 2px solid #8B0000; }
+  ul, ol { font-size: 14px; line-height: 1.6; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  .up { color: #2E7D32; font-size: 11px; }
+  .down { color: #C62828; font-size: 11px; }
+  .flat { color: #888; }
+  .footer { background: #f0f0f0; padding: 16px 32px; text-align: center; font-size: 11px; color: #888; border-top: 1px solid #ddd; }
+  .kpi-banner { background: #f8f8f8; border: 1px solid #ddd; border-radius: 4px; padding: 14px 20px; margin: 12px 0; display: flex; justify-content: space-around; text-align: center; }
+  .kpi-banner .kpi { flex: 1; }
+  .kpi-banner .kpi-val { font-size: 22px; font-weight: 700; color: #8B0000; }
+  .kpi-banner .kpi-label { font-size: 11px; color: #666; margin-top: 2px; }
+  @media only screen and (max-width: 600px) {
+    .content { padding: 16px; }
+    table { font-size: 11px; }
+    th, td { padding: 4px 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>Tommy's Express Car Wash</h1>
+  <p class="subtitle">Weekly Operations Report</p>
+  <p class="week">Week 10: February 28 - March 7, 2026</p>
+</div>
+
+<div class="content">
+
+<!-- KPI Banner -->
+<div class="kpi-banner">
+  <div class="kpi"><div class="kpi-val">5,517</div><div class="kpi-label">Total Washes</div></div>
+  <div class="kpi"><div class="kpi-val">$37,076.68</div><div class="kpi-label">Gross Revenue</div></div>
+  <div class="kpi"><div class="kpi-val">$6.72</div><div class="kpi-label">Per Wash</div></div>
+  <div class="kpi"><div class="kpi-val">382</div><div class="kpi-label">New IC Members</div></div>
+</div>
+
+<h2>Executive Summary</h2>
+<p>The table below compares key weekly metrics across all three sites. Green cells indicate best performance; red cells highlight areas requiring manager attention.</p>
+<table><thead><tr>
+    <th>Metric</th><th>TX160<br>Houston</th><th>TX190<br>Clear Lake</th><th>UT426<br>Saratoga</th><th>Total / Avg</th>
+  </tr></thead><tbody><tr><td class="label">Total Washes</td><td class="best">2,352</td><td>1,850</td><td class="warn">1,315</td><td class="total">5,517</td></tr><tr><td class="label">Gross Sales</td><td class="best">$16,614.48</td><td>$11,491.04</td><td class="warn">$8,971.16</td><td class="total">$37,076.68</td></tr><tr><td class="label">Per Wash Rev</td><td class="best">$7.06</td><td class="warn">$6.21</td><td>$6.82</td><td class="total">$6.72</td></tr><tr><td class="label">Coupons Used</td><td class="warn">271</td><td class="best">120</td><td>214</td><td class="total">605</td></tr><tr><td class="label">Coupon Discount</td><td class="warn">$5,526.56</td><td class="best">$2,117.06</td><td>$5,169.16</td><td class="total">$12,812.78</td></tr><tr><td class="label">Rewashes</td><td class="warn">45</td><td>13</td><td class="best">8</td><td class="total">66</td></tr><tr><td class="label">Rewash Cost</td><td class="best">$80.00</td><td>$80.00</td><td class="warn">$88.00</td><td class="total">$248.00</td></tr><tr><td class="label">New IC Members</td><td class="best">162</td><td>125</td><td class="warn">95</td><td class="total">382</td></tr><tr><td class="label">IC Revenue</td><td class="best">$5,482.50</td><td>$3,517.04</td><td class="warn">$2,883.16</td><td class="total">$11,882.70</td></tr></tbody></table>
+<p><strong>Combined:</strong> 5,517 total washes | $37,076.68 gross sales | 382 new InstaClub members</p>
+
+<h2>Member vs. Retail Wash Mix</h2>
+<p>Breakdown of club member washes vs. pay-per-wash retail customers. A strong member base (&gt;75%) provides stable recurring revenue.</p>
+<table><thead><tr>
+    <th>Site</th><th>Total Washes</th><th>Member</th><th>Member %</th><th>Retail</th><th>Health Signal</th>
+  </tr></thead><tbody><tr>
+      <td class="label">TX160</td>
+      <td>2,352</td><td>1,658</td>
+      <td class="best">70.5%</td>
+      <td>694</td>
+      <td style="font-weight:bold">Healthy</td>
+    </tr><tr>
+      <td class="label">TX190</td>
+      <td>1,850</td><td>1,319</td>
+      <td class="best">71.3%</td>
+      <td>531</td>
+      <td style="font-weight:bold">Healthy</td>
+    </tr><tr>
+      <td class="label">UT426</td>
+      <td>1,315</td><td>1,017</td>
+      <td class="best">77.3%</td>
+      <td>298</td>
+      <td style="font-weight:bold">Healthy</td>
+    </tr><tr class="totals-row">
+    <td class="label">COMBINED</td><td>5,517</td><td>3,994</td>
+    <td>72.4%</td><td>1,523</td><td style="font-weight:bold">Healthy</td>
+  </tr></tbody></table>
+
+<h2>Key Insights &amp; Manager Action Items</h2>
+<ul><li><strong>TX160 Rewash Alert:</strong> 45 rewashes ($80.00 cost) this week. Investigate equipment, chemicals, and operator training.</li>
+<li><strong>TX160 Volume Leader:</strong> Highest washes (2,352) and gross sales ($16,614.48). 162 new IC members.</li>
+<li><strong>Coupon Spending:</strong> $12,812.78 total coupons across all sites (34.6% of combined gross sales of $37,076.68). Evaluate ROI and consider site-specific coupon limits.</li>
+<li><strong>InstaClub Performance:</strong> 382 new members generating $11,882.70 in revenue. Strong capture across all sites.</li>
+<li><strong>Strongest Membership Base: UT426</strong> at 77.3% member washes. This recurring revenue base protects against weather and traffic variability.</li>
+<li><strong>Membership Opportunity: TX160</strong> at 70.5% member washes — 694 retail washes represent untapped conversion potential.</li></ul>
+<hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>TX160 &mdash; Houston, TX - FM 1960</h2><p>During Week 10 (February 28 - March 7, 2026), Houston, TX - FM 1960 (TX160) processed
+    <strong>2,352</strong> total washes generating <strong>$16,614.48</strong> in gross sales
+    ($7.06 per wash). Coupons: 271 used ($5,526.56 discount).
+    45 rewashes recorded ($80.00 cost). InstaClub: 162 new members, $5,482.50 revenue.</p><h3>Member vs. Retail Wash Mix</h3><p>TX160 processed 2,352 total washes: 1,658 member (70.5%) and 694 retail (29.5%). Health Signal: <strong>Healthy</strong>.</p><p>Tier breakdown — Works: 1092 member / 303 retail (78% member); Ultimate: 165 member / 72 retail (69% member); Super: 99 member / 116 retail (46% member); Quality: 302 member / 203 retail (59% member).</p><h3>Wash Details</h3><table><thead><tr>
+    <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
+  </tr></thead><tbody><tr>
+      <td class="label">Quality Club</td><td>302</td><td>297</td>
+      <td>5</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Quality</td><td>203</td><td>205</td>
+      <td>2</td><td>---</td><td>$2,030.00</td>
+    </tr><tr>
+      <td class="label">Ultimate Club</td><td>165</td><td>163</td>
+      <td>2</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Ultimate</td><td>72</td><td>73</td>
+      <td>1</td><td>---</td><td>$1,152.00</td>
+    </tr><tr>
+      <td class="label">Works Club</td><td>1,092</td><td>1094</td>
+      <td>2</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Works</td><td>303</td><td>316</td>
+      <td>13</td><td>---</td><td>$6,060.00</td>
+    </tr><tr>
+      <td class="label">Super Club</td><td>99</td><td>98</td>
+      <td>1</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Super</td><td>116</td><td>118</td>
+      <td>2</td><td>---</td><td>$1,508.00</td>
+    </tr><tr class="totals-row">
+    <td class="label">TOTAL</td><td>2,352</td>
+    <td>---</td><td>---</td><td>---</td><td>$10,750.00</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td><td>121</td><td>$2,135.79</td></tr><tr><td class="label">All sites: 2025 4th national mailer</td><td>96</td><td>$2,259.80</td></tr><tr><td class="label">TX160 (Houston): Service Member</td><td>38</td><td>$760.00</td></tr><tr><td class="label">TX190/TX160/UT426: Edwin Greer free Works wash</td><td>8</td><td>$210.97</td></tr><tr><td class="label">TX190/TX160: Pollen free Works</td><td>6</td><td>$120.00</td></tr><tr><td class="label">All Sites (National Promo): From Us to You 4</td><td>2</td><td>$40.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+    <td>271</td>
+    <td>$5,526.56</td></tr></tbody></table><h3>Rewash Details</h3><p>45 rewashes: 40 Open Gate, 2 Quality ($20.00), 3 Works ($60.00). Total cost: $80.00</p><h3>InstaClub Membership</h3><p>New Members: 162 | Revenue: $5,482.50</p><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>TX190 &mdash; Clear Lake, TX - El Camino Real</h2><p>During Week 10 (February 28 - March 7, 2026), Clear Lake, TX - El Camino Real (TX190) processed
+    <strong>1,850</strong> total washes generating <strong>$11,491.04</strong> in gross sales
+    ($6.21 per wash). Coupons: 120 used ($2,117.06 discount).
+    13 rewashes recorded ($80.00 cost). InstaClub: 125 new members, $3,517.04 revenue.</p><h3>Member vs. Retail Wash Mix</h3><p>TX190 processed 1,850 total washes: 1,319 member (71.3%) and 531 retail (28.7%). Health Signal: <strong>Healthy</strong>.</p><p>Tier breakdown — Works: 970 member / 187 retail (83% member); Ultimate: 76 member / 62 retail (55% member); Super: 87 member / 92 retail (48% member); Quality: 186 member / 190 retail (49% member).</p><h3>Wash Details</h3><table><thead><tr>
+    <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
+  </tr></thead><tbody><tr>
+      <td class="label">Quality Club</td><td>186</td><td>189</td>
+      <td>3</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Quality</td><td>190</td><td>192</td>
+      <td>2</td><td>---</td><td>$1,900.00</td>
+    </tr><tr>
+      <td class="label">Ultimate Club</td><td>76</td><td>76</td>
+      <td>0</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Ultimate</td><td>62</td><td>62</td>
+      <td>0</td><td>---</td><td>$992.00</td>
+    </tr><tr>
+      <td class="label">Works Club</td><td>970</td><td>985</td>
+      <td>15</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Works</td><td>187</td><td>191</td>
+      <td>4</td><td>---</td><td>$3,740.00</td>
+    </tr><tr>
+      <td class="label">Super Club</td><td>87</td><td>87</td>
+      <td>0</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Super</td><td>92</td><td>94</td>
+      <td>2</td><td>---</td><td>$1,196.00</td>
+    </tr><tr class="totals-row">
+    <td class="label">TOTAL</td><td>1,850</td>
+    <td>---</td><td>---</td><td>---</td><td>$7,828.00</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td><td>94</td><td>$1,597.06</td></tr><tr><td class="label">TX190/TX160: Pollen free Works</td><td>16</td><td>$320.00</td></tr><tr><td class="label">TX190 (Houston): Sticky Note Street Card</td><td>9</td><td>$180.00</td></tr><tr><td class="label">TX190/TX160/UT426: Edwin Greer free Works wash</td><td>1</td><td>$20.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+    <td>120</td>
+    <td>$2,117.06</td></tr></tbody></table><h3>Rewash Details</h3><p>13 rewashes: 9 Open Gate, 4 Works ($80.00). Total cost: $80.00</p><h3>InstaClub Membership</h3><p>New Members: 125 | Revenue: $3,517.04</p><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>UT426 &mdash; Saratoga Springs, UT - E Crossroads Blvd</h2><p>During Week 10 (February 28 - March 7, 2026), Saratoga Springs, UT - E Crossroads Blvd (UT426) processed
+    <strong>1,315</strong> total washes generating <strong>$8,971.16</strong> in gross sales
+    ($6.82 per wash). Coupons: 214 used ($5,169.16 discount).
+    8 rewashes recorded ($88.00 cost). InstaClub: 95 new members, $2,883.16 revenue.</p><h3>Member vs. Retail Wash Mix</h3><p>UT426 processed 1,315 total washes: 1,017 member (77.3%) and 298 retail (22.7%). Health Signal: <strong>Healthy</strong>.</p><p>Tier breakdown — Works: 715 member / 168 retail (80% member); Ultimate: 52 member / 13 retail (80% member); Super: 111 member / 39 retail (74% member); Quality: 139 member / 78 retail (64% member).</p><h3>Wash Details</h3><table><thead><tr>
+    <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
+  </tr></thead><tbody><tr>
+      <td class="label">Quality Club</td><td>139</td><td>138</td>
+      <td>1</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Quality</td><td>78</td><td>78</td>
+      <td>0</td><td>---</td><td>$858.00</td>
+    </tr><tr>
+      <td class="label">Ultimate Club</td><td>52</td><td>55</td>
+      <td>3</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Ultimate</td><td>13</td><td>13</td>
+      <td>0</td><td>---</td><td>$260.00</td>
+    </tr><tr>
+      <td class="label">Works Club</td><td>715</td><td>707</td>
+      <td>8</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Works</td><td>168</td><td>200</td>
+      <td>32</td><td>---</td><td>$3,696.00</td>
+    </tr><tr>
+      <td class="label">Super Club</td><td>111</td><td>108</td>
+      <td>3</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Super</td><td>39</td><td>38</td>
+      <td>1</td><td>---</td><td>$585.00</td>
+    </tr><tr class="totals-row">
+    <td class="label">TOTAL</td><td>1,315</td>
+    <td>---</td><td>---</td><td>---</td><td>$5,399.00</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">All sites: 2025 4th national mailer</td><td>174</td><td>$4,583.46</td></tr><tr><td class="label">UT426: IC2 on Super/Ultimate</td><td>18</td><td>$197.82</td></tr><tr><td class="label">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td><td>12</td><td>$167.88</td></tr><tr><td class="label">UT426 (Saratoga Springs): Operational Site Street Cards</td><td>10</td><td>$220.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+    <td>214</td>
+    <td>$5,169.16</td></tr></tbody></table><h3>Rewash Details</h3><p>8 rewashes: 4 Works ($88.00), 4 Works Club. Total cost: $88.00</p><h3>InstaClub Membership</h3><p>New Members: 95 | Revenue: $2,883.16</p>
+<h2>Strategic Recommendations</h2>
+<ol><li><strong>TX160 Rewash Review:</strong> 45 rewashes in one week ($80.00 cost). Review equipment maintenance, chemical ratios, and operator training. Target: reduce below 10 rewashes/week.</li>
+<li><strong>Coupon ROI Analysis:</strong> $12,812.78 in total coupon discounts represents 34.6% of combined gross sales ($37,076.68). Evaluate whether campaigns drive incremental volume or simply discount existing customers.</li>
+<li><strong>Benchmark TX160 Per-Wash Revenue:</strong> $7.06 per wash — highest across all sites. Document pricing strategy and upsell techniques for replication.</li>
+<li><strong>InstaClub Growth:</strong> 382 new members generating $11,882.70 in revenue. Strong capture across all sites. Continue current methodology.</li>
+<li><strong>Membership Opportunity — TX160:</strong> 70.5% member washes — 694 retail washes represent untapped conversion potential. Target improved capture rate.</li>
+<li><strong>Weekly Monitoring:</strong> Track rewash rate, coupon-to-gross ratio, and per-wash revenue weekly. Establish site-specific targets and accountability.</li></ol>
+</div><!-- /.content -->
+
+<div class="footer">
+  Tommy's Express Car Wash &mdash; Confidential, Internal Use Only<br>
+  Generated 2026-03-08
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>
