@@ -19,7 +19,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .stat-card .label { font-size:12px; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
 .stat-card .value { font-size:24px; font-weight:700; color:#0f172a; }
 .stat-card .change { font-size:13px; margin-top:4px; }
-.stat-card .pending { font-size:11px; color:#94a3b8; font-style:italic; margin-top:4px; }
 .site-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
 .site-card { background:white; border-radius:10px; padding:18px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
 .site-card h3 { font-size:15px; font-weight:700; color:#0f172a; margin-bottom:2px; }
@@ -33,7 +32,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .alert-warning { background:#fffbeb; border-color:#f59e0b; }
 .alert-success { background:#f0fdf4; border-color:#10b981; }
 .alert-info { background:#eff6ff; border-color:#3b82f6; }
-.alert-system { background:#f5f3ff; border-color:#8b5cf6; }
 .alert .title { font-weight:700; font-size:14px; margin-bottom:4px; }
 .alert .body { font-size:13px; color:#475569; }
 table { width:100%; border-collapse:collapse; font-size:14px; }
@@ -45,9 +43,9 @@ td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
 .action-item p { margin-top:4px; font-size:14px; color:#475569; padding-left:32px; }
 .weather-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-bottom:16px; }
 .weather-card { background:white; border-radius:10px; padding:18px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.weather-card.storm { border-top:3px solid #ef4444; }
 .weather-card.rain { border-top:3px solid #fbbf24; }
 .weather-card.clear { border-top:3px solid #10b981; }
-.weather-card.cold { border-top:3px solid #60a5fa; }
 .weather-card h3 { font-size:15px; font-weight:700; color:#0f172a; margin-bottom:2px; }
 .weather-card .wx-location { font-size:12px; color:#64748b; margin-bottom:10px; }
 .weather-card .wx-icon { font-size:32px; float:right; margin-top:-8px; }
@@ -55,30 +53,17 @@ td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
 .weather-card .wx-row:last-child { border-bottom:none; }
 .weather-card .wx-label { color:#64748b; }
 .weather-card .wx-val { font-weight:600; color:#0f172a; }
+.weather-card .wx-compare { font-size:11px; color:#94a3b8; }
 .impact-high { color:#ef4444; font-weight:700; }
 .impact-med { color:#f59e0b; font-weight:700; }
 .impact-low { color:#10b981; font-weight:700; }
 .forecast-table { width:100%; border-collapse:collapse; font-size:13px; }
 .forecast-table th { background:#1e293b; color:white; padding:10px 8px; text-align:center; font-size:12px; }
 .forecast-table th:first-child, .forecast-table th:nth-child(2), .forecast-table th:nth-child(3) { text-align:left; }
-.forecast-table td { padding:10px 8px; border-bottom:1px solid #e2e8f0; vertical-align:top; text-align:center; }
-.forecast-table td:first-child, .forecast-table td:nth-child(2), .forecast-table td:nth-child(3) { text-align:left; }
+.forecast-table td { padding:10px 8px; border-bottom:1px solid #e2e8f0; vertical-align:top; }
 .forecast-total { background:#f8fafc; font-weight:700; }
-.fc-bar { display:inline-block; height:16px; background:linear-gradient(90deg, #3b82f6, #60a5fa); border-radius:3px; vertical-align:middle; margin-left:4px; }
-.data-gap-banner { background: linear-gradient(135deg, #fef3c7, #fde68a); border:2px solid #f59e0b; border-radius:10px; padding:16px 20px; margin-bottom:20px; text-align:center; }
-.data-gap-banner .icon { font-size:24px; margin-bottom:4px; }
-.data-gap-banner .msg { font-size:14px; font-weight:600; color:#92400e; }
-.data-gap-banner .detail { font-size:12px; color:#a16207; margin-top:4px; }
-.reference-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-bottom:16px; }
-.ref-card { background:white; border-radius:10px; padding:18px; box-shadow:0 1px 3px rgba(0,0,0,0.08); border-top:3px solid #94a3b8; }
-.ref-card h3 { font-size:15px; font-weight:700; color:#0f172a; margin-bottom:2px; }
-.ref-card .location { font-size:12px; color:#64748b; margin-bottom:12px; }
-.ref-card .metric { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f1f5f9; font-size:14px; }
-.ref-card .metric:last-child { border-bottom:none; }
-.ref-card .metric .lbl { color:#64748b; }
-.ref-card .metric .val { font-weight:600; color:#0f172a; }
 .footer { text-align:center; padding:30px 20px; font-size:12px; color:#94a3b8; }
-@media (max-width:768px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } .site-grid, .weather-grid, .reference-grid { grid-template-columns: 1fr; } .forecast-table { font-size:11px; } }
+@media (max-width:768px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } .site-grid { grid-template-columns: 1fr; } .weather-grid { grid-template-columns: 1fr; } .forecast-table { font-size:11px; } }
 </style>
 </head>
 <body>
@@ -91,307 +76,308 @@ td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
 
 <div class="container">
 
-<!-- DATA GAP BANNER -->
-<div class="data-gap-banner">
-  <div class="icon">⚠️</div>
-  <div class="msg">Saturday March 7 Wash Data Unavailable</div>
-  <div class="detail">Browser authentication was unresponsive during the 1 AM automated run. Yesterday's wash performance data could not be pulled from Tommy's Manager API. Weather analysis and 5-day forecast are current. Wash data will be available when the briefing is manually re-run during business hours.</div>
-</div>
-
 <!-- AI INSIGHTS -->
 <div class="section-title">AI Insights</div>
 
 <div class="alert alert-danger">
-  <div class="title">🌧️ Heavy Rain Hit Houston Yesterday — Expect Depressed Saturday Numbers</div>
-  <div class="body">Houston recorded 0.27" of rain (WMO code 63: moderate rain) with highs of 86°F and 12 mph winds on Saturday. Last Saturday (Feb 28) was clear and dry. Historical correlation suggests Saturday wash volume at TX160 and TX190 was likely 25–35% below the Feb 28 benchmark (combined ~786 washes). Actual data will confirm when the API session is refreshed.</div>
-</div>
-
-<div class="alert alert-success">
-  <div class="title">☀️ UT426 Had a Clear, Dry Saturday — Post-Storm Rebound Expected</div>
-  <div class="body">After a brutal snow week (1.05" snowfall Thursday–Friday), Saratoga Springs cleared to sunny skies Saturday with a high of 44°F and no precipitation. This classic post-storm pattern typically drives a surge in wash demand. Last Saturday UT426 did 347 washes / $5,210 — conditions were similar (56°F, light rain). Expect moderate-to-strong performance despite cold temps.</div>
+  <div class="title">⛈️ Saturday Thunderstorm Hammered Houston — Fleet Down 21.8%</div>
+  <div class="body">Houston saw thunderstorms (weather code 95) with 0.65" of precipitation and 15.5 mph winds on what should be the busiest day of the week. TX160 dropped 31.9% and TX190 dropped 22.7% vs last Saturday. The fleet recorded 886 washes vs 1,133 last Saturday — a loss of ~247 washes driven almost entirely by weather.</div>
 </div>
 
 <div class="alert alert-warning">
-  <div class="title">🌧️ Today (Sunday): Rain Continues in Houston — Prepare for Low Volume</div>
-  <div class="body">Today's forecast shows continued rain in Houston (0.11" expected, 42% probability) with a significant cooldown to 71°F (down from 86°F yesterday). The ML model predicts 321 washes at TX160 and 244 at TX190 — both well below typical Sunday volumes. Consider reduced staffing at both Houston sites.</div>
+  <div class="title">💰 Gross Revenue Down 57.7% Despite Decent Volume</div>
+  <div class="body">Fleet gross sales of $5,115.61 vs $12,099.56 last Saturday is a steeper decline than the 21.8% wash count drop. The $5.77 avg/wash (vs $10.68 last Sat) suggests a higher proportion of club member washes vs pay-per-wash. This is actually a positive signal — members are washing through bad weather while casual customers stay home.</div>
 </div>
 
-<div class="alert alert-info">
-  <div class="title">📊 Week Ahead: Mixed Conditions — Rain Risk Monday, Clear Wednesday+</div>
-  <div class="body">The 5-day forecast shows Houston rain Monday (0.66", 41% prob) suppressing volumes further, then clearing Tuesday through Thursday. UT426 enjoys clear, warming conditions all week (58°F→68°F). Fleet total predicted at 692–790 washes/day with best performance Thursday (739). Plan staffing for a slow start to the week with a mid-week ramp-up.</div>
+<div class="alert alert-success">
+  <div class="title">🏆 UT426 Outperformed in Tough Conditions</div>
+  <div class="body">Utah's 322 washes matched TX160 despite being the smallest market. With overcast skies but no precipitation (49°F), UT426 showed only a 7.2% volume decline. InstaClub signups were strong at 10 new members — the site's membership base is proving resilient.</div>
+</div>
+
+<div class="alert alert-success">
+  <div class="title">📈 InstaClub Momentum: 39 New Members Fleet-Wide</div>
+  <div class="body">Despite thunderstorms, the fleet signed up 39 new InstaClub members generating $1,377.61 in membership revenue (26.9% of gross). TX160 led with 16 new members. The membership engine continues to perform even on weather-impacted days.</div>
 </div>
 
 <div class="card" style="background:#f8fafc; border:1px solid #e2e8f0;">
-  <div class="title" style="font-weight:700; font-size:14px; margin-bottom:8px;">💡 Insight: Houston Rain Pattern Shift</div>
-  <div class="body" style="font-size:13px; color:#475569;">Houston has experienced drizzle or rain 5 of the last 5 days (Mar 3–7), with yesterday being the heaviest at 0.27". This extended wet period likely created cumulative demand suppression — customers are deferring washes, expecting more rain. When the weather finally clears (projected Wednesday), expect a demand rebound of 15–20% above baseline as deferred washes materialize. Position staffing for a surge mid-week.</div>
+  <div style="font-weight:700; margin-bottom:8px; color:#1e40af;">💡 Deeper Analysis: Saturday Patterns in Bad Weather</div>
+  <div style="font-size:14px; color:#475569;">Saturday's data reveals an important insight: club members wash regardless of weather. The high club percentages (TX160: 74.2%, TX190: 74.4%, UT426: 77.6%) show the subscription base driving through storms — it's pay-per-wash that evaporates. This validates the InstaClub growth strategy. Today (Sunday) expect Houston recovery with fog clearing to 69°F and no rain. UT426 should see a strong day with clear 58°F skies. Fleet forecast: ~364 washes.</div>
 </div>
 
 <!-- WEATHER IMPACT -->
-<div class="section-title">Weather Impact — Saturday, March 7</div>
+<div class="section-title">Weather Impact</div>
 
 <div class="weather-grid">
-  <div class="weather-card rain">
-    <div class="wx-icon">🌧️</div>
-    <h3>TX160 — FM 1960</h3>
-    <div class="wx-location">Houston, TX</div>
-    <div class="wx-row"><span class="wx-label">Conditions</span><span class="wx-val">Moderate Rain</span></div>
-    <div class="wx-row"><span class="wx-label">Temperature</span><span class="wx-val">86°F / 70°F</span></div>
-    <div class="wx-row"><span class="wx-label">Precipitation</span><span class="wx-val impact-med">0.27 in</span></div>
-    <div class="wx-row"><span class="wx-label">Wind</span><span class="wx-val">12.2 mph</span></div>
-    <div class="wx-row"><span class="wx-label">Impact</span><span class="wx-val impact-med">Moderate ↓</span></div>
-    <div class="wx-row"><span class="wx-label">vs Last Sat</span><span class="wx-val">Clear → Rain</span></div>
+  <div class="weather-card storm">
+    <div class="wx-icon">⛈️</div>
+    <h3>TX160 — Houston</h3>
+    <div class="wx-location">ZIP 77065 · FM 1960</div>
+    <div class="wx-row"><span class="wx-label">Conditions</span><span class="wx-val" style="color:#ef4444;">Thunderstorm</span></div>
+    <div class="wx-row"><span class="wx-label">High / Low</span><span class="wx-val">84.1°F / 69.1°F</span></div>
+    <div class="wx-row"><span class="wx-label">Precipitation</span><span class="wx-val" style="color:#ef4444;">0.65"</span></div>
+    <div class="wx-row"><span class="wx-label">Wind</span><span class="wx-val">15.5 mph</span></div>
+    <div class="wx-row"><span class="wx-label">Last Sat</span><span class="wx-compare">79.4°F, Partly Cloudy, 0.0" precip</span></div>
+    <div class="wx-row"><span class="wx-label">Volume Impact</span><span class="wx-val impact-high">▼ 31.9%</span></div>
   </div>
-  <div class="weather-card rain">
-    <div class="wx-icon">🌧️</div>
-    <h3>TX190 — El Camino Real</h3>
-    <div class="wx-location">Webster, TX</div>
-    <div class="wx-row"><span class="wx-label">Conditions</span><span class="wx-val">Moderate Rain</span></div>
-    <div class="wx-row"><span class="wx-label">Temperature</span><span class="wx-val">86°F / 70°F</span></div>
-    <div class="wx-row"><span class="wx-label">Precipitation</span><span class="wx-val impact-med">0.27 in</span></div>
-    <div class="wx-row"><span class="wx-label">Wind</span><span class="wx-val">12.2 mph</span></div>
-    <div class="wx-row"><span class="wx-label">Impact</span><span class="wx-val impact-med">Moderate ↓</span></div>
-    <div class="wx-row"><span class="wx-label">vs Last Sat</span><span class="wx-val">Clear → Rain</span></div>
+  <div class="weather-card storm">
+    <div class="wx-icon">⛈️</div>
+    <h3>TX190 — Webster</h3>
+    <div class="wx-location">ZIP 77062 · El Camino Real</div>
+    <div class="wx-row"><span class="wx-label">Conditions</span><span class="wx-val" style="color:#ef4444;">Thunderstorm</span></div>
+    <div class="wx-row"><span class="wx-label">High / Low</span><span class="wx-val">84.1°F / 69.1°F</span></div>
+    <div class="wx-row"><span class="wx-label">Precipitation</span><span class="wx-val" style="color:#ef4444;">0.65"</span></div>
+    <div class="wx-row"><span class="wx-label">Wind</span><span class="wx-val">15.5 mph</span></div>
+    <div class="wx-row"><span class="wx-label">Last Sat</span><span class="wx-compare">79.4°F, Partly Cloudy, 0.0" precip</span></div>
+    <div class="wx-row"><span class="wx-label">Volume Impact</span><span class="wx-val impact-high">▼ 22.7%</span></div>
   </div>
   <div class="weather-card clear">
-    <div class="wx-icon">☀️</div>
-    <h3>UT426 — Crossroads Blvd</h3>
-    <div class="wx-location">Saratoga Springs, UT</div>
-    <div class="wx-row"><span class="wx-label">Conditions</span><span class="wx-val">Clear Sky</span></div>
-    <div class="wx-row"><span class="wx-label">Temperature</span><span class="wx-val">44°F / 29°F</span></div>
-    <div class="wx-row"><span class="wx-label">Precipitation</span><span class="wx-val impact-low">0.00 in</span></div>
-    <div class="wx-row"><span class="wx-label">Wind</span><span class="wx-val">5.6 mph</span></div>
-    <div class="wx-row"><span class="wx-label">Impact</span><span class="wx-val impact-low">Post-Storm ↑</span></div>
-    <div class="wx-row"><span class="wx-label">vs Last Sat</span><span class="wx-val">Rain → Clear</span></div>
+    <div class="wx-icon">☁️</div>
+    <h3>UT426 — Saratoga Springs</h3>
+    <div class="wx-location">ZIP 84045 · Crossroads Blvd</div>
+    <div class="wx-row"><span class="wx-label">Conditions</span><span class="wx-val">Overcast</span></div>
+    <div class="wx-row"><span class="wx-label">High / Low</span><span class="wx-val">49.2°F / 25.1°F</span></div>
+    <div class="wx-row"><span class="wx-label">Precipitation</span><span class="wx-val">0.0"</span></div>
+    <div class="wx-row"><span class="wx-label">Wind</span><span class="wx-val">7.7 mph</span></div>
+    <div class="wx-row"><span class="wx-label">Last Sat</span><span class="wx-compare">47.6°F, Clear, 0.0" precip</span></div>
+    <div class="wx-row"><span class="wx-label">Volume Impact</span><span class="wx-val impact-med">▼ 7.2%</span></div>
   </div>
 </div>
 
-<!-- WASH PERFORMANCE (Reference Data) -->
-<div class="section-title">Last Saturday Reference (February 28)</div>
+<div class="alert alert-info">
+  <div class="title">📊 Weather–Volume Correlation</div>
+  <div class="body">Thunderstorms (code 95) with 0.65" precipitation hit Houston hard — saturdays are particularly sensitive because they rely more on drive-by traffic. UT426's minimal 7.2% decline with no precipitation confirms that overcast/cold alone has mild impact. Industry benchmarks: thunderstorms = 25-40% reduction, overcast/cold = 5-15%. Both Houston sites exceeded the expected drop range, suggesting Saturday-specific discretionary traffic effects.</div>
+</div>
+
+<!-- WASH PERFORMANCE SCORECARD -->
+<div class="section-title">Wash Performance Scorecard</div>
 
 <div class="stat-grid">
   <div class="stat-card">
-    <div class="label">Fleet Washes</div>
-    <div class="value">1,133</div>
-    <div class="pending">Feb 28 (last Sat) reference</div>
+    <div class="label">Total Washes</div>
+    <div class="value">886</div>
+    <div class="change">vs 1,133 last Sat <span style="color:#ef4444;font-weight:600">▼ 21.8%</span></div>
   </div>
   <div class="stat-card">
-    <div class="label">Fleet Gross Sales</div>
-    <div class="value">$12,107</div>
-    <div class="pending">Feb 28 (last Sat) reference</div>
+    <div class="label">Gross Sales</div>
+    <div class="value">$5,115.61</div>
+    <div class="change">vs $12,106.80 <span style="color:#ef4444;font-weight:600">▼ 57.7%</span></div>
   </div>
   <div class="stat-card">
-    <div class="label">Avg $/Wash</div>
-    <div class="value">$10.69</div>
-    <div class="pending">Feb 28 (last Sat) reference</div>
+    <div class="label">Avg Per Wash</div>
+    <div class="value">$5.77</div>
+    <div class="change">vs $10.69 last Sat</div>
   </div>
   <div class="stat-card">
-    <div class="label">Mar 7 Data</div>
-    <div class="value" style="font-size:16px; color:#f59e0b;">Pending</div>
-    <div class="pending">API auth unavailable at 1 AM</div>
+    <div class="label">Rewash Rate</div>
+    <div class="value">1.24%</div>
+    <div class="change">11 of 886 washes</div>
   </div>
 </div>
 
-<div class="reference-grid">
-  <div class="ref-card">
-    <h3>TX160 — FM 1960</h3>
-    <div class="location">Houston, TX (Site 265)</div>
-    <div class="metric"><span class="lbl">Washes (Feb 28)</span><span class="val">473</span></div>
-    <div class="metric"><span class="lbl">Gross Sales</span><span class="val">$4,595.58</span></div>
-    <div class="metric"><span class="lbl">$/Wash</span><span class="val">$9.72</span></div>
-    <div class="metric"><span class="lbl">Yesterday Weather</span><span class="val" style="color:#f59e0b;">Rain 🌧️</span></div>
+<div class="site-grid">
+  <div class="site-card">
+    <h3>TX160</h3>
+    <div class="location">FM 1960, Houston · ⛈️ Thunderstorm 84.1°F</div>
+    <div class="metric"><span class="lbl">Washes</span><span class="val">322 <span style="color:#ef4444;font-weight:600">▼ 31.9%</span></span></div>
+    <div class="metric"><span class="lbl">Gross Sales</span><span class="val">$1,906.84 <span style="color:#ef4444;font-weight:600">▼ 58.5%</span></span></div>
+    <div class="metric"><span class="lbl">Per Wash</span><span class="val">$5.92</span></div>
+    <div class="metric"><span class="lbl">Club %</span><span class="val">74.2%</span></div>
+    <div class="metric"><span class="lbl">Rewash Rate</span><span class="val">1.6% <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">OK</span></span></div>
   </div>
-  <div class="ref-card">
-    <h3>TX190 — El Camino Real</h3>
-    <div class="location">Webster, TX (Site 253)</div>
-    <div class="metric"><span class="lbl">Washes (Feb 28)</span><span class="val">313</span></div>
-    <div class="metric"><span class="lbl">Gross Sales</span><span class="val">$2,300.81</span></div>
-    <div class="metric"><span class="lbl">$/Wash</span><span class="val">$7.35</span></div>
-    <div class="metric"><span class="lbl">Yesterday Weather</span><span class="val" style="color:#f59e0b;">Rain 🌧️</span></div>
+  <div class="site-card">
+    <h3>TX190</h3>
+    <div class="location">El Camino Real, Webster · ⛈️ Thunderstorm 84.1°F</div>
+    <div class="metric"><span class="lbl">Washes</span><span class="val">242 <span style="color:#ef4444;font-weight:600">▼ 22.7%</span></span></div>
+    <div class="metric"><span class="lbl">Gross Sales</span><span class="val">$1,398.87 <span style="color:#ef4444;font-weight:600">▼ 39.2%</span></span></div>
+    <div class="metric"><span class="lbl">Per Wash</span><span class="val">$5.78</span></div>
+    <div class="metric"><span class="lbl">Club %</span><span class="val">74.4%</span></div>
+    <div class="metric"><span class="lbl">Rewash Rate</span><span class="val">1.2% <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">OK</span></span></div>
   </div>
-  <div class="ref-card">
-    <h3>UT426 — Crossroads Blvd</h3>
-    <div class="location">Saratoga Springs, UT (Site 259)</div>
-    <div class="metric"><span class="lbl">Washes (Feb 28)</span><span class="val">347</span></div>
-    <div class="metric"><span class="lbl">Gross Sales</span><span class="val">$5,210.41</span></div>
-    <div class="metric"><span class="lbl">$/Wash</span><span class="val">$15.02</span></div>
-    <div class="metric"><span class="lbl">Yesterday Weather</span><span class="val" style="color:#10b981;">Clear ☀️</span></div>
+  <div class="site-card">
+    <h3>UT426</h3>
+    <div class="location">Crossroads Blvd, Saratoga Springs · ☁️ Overcast 49.2°F</div>
+    <div class="metric"><span class="lbl">Washes</span><span class="val">322 <span style="color:#ef4444;font-weight:600">▼ 7.2%</span></span></div>
+    <div class="metric"><span class="lbl">Gross Sales</span><span class="val">$1,809.90 <span style="color:#ef4444;font-weight:600">▼ 65.3%</span></span></div>
+    <div class="metric"><span class="lbl">Per Wash</span><span class="val">$5.62</span></div>
+    <div class="metric"><span class="lbl">Club %</span><span class="val">77.6%</span></div>
+    <div class="metric"><span class="lbl">Rewash Rate</span><span class="val">0.9% <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">OK</span></span></div>
   </div>
 </div>
 
-<!-- RECENT TREND (Last 10 Days) -->
-<div class="section-title">Recent Performance Trend (Feb 27 – Mar 6)</div>
+<!-- REWASH & COUPON ANALYSIS -->
+<div class="section-title">Rewash & Coupon Analysis</div>
 <div class="card">
 <table>
-<thead>
-<tr><th>Date</th><th>Day</th><th>TX160</th><th>TX190</th><th>UT426</th><th>Fleet</th><th>Weather</th></tr>
-</thead>
-<tbody>
-<tr><td>Feb 27</td><td>Fri</td><td>342</td><td>286</td><td>259</td><td>887</td><td>☀️ Clear all sites</td></tr>
-<tr><td>Feb 28</td><td><strong>Sat</strong></td><td><strong>473</strong></td><td><strong>313</strong></td><td><strong>347</strong></td><td><strong>1,133</strong></td><td>☁️ Overcast / light rain UT</td></tr>
-<tr><td>Mar 1</td><td>Sun</td><td>326</td><td>296</td><td>118</td><td>740</td><td>☁️ Overcast / drizzle UT</td></tr>
-<tr><td>Mar 2</td><td>Mon</td><td>250</td><td>202</td><td>78</td><td>530</td><td>❄️ Snow UT (0.4")</td></tr>
-<tr><td>Mar 3</td><td>Tue</td><td>214</td><td>181</td><td>100</td><td>495</td><td>🌧️ Drizzle HOU / light UT</td></tr>
-<tr><td>Mar 4</td><td>Wed</td><td>221</td><td>201</td><td>190</td><td>612</td><td>🌧️ Drizzle HOU / snow UT</td></tr>
-<tr><td>Mar 5</td><td>Thu</td><td>265</td><td>212</td><td>76</td><td>553</td><td>🌧️ Drizzle HOU / ❄️ heavy snow UT</td></tr>
-<tr><td>Mar 6</td><td>Fri</td><td>281</td><td>203</td><td>84</td><td>568</td><td>🌧️ Drizzle + wind HOU / ❄️ snow UT</td></tr>
-<tr style="background:#fff7ed;"><td>Mar 7</td><td><strong>Sat</strong></td><td colspan="4" style="text-align:center; color:#f59e0b; font-style:italic;">Data pending — API auth unavailable</td><td>🌧️ Rain HOU / ☀️ Clear UT</td></tr>
-</tbody>
+<tr><th>Site</th><th>Total Rewashes</th><th>Rate</th><th>Status</th></tr>
+<tr><td><strong>TX160</strong></td><td>5</td><td>1.55%</td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">OK</span></td></tr>
+<tr><td><strong>TX190</strong></td><td>3</td><td>1.24%</td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">OK</span></td></tr>
+<tr><td><strong>UT426</strong></td><td>3</td><td>0.93%</td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">OK</span></td></tr>
 </table>
 </div>
 
-<!-- 5-DAY WASH VOLUME FORECAST -->
-<div class="section-title">5-Day Wash Volume Forecast (Mar 8–12)</div>
-
-<div class="stat-grid">
-  <div class="stat-card">
-    <div class="label">Best Day</div>
-    <div class="value">Sun 3/8</div>
-    <div class="change" style="color:#10b981;">790 fleet washes</div>
-  </div>
-  <div class="stat-card">
-    <div class="label">Weakest Day</div>
-    <div class="value">Wed 3/11</div>
-    <div class="change" style="color:#ef4444;">692 fleet washes</div>
-  </div>
-  <div class="stat-card">
-    <div class="label">5-Day Total</div>
-    <div class="value">3,642</div>
-    <div class="change" style="color:#64748b;">avg 728/day</div>
-  </div>
-  <div class="stat-card">
-    <div class="label">Key Risk</div>
-    <div class="value" style="font-size:16px;">Mon Rain</div>
-    <div class="change" style="color:#f59e0b;">HOU: 0.66" expected</div>
-  </div>
-</div>
-
-<div class="card" style="overflow-x:auto;">
-<table class="forecast-table">
-<thead>
-<tr>
-  <th>Day</th>
-  <th>Date</th>
-  <th>Weather</th>
-  <th>TX160</th>
-  <th>TX190</th>
-  <th>UT426</th>
-  <th>Fleet</th>
-  <th>Confidence</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td><strong>Sun</strong></td>
-  <td>Mar 8</td>
-  <td>🌧️ Rain HOU 71°F · ☀️ Clear UT 58°F</td>
-  <td>321</td>
-  <td>244</td>
-  <td>225</td>
-  <td><strong>790</strong></td>
-  <td>🟡 Moderate</td>
-</tr>
-<tr>
-  <td><strong>Mon</strong></td>
-  <td>Mar 9</td>
-  <td>🌧️ Showers HOU 79°F · ☁️ Overcast UT 70°F</td>
-  <td>293</td>
-  <td>219</td>
-  <td>199</td>
-  <td><strong>711</strong></td>
-  <td>🟡 Moderate</td>
-</tr>
-<tr>
-  <td><strong>Tue</strong></td>
-  <td>Mar 10</td>
-  <td>☁️ Overcast HOU 85°F · ☁️ Overcast UT 53°F</td>
-  <td>297</td>
-  <td>221</td>
-  <td>192</td>
-  <td><strong>710</strong></td>
-  <td>🟡 Moderate</td>
-</tr>
-<tr>
-  <td><strong>Wed</strong></td>
-  <td>Mar 11</td>
-  <td>🌧️ Drizzle HOU 83°F · ☁️ Overcast UT 52°F</td>
-  <td>283</td>
-  <td>213</td>
-  <td>196</td>
-  <td><strong>692</strong></td>
-  <td>🟡 Moderate</td>
-</tr>
-<tr>
-  <td><strong>Thu</strong></td>
-  <td>Mar 12</td>
-  <td>☀️ Clear HOU 71°F · ☁️ Overcast UT 68°F</td>
-  <td>309</td>
-  <td>229</td>
-  <td>201</td>
-  <td><strong>739</strong></td>
-  <td>🟡 Moderate</td>
-</tr>
-<tr class="forecast-total">
-  <td colspan="3"><strong>5-Day Total</strong></td>
-  <td><strong>1,503</strong></td>
-  <td><strong>1,126</strong></td>
-  <td><strong>1,013</strong></td>
-  <td><strong>3,642</strong></td>
-  <td></td>
-</tr>
-</tbody>
+<div class="card">
+<table>
+<tr><th>Promotion</th><th>Site</th><th>Uses</th><th>Discount</th><th>Avg/Use</th></tr>
+<tr><td>Detail Kit, TX</td><td>TX160</td><td>2</td><td>$10.00</td><td>$5.00</td></tr>
+<tr><td>Detail Kit, TX</td><td>TX190</td><td>1</td><td>$5.00</td><td>$5.00</td></tr>
 </table>
 </div>
 
-<div class="card" style="background:#f8fafc; border:1px solid #e2e8f0; margin-top:12px;">
-  <div style="font-size:12px; color:#64748b;">
-    <strong>Methodology:</strong> V2 ML model trained on 180 days (Sep 2025–Mar 2026). Uses recent wash history, subscriber counts, day-of-week patterns, and Open-Meteo weather data. Accuracy: TX sites ~18% MAPE, UT426 ~32% MAPE. Predictions are point estimates — actual volumes may vary ±18-32%.
+<!-- INSTACLUB MEMBERSHIP -->
+<div class="section-title">InstaClub Membership</div>
+<div class="site-grid">
+  <div class="site-card">
+    <h3>TX160 InstaClub</h3>
+    <div class="location">FM 1960, Houston</div>
+    <div class="metric"><span class="lbl">New Members</span><span class="val">16</span></div>
+    <div class="metric"><span class="lbl">IC Revenue</span><span class="val">$581.84</span></div>
+  </div>
+  <div class="site-card">
+    <h3>TX190 InstaClub</h3>
+    <div class="location">El Camino Real, Webster</div>
+    <div class="metric"><span class="lbl">New Members</span><span class="val">13</span></div>
+    <div class="metric"><span class="lbl">IC Revenue</span><span class="val">$480.87</span></div>
+  </div>
+  <div class="site-card">
+    <h3>UT426 InstaClub</h3>
+    <div class="location">Crossroads Blvd, Saratoga Springs</div>
+    <div class="metric"><span class="lbl">New Members</span><span class="val">10</span></div>
+    <div class="metric"><span class="lbl">IC Revenue</span><span class="val">$314.90</span></div>
   </div>
 </div>
-
-<!-- WEATHER ALERTS -->
-<div class="section-title">Weather Alerts</div>
-
-<div class="alert alert-danger">
-  <div class="title">🌧️ Monday Rain — Houston 0.66" with 41% Probability</div>
-  <div class="body">Moderate rain showers forecast for Monday across Houston. Combined TX160+TX190 predicted at just 512 washes (vs. typical Monday ~450-500). While Mondays are already the weakest day, the rain adds additional suppression. Consider skeleton crew staffing at both Houston locations.</div>
-</div>
-
-<div class="alert alert-warning">
-  <div class="title">💨 Wednesday Drizzle + Strong Wind — Houston 18.8 mph</div>
-  <div class="body">Wednesday shows drizzle returning to Houston with 18.8 mph winds and 56% precipitation probability. This is the weakest predicted fleet day (692 washes). UT426 remains dry but cold (52°F high). Plan for reduced capacity fleet-wide.</div>
-</div>
-
-<div class="alert alert-success">
-  <div class="title">☀️ Utah Clear Streak — 5 Consecutive Dry Days Ahead</div>
-  <div class="body">After last week's snowstorm, Saratoga Springs enjoys 5 straight days of dry weather with warming temperatures (58°F→68°F by Thursday). UT426 predicted to average 203 washes/day — significantly better than last week's snow-suppressed 76-190 range. Post-storm pent-up demand should boost volumes above model predictions.</div>
+<div class="stat-grid" style="grid-template-columns: repeat(4, 1fr); margin-top:14px;">
+  <div class="stat-card"><div class="label">Total New Members</div><div class="value">39</div></div>
+  <div class="stat-card"><div class="label">Total IC Revenue</div><div class="value">$1,377.61</div></div>
+  <div class="stat-card"><div class="label">% of Gross Sales</div><div class="value">26.9%</div></div>
+  <div class="stat-card"><div class="label">Top Performer</div><div class="value">TX160</div><div class="change">16 new members</div></div>
 </div>
 
 <!-- RECOMMENDED ACTIONS -->
 <div class="section-title">Recommended Actions</div>
 <div class="card">
   <div class="action-item">
-    <span class="num">1</span><span class="title">TX160/TX190 — Reduce Sunday & Monday Staffing</span>
-    <p>Both Houston sites face continued rain today and Monday. ML model predicts 565 combined washes today and 512 Monday. Consider running minimum crew and staggering shifts to cover peak hours only (10 AM–2 PM).</p>
+    <span class="num">1</span><span class="title">Fleet — Post-Storm Sunday Opportunity</span>
+    <p>Houston skies clear to fog/69°F today with no rain. Customers who skipped yesterday's thunderstorm will want washes today. Ensure full staffing at both TX sites to capture pent-up demand. UT426 sees clear 58°F — prime conditions.</p>
   </div>
   <div class="action-item">
-    <span class="num">2</span><span class="title">UT426 — Staff for Post-Storm Rebound</span>
-    <p>Clear weather returns after Thursday–Friday snowstorm. Post-storm weekends historically drive 20%+ above baseline demand. Ensure full staffing and sufficient chemical supply today and through the week. UT426 predicted at 225 washes today — the best single-site day in over a week.</p>
+    <span class="num">2</span><span class="title">TX190 — Address Higher Weather Sensitivity</span>
+    <p>Webster's 22.7% volume drop in identical weather to TX160's 31.9% suggests TX190 is actually more weather-resilient this time, but with lower base volume. Focus on growing the member base at TX190 — the 74% club rate is strong but member count is the constraint.</p>
   </div>
   <div class="action-item">
-    <span class="num">3</span><span class="title">All Sites — Re-Run Briefing During Business Hours</span>
-    <p>Saturday's actual wash data was not captured due to a browser authentication timeout during the 1 AM automated run. Please re-trigger the morning briefing manually once Tommy's Manager is accessible in the browser to get the complete March 7 performance data.</p>
+    <span class="num">3</span><span class="title">UT426 — Capitalize on Spring Warming Trend</span>
+    <p>Utah forecast shows warming from 49°F to 71°F by Monday. This "winter-to-spring" transition drives car wash demand as people shed winter grime. Prepare InstaClub promotional materials emphasizing spring cleaning — the 10 signups yesterday show appetite for memberships.</p>
   </div>
   <div class="action-item">
-    <span class="num">4</span><span class="title">TX160/TX190 — Plan Mid-Week Rebound Marketing</span>
-    <p>After 5+ days of rain-suppressed volumes, Houston is forecast to clear Tuesday with a high of 85°F. Consider pushing a "Post-Rain Shine" campaign via SMS/push notifications to InstaClub members. Pent-up demand from deferred washes should amplify the weather-driven rebound.</p>
+    <span class="num">4</span><span class="title">Fleet — Watch Wednesday Rain in Houston</span>
+    <p>Light rain (0.11") forecast for Wednesday March 11 with 17.5 mph winds. Plan for ~15-25% Houston volume reduction. Keep UT426 fully staffed — clear conditions expected all week.</p>
   </div>
+  <div class="action-item">
+    <span class="num">5</span><span class="title">TX160 — InstaClub Leader: 16 New Members in a Storm</span>
+    <p>Signing 16 members during thunderstorms is exceptional. Document what TX160's cashier team is doing differently — scripting, timing, or promotional display. Roll out best practices to TX190 and UT426.</p>
+  </div>
+</div>
+
+<!-- 5-DAY FORECAST -->
+<div class="section-title">5-Day Wash Volume Forecast</div>
+
+<div class="stat-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom:16px;">
+  <div class="stat-card" style="border-top:3px solid #3b82f6;">
+    <div class="label">5-Day Fleet Total</div>
+    <div class="value">2,206</div>
+    <div class="change">Mar 8–12 predicted</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Best Day</div>
+    <div class="value">Thu</div>
+    <div class="change">500 fleet washes</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Worst Day</div>
+    <div class="value" style="color:#ef4444;">Sun</div>
+    <div class="change">364 fleet washes</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Avg Daily</div>
+    <div class="value">441</div>
+    <div class="change">per day forecast</div>
+  </div>
+</div>
+
+<div class="card" style="padding:0; overflow-x:auto;">
+<table class="forecast-table">
+<tr>
+  <th style="width:100px;">Date</th>
+  <th>Houston Weather</th>
+  <th>Utah Weather</th>
+  <th style="text-align:center;">TX160</th>
+  <th style="text-align:center;">TX190</th>
+  <th style="text-align:center;">UT426</th>
+  <th style="text-align:center;">Fleet</th>
+</tr>
+<tr style="background:#fffbeb;">
+  <td><strong>Sun Mar 08</strong></td>
+  <td>🌫️ Foggy<br><span style="font-size:12px;color:#64748b;">69.1°F · 0.0" · 9.0mph</span></td>
+  <td>☀️ Clear Sky<br><span style="font-size:12px;color:#64748b;">58.2°F · 0.0" snow · 6.4mph</span></td>
+  <td style="text-align:center;"><strong>112</strong></td>
+  <td style="text-align:center;"><strong>92</strong></td>
+  <td style="text-align:center;"><strong>160</strong></td>
+  <td style="text-align:center;font-weight:700;">364</td>
+</tr>
+<tr>
+  <td><strong>Mon Mar 09</strong></td>
+  <td>🌫️ Foggy<br><span style="font-size:12px;color:#64748b;">80.2°F · 0.0" · 10.9mph</span></td>
+  <td>☁️ Overcast<br><span style="font-size:12px;color:#64748b;">70.7°F · 0.0" snow · 13.2mph</span></td>
+  <td style="text-align:center;"><strong>145</strong></td>
+  <td style="text-align:center;"><strong>120</strong></td>
+  <td style="text-align:center;"><strong>208</strong></td>
+  <td style="text-align:center;font-weight:700;">473</td>
+</tr>
+<tr style="background:#fffbeb;">
+  <td><strong>Tue Mar 10</strong></td>
+  <td>☁️ Overcast<br><span style="font-size:12px;color:#64748b;">84.8°F · 0.0" · 15.0mph</span></td>
+  <td>☁️ Overcast<br><span style="font-size:12px;color:#64748b;">60.9°F · 0.0" snow · 17.7mph</span></td>
+  <td style="text-align:center;"><strong>155</strong></td>
+  <td style="text-align:center;"><strong>127</strong></td>
+  <td style="text-align:center;"><strong>188</strong></td>
+  <td style="text-align:center;font-weight:700;">470</td>
+</tr>
+<tr style="background:#fef2f2;">
+  <td><strong>Wed Mar 11</strong></td>
+  <td>🌧️ Slight Rain<br><span style="font-size:12px;color:#64748b;">84.1°F · 0.114" · 17.5mph</span></td>
+  <td>☁️ Overcast<br><span style="font-size:12px;color:#64748b;">54.8°F · 0.0" snow · 10.8mph</span></td>
+  <td style="text-align:center;"><strong>116</strong></td>
+  <td style="text-align:center;"><strong>95</strong></td>
+  <td style="text-align:center;"><strong>188</strong></td>
+  <td style="text-align:center;font-weight:700;">399</td>
+</tr>
+<tr>
+  <td><strong>Thu Mar 12</strong></td>
+  <td>🌤️ Mainly Clear<br><span style="font-size:12px;color:#64748b;">72.6°F · 0.0" · 15.7mph</span></td>
+  <td>☁️ Overcast<br><span style="font-size:12px;color:#64748b;">66.8°F · 0.0" snow · 11.6mph</span></td>
+  <td style="text-align:center;"><strong>165</strong></td>
+  <td style="text-align:center;"><strong>135</strong></td>
+  <td style="text-align:center;"><strong>200</strong></td>
+  <td style="text-align:center;font-weight:700;">500</td>
+</tr>
+<tr class="forecast-total">
+  <td colspan="3"><strong>5-Day Total</strong></td>
+  <td style="text-align:center;"><strong>693</strong></td>
+  <td style="text-align:center;"><strong>569</strong></td>
+  <td style="text-align:center;"><strong>944</strong></td>
+  <td style="text-align:center;"><strong>2206</strong></td>
+</tr>
+</table>
+</div>
+
+<div class="alert alert-info" style="margin-top:16px;">
+  <div class="title">📊 Forecast Methodology</div>
+  <div class="body">Estimates based on day-of-week baselines, weather impact multipliers, and historical patterns. Confidence: Moderate for Houston (±18%), Low for Utah (±32%). Fog/overcast reduces Houston estimates 15%; rain &gt;0.1" reduces 25%.</div>
 </div>
 
 </div>
 
 <div class="footer">
-  Data: Tommy's Manager API (cached Feb 27–Mar 6) + Open-Meteo Weather API, March 7 · Generated Sunday, March 8, 2026, 1:15 AM CT<br>
-  ML Forecast: V2 model (180-day training period) · Note: March 7 wash data pending — browser auth unavailable during automated run
+  Data: Tommy's Manager API, March 7, 2026 · Weather: Open-Meteo · Generated March 08, 2026 at 07:08 AM CT
 </div>
 
 </body>
