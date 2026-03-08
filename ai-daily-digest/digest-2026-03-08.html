@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 8, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Sunday, March 8, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>OpenAI's GPT-5.4 dropped this week with native computer-use capabilities and a 1M-token context window — the first general-purpose model that can autonomously operate desktop applications. The Linux Foundation formalized the agentic AI stack by launching the Agentic AI Foundation (AAIF), with MCP, goose, and AGENTS.md as founding projects backed by every major lab. NIST's RFI deadline on AI agent security closes tomorrow (March 9), signaling that Washington is now actively shaping how agents authenticate and interoperate. Global VC hit $189B in February — 90% AI-driven — led by OpenAI's $110B and Anthropic's $30B mega-rounds. And the FTC's March 11 deadline for AI preemption guidance looms as the pivotal regulatory moment that will determine whether state AI laws survive or get swept aside by federal policy.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://openai.com/index/introducing-gpt-5-4/">OpenAI Launches GPT-5.4 — Native Computer Use, 1M-Token Context, Agentic Workflows</a></h3>
+    <p class="story-meta"><span class="source">OpenAI / TechCrunch</span> · Mar 5 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">GPT-5.4 is OpenAI's most capable model to date, and the first general-purpose model with native computer-use capabilities — agents can now operate desktop applications, navigate browsers, and execute multi-step workflows across software. Available in three variants: standard, Thinking (extended reasoning for Plus/Pro users), and Pro (enterprise API). The 1M-token context window is the largest OpenAI has offered. On OSWorld-Verified, GPT-5.4 achieves 75% success rate, surpassing human performance at 72.4%. Hallucination rates are down 27% when using web tools and 20% on internal knowledge vs. GPT-5.2.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Native computer-use changes the agent game. Instead of building tool integrations one-by-one, agents can now interact with any desktop application the way a human would. Combined with the 1M context window, this opens up workflows that were previously impossible — like having an agent process an entire quarter's worth of reports in a single pass. Worth testing against your existing Claude Code and Cowork workflows to benchmark cost-per-task.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://llm-stats.com/ai-news">Zhipu AI Ships GLM-5 — 744B Parameters, MIT License, Built on Huawei Ascend</a></h3>
+    <p class="story-meta"><span class="source">LLM Stats / Zhipu AI</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">China's Zhipu AI released GLM-5, a 744B-parameter MoE model with 44B active parameters, a 200K context window, and 77.8% on SWE-bench Verified — competitive with frontier Western models. Crucially, it's trained entirely on Huawei Ascend chips (no Nvidia dependency) and released under the MIT license. This is the most capable fully-open model to date and the clearest signal yet that the Chinese AI hardware stack can produce frontier-tier results independently.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> MIT-licensed with SWE-bench scores rivaling closed models means GLM-5 is immediately useful for on-premise or cost-sensitive deployments. The Huawei Ascend training story is the bigger signal — if Chinese labs can match frontier performance on domestic silicon, the global chip supply chain dynamics shift permanently.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.mixvale.com.br/2026/03/05/openai-launches-gpt-5-4-with-a-focus-on-professional-work-and-autonomous-agents-en/">GPT-5.3 Instant Now Available to All ChatGPT Users</a></h3>
+    <p class="story-meta"><span class="source">OpenAI</span> · Mar 5 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Alongside GPT-5.4, OpenAI quietly rolled out GPT-5.3 Instant to all ChatGPT users (including free tier) and API developers. It delivers more factual responses with hallucination rates cut by 27% (web) and 20% (internal knowledge) vs. GPT-5.2. Positioned as the everyday workhorse model while 5.4 targets power users and enterprise agentic workflows.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">Linux Foundation Launches Agentic AI Foundation — MCP Goes Open Governance</a></h3>
+    <p class="story-meta"><span class="source">Linux Foundation</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Linux Foundation established the Agentic AI Foundation (AAIF) with Anthropic's Model Context Protocol (MCP), Block's goose, and OpenAI's AGENTS.md as founding projects. Platinum members include Anthropic, OpenAI, AWS, Google, Microsoft, Cloudflare, Block, Bloomberg, Intuit, Replit, Samsung, PayPal, Salesforce, and SAP. MCP's Python and TypeScript SDKs now exceed 97 million monthly downloads with 10,000+ published servers. This formalizes MCP as the de facto standard for agent-to-tool communication under neutral governance.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> MCP under the Linux Foundation is the clearest buy signal yet for building on the protocol. Every major cloud provider and AI lab is now committed to interoperability through AAIF. If you're building agent infrastructure, MCP is no longer a bet — it's the standard. The three-layer architecture (MCP for tools, A2A for agent-to-agent, WebMCP for web) is the stack to build against.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://adversa.ai/blog/top-mcp-security-resources-march-2026/">MCP Security Under Siege: 30 CVEs in 60 Days, Overthinking Loop Attack Discovered</a></h3>
+    <p class="story-meta"><span class="source">Adversa AI / Security Research</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">MCP's rapid adoption has made it the fastest-growing attack surface in AI infrastructure. Analysis reveals 30 CVEs filed in 60 days, with 38% of 500+ scanned servers completely lacking authentication. A newly identified "overthinking loop" attack can exploit tool-using LLM agents by inducing cyclic reasoning patterns, amplifying token consumption up to 142x and creating severe denial-of-wallet risk. MCP gateways and dedicated AI security tools are emerging as essential enterprise infrastructure layers.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.hungyichen.com/en/insights/ai-agent-protocol-wars">Three-Layer Protocol Stack Crystallizes: MCP + A2A + WebMCP</a></h3>
+    <p class="story-meta"><span class="source">Industry Analysis</span> · Feb-Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The agent communication architecture has settled into three distinct layers: MCP (agent-to-tool), A2A (agent-to-agent, championed by Google), and WebMCP (structured web content access). Gartner predicts 75% of gateway vendors will integrate MCP features by year-end, and 40% of enterprise applications will have built-in AI agents by late 2026 — up from under 5% in 2025.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/record-setting-global-funding-february-2026-openai-anthropic/">February Shatters Records: $189B in Global VC, 90% AI-Driven</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Global venture investment hit $189 billion in February — the largest single month on record — with AI companies capturing 90% of capital. Three mega-rounds dominated: OpenAI ($110B at $840B post-money valuation, backed by Amazon, SoftBank, and Nvidia), Anthropic ($30B Series G at $380B post-money), and xAI ($20B Series E). Physical AI emerged as a co-equal theme with $19B+ flowing to Waymo ($16B), Wayve ($1.2B), Waabi ($1B), and robotics startups. The AI chip arms race intensified with $1.2B+ to Nvidia alternatives in one week.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The concentration is staggering — three companies absorbed 83% of all global VC. But the real signal is that frontier AI labs are now valued like the world's largest public companies, and the capital is flowing downstream into infrastructure, chips, and physical AI. Every layer of the stack is getting funded, which means the tooling and pricing environment will get more competitive for builders throughout 2026.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-ai-openai-semiconductors-matx/">MatX Raises $500M Series B for Custom LLM Chips</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">MatX, which designs custom chips and hardware architectures specifically for large language models, closed a $500M Series B led by Jane Street Capital and Situational Awareness. Also notable in early March: Runway secured $315M Series E at $5.3B valuation for AI video generation, and Science Corp. closed $230M Series C for brain-computer interfaces.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure">NIST AI Agent Standards RFI Closes Tomorrow — Washington Shapes Agent Security</a></h3>
+    <p class="story-meta"><span class="source">NIST</span> · Due Mar 9 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">NIST's Center for AI Standards and Innovation (CAISI) launched the AI Agent Standards Initiative focused on three pillars: industry-led standards development, open-source protocol maintenance, and AI agent security and identity research. The RFI on AI Agent Security closes March 9, with an Agent Identity and Authorization concept paper due April 2. NIST has signaled interest in MCP as a candidate for integrating security and identity controls directly into agent ecosystems. Listening session requests are due March 20.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> NIST setting standards for agent identity and authorization will directly affect how every MCP server authenticates. If you're building agent tooling, the March 9 RFI deadline and April 2 identity paper are the documents that will shape compliance requirements. This is the federal government formally acknowledging that autonomous AI agents need their own security framework — separate from traditional software security.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.wsgr.com/en/insights/2026-year-in-preview-ai-regulatory-developments-for-companies-to-watch-out-for.html">FTC March 11 Deadline: AI Preemption Guidance Could Override State Laws</a></h3>
+    <p class="story-meta"><span class="source">Wilson Sonsini / Federal Register</span> · Due Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Two critical deadlines hit March 11: the FTC must issue a policy statement describing how the FTC Act applies to AI, and the Secretary of Commerce must publish an evaluation identifying state AI laws that conflict with federal policy. This follows President Trump's December 2025 executive order proposing uniform federal AI policy that would preempt inconsistent state laws — potentially overriding California's Transparency in Frontier AI Act and Texas's Responsible AI Governance Act, both effective since January 1.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai">EU AI Act: High-Risk Compliance Paused Until 2027-2028 as Standards Develop</a></h3>
+    <p class="story-meta"><span class="source">European Commission</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The EU AI Act's compliance deadline for high-risk AI systems has been effectively pushed to late 2027 or 2028, giving companies more runway as technical standards are finalized. On March 5, the Commission published a second draft of the Code of Practice on marking and labelling AI-generated content. The full Act becomes applicable August 2, 2026, but enforcement will be phased. South Korea's AI Basic Act also takes effect January 22, 2026, making it the first comprehensive AI framework in Asia.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.cnn.com/2026/02/26/business/block-layoffs-ai-jack-dorsey">Block Cuts 4,000 Jobs (40% of Staff) — Cites AI as Primary Driver</a></h3>
+    <p class="story-meta"><span class="source">CNN / Bloomberg / CNBC</span> · Feb 26 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Jack Dorsey's Block laid off more than 4,000 employees — roughly 40% of the company — explicitly citing AI efficiency as the reason. Dorsey predicted most companies will make similar structural changes within the next year. The stock surged 24% on the news. However, former Block communications head Aaron Zamost pushed back, arguing the cuts targeted policy and DEI roles and resembled standard cost management rather than genuine AI-driven reinvention. Regardless of motive, this is the highest-profile AI-attributed workforce reduction to date and sets a template others may follow.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Whether the AI framing is genuine or performative, Block just made it acceptable for CEOs to attribute mass layoffs to AI transformation — and the market rewarded it with a 24% pop. Expect this playbook to spread. For AI-first businesses, the signal is that Wall Street is pricing in aggressive headcount reduction as a feature of AI adoption, not a risk.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html">Deloitte: Only 8.6% of Enterprises Have AI Agents in Production</a></h3>
+    <p class="story-meta"><span class="source">Deloitte</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Deloitte's 2026 State of AI in the Enterprise survey (120,000+ respondents) found that while 78% of organizations have adopted some form of AI, only 8.6% have AI agents in production and 63.7% report no formalized AI initiative at all. Companies report 3.7x ROI per dollar invested in generative AI and average time savings of 52-60 minutes per worker daily. The bottleneck isn't technology — it's data readiness, governance, and the 70% people-and-process effort that BCG's "10-20-70 rule" calls out.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://gloat.com/blog/ai-workforce-trends/">AI Skills Premium Hits 56% — 120M Workers Face Reskilling Gap</a></h3>
+    <p class="story-meta"><span class="source">Gloat / PwC</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">PwC's latest analysis shows workers with advanced AI skills earn 56% more than peers in the same roles without them, while productivity growth has quadrupled in AI-exposed industries since 2022. On the other side, an estimated 120 million workers face medium-term redundancy risk due to insufficient reskilling. Gartner projects 80% of the engineering workforce will need to upskill through 2027 just to keep pace with generative AI's evolution.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Sunday, March 8, 2026</p>
+  <p class="sources">Sources: OpenAI, TechCrunch, Linux Foundation, Adversa AI, Crunchbase, NIST, Wilson Sonsini, European Commission, CNN, Bloomberg, CNBC, Deloitte, PwC, Gloat, Gartner, LLM Stats, Zhipu AI</p>
+</div>
+
+</div>
+</body>
+</html>
