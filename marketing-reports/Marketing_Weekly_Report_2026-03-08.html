@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCWH Weekly Marketing Report — Mar 8, 2026</title>
+<style>
+  :root {
+    --dark: #1a1a2e;
+    --accent: #e94560;
+    --accent2: #0f3460;
+    --light: #f8f9fa;
+    --mid: #e9ecef;
+    --text: #212529;
+    --success: #28a745;
+    --warn: #ffc107;
+    --danger: #dc3545;
+    --info: #17a2b8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--text); background: var(--light); line-height: 1.6; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--accent2) 100%);
+    color: white; padding: 50px 40px; text-align: center;
+  }
+  .hero h1 { font-size: 2.4em; margin-bottom: 8px; letter-spacing: -1px; }
+  .hero .subtitle { font-size: 1.1em; opacity: 0.85; }
+  .hero .period { margin-top: 15px; font-size: 1em; opacity: 0.7; padding: 6px 20px; border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; display: inline-block; }
+  .hero .meta { margin-top: 12px; font-size: 0.85em; opacity: 0.6; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 30px 25px; }
+
+  /* KPI Cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 25px 0; }
+  .kpi-card {
+    background: white; border-radius: 10px; padding: 20px; text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-top: 4px solid var(--accent2);
+  }
+  .kpi-card.danger { border-top-color: var(--danger); }
+  .kpi-card.warn { border-top-color: var(--warn); }
+  .kpi-card.success { border-top-color: var(--success); }
+  .kpi-card .value { font-size: 2em; font-weight: 700; color: var(--dark); }
+  .kpi-card .label { font-size: 0.85em; color: #666; margin-top: 4px; }
+  .kpi-card .delta { font-size: 0.8em; margin-top: 6px; font-weight: 600; }
+  .delta-up { color: var(--success); }
+  .delta-down { color: var(--danger); }
+  .delta-neutral { color: #888; }
+
+  /* Sections */
+  .section { margin-bottom: 35px; }
+  .section-header {
+    background: white; border-radius: 12px 12px 0 0; padding: 20px 25px;
+    border-left: 5px solid var(--accent); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  .section-header h2 { font-size: 1.5em; color: var(--dark); margin: 0; }
+  .section-header p { color: #666; margin-top: 4px; font-size: 0.9em; }
+  .section-body {
+    background: white; border-radius: 0 0 12px 12px; padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 1px;
+  }
+  .section-body p { margin-bottom: 12px; }
+  .section-body h3 { color: var(--accent2); margin: 20px 0 10px; font-size: 1.15em; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+  th { background: var(--accent2); color: white; padding: 10px 14px; text-align: left; font-size: 0.85em; font-weight: 600; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--mid); font-size: 0.9em; }
+  .row-alt { background: #f8f9fa; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Status badges */
+  .status-green { background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; display: inline-block; }
+  .status-yellow { background: #fff3cd; color: #856404; padding: 3px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; display: inline-block; }
+  .status-red { background: #f8d7da; color: #721c24; padding: 3px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; display: inline-block; }
+
+  /* Tags */
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.78em; font-weight: 600; }
+  .tag-core { background: #e3f2fd; color: #1565c0; }
+  .tag-brand { background: #e8f5e9; color: #2e7d32; }
+  .tag-coloc { background: #fff3e0; color: #e65100; }
+  .tag-irrel { background: #fce4ec; color: #c62828; }
+
+  /* Priority badges */
+  .pri-badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 0.85em; }
+  .pri-red { background: #f8d7da; color: #721c24; }
+  .pri-yellow { background: #fff3cd; color: #856404; }
+  .pri-gray { background: #e2e3e5; color: #383d41; }
+
+  /* Trend arrows */
+  .trend-up { color: var(--success); font-weight: 700; }
+  .trend-down { color: var(--danger); font-weight: 700; }
+
+  /* Alert banner */
+  .alert-banner {
+    background: linear-gradient(135deg, var(--accent), #d63447);
+    color: white; padding: 18px 25px; border-radius: 10px; margin-bottom: 20px;
+  }
+  .alert-banner h3 { margin-bottom: 6px; font-size: 1.1em; }
+  .alert-banner p { opacity: 0.92; font-size: 0.92em; }
+
+  /* Benchmark scorecard */
+  .scorecard {
+    display: flex; align-items: center; gap: 15px;
+    background: white; padding: 20px; border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin: 15px 0;
+  }
+  .score-circle {
+    width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 1.8em; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .score-good { background: linear-gradient(135deg, var(--success), #218838); }
+  .score-mixed { background: linear-gradient(135deg, var(--warn), #e0a800); }
+  .score-poor { background: linear-gradient(135deg, var(--danger), #c82333); }
+
+  /* Footer */
+  .footer {
+    background: var(--dark); color: rgba(255,255,255,0.7); padding: 30px; text-align: center;
+    font-size: 0.85em; margin-top: 40px;
+  }
+  .footer strong { color: white; }
+
+  @media (max-width: 768px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero h1 { font-size: 1.8em; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <h1>UCWH Weekly Marketing Report</h1>
+  <div class="subtitle">Tommy's Express Car Wash — Yext Performance Analysis</div>
+  <div class="period">March 2, 2026 – March 8, 2026</div>
+  <div class="meta">Account: 3138077 &bull; Locations: TX190, UT426, TX160 &bull; Generated: March 9, 2026</div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════ KPI CARDS ═══════════════ -->
+<div class="kpi-grid">
+  <div class="kpi-card success">
+    <div class="value">4.51★</div>
+    <div class="label">Average Rating</div>
+    <div class="delta delta-up">+0.09 vs prior</div>
+  </div>
+  <div class="kpi-card success">
+    <div class="value">14</div>
+    <div class="label">New Reviews</div>
+    <div class="delta delta-up">+17% WoW</div>
+  </div>
+  <div class="kpi-card danger">
+    <div class="value">104h</div>
+    <div class="label">Avg Response Time</div>
+    <div class="delta delta-down">+71 hrs vs prior</div>
+  </div>
+  <div class="kpi-card warn">
+    <div class="value">93%</div>
+    <div class="label">Response Rate</div>
+    <div class="delta delta-down">-3% vs prior</div>
+  </div>
+</div>
+
+<!-- Critical Alert -->
+<div class="alert-banner">
+  <h3>⚠ Critical: Review Response Time at 104 Hours</h3>
+  <p>Industry best practice is under 24 hours. Current response time represents a 433% gap versus benchmark. This is the #1 priority requiring immediate action.</p>
+</div>
+
+<!-- ═══════════════ EXECUTIVE SUMMARY ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Executive Summary</h2>
+    <p>Weekly performance overview with key findings</p>
+  </div>
+  <div class="section-body">
+    <p>This report covers the period <strong>March 2, 2026 – March 8, 2026</strong> for Tommy's Express Car Wash across three locations (TX190, UT426, TX160). Data sourced from Yext Account 3138077 with benchmarking against car wash industry standards.</p>
+    <p>The average rating of <strong>4.51 stars</strong> continues to exceed the industry benchmark of 4.3.
+     Review response time remains at <strong>104 hours</strong>, well above the 24-hour industry best practice — this is the most critical metric requiring immediate improvement.
+     The response rate of <strong>93%</strong> is below the 95%+ target, continuing a declining trend.</p>
+    <p>GBP impressions totaled <strong>2,483</strong> for the week with <strong>500</strong> driving direction requests, indicating healthy local visibility.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ PERFORMANCE DASHBOARD ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Performance Dashboard</h2>
+    <p>Key metrics vs. industry benchmarks</p>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead>
+        <tr><th>Metric</th><th>Current</th><th>Benchmark</th><th>Delta</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-alt"><td>Average Rating</td><td class="num">4.51</td><td>4.3 (industry)</td><td>+0.09</td><td><span class="status-green">Above Benchmark</span></td></tr>
+        <tr><td>New Reviews (week)</td><td class="num">14</td><td>40-60 (3 loc.)</td><td>+17%</td><td><span class="status-green">On Pace</span></td></tr>
+        <tr class="row-alt"><td>Response Rate</td><td class="num">93%</td><td>95%+</td><td>-3%</td><td><span class="status-red">Below Benchmark</span></td></tr>
+        <tr><td>Avg Response Time</td><td class="num">104 hrs</td><td><24 hrs</td><td>+71 hrs</td><td><span class="status-red">CRITICAL GAP</span></td></tr>
+        <tr class="row-alt"><td>GBP Impressions/wk</td><td class="num">~2,483</td><td>2,000-3,000</td><td>On target</td><td><span class="status-green">Meets Benchmark</span></td></tr>
+        <tr><td>Directions/wk</td><td class="num">~500</td><td>300-500</td><td>On target</td><td><span class="status-green">Meets Benchmark</span></td></tr>
+        <tr class="row-alt"><td>Local Pack/wk</td><td class="num">55</td><td>60-80</td><td>Below</td><td><span class="status-yellow">Below Benchmark</span></td></tr>
+        <tr><td>Website CTR</td><td class="num">2.6%</td><td>5%+</td><td>Below</td><td><span class="status-yellow">Below Target</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ REVIEW PERFORMANCE ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Review Performance Analysis</h2>
+    <p>Rating trends, volume, response metrics</p>
+  </div>
+  <div class="section-body">
+    <h3>Rating Trend</h3>
+    <p>The current average rating of <strong>4.51 stars</strong> represents a +0.09-star change versus the prior period. This exceeds the car wash industry benchmark of 4.3 stars.</p>
+
+    <h3>Volume Analysis</h3>
+    <p>This week generated <strong>14 new reviews</strong> across 3 locations (~4.7 per location). This pace is on track to meet the monthly benchmark of 40-60 total reviews. Week-over-week volume is +17%.</p>
+
+    <h3>Response Time (CRITICAL)</h3>
+    <p>The average response time of <strong>104 hours</strong> (4.3 days) remains the most significant performance gap. The industry best practice is under 24 hours, with leading brands targeting under 4 hours.</p>
+    <p>Business impact includes: reduced local search ranking signals, decreased customer trust, lost recovery opportunities (negative reviewers who receive prompt responses are 33% more likely to update their rating), and competitive disadvantage.</p>
+
+    <h3>Response Rate Trend</h3>
+    <p>The response rate continues below target at <strong>93%</strong> (-3% vs prior). Best-in-class brands maintain 99%+. The declining trend suggests attention is needed in the review management workflow.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ GBP ANALYSIS ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Google Business Profile Analysis</h2>
+    <p>Search terms, brand vs. non-brand, conversion funnel</p>
+  </div>
+  <div class="section-body">
+    <h3>Search Term Breakdown</h3>
+    <p>GBP analytics show <strong>2,483</strong> total impressions for the week. Top search terms by category:</p>
+    <table>
+      <thead>
+        <tr><th>Search Term</th><th>Impressions</th><th>Category</th><th>% of Sample</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-alt">
+    <td>car wash</td>
+    <td class="num">224</td>
+    <td><span class="tag tag-core">Core</span></td>
+    <td class="num">26.1%</td>
+  </tr>
+<tr class="">
+    <td>tommy's express car wash</td>
+    <td class="num">171</td>
+    <td><span class="tag tag-brand">Brand</span></td>
+    <td class="num">19.9%</td>
+  </tr>
+<tr class="row-alt">
+    <td>restaurants</td>
+    <td class="num">113</td>
+    <td><span class="tag tag-irrel">Irrelevant</span></td>
+    <td class="num">13.2%</td>
+  </tr>
+<tr class="">
+    <td>car wash near me</td>
+    <td class="num">100</td>
+    <td><span class="tag tag-core">Core</span></td>
+    <td class="num">11.7%</td>
+  </tr>
+<tr class="row-alt">
+    <td>costco wholesale</td>
+    <td class="num">73</td>
+    <td><span class="tag tag-coloc">Co-located</span></td>
+    <td class="num">8.5%</td>
+  </tr>
+<tr class="">
+    <td>walmart</td>
+    <td class="num">41</td>
+    <td><span class="tag tag-irrel">Irrelevant</span></td>
+    <td class="num">4.8%</td>
+  </tr>
+<tr class="row-alt">
+    <td>tommy express car wash</td>
+    <td class="num">41</td>
+    <td><span class="tag tag-brand">Brand</span></td>
+    <td class="num">4.8%</td>
+  </tr>
+<tr class="">
+    <td>the ups store</td>
+    <td class="num">39</td>
+    <td><span class="tag tag-coloc">Co-located</span></td>
+    <td class="num">4.5%</td>
+  </tr>
+<tr class="row-alt">
+    <td>vasa fitness</td>
+    <td class="num">28</td>
+    <td><span class="tag tag-coloc">Co-located</span></td>
+    <td class="num">3.3%</td>
+  </tr>
+<tr class="">
+    <td>tommy's car wash</td>
+    <td class="num">28</td>
+    <td><span class="tag tag-brand">Brand</span></td>
+    <td class="num">3.3%</td>
+  </tr>
+      </tbody>
+    </table>
+
+    <h3>Brand vs. Non-Brand</h3>
+    <p>Brand searches account for <strong>240</strong> impressions (28.0%). Core category searches represent <strong>324</strong> (37.8%). Combined relevant share is <strong>65.7%</strong>, while <strong>34.3%</strong> comes from co-located or irrelevant terms. Irrelevant impression share is trending positively.</p>
+
+    <h3>Conversion Funnel</h3>
+    <p><strong>500</strong> driving direction requests from 2,483 impressions (20.1% conversion). Website clicks: <strong>65</strong> (2.6% CTR). Tap-to-call: <strong>50</strong>/week. Website CTR remains below the 5% target — GBP listing enhancement needed.</p>
+
+    <h3>Maps vs. Search</h3>
+    <p>Google Maps impressions (~2,300) vs. Search (~183) show a <strong>13:1 ratio</strong>. This Maps dominance is typical for physical service businesses and reinforces the importance of GBP optimization, photo quality, and review management.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ COMPETITIVE POSITIONING ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Competitive Positioning</h2>
+    <p>Benchmark scorecard and competitive analysis</p>
+  </div>
+  <div class="section-body">
+    <div class="scorecard">
+      <div class="score-circle score-mixed">3/6</div>
+      <div>
+        <strong>Benchmark Scorecard</strong><br>
+        Tommy's Express meets <strong>3 of 6</strong> core benchmarks this week.
+        Performance is mixed with critical gaps in response management.
+      </div>
+    </div>
+
+    <h3>Strengths</h3>
+    <p>4.51 average rating exceeding the 4.3 benchmark, strong local penetration with 500 weekly driving directions, meaningful brand equity with 240 brand-specific impressions.</p>
+
+    <h3>Weaknesses</h3>
+    <p>response time of 104hrs (benchmark: <24hrs), declining response rate at 93% (benchmark: 95%+), low website CTR at 2.6% (benchmark: 5%+).</p>
+  </div>
+</div>
+
+<!-- ═══════════════ CORRECTIVE ACTIONS ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Corrective Action Strategies</h2>
+    <p>Prioritized actions with timelines and expected impact</p>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead>
+        <tr><th>Pri</th><th>Issue</th><th>Strategy</th><th>Execution Tactic</th><th>Timeline</th><th>Expected Impact</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+  <td><span class="pri-badge pri-red">P1</span></td>
+  <td>Response Time: 104hrs</td>
+  <td>Implement 24hr SLA with escalation</td>
+  <td>Assign daily review owner; draft templates; enable Yext alerts</td>
+  <td>Ongoing</td>
+  <td>Reduce to <24hrs; improve Google ranking signals</td>
+</tr>
+<tr>
+  <td><span class="pri-badge pri-red">P1</span></td>
+  <td>Response Rate: 93%</td>
+  <td>Target 99%+ with no-miss process</td>
+  <td>Daily review monitoring checklist; automation for drafts</td>
+  <td>Ongoing</td>
+  <td>Close 6% gap; demonstrate active management</td>
+</tr>
+<tr>
+  <td><span class="pri-badge pri-yellow">P2</span></td>
+  <td>Low Website CTR (2.6%)</td>
+  <td>Enhance GBP listing engagement</td>
+  <td>Upload quality photos; weekly Google Posts; add offers</td>
+  <td>4 weeks</td>
+  <td>Increase CTR to 5%+; drive online conversions</td>
+</tr>
+<tr>
+  <td><span class="pri-badge pri-gray">P3</span></td>
+  <td>Local Pack: 55/wk</td>
+  <td>Increase to 75+ through optimization</td>
+  <td>Improve NAP consistency; increase review velocity; structured data</td>
+  <td>8 weeks</td>
+  <td>25-50% increase in Local Pack appearances</td>
+</tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ WEEK-OVER-WEEK TREND ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Week-over-Week Trends</h2>
+    <p>Key metrics vs. prior week</p>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead>
+        <tr><th>Metric</th><th>This Week</th><th>Prior Week</th><th>Change</th><th>Trend</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-alt"><td>Average Rating</td><td class="num">4.51</td><td class="num">4.42</td><td>+0.09</td><td><span class="trend-up">▲</span></td></tr>
+        <tr><td>New Reviews</td><td class="num">14</td><td class="num">12</td><td>+17%</td><td><span class="trend-up">▲</span></td></tr>
+        <tr class="row-alt"><td>Response Rate</td><td class="num">93%</td><td class="num">96%</td><td>-3%</td><td><span class="trend-down">▼</span></td></tr>
+        <tr><td>Avg Response Time</td><td class="num">104 hrs</td><td class="num">33 hrs</td><td>+71 hrs</td><td><span class="trend-down">▼</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<div class="footer">
+  <strong>Data:</strong> Yext Account 3138077 &bull; <strong>Period:</strong> March 2, 2026 – March 8, 2026 &bull; <strong>Generated:</strong> Monday, March 9, 2026 at 1:11 AM
+  <br>Prepared by Cowork AI &bull; Tommy's Express Car Wash &bull; United Car Wash Holdings
+</div>
+
+</body>
+</html>
