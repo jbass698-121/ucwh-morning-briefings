@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6-Month Hourly Inspection Analysis &mdash; Sep 2025 to Feb 2026</title>
+<style>
+:root {
+  --primary: #1a365d;
+  --primary-light: #2a4a7f;
+  --accent: #3182ce;
+  --bg: #f7fafc;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --text: #2d3748;
+  --text-light: #718096;
+  --good: #27ae60;
+  --warning: #f39c12;
+  --critical: #e74c3c;
+  --info: #3182ce;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+.hero {
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 40%, #2c5364 100%);
+  color: white;
+  padding: 2.5rem 2rem 2rem;
+}
+.hero h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; }
+.hero .subtitle { opacity: 0.85; font-size: 1.05rem; }
+.hero .period { font-size: 1.1rem; opacity: 0.9; margin-top: 0.5rem; }
+.hero .badge-report { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 0.2rem 0.75rem; border-radius: 20px; font-size: 0.8rem; margin-top: 0.75rem; }
+.nav-bar {
+  background: #203a43;
+  padding: 0.5rem 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.nav-link {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.nav-link:hover { background: rgba(255,255,255,0.15); color: white; }
+.container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+
+/* Global metrics */
+.global-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.global-metric {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 1.25rem;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  border-top: 3px solid var(--accent);
+}
+.global-metric .gm-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+.global-metric .gm-label { font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem; }
+
+/* Section headers */
+.section-title {
+  font-size: 1.4rem;
+  color: var(--primary);
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Insight cards */
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.insight-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-left: 4px solid;
+}
+.insight-card.insight-good { border-color: var(--good); }
+.insight-card.insight-warning { border-color: var(--warning); }
+.insight-card.insight-critical { border-color: var(--critical); }
+.insight-card.insight-info { border-color: var(--info); }
+.insight-icon { font-size: 1.3rem; margin-bottom: 0.25rem; }
+.insight-title { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; }
+.insight-text { font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+
+/* Site cards */
+.site-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid var(--border);
+}
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.site-header h2 { font-size: 1.3rem; color: var(--primary); }
+.site-header .subtitle { font-size: 0.85rem; color: var(--text-light); }
+.rate-display {
+  border: 3px solid;
+  border-radius: 12px;
+  padding: 0.5rem 1.25rem;
+  text-align: center;
+  min-width: 110px;
+}
+.rate-number { font-size: 1.6rem; font-weight: 700; }
+.rate-label { font-size: 0.75rem; color: var(--text-light); }
+
+/* Metrics grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+.metric-card {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 0.75rem;
+  text-align: center;
+}
+.metric-value { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+.metric-label { font-size: 0.75rem; color: var(--text-light); }
+
+/* Charts */
+.section-row { display: flex; gap: 1.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.section-half { flex: 1; min-width: 280px; }
+h3 { font-size: 1rem; color: var(--primary); margin-bottom: 0.75rem; }
+
+.monthly-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 160px;
+  padding: 10px 0;
+}
+.chart-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+.bar-fill {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  position: relative;
+}
+.bar-fill .bar-value {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.bar-label {
+  font-size: 0.7rem;
+  color: var(--text-light);
+  margin-top: 6px;
+  white-space: nowrap;
+}
+
+/* Comparison table */
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 1rem; }
+.data-table th {
+  background: var(--primary);
+  color: white;
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+.data-table tr:hover { background: #f0f4f8; }
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.badge-good { background: #d4edda; color: var(--good); }
+.badge-warning { background: #fef3cd; color: #856404; }
+.badge-critical { background: #fde8e8; color: var(--critical); }
+
+/* Trend indicators */
+.trend-up { color: var(--good); font-weight: 700; }
+.trend-down { color: var(--critical); font-weight: 700; }
+.trend-flat { color: var(--text-light); font-weight: 700; }
+
+/* Hour heatmap */
+.heatmap { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: 1rem; }
+.heat-cell {
+  width: 38px;
+  height: 38px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: white;
+}
+.heat-cell .heat-hour { font-size: 0.6rem; opacity: 0.85; }
+
+/* DOW chart */
+.dow-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 140px;
+  padding-top: 10px;
+}
+
+/* Ranking cards */
+.ranking-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.ranking-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid var(--border);
+  position: relative;
+}
+.ranking-card .rank-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.ranking-card .rank-name { font-size: 1rem; font-weight: 700; color: var(--primary); margin-top: 0.75rem; }
+.ranking-card .rank-rate { font-size: 2.2rem; font-weight: 700; margin: 0.5rem 0; }
+.ranking-card .rank-trend { font-size: 0.9rem; }
+
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .hero { padding: 1.5rem 1rem; }
+  .hero h1 { font-size: 1.3rem; }
+  .container { padding: 1rem; }
+  .section-row { flex-direction: column; }
+  .ranking-grid { grid-template-columns: 1fr; }
+  .insights-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>6-Month Hourly Inspection Analysis</h1>
+  <div class="subtitle">Tommy's Express Car Wash &mdash; All Sites</div>
+  <div class="period">2025-09-01 to 2026-03-09</div>
+  <div class="badge-report">Comprehensive Performance Review</div>
+</div>
+
+<div class="nav-bar">
+  <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">Jump to:</span>
+  <a href="#executive-summary" class="nav-link">Executive Summary</a>
+  <a href="#rankings" class="nav-link">Site Rankings</a>
+  <a href="#insights" class="nav-link">AI Insights</a>
+  <a href="#trends" class="nav-link">Monthly Trends</a>
+  <a href="#patterns" class="nav-link">Patterns</a>
+  <a href="#site-253" class="nav-link">El Camino Real</a>
+  <a href="#site-265" class="nav-link">FM 1960</a>
+  <a href="#site-259" class="nav-link">E Crossroads Blvd</a>
+</div>
+
+<div class="container">
+
+<div id="executive-summary" class="section-title">📋 Executive Summary</div>
+<div class="global-metrics">
+  <div class="global-metric">
+    <div class="gm-value" style="color:var(--warning)">70.4%</div>
+    <div class="gm-label">Overall Completion Rate</div>
+  </div>
+  <div class="global-metric">
+    <div class="gm-value">674,374</div>
+    <div class="gm-label">Total Inspection Slots</div>
+  </div>
+  <div class="global-metric">
+    <div class="gm-value" style="color:var(--critical)">199,713</div>
+    <div class="gm-label">Total Expired Slots</div>
+  </div>
+  <div class="global-metric">
+    <div class="gm-value">474,661</div>
+    <div class="gm-label">Tasks Completed</div>
+  </div>
+  <div class="global-metric">
+    <div class="gm-value">3</div>
+    <div class="gm-label">Sites Reporting</div>
+  </div>
+  <div class="global-metric">
+    <div class="gm-value">7</div>
+    <div class="gm-label">Months of Data</div>
+  </div>
+</div>
+<div id="rankings" class="section-title">🏅 Site Rankings</div>
+<div class="ranking-grid">
+  <div class="ranking-card">
+    <div class="rank-badge">1</div>
+    <div class="rank-name">Site 253: El Camino Real</div>
+    <div class="rank-rate" style="color:var(--warning)">77.1%</div>
+    <div class="rank-trend" style="color:var(--good)">↑ +4.1% over period</div>
+    <div style="font-size:0.8rem; color:var(--text-light); margin-top:0.5rem;">183,956 slots &middot; 42,158 expired</div>
+  </div>
+  <div class="ranking-card">
+    <div class="rank-badge">2</div>
+    <div class="rank-name">Site 265: FM 1960</div>
+    <div class="rank-rate" style="color:var(--critical)">69.1%</div>
+    <div class="rank-trend" style="color:var(--good)">↑ +9.5% over period</div>
+    <div style="font-size:0.8rem; color:var(--text-light); margin-top:0.5rem;">349,898 slots &middot; 108,193 expired</div>
+  </div>
+  <div class="ranking-card">
+    <div class="rank-badge">3</div>
+    <div class="rank-name">Site 259: E Crossroads Blvd</div>
+    <div class="rank-rate" style="color:var(--critical)">64.9%</div>
+    <div class="rank-trend" style="color:var(--critical)">↓ -15.8% over period</div>
+    <div style="font-size:0.8rem; color:var(--text-light); margin-top:0.5rem;">140,520 slots &middot; 49,362 expired</div>
+  </div>
+</div>
+<div id="insights" class="section-title">🤖 AI Insights &amp; Recommendations</div>
+<div class="insights-grid">
+  <div class="insight-card insight-good">
+    <div class="insight-icon">🏆</div>
+    <div class="insight-title">Top Performer: El Camino Real</div>
+    <div class="insight-text">Site 253 leads all locations with a 77.1% completion rate and is on a strong upward trajectory (+4.1% over the period). This site has consistently been above 73% every month and peaked at 83.3% — setting the benchmark for operational excellence across the portfolio.</div>
+  </div>
+  <div class="insight-card insight-critical">
+    <div class="insight-icon">🚨</div>
+    <div class="insight-title">Critical Concern: Saratoga Springs Decline</div>
+    <div class="insight-text">E Crossroads Blvd (Site 259) shows a alarming downward trend, dropping from 56.9% in October to just 41.1% in early March — a 15.8% decline. With only 64.9% overall completion and the highest expiration rate across all sites, this location needs immediate management intervention. The February-to-March drop of ~25 points suggests a staffing or operational breakdown.</div>
+  </div>
+  <div class="insight-card insight-good">
+    <div class="insight-icon">📈</div>
+    <div class="insight-title">FM 1960: Strong Recovery Story</div>
+    <div class="insight-text">Site 265 has shown the most dramatic improvement of any location, jumping from 63.1% in Oct-Nov to 80.2% in February — a +9.5% swing. This turnaround suggests that whatever operational changes were made in late 2025 are working. The challenge now is sustaining this momentum; the slight March dip to 77.5% needs monitoring.</div>
+  </div>
+  <div class="insight-card insight-warning">
+    <div class="insight-icon">📅</div>
+    <div class="insight-title">Sunday Staffing Gap</div>
+    <div class="insight-text">Across all sites, Sunday completion rates drop to just 54.9% — nearly 25 points below the best day (Tuesday at 78.4%). This is likely a staffing coverage issue. Consider staggering Sunday shifts or implementing Sunday-specific task checklists to close this gap. Weekend performance overall trails weekdays by roughly 10 points.</div>
+  </div>
+  <div class="insight-card insight-warning">
+    <div class="insight-icon">🌙</div>
+    <div class="insight-title">Overnight Hours: Near-Zero Compliance</div>
+    <div class="insight-text">Task completion plummets between 2-7 AM with rates as low as 0-15%. While some of this is expected (sites may be closed), the presence of scheduled tasks during these hours that aren't being completed suggests either (a) task schedules need adjustment to reflect actual operating hours, or (b) overnight staff aren't performing inspections. Reconfiguring task schedules to match actual open hours would immediately improve overall metrics.</div>
+  </div>
+  <div class="insight-card insight-info">
+    <div class="insight-icon">📊</div>
+    <div class="insight-title">Data Volume Imbalance</div>
+    <div class="insight-text">FM 1960 accounts for 349,898 of the 674,374 total slots (52%) — nearly twice the volume of either other site. This likely reflects a larger task list or longer operating hours. Standardizing task counts across sites would make cross-site comparisons more meaningful and reduce the data skew.</div>
+  </div>
+</div>
+<div id="trends" class="section-title">📈 Monthly Completion Trends</div>
+<table class="data-table">
+<tr><th>Month</th><th>El Camino Real</th><th>FM 1960</th><th>E Crossroads Blvd</th><th>All Sites Avg</th></tr>
+<tr><td style="font-weight:600">2025-09</td><td style="color:var(--text-light)">—</td><td><span class="badge badge-critical">68.0%</span></td><td style="color:var(--text-light)">—</td><td><span class="badge badge-critical">68.0%</span></td></tr>
+<tr><td style="font-weight:600">2025-10</td><td><span class="badge badge-warning">79.2%</span></td><td><span class="badge badge-critical">63.1%</span></td><td><span class="badge badge-critical">56.9%</span></td><td><span class="badge badge-critical">66.4%</span></td></tr>
+<tr><td style="font-weight:600">2025-11</td><td><span class="badge badge-warning">73.6%</span></td><td><span class="badge badge-critical">63.1%</span></td><td><span class="badge badge-critical">65.7%</span></td><td><span class="badge badge-critical">67.5%</span></td></tr>
+<tr><td style="font-weight:600">2025-12</td><td><span class="badge badge-warning">74.1%</span></td><td><span class="badge badge-critical">69.9%</span></td><td><span class="badge badge-warning">70.3%</span></td><td><span class="badge badge-warning">71.4%</span></td></tr>
+<tr><td style="font-weight:600">2026-01</td><td><span class="badge badge-warning">79.1%</span></td><td><span class="badge badge-critical">67.0%</span></td><td><span class="badge badge-critical">68.1%</span></td><td><span class="badge badge-warning">71.4%</span></td></tr>
+<tr><td style="font-weight:600">2026-02</td><td><span class="badge badge-good">81.1%</span></td><td><span class="badge badge-good">80.2%</span></td><td><span class="badge badge-critical">65.6%</span></td><td><span class="badge badge-warning">75.6%</span></td></tr>
+<tr><td style="font-weight:600">2026-03</td><td><span class="badge badge-good">83.3%</span></td><td><span class="badge badge-warning">77.5%</span></td><td><span class="badge badge-critical">41.1%</span></td><td><span class="badge badge-critical">67.3%</span></td></tr>
+</table>
+<div class="section-row">
+<div class="section-half"><h3>Site 253: El Camino Real</h3><div class="monthly-chart">
+  <div class="chart-bar"><div class="bar-fill" style="height:110.88px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">79.2%</span></div><div class="bar-label">Oct</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:103.03999999999999px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">73.6%</span></div><div class="bar-label">Nov</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:103.73999999999998px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">74.1%</span></div><div class="bar-label">Dec</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:110.73999999999998px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">79.1%</span></div><div class="bar-label">Jan</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:113.53999999999998px; background:var(--good);"><span class="bar-value" style="color:var(--good)">81.1%</span></div><div class="bar-label">Feb</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:116.61999999999999px; background:var(--good);"><span class="bar-value" style="color:var(--good)">83.3%</span></div><div class="bar-label">Mar</div></div>
+</div></div>
+<div class="section-half"><h3>Site 265: FM 1960</h3><div class="monthly-chart">
+  <div class="chart-bar"><div class="bar-fill" style="height:95.19999999999999px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">68.0%</span></div><div class="bar-label">Sep</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:88.34px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">63.1%</span></div><div class="bar-label">Oct</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:88.34px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">63.1%</span></div><div class="bar-label">Nov</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:97.86px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">69.9%</span></div><div class="bar-label">Dec</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:93.8px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">67.0%</span></div><div class="bar-label">Jan</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:112.28px; background:var(--good);"><span class="bar-value" style="color:var(--good)">80.2%</span></div><div class="bar-label">Feb</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:108.5px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">77.5%</span></div><div class="bar-label">Mar</div></div>
+</div></div>
+<div class="section-half"><h3>Site 259: E Crossroads Blvd</h3><div class="monthly-chart">
+  <div class="chart-bar"><div class="bar-fill" style="height:79.66px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">56.9%</span></div><div class="bar-label">Oct</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:91.98px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">65.7%</span></div><div class="bar-label">Nov</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:98.41999999999999px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">70.3%</span></div><div class="bar-label">Dec</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:95.33999999999999px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">68.1%</span></div><div class="bar-label">Jan</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:91.83999999999999px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">65.6%</span></div><div class="bar-label">Feb</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:57.54px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">41.1%</span></div><div class="bar-label">Mar</div></div>
+</div></div>
+</div>
+<div id="patterns" class="section-title">🔍 Completion Patterns</div>
+<div class="section-row">
+<div class="section-half"><h3>Day of Week (All Sites)</h3><div class="dow-chart">
+  <div class="chart-bar"><div class="bar-fill" style="height:86.97000000000001px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">66.9%</span></div><div class="bar-label">Mon</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:101.92000000000002px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">78.4%</span></div><div class="bar-label">Tue</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:99.45px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">76.5%</span></div><div class="bar-label">Wed</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:87.62px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">67.4%</span></div><div class="bar-label">Thu</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:97.89px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">75.3%</span></div><div class="bar-label">Fri</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:95.55px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">73.5%</span></div><div class="bar-label">Sat</div></div>
+  <div class="chart-bar"><div class="bar-fill" style="height:71.37px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">54.9%</span></div><div class="bar-label">Sun</div></div>
+</div></div>
+<div class="section-half"><h3>Hour of Day Completion Heatmap</h3><div class="heatmap">
+  <div class="heat-cell" style="background:#7fb069"><span class="heat-hour">0:00</span>68.1%</div>
+  <div class="heat-cell" style="background:var(--warning)"><span class="heat-hour">1:00</span>49.7%</div>
+  <div class="heat-cell" style="background:var(--critical)"><span class="heat-hour">2:00</span>15.5%</div>
+  <div class="heat-cell" style="background:var(--critical)"><span class="heat-hour">3:00</span>13.9%</div>
+  <div class="heat-cell" style="background:var(--critical)"><span class="heat-hour">4:00</span>0.0%</div>
+  <div class="heat-cell" style="background:var(--critical)"><span class="heat-hour">5:00</span>2.9%</div>
+  <div class="heat-cell" style="background:#e67e22"><span class="heat-hour">6:00</span>38.1%</div>
+  <div class="heat-cell" style="background:var(--warning)"><span class="heat-hour">7:00</span>43.9%</div>
+  <div class="heat-cell" style="background:#7fb069"><span class="heat-hour">12:00</span>63.6%</div>
+  <div class="heat-cell" style="background:var(--warning)"><span class="heat-hour">13:00</span>56.9%</div>
+  <div class="heat-cell" style="background:#7fb069"><span class="heat-hour">14:00</span>69.1%</div>
+  <div class="heat-cell" style="background:var(--good)"><span class="heat-hour">15:00</span>81.1%</div>
+  <div class="heat-cell" style="background:#7fb069"><span class="heat-hour">16:00</span>79.6%</div>
+  <div class="heat-cell" style="background:var(--good)"><span class="heat-hour">17:00</span>82.2%</div>
+  <div class="heat-cell" style="background:var(--good)"><span class="heat-hour">18:00</span>86.3%</div>
+  <div class="heat-cell" style="background:var(--good)"><span class="heat-hour">19:00</span>83.6%</div>
+  <div class="heat-cell" style="background:var(--good)"><span class="heat-hour">20:00</span>83.9%</div>
+  <div class="heat-cell" style="background:#7fb069"><span class="heat-hour">21:00</span>74.8%</div>
+  <div class="heat-cell" style="background:var(--good)"><span class="heat-hour">22:00</span>80.2%</div>
+  <div class="heat-cell" style="background:#7fb069"><span class="heat-hour">23:00</span>77.1%</div>
+</div></div>
+</div>
+<div class="section-title" style="margin-top:2.5rem;">📍 Site Deep Dives</div>
+
+<div class="site-card" id="site-253">
+  <div class="site-header">
+    <div>
+      <h2>Site 253: Houston TX - El Camino Real</h2>
+      <span class="subtitle">183,956 total slots &middot; 6 months of data</span>
+    </div>
+    <div class="rate-display" style="border-color:var(--warning)">
+      <div class="rate-number" style="color:var(--warning)">77.1%</div>
+      <div class="rate-label">6-Month Average</div>
+    </div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">42,158</div>
+      <div class="metric-label">Expired Slots</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--warning)">141,798</div>
+      <div class="metric-label">Completed</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">1736h</div>
+      <div class="metric-label">Worst Streak</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">328</div>
+      <div class="metric-label">2+ Hour Streaks</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">1</div>
+      <div class="metric-label">High Risk Tasks</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--good)">↑ +4.1%</div>
+      <div class="metric-label">6-Month Trend</div>
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-half">
+      <h3>Monthly Trend</h3>
+      <div class="monthly-chart">
+        <div class="chart-bar"><div class="bar-fill" style="height:110.88px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">79.2%</span></div><div class="bar-label">Oct</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:103.03999999999999px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">73.6%</span></div><div class="bar-label">Nov</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:103.73999999999998px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">74.1%</span></div><div class="bar-label">Dec</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:110.73999999999998px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">79.1%</span></div><div class="bar-label">Jan</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:113.53999999999998px; background:var(--good);"><span class="bar-value" style="color:var(--good)">81.1%</span></div><div class="bar-label">Feb</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:116.61999999999999px; background:var(--good);"><span class="bar-value" style="color:var(--good)">83.3%</span></div><div class="bar-label">Mar</div></div>
+      </div>
+    </div>
+    <div class="section-half">
+      <h3>Monthly Breakdown</h3>
+      <table class="data-table">
+        <tr><th>Month</th><th>Completed</th><th>Total</th><th>Rate</th></tr>
+        <tr><td>2025-10</td><td>18,569</td><td>23,444</td><td><span class="badge badge-warning">79.2%</span></td></tr>
+        <tr><td>2025-11</td><td>32,890</td><td>44,713</td><td><span class="badge badge-warning">73.6%</span></td></tr>
+        <tr><td>2025-12</td><td>29,378</td><td>39,659</td><td><span class="badge badge-warning">74.1%</span></td></tr>
+        <tr><td>2026-01</td><td>36,618</td><td>46,291</td><td><span class="badge badge-warning">79.1%</span></td></tr>
+        <tr><td>2026-02</td><td>18,874</td><td>23,282</td><td><span class="badge badge-good">81.1%</span></td></tr>
+        <tr><td>2026-03</td><td>5,469</td><td>6,567</td><td><span class="badge badge-good">83.3%</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="site-card" id="site-265">
+  <div class="site-header">
+    <div>
+      <h2>Site 265: Houston TX - FM 1960</h2>
+      <span class="subtitle">349,898 total slots &middot; 7 months of data</span>
+    </div>
+    <div class="rate-display" style="border-color:var(--critical)">
+      <div class="rate-number" style="color:var(--critical)">69.1%</div>
+      <div class="rate-label">6-Month Average</div>
+    </div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">108,193</div>
+      <div class="metric-label">Expired Slots</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">241,705</div>
+      <div class="metric-label">Completed</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">3272h</div>
+      <div class="metric-label">Worst Streak</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">486</div>
+      <div class="metric-label">2+ Hour Streaks</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">55</div>
+      <div class="metric-label">High Risk Tasks</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--good)">↑ +9.5%</div>
+      <div class="metric-label">6-Month Trend</div>
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-half">
+      <h3>Monthly Trend</h3>
+      <div class="monthly-chart">
+        <div class="chart-bar"><div class="bar-fill" style="height:95.19999999999999px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">68.0%</span></div><div class="bar-label">Sep</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:88.34px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">63.1%</span></div><div class="bar-label">Oct</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:88.34px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">63.1%</span></div><div class="bar-label">Nov</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:97.86px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">69.9%</span></div><div class="bar-label">Dec</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:93.8px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">67.0%</span></div><div class="bar-label">Jan</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:112.28px; background:var(--good);"><span class="bar-value" style="color:var(--good)">80.2%</span></div><div class="bar-label">Feb</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:108.5px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">77.5%</span></div><div class="bar-label">Mar</div></div>
+      </div>
+    </div>
+    <div class="section-half">
+      <h3>Monthly Breakdown</h3>
+      <table class="data-table">
+        <tr><th>Month</th><th>Completed</th><th>Total</th><th>Rate</th></tr>
+        <tr><td>2025-09</td><td>15,740</td><td>23,160</td><td><span class="badge badge-critical">68.0%</span></td></tr>
+        <tr><td>2025-10</td><td>29,867</td><td>47,321</td><td><span class="badge badge-critical">63.1%</span></td></tr>
+        <tr><td>2025-11</td><td>42,810</td><td>67,792</td><td><span class="badge badge-critical">63.1%</span></td></tr>
+        <tr><td>2025-12</td><td>48,089</td><td>68,786</td><td><span class="badge badge-critical">69.9%</span></td></tr>
+        <tr><td>2026-01</td><td>45,652</td><td>68,171</td><td><span class="badge badge-critical">67.0%</span></td></tr>
+        <tr><td>2026-02</td><td>49,641</td><td>61,887</td><td><span class="badge badge-good">80.2%</span></td></tr>
+        <tr><td>2026-03</td><td>9,906</td><td>12,781</td><td><span class="badge badge-warning">77.5%</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="site-card" id="site-259">
+  <div class="site-header">
+    <div>
+      <h2>Site 259: Saratoga Springs UT - E Crossroads Blvd</h2>
+      <span class="subtitle">140,520 total slots &middot; 6 months of data</span>
+    </div>
+    <div class="rate-display" style="border-color:var(--critical)">
+      <div class="rate-number" style="color:var(--critical)">64.9%</div>
+      <div class="rate-label">6-Month Average</div>
+    </div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">49,362</div>
+      <div class="metric-label">Expired Slots</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">91,158</div>
+      <div class="metric-label">Completed</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">1443h</div>
+      <div class="metric-label">Worst Streak</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">378</div>
+      <div class="metric-label">2+ Hour Streaks</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">55</div>
+      <div class="metric-label">High Risk Tasks</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--critical)">↓ -15.8%</div>
+      <div class="metric-label">6-Month Trend</div>
+    </div>
+  </div>
+
+  <div class="section-row">
+    <div class="section-half">
+      <h3>Monthly Trend</h3>
+      <div class="monthly-chart">
+        <div class="chart-bar"><div class="bar-fill" style="height:79.66px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">56.9%</span></div><div class="bar-label">Oct</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:91.98px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">65.7%</span></div><div class="bar-label">Nov</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:98.41999999999999px; background:var(--warning);"><span class="bar-value" style="color:var(--warning)">70.3%</span></div><div class="bar-label">Dec</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:95.33999999999999px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">68.1%</span></div><div class="bar-label">Jan</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:91.83999999999999px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">65.6%</span></div><div class="bar-label">Feb</div></div>
+        <div class="chart-bar"><div class="bar-fill" style="height:57.54px; background:var(--critical);"><span class="bar-value" style="color:var(--critical)">41.1%</span></div><div class="bar-label">Mar</div></div>
+      </div>
+    </div>
+    <div class="section-half">
+      <h3>Monthly Breakdown</h3>
+      <table class="data-table">
+        <tr><th>Month</th><th>Completed</th><th>Total</th><th>Rate</th></tr>
+        <tr><td>2025-10</td><td>11,115</td><td>19,530</td><td><span class="badge badge-critical">56.9%</span></td></tr>
+        <tr><td>2025-11</td><td>26,238</td><td>39,919</td><td><span class="badge badge-critical">65.7%</span></td></tr>
+        <tr><td>2025-12</td><td>12,961</td><td>18,445</td><td><span class="badge badge-warning">70.3%</span></td></tr>
+        <tr><td>2026-01</td><td>27,810</td><td>40,863</td><td><span class="badge badge-critical">68.1%</span></td></tr>
+        <tr><td>2026-02</td><td>10,944</td><td>16,681</td><td><span class="badge badge-critical">65.6%</span></td></tr>
+        <tr><td>2026-03</td><td>2,090</td><td>5,082</td><td><span class="badge badge-critical">41.1%</span></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  Generated on 2026-03-09 14:29:27 &mdash; 6-Month Hourly Inspection Analysis<br>
+  Tommy's Express Car Wash &mdash; United Car Wash Holdings<br>
+  Data period: 2025-09-01 to 2026-03-09 &middot; 674,374 total inspection slots analyzed
+</div>
+
+</body>
+</html>
