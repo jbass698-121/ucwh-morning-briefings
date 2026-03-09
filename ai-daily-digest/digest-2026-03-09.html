@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 9, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Monday, March 9, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>DeepSeek dropped V4 this week — a trillion-parameter multimodal model trained entirely on Huawei Ascend chips with no Nvidia dependency, the clearest signal yet that China's AI hardware stack can produce frontier results independently. Anthropic escalated the model-distillation wars by accusing DeepSeek, Moonshot, and MiniMax of running industrial-scale extraction campaigns using 24,000 unauthorized accounts. On the funding side, early-stage AI deals have entered uncharted territory: Humans& closed a $480M seed round and ElevenLabs raised $500M at an $11B valuation. MIT Sloan warns that AI agents are heading into the trough of disillusionment with enterprise readiness lagging hype. And on the regulatory front, the FTC's pivotal March 11 deadline for AI preemption guidance is just two days away — the ruling that could determine whether state AI laws survive or get overridden by federal policy.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://finance.yahoo.com/news/deepseek-release-long-awaited-ai-162425187.html">DeepSeek V4 Launches — 1 Trillion Parameters, Multimodal, Trained on Huawei Ascend</a></h3>
+    <p class="story-meta"><span class="source">Yahoo Finance / Reuters</span> · Mar 3 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">China's DeepSeek released its first flagship model in over a year. V4 hits 1 trillion parameters while using only 32 billion active parameters per token through its mixture-of-experts architecture. The model is multimodal — generating text, images, and video — and was trained entirely on Huawei Ascend chips, marking a sharp break from industry norms of collaborating with US chipmakers. DeepSeek reportedly withheld pre-release access from Nvidia and AMD, signaling growing independence from the Western chip supply chain.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The Huawei Ascend training story is the headline within the headline. If a frontier Chinese lab can hit trillion-parameter scale on domestic silicon without Nvidia GPUs, the export-control thesis that US chip restrictions would slow Chinese AI development needs fundamental reassessment. For builders, the MoE architecture (32B active of 1T total) is also notable — it suggests extreme efficiency gains that could make frontier capabilities accessible at much lower inference costs.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.crescendo.ai/news/latest-ai-news-and-updates">Anthropic Accuses DeepSeek, Moonshot &amp; MiniMax of Industrial-Scale Model Distillation</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / Crescendo AI</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic publicly disclosed that it identified industrial-scale campaigns by three AI laboratories — DeepSeek, Moonshot, and MiniMax — to extract Claude's capabilities through systematic distillation. The campaigns involved over 16 million interactions using approximately 24,000 unauthorized accounts. This is the most significant public accusation of model theft between major AI labs to date and escalates the IP tensions between US and Chinese AI companies to a new level.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Model distillation at this scale raises fundamental questions about the defensibility of proprietary AI capabilities. If frontier models can be systematically copied through API access, the competitive moat shifts from model quality to distribution, tooling, and ecosystem lock-in — exactly the areas where MCP, agent infrastructure, and integrated platforms create durable advantages. This also makes the case stronger for on-premise deployment of sensitive business workflows.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/new-ai-model-releases-news-march-2026/">Sakana AI Releases Doc-to-LoRA — Instant Model Updates Without Fine-Tuning</a></h3>
+    <p class="story-meta"><span class="source">Sakana AI</span> · Mar 2 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Sakana AI released Doc-to-LoRA and Text-to-LoRA, two open-source systems that update large language models without running new fine-tuning jobs. A hypernetwork generates small weight updates (LoRA adapters) in a single forward pass, which attach to a frozen base model for instant new knowledge or skills. This eliminates the compute-intensive training cycle traditionally required to update model capabilities.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.crescendo.ai/news/latest-ai-news-and-updates">Claude Gets Import Memory — Transfer Context from ChatGPT and Gemini</a></h3>
+    <p class="story-meta"><span class="source">Anthropic</span> · Mar 2 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Anthropic introduced Claude Import Memory, a feature that transfers conversational context and user preferences from ChatGPT and Gemini into Claude's persistent memory system. The feature stores imported details across sessions, reducing onboarding friction for users switching between AI assistants. This is Anthropic's most direct competitive move to lower switching costs and capture users from rival platforms.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://sloanreview.mit.edu/article/five-trends-in-ai-and-data-science-for-2026/">MIT Sloan: AI Agents Heading Into Trough of Disillusionment</a></h3>
+    <p class="story-meta"><span class="source">MIT Sloan Management Review</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">MIT Sloan Management Review's 2026 AI trends report warns that AI agents have become the most-hyped technology since generative AI itself — and are now entering Gartner's trough of disillusionment. Researchers found that agents make too many mistakes for processes involving significant financial stakes, and enterprise experiments consistently show that the gap between demo-ready and production-ready is wider than anticipated. Only 6% of enterprises have agentic AI in production despite massive investment. The bottleneck isn't model capability — it's reliability, error handling, and the governance frameworks needed for autonomous decision-making.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the reality check the market needed. While agentic AI is genuinely transformative long-term, the production readiness gap means there's a premium on companies that can actually ship reliable agent workflows — not just demos. For AI-first businesses, the opportunity is in building the reliability layer (error recovery, human-in-the-loop, guardrails) that bridges the gap between agent hype and agent reality. Focus on narrow, high-value agent use cases with clear ROI rather than general-purpose autonomy.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://adversa.ai/blog/top-mcp-security-resources-march-2026/">MCP Dev Summit Announced: NYC, April 2–3 — Protocol Roadmap &amp; Security Focus</a></h3>
+    <p class="story-meta"><span class="source">MCP Community</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The next MCP Developer Summit is scheduled for April 2–3 in New York City, with speaking proposals and registration now open. Under the new AAIF governance, the summit is expected to address the protocol's security challenges head-on — particularly the 30 CVEs filed in 60 days and the 38% of servers lacking authentication. Topics include MCP gateway standards, agent identity frameworks, and the integration of security controls into the protocol specification itself.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/seed-seriesa-startup-megadeals-ai-2026/">Humans&amp; Closes $480M Seed Round — The Largest Seed Deal in History</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Humans&, an AI lab founded by top researchers from Google, Anthropic, xAI, OpenAI, and Meta, closed a $480 million seed financing — believed to be the largest seed round in venture history. The deal exemplifies a broader trend: over 40% of seed and Series A investment in 2026 has gone to rounds of $100 million or more, a pattern that didn't exist for most of startup history. Other notable early-stage mega-rounds include Ricursive Intelligence ($300M Series A at $4B valuation) and Merge Labs ($252M seed backed by OpenAI for brain-computer interfaces).</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The seed stage is no longer what it was. When $480M is a seed round and 40% of early-stage capital flows to $100M+ deals, the implications are clear: AI startups need to either raise at mega-scale or find capital-efficient niches. For builders, this also signals that the talent war is at peak intensity — every major lab is losing researchers to startups that can offer nine-figure backing from day one.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">ElevenLabs Raises $500M Series D at $11B Valuation</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker / Sequoia</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Voice AI company ElevenLabs closed a $500 million Series D round led by Sequoia, valued at $11 billion. The company has become the dominant player in AI-generated speech and voice cloning, with applications spanning media production, gaming, customer service, and accessibility. The valuation represents a 4x increase from its previous round, reflecting the rapid growth of the AI audio market.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-cloud-energy-ai-world-labs/">Form Energy's $1B Sale to Google Signals Hyperscaler Energy Pivot</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Google acquired Form Energy for $1 billion — an iron-air battery startup that delivers 100 hours of continuous power. The acquisition signals that AI's massive energy demands are driving hyperscalers to acquire energy storage infrastructure directly, rather than just contracting for power. Google joins Microsoft and Amazon in making billion-dollar energy bets to secure the power needed for next-generation AI training clusters.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.wsgr.com/en/insights/2026-year-in-preview-ai-regulatory-developments-for-companies-to-watch-out-for.html">FTC &amp; Commerce March 11 Deadlines: 48 Hours Until AI Preemption Ruling</a></h3>
+    <p class="story-meta"><span class="source">Wilson Sonsini / Federal Register</span> · Due Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Two critical federal deadlines arrive Wednesday: the FTC must issue its policy statement on how the FTC Act applies to AI (including guidance on when state laws requiring alteration of truthful AI outputs are preempted by federal law), and the Commerce Department must publish its evaluation identifying state AI laws deemed to conflict with federal competitiveness policy. The rulings will determine whether California's Transparency in Frontier AI Act, Texas's Responsible AI Governance Act, and Colorado's upcoming AI Act (effective June 30) survive or face federal challenge through the DOJ's AI Litigation Task Force.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Wednesday's announcements will set the regulatory trajectory for all of 2026. If the Commerce Department identifies major state laws as "burdensome" and the FTC signals broad federal preemption, the compliance landscape simplifies dramatically. If not, companies face a patchwork of state-by-state AI requirements. Either outcome demands immediate attention — and the 48-hour countdown makes this the most consequential regulatory moment in AI since the EU AI Act passed.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.corporatecomplianceinsights.com/2026-operational-guide-cybersecurity-ai-governance-emerging-risks/">AI Cyber Insurance Riders Emerge — Carriers Now Require AI Security Controls</a></h3>
+    <p class="story-meta"><span class="source">Corporate Compliance Insights</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The cyber insurance market is undergoing an AI-related transformation. Carriers are increasingly conditioning coverage on AI-specific security controls, introducing "AI Security Riders" that require documented evidence of adversarial red-teaming, model-level risk assessments, and specialized safeguards as prerequisites for underwriting. The SEC's Investor Advisory Committee has also recommended enhanced disclosures on how boards oversee AI governance as part of managing material cybersecurity risks.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://lucidworks.com/blog/enterprise-ai-adoption-in-2026-trends-gaps-and-strategic-insights">Enterprise AI: 78% Adoption, But 64% Still Have No Formalized AI Strategy</a></h3>
+    <p class="story-meta"><span class="source">Lucidworks / Deloitte</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Despite 78% of organizations reporting some AI adoption and workers saving 52–60 minutes daily on average, the maturity gap is stark: 63.7% of companies have no formalized AI initiative, only 20% are generating revenue from AI (while 74% aspire to), and nearly two-thirds remain stuck in the pilot stage. The number of companies with 40%+ of AI projects in production is expected to double in the next six months, but the dominant challenge remains the 70% people-and-process effort that BCG's "10-20-70 rule" identifies as the real bottleneck.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://bernardmarr.com/ai-agents-lead-the-8-tech-trends-transforming-enterprise-in-2026/">Agentic AI Market to Hit $45B by 2030 — But 2026 Is the Testing Ground</a></h3>
+    <p class="story-meta"><span class="source">Bernard Marr / Gartner</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The agentic AI market is projected to grow from $8.5 billion in 2026 to $45 billion by 2030, according to new forecasts. Gartner predicts 40% of enterprise applications will have built-in AI agents by the end of 2026 (up from under 5% in 2025). However, a talent crunch looms: job postings for AI agent developers surged nearly 1,000% between 2023 and 2024, and 46% of tech leaders cite AI skill gaps as their primary adoption barrier. Legacy system integration remains the other critical friction point, with 60% of AI leaders naming it as a primary challenge.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Monday, March 9, 2026</p>
+  <p class="sources">Sources: Yahoo Finance, Reuters, Anthropic, Crescendo AI, Sakana AI, MIT Sloan Management Review, Adversa AI, Crunchbase, AI Funding Tracker, Sequoia, Wilson Sonsini, Corporate Compliance Insights, Lucidworks, Deloitte, Bernard Marr, Gartner, BCG, PwC, MCP Community</p>
+</div>
+
+</div>
+</body>
+</html>
