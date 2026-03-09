@@ -34,10 +34,37 @@
   .kpi-banner .kpi { flex: 1; }
   .kpi-banner .kpi-val { font-size: 22px; font-weight: 700; color: #8B0000; }
   .kpi-banner .kpi-label { font-size: 11px; color: #666; margin-top: 2px; }
+  .ote-green { display: inline-block; background: #dcfce7; color: #166534; border: 1px solid #16a34a; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .ote-yellow { display: inline-block; background: #fef3c7; color: #92400e; border: 1px solid #d97706; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .ote-red { display: inline-block; background: #fee2e2; color: #991b1b; border: 1px solid #dc2626; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .ote-legend { background: #f8f8f8; border: 1px solid #ddd; border-radius: 4px; padding: 10px 16px; margin: 12px 0; font-size: 12px; color: #555; }
+  .ote-legend span { margin-right: 16px; }
+  .ote-scorecard { display: flex; justify-content: space-around; margin: 12px 0; gap: 8px; }
+  .ote-site-card { flex: 1; background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; text-align: center; }
+  .ote-site-card h4 { margin: 0 0 8px; color: #8B0000; font-size: 14px; }
+  .ote-site-card .ote-metric { margin: 4px 0; font-size: 12px; }
+  .ote-badge.ote-gray, .ote-gray { display: inline-block; background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .incentive-site-block { margin: 16px 0 24px; padding: 16px; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 8px; }
+  .incentive-site-block h3 { color: #8B0000; margin: 0 0 12px; font-size: 16px; border-bottom: 1px solid #8B0000; padding-bottom: 4px; }
+  .role-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; margin: 10px 0; overflow: hidden; }
+  .role-header { background: linear-gradient(135deg, #8B0000, #a52a2a); color: #fff; padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; }
+  .role-title { font-weight: 700; font-size: 13px; }
+  .role-comp { font-size: 11px; color: #ffcccc; }
+  .role-metrics { padding: 8px 14px; }
+  .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-row.metric-highlight { background: #fffbeb; padding: 6px 4px; border-radius: 4px; font-weight: 600; }
+  .metric-name { color: #374151; flex: 1; }
+  .metric-weight { color: #9ca3af; font-size: 10px; }
+  .metric-val { text-align: right; font-weight: 600; color: #111; white-space: nowrap; }
+  .ote-orange { display: inline-block; background: #ffedd5; color: #9a3412; border: 1px solid #f97316; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
   @media only screen and (max-width: 600px) {
     .content { padding: 16px; }
     table { font-size: 11px; }
     th, td { padding: 4px 6px; }
+    .ote-scorecard { flex-direction: column; }
+    .role-header { flex-direction: column; gap: 2px; }
+    .metric-row { flex-direction: column; gap: 2px; align-items: flex-start; }
   }
 </style>
 </head>
@@ -47,7 +74,7 @@
 <div class="header">
   <h1>Tommy's Express Car Wash</h1>
   <p class="subtitle">Weekly Operations Report</p>
-  <p class="week">Week 10: February 28 - March 7, 2026</p>
+  <p class="week">Week 10: February 28-7, 2026</p>
 </div>
 
 <div class="content">
@@ -55,240 +82,388 @@
 <!-- KPI Banner -->
 <div class="kpi-banner">
   <div class="kpi"><div class="kpi-val">5,517</div><div class="kpi-label">Total Washes</div></div>
-  <div class="kpi"><div class="kpi-val">$37,076.68</div><div class="kpi-label">Gross Revenue</div></div>
-  <div class="kpi"><div class="kpi-val">$6.72</div><div class="kpi-label">Per Wash</div></div>
-  <div class="kpi"><div class="kpi-val">382</div><div class="kpi-label">New IC Members</div></div>
+  <div class="kpi"><div class="kpi-val">$23,977.00</div><div class="kpi-label">Gross Revenue</div></div>
+  <div class="kpi"><div class="kpi-val">$4.35</div><div class="kpi-label">Per Wash</div></div>
+  <div class="kpi"><div class="kpi-val">382</div><div class="kpi-label">IC Signups*</div></div>
 </div>
 
 <h2>Executive Summary</h2>
 <p>The table below compares key weekly metrics across all three sites. Green cells indicate best performance; red cells highlight areas requiring manager attention.</p>
 <table><thead><tr>
     <th>Metric</th><th>TX160<br>Houston</th><th>TX190<br>Clear Lake</th><th>UT426<br>Saratoga</th><th>Total / Avg</th>
-  </tr></thead><tbody><tr><td class="label">Total Washes</td><td class="best">2,352</td><td>1,850</td><td class="warn">1,315</td><td class="total">5,517</td></tr><tr><td class="label">Gross Sales</td><td class="best">$16,614.48</td><td>$11,491.04</td><td class="warn">$8,971.16</td><td class="total">$37,076.68</td></tr><tr><td class="label">Per Wash Rev</td><td class="best">$7.06</td><td class="warn">$6.21</td><td>$6.82</td><td class="total">$6.72</td></tr><tr><td class="label">Coupons Used</td><td class="warn">271</td><td class="best">120</td><td>214</td><td class="total">605</td></tr><tr><td class="label">Coupon Discount</td><td class="warn">$5,526.56</td><td class="best">$2,117.06</td><td>$5,169.16</td><td class="total">$12,812.78</td></tr><tr><td class="label">Rewashes</td><td class="warn">45</td><td>13</td><td class="best">8</td><td class="total">66</td></tr><tr><td class="label">Rewash Cost</td><td class="best">$80.00</td><td>$80.00</td><td class="warn">$88.00</td><td class="total">$248.00</td></tr><tr><td class="label">New IC Members</td><td class="best">162</td><td>125</td><td class="warn">95</td><td class="total">382</td></tr><tr><td class="label">IC Revenue</td><td class="best">$5,482.50</td><td>$3,517.04</td><td class="warn">$2,883.16</td><td class="total">$11,882.70</td></tr></tbody></table>
-<p><strong>Combined:</strong> 5,517 total washes | $37,076.68 gross sales | 382 new InstaClub members</p>
-
-<h2>Member vs. Retail Wash Mix</h2>
-<p>Breakdown of club member washes vs. pay-per-wash retail customers. A strong member base (&gt;75%) provides stable recurring revenue.</p>
-<table><thead><tr>
-    <th>Site</th><th>Total Washes</th><th>Member</th><th>Member %</th><th>Retail</th><th>Health Signal</th>
+  </tr></thead><tbody><tr><td class="label">Total Washes</td><td class="best">2,352</td><td>1,850</td><td>1,315</td><td class="total">5,517</td></tr><tr><td class="label">Gross Sales</td><td class="best">$10,750.00</td><td>$7,828.00</td><td>$5,399.00</td><td class="total">$23,977.00</td></tr><tr><td class="label">Per Wash Rev</td><td class="best">$4.57</td><td>$4.23</td><td class="warn">$4.11</td><td class="total">$4.35</td></tr><tr><td class="label">Coupons Used</td><td class="warn">271</td><td>120</td><td>214</td><td class="total">605</td></tr><tr><td class="label">Coupon Discount</td><td class="warn">$5,526.56</td><td>$2,117.06</td><td>$5,169.16</td><td class="total">$12,812.78</td></tr><tr><td class="label">Rewashes</td><td class="warn">45</td><td>13</td><td class="best">8</td><td class="total">66</td></tr><tr><td class="label">Rewash Cost</td><td>$80.00</td><td>$80.00</td><td class="warn">$88.00</td><td class="total">$248.00</td></tr><tr><td class="label">Net New Members</td><td class="best">162*</td><td>125*</td><td>95*</td><td class="total">382*</td></tr><tr><td class="label">IC Revenue</td><td class="best">$5,482.50</td><td>$3,517.04</td><td>$2,883.16</td><td class="total">$11,882.70</td></tr></tbody></table>
+<p><strong>Combined:</strong> 5,517 total washes | $23,977.00 gross sales | 382 IC signups this week*</p>
+<div class="ote-legend">
+  <strong>Incentive Plan KPI Legend:</strong>
+  <span class="ote-green">✓ At/Above Target</span>
+  <span class="ote-yellow">⚠ Below Target (Still Earning)</span>
+  <span class="ote-red">✗ Hard Floor / No Payout</span>
+  &nbsp;| Thresholds from Site Leader, Shift Manager, FD1 &amp; VacCon incentive plans.
+</div><h2>Team Incentive Scorecard</h2>
+  <p>Current performance against incentive plan tier thresholds. <strong>Green</strong> = At/Above Target, <strong>Yellow</strong> = Below Target (still earning), <strong>Red</strong> = Hard Floor ($0). Net new members shown as MTD actual when membership data is available, or weekly IC signups projected to monthly (×4.33) as fallback. Metrics marked "Data Pending" require UCWH Dashboard, Google Reviews, or manual scoring data.</p>
+  <div class="incentive-site-block"><h3>TX160 — Houston, TX - FM 1960</h3><div class="role-card"><div class="role-header"><span class="role-title">Site Leader — Harold</span><span class="role-comp">Target: $1,213.00/mo</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(35%)</span></span><span class="metric-val">162/wk (701 proj) <span class="ote-green">✓ 150% Exceptional</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(35%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Customer Satisfaction Rating <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Inspection Quality & Completion <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Shift Managers</span><span class="role-comp">Target: $311.75/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(30%)</span></span><span class="metric-val">162/wk (701 proj) <span class="ote-green">✓ 150% Exceptional</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate (FD1 Team Avg) <span class="metric-weight">(15%)</span></span><span class="metric-val">21.40% <span class="ote-green">✓ 150% Exceeds Target</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate (FD1 + Vac Con) <span class="metric-weight">(20%)</span></span><span class="metric-val">59.06% <span class="ote-red">✗ 0% Hard Floor</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">FD1 Guest Sales Specialists</span><span class="role-comp">$3.5/member × multipliers (max $7.88)</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Members (Attributed) <span class="metric-weight">(Base)</span></span><span class="metric-val">Per-cashier — see 5Cs below <span class="ote-badge ote-gray">📊 Per Cashier</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate Multiplier</span><span class="metric-val">21.40% → 1.5x <span class="ote-green">✓ Exceeds Target</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate Multiplier</span><span class="metric-val">59.06% → 1x <span class="ote-yellow">⚠ Below Threshold</span></span></div><div class="metric-row metric-highlight"><span class="metric-name">Effective Per-Member Rate</span><span class="metric-val">$5.25/member <span class="ote-green">✓ 1.5x × 1x</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Vacuum Concierges</span><span class="role-comp">Target: $277.00/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(40%)</span></span><span class="metric-val">162/wk (701 proj) <span class="ote-green">✓ 150% Exceptional</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate <span class="metric-weight">(30%)</span></span><span class="metric-val">59.06% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(10%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div></div><div class="incentive-site-block"><h3>TX190 — Clear Lake, TX - El Camino Real</h3><div class="role-card"><div class="role-header"><span class="role-title">Site Leader — Crystal</span><span class="role-comp">Target: $1,040.00/mo</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(35%)</span></span><span class="metric-val">125/wk (541 proj) <span class="ote-green">✓ 150% Exceptional</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(35%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Customer Satisfaction Rating <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Inspection Quality & Completion <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Shift Managers</span><span class="role-comp">Target: $311.75/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(30%)</span></span><span class="metric-val">125/wk (541 proj) <span class="ote-green">✓ 150% Exceptional</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate (FD1 Team Avg) <span class="metric-weight">(15%)</span></span><span class="metric-val">21.40% <span class="ote-green">✓ 150% Exceeds Target</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate (FD1 + Vac Con) <span class="metric-weight">(20%)</span></span><span class="metric-val">59.06% <span class="ote-red">✗ 0% Hard Floor</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">FD1 Guest Sales Specialists</span><span class="role-comp">$3.5/member × multipliers (max $7.88)</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Members (Attributed) <span class="metric-weight">(Base)</span></span><span class="metric-val">Per-cashier — see 5Cs below <span class="ote-badge ote-gray">📊 Per Cashier</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate Multiplier</span><span class="metric-val">21.40% → 1.5x <span class="ote-green">✓ Exceeds Target</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate Multiplier</span><span class="metric-val">59.06% → 1x <span class="ote-yellow">⚠ Below Threshold</span></span></div><div class="metric-row metric-highlight"><span class="metric-name">Effective Per-Member Rate</span><span class="metric-val">$5.25/member <span class="ote-green">✓ 1.5x × 1x</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Vacuum Concierges</span><span class="role-comp">Target: $277.00/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(40%)</span></span><span class="metric-val">125/wk (541 proj) <span class="ote-green">✓ 150% Exceptional</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate <span class="metric-weight">(30%)</span></span><span class="metric-val">59.06% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(10%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div></div><div class="incentive-site-block"><h3>UT426 — Saratoga Springs, UT - E Crossroads Blvd</h3><div class="role-card"><div class="role-header"><span class="role-title">Shift Managers</span><span class="role-comp">Target: $311.75/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(30%)</span></span><span class="metric-val">95/wk (411 proj) <span class="ote-green">✓ 150% Exceptional</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate (FD1 Team Avg) <span class="metric-weight">(15%)</span></span><span class="metric-val">21.40% <span class="ote-green">✓ 150% Exceeds Target</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate (FD1 + Vac Con) <span class="metric-weight">(20%)</span></span><span class="metric-val">59.06% <span class="ote-red">✗ 0% Hard Floor</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">FD1 Guest Sales Specialists</span><span class="role-comp">$3.5/member × multipliers (max $7.88)</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Members (Attributed) <span class="metric-weight">(Base)</span></span><span class="metric-val">Per-cashier — see 5Cs below <span class="ote-badge ote-gray">📊 Per Cashier</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate Multiplier</span><span class="metric-val">21.40% → 1.5x <span class="ote-green">✓ Exceeds Target</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate Multiplier</span><span class="metric-val">59.06% → 1x <span class="ote-yellow">⚠ Below Threshold</span></span></div><div class="metric-row metric-highlight"><span class="metric-name">Effective Per-Member Rate</span><span class="metric-val">$5.25/member <span class="ote-green">✓ 1.5x × 1x</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Vacuum Concierges</span><span class="role-comp">Target: $277.00/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(40%)</span></span><span class="metric-val">95/wk (411 proj) <span class="ote-green">✓ 150% Exceptional</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate <span class="metric-weight">(30%)</span></span><span class="metric-val">59.06% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(10%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div></div><h2>Window Sales KPIs (Rolling 30-Day)</h2>
+  <p>Rolling 30-day performance across all sites. Green indicates best performance; red indicates worst. Arrows show period-over-period change. <strong>OTE badges</strong> show incentive tier status.</p>
+  <table><thead><tr>
+    <th>KPI</th><th>TX160</th><th>TX190</th><th>UT426</th><th>Best</th><th>Worst</th>
+  </tr></thead><tbody><tr><td class="label">R30D Capture %</td><td class="best">21.40% <span class="flat">&ndash;</span> <span class="ote-green">✓ 125% Stretch</span></td><td>21.40% <span class="flat">&ndash;</span> <span class="ote-green">✓ 125% Stretch</span></td><td>21.40% <span class="flat">&ndash;</span> <span class="ote-green">✓ 125% Stretch</span></td><td class="best">TX160</td><td class="warn">TX160</td></tr><tr><td class="label">R30D NM Capture %</td><td class="best">18.07% <span class="flat">&ndash;</span> <span class="ote-green">✓ 100% Target</span></td><td>18.07% <span class="flat">&ndash;</span> <span class="ote-green">✓ 100% Target</span></td><td>18.07% <span class="flat">&ndash;</span> <span class="ote-green">✓ 100% Target</span></td><td class="best">TX160</td><td class="warn">TX160</td></tr><tr><td class="label">R30D WB Capture %</td><td class="best">3.33% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td>3.33% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td>3.33% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td class="best">TX160</td><td class="warn">TX160</td></tr><tr><td class="label">R30D NM Claim %</td><td class="best">59.06% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td>59.06% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td>59.06% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td class="best">TX160</td><td class="warn">TX160</td></tr><tr><td class="label">R30D WB Claim %</td><td class="best">38.98% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td>38.98% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td>38.98% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td class="best">TX160</td><td class="warn">TX160</td></tr></tbody></table><h2>Key Insights &amp; Manager Action Items</h2>
+<ul><li><strong>TX160 CRITICAL - Quality Audit Required:</strong> 45 rewashes ($80.00 cost) this week. Combined with 271 coupons costing $5,526.56 (51.4% of gross sales), immediate investigation of equipment, chemicals, and coupon strategy is needed.</li>
+<li><strong>UT426 Best Practices:</strong> 8 rewashes and lowest coupon usage (214). $4.11 per-wash revenue. This site should be benchmarked for operational discipline.</li>
+<li><strong>TX160 Volume Leader:</strong> Highest washes (2,352) and gross sales ($10,750.00). 162 new IC signups this week.</li>
+<li><strong>Coupon Spending:</strong> $12,812.78 total coupons across all sites (53.4% of combined gross sales of $23,977.00). Evaluate ROI and consider site-specific coupon limits.</li>
+<li><strong>Membership Growth:</strong> 382 new IC signups this week generating $11,882.70 in IC revenue. Note: IC signups are weekly plan purchases, not net member growth.</li>
+<li><strong>Best Cashier Capture: UT426</strong> 25.60% capture rate. Review their techniques with other teams.</li>
+<li><strong>Top Performer: Austin Nettle (TX190)</strong> 50.00% conversion rate with 66.70% claim rate. Model for other cashiers.</li></ul><h2>Cashier 5Cs Cross-Site Summary</h2>
+  <p>High-level comparison of cashier performance metrics across all sites.</p>
+  <table><thead><tr>
+    <th>Site</th><th>Capture %</th><th>Claim %</th><th>Conversion %</th>
   </tr></thead><tbody><tr>
       <td class="label">TX160</td>
-      <td>2,352</td><td>1,658</td>
-      <td class="best">70.5%</td>
-      <td>694</td>
-      <td style="font-weight:bold">Healthy</td>
+      <td>20.00% <span class="ote-green">✓ 125% Stretch</span></td>
+      <td>58.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td>4.30%</td>
     </tr><tr>
       <td class="label">TX190</td>
-      <td>1,850</td><td>1,319</td>
-      <td class="best">71.3%</td>
-      <td>531</td>
-      <td style="font-weight:bold">Healthy</td>
+      <td>20.70% <span class="ote-green">✓ 125% Stretch</span></td>
+      <td class="best">65.60% <span class="ote-yellow">⚠ 75% Below</span></td>
+      <td class="best">13.80%</td>
     </tr><tr>
       <td class="label">UT426</td>
-      <td>1,315</td><td>1,017</td>
-      <td class="best">77.3%</td>
-      <td>298</td>
-      <td style="font-weight:bold">Healthy</td>
-    </tr><tr class="totals-row">
-    <td class="label">COMBINED</td><td>5,517</td><td>3,994</td>
-    <td>72.4%</td><td>1,523</td><td style="font-weight:bold">Healthy</td>
-  </tr></tbody></table>
-
-<h2>Window Sales KPIs (Rolling 30-Day)</h2>
-<p>Rolling 30-day window sales performance metrics across all sites, sourced from Power BI analytics.</p>
-<div class="kpi-banner">
-  <div class="kpi"><div class="kpi-val">21.97%</div><div class="kpi-label">R30D Capture %</div></div>
-  <div class="kpi"><div class="kpi-val">18.38%</div><div class="kpi-label">R30D NM Capture %</div></div>
-  <div class="kpi"><div class="kpi-val">3.59%</div><div class="kpi-label">R30D WB Capture %</div></div>
-  <div class="kpi"><div class="kpi-val">57.80%</div><div class="kpi-label">R30D NM Claim %</div></div>
-  <div class="kpi"><div class="kpi-val">36.36%</div><div class="kpi-label">R30D WB Claim %</div></div>
-</div>
-
-<h2>Cashier 5Cs Performance (Weekly)</h2>
-<p>Cashier performance for the week of Feb 28 &ndash; Mar 7, 2026. Data extracted via Power BI SDK from Cashier Tracking analytics. Create = unique customer opportunities at the window; Capture = customer info captured; Claim = offer claimed; Convert = membership converted; Close = end-to-end conversion rate.</p>
-
-<h3>TX160 &mdash; Cashier 5Cs</h3>
-<table><thead><tr>
-  <th>Cashier</th><th>Create</th><th>Capture</th><th>Capture %</th><th>Claim</th><th>Claim %</th><th>Convert</th><th>Conv %</th><th>Close %</th>
-</tr></thead><tbody>
-<tr><td class="label">Faith Blankenship</td><td>37</td><td>6</td><td>16.2%</td><td>5</td><td>83.3%</td><td>0</td><td>0.0%</td><td>0.00%</td></tr>
-<tr><td class="label">Harold Bonner</td><td>35</td><td>4</td><td>11.4%</td><td>3</td><td>75.0%</td><td>0</td><td>0.0%</td><td>0.00%</td></tr>
-<tr><td class="label">Javier Moralez</td><td>43</td><td>2</td><td>4.7%</td><td>2</td><td>100.0%</td><td>0</td><td>0.0%</td><td>0.00%</td></tr>
-<tr><td class="label">Kile Mingo</td><td>75</td><td>14</td><td>18.7%</td><td>12</td><td class="best">85.7%</td><td>0</td><td>0.0%</td><td>0.00%</td></tr>
-<tr><td class="label">Kimberly Romero</td><td>149</td><td>26</td><td>17.4%</td><td>12</td><td>46.2%</td><td>1</td><td>8.3%</td><td>0.67%</td></tr>
-<tr><td class="label">Londyn Collins</td><td>381</td><td>93</td><td class="best">24.4%</td><td>47</td><td>50.5%</td><td>2</td><td>4.3%</td><td>0.52%</td></tr>
-<tr class="totals-row"><td class="label">TX160 TOTAL</td><td>720</td><td>145</td><td>20.1%</td><td>81</td><td>55.9%</td><td>3</td><td>3.7%</td><td>0.42%</td></tr>
-</tbody></table>
-
-<h3>TX190 &mdash; Cashier 5Cs</h3>
-<table><thead><tr>
-  <th>Cashier</th><th>Create</th><th>Capture</th><th>Capture %</th><th>Claim</th><th>Claim %</th><th>Convert</th><th>Conv %</th><th>Close %</th>
-</tr></thead><tbody>
-<tr><td class="label">Amanda Kleinhenz</td><td>55</td><td>9</td><td>16.4%</td><td>6</td><td>66.7%</td><td>0</td><td>0.0%</td><td>0.00%</td></tr>
-<tr><td class="label">Austin Nettle</td><td>7</td><td>2</td><td>28.6%</td><td>2</td><td>100.0%</td><td>1</td><td>50.0%</td><td class="best">14.29%</td></tr>
-<tr><td class="label">Crystal Chambers</td><td>51</td><td>10</td><td>19.6%</td><td>5</td><td>50.0%</td><td>0</td><td>0.0%</td><td>0.00%</td></tr>
-<tr><td class="label">Hayley Temple</td><td>192</td><td>37</td><td>19.3%</td><td>25</td><td>67.6%</td><td>5</td><td>20.0%</td><td>2.60%</td></tr>
-<tr><td class="label">Lecretia Carraway</td><td>79</td><td>10</td><td>12.7%</td><td>4</td><td>40.0%</td><td>1</td><td>25.0%</td><td>1.27%</td></tr>
-<tr><td class="label">Terell Harper</td><td>133</td><td>39</td><td class="best">29.3%</td><td>30</td><td class="best">76.9%</td><td>2</td><td>6.7%</td><td>1.50%</td></tr>
-<tr class="totals-row"><td class="label">TX190 TOTAL</td><td>517</td><td>107</td><td>20.7%</td><td>72</td><td>67.3%</td><td>9</td><td>12.5%</td><td>1.74%</td></tr>
-</tbody></table>
-
-<h3>UT426 &mdash; Cashier 5Cs</h3>
-<table><thead><tr>
-  <th>Cashier</th><th>Create</th><th>Capture</th><th>Capture %</th><th>Claim</th><th>Claim %</th><th>Convert</th><th>Conv %</th><th>Close %</th>
-</tr></thead><tbody>
-<tr><td class="label">Belle Warren</td><td>61</td><td>16</td><td>26.2%</td><td>8</td><td>50.0%</td><td>1</td><td>12.5%</td><td>1.64%</td></tr>
-<tr><td class="label">Brady Balmforth</td><td>51</td><td>16</td><td>31.4%</td><td>7</td><td>43.8%</td><td>0</td><td>0.0%</td><td>0.00%</td></tr>
-<tr><td class="label">Brylee Robertson</td><td>3</td><td>0</td><td>0.0%</td><td>0</td><td>---</td><td>0</td><td>---</td><td>0.00%</td></tr>
-<tr><td class="label">Chow Chow</td><td>140</td><td>43</td><td class="best">30.7%</td><td>10</td><td>23.3%</td><td>1</td><td>10.0%</td><td>0.71%</td></tr>
-<tr><td class="label">Ethan Hendrickson</td><td>2</td><td>0</td><td>0.0%</td><td>0</td><td>---</td><td>0</td><td>---</td><td>0.00%</td></tr>
-<tr><td class="label">Ethan Kearney</td><td>2</td><td>0</td><td>0.0%</td><td>0</td><td>---</td><td>0</td><td>---</td><td>0.00%</td></tr>
-<tr><td class="label">Kinzie Bailey</td><td>4</td><td>3</td><td>75.0%</td><td>0</td><td>0.0%</td><td>0</td><td>---</td><td>0.00%</td></tr>
-<tr><td class="label">Max Browne</td><td>8</td><td>0</td><td>0.0%</td><td>0</td><td>---</td><td>0</td><td>---</td><td>0.00%</td></tr>
-<tr><td class="label">Maxi Bedolla</td><td>9</td><td>1</td><td>11.1%</td><td>1</td><td>100.0%</td><td>0</td><td>0.0%</td><td>0.00%</td></tr>
-<tr><td class="label">Scott Morris</td><td>1</td><td>0</td><td>0.0%</td><td>0</td><td>---</td><td>0</td><td>---</td><td>0.00%</td></tr>
-<tr><td class="label">Taylor Schriever</td><td>16</td><td>6</td><td>37.5%</td><td>4</td><td>66.7%</td><td>1</td><td>25.0%</td><td class="best">6.25%</td></tr>
-<tr class="totals-row"><td class="label">UT426 TOTAL</td><td>297</td><td>85</td><td>28.6%</td><td>30</td><td>35.3%</td><td>3</td><td>10.0%</td><td>1.01%</td></tr>
-</tbody></table>
-
-<h3>Cashier 5Cs &mdash; Cross-Site Summary</h3>
-<table><thead><tr>
-  <th>Site</th><th>Create</th><th>Capture</th><th>Capture %</th><th>Claim</th><th>Claim %</th><th>Convert</th><th>Conv %</th><th>Close %</th>
-</tr></thead><tbody>
-<tr><td class="label">TX160</td><td>720</td><td>145</td><td>20.1%</td><td>81</td><td>55.9%</td><td>3</td><td>3.7%</td><td>0.42%</td></tr>
-<tr><td class="label">TX190</td><td>517</td><td>107</td><td>20.7%</td><td>72</td><td class="best">67.3%</td><td>9</td><td class="best">12.5%</td><td class="best">1.74%</td></tr>
-<tr><td class="label">UT426</td><td>297</td><td>85</td><td class="best">28.6%</td><td>30</td><td>35.3%</td><td>3</td><td>10.0%</td><td>1.01%</td></tr>
-<tr class="totals-row"><td class="label">COMBINED</td><td>1,534</td><td>337</td><td>22.0%</td><td>183</td><td>54.3%</td><td>15</td><td>8.2%</td><td>0.98%</td></tr>
-</tbody></table>
-
-<h2>Key Insights &amp; Manager Action Items</h2>
-<ul><li><strong>TX160 Rewash Alert:</strong> 45 rewashes ($80.00 cost) this week. Investigate equipment, chemicals, and operator training.</li>
-<li><strong>TX160 Volume Leader:</strong> Highest washes (2,352) and gross sales ($16,614.48). 162 new IC members.</li>
-<li><strong>Coupon Spending:</strong> $12,812.78 total coupons across all sites (34.6% of combined gross sales of $37,076.68). Evaluate ROI and consider site-specific coupon limits.</li>
-<li><strong>InstaClub Performance:</strong> 382 new members generating $11,882.70 in revenue. Strong capture across all sites.</li>
-<li><strong>Strongest Membership Base: UT426</strong> at 77.3% member washes. This recurring revenue base protects against weather and traffic variability.</li>
-<li><strong>Membership Opportunity: TX160</strong> at 70.5% member washes — 694 retail washes represent untapped conversion potential.</li>
-<li><strong>Window Sales — UT426 Capture Leader:</strong> 28.6% capture rate leads all sites. Chow Chow (30.7%) and Taylor Schriever (37.5%) are top performers.</li>
-<li><strong>Window Sales — TX190 Best Close Rate:</strong> 1.74% close rate with 9 conversions. Terell Harper (29.3% capture, 76.9% claim) and Hayley Temple (5 converts) are standouts.</li>
-<li><strong>Conversion Gap:</strong> TX160 has only 3 conversions from 720 creates (0.42% close). Despite strong capture (20.1%), the claim-to-convert step needs attention — cashiers are creating opportunities but not closing.</li>
-<li><strong>Londyn Collins (TX160):</strong> Handles 52.9% of TX160 traffic with 24.4% capture but only 50.5% claim and 0.52% close. High-volume training opportunity.</li></ul>
-<hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>TX160 &mdash; Houston, TX - FM 1960</h2><p>During Week 10 (February 28 - March 7, 2026), Houston, TX - FM 1960 (TX160) processed
-    <strong>2,352</strong> total washes generating <strong>$16,614.48</strong> in gross sales
-    ($7.06 per wash). Coupons: 271 used ($5,526.56 discount).
-    45 rewashes recorded ($80.00 cost). InstaClub: 162 new members, $5,482.50 revenue.</p><h3>Member vs. Retail Wash Mix</h3><p>TX160 processed 2,352 total washes: 1,658 member (70.5%) and 694 retail (29.5%). Health Signal: <strong>Healthy</strong>.</p><p>Tier breakdown — Works: 1092 member / 303 retail (78% member); Ultimate: 165 member / 72 retail (69% member); Super: 99 member / 116 retail (46% member); Quality: 302 member / 203 retail (59% member).</p><h3>Wash Details</h3><table><thead><tr>
+      <td class="best">25.60% <span class="ote-green">✓ 125% Stretch</span></td>
+      <td>40.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td>7.90%</td>
+    </tr></tbody></table><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>TX160 &mdash; Houston, TX - FM 1960</h2><p>During Week 10 (February 28-7, 2026), Houston, TX - FM 1960 (TX160) processed
+    <strong>2,352</strong> total washes generating <strong>$10,750.00</strong> in gross sales
+    ($4.57 per wash). Coupons: 271 used ($5,526.56 discount).
+    45 rewashes recorded ($80.00 cost). IC Signups: 162 this week, IC Revenue: $5,482.50.</p><h3>Window Sales KPIs (Rolling 30-Day)</h3><table><thead><tr>
+      <th>R30D Capture %</th><th>R30D NM Capture %</th><th>R30D WB Capture %</th><th>R30D NM Claim %</th><th>R30D WB Claim %</th>
+    </tr></thead><tbody><tr>
+      <td>21.40% <span class="flat">&ndash;</span> <span class="ote-green">✓ 125% Stretch</span></td>
+      <td>18.07% <span class="flat">&ndash;</span> <span class="ote-green">✓ 100% Target</span></td>
+      <td>3.33% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>59.06% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td>38.98% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+    </tr></tbody></table><h3>Wash Details</h3><table><thead><tr>
     <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
   </tr></thead><tbody><tr>
-      <td class="label">Quality Club</td><td>302</td><td>297</td>
-      <td>5</td><td>---</td><td>$0.00</td>
+      <td class="label">Works Club</td><td>1092</td><td>1092</td>
+      <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
-      <td class="label">Quality</td><td>203</td><td>205</td>
-      <td>2</td><td>---</td><td>$2,030.00</td>
+      <td class="label">Works</td><td>303</td><td>303</td>
+      <td>0</td><td>$20</td><td>$6,060.00</td>
     </tr><tr>
-      <td class="label">Ultimate Club</td><td>165</td><td>163</td>
-      <td>2</td><td>---</td><td>$0.00</td>
+      <td class="label">Ultimate Club</td><td>165</td><td>165</td>
+      <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
-      <td class="label">Ultimate</td><td>72</td><td>73</td>
-      <td>1</td><td>---</td><td>$1,152.00</td>
+      <td class="label">Ultimate</td><td>72</td><td>72</td>
+      <td>0</td><td>$16</td><td>$1,152.00</td>
     </tr><tr>
-      <td class="label">Works Club</td><td>1,092</td><td>1094</td>
-      <td>2</td><td>---</td><td>$0.00</td>
+      <td class="label">Super Club</td><td>99</td><td>99</td>
+      <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
-      <td class="label">Works</td><td>303</td><td>316</td>
-      <td>13</td><td>---</td><td>$6,060.00</td>
+      <td class="label">Super</td><td>116</td><td>116</td>
+      <td>0</td><td>$13</td><td>$1,508.00</td>
     </tr><tr>
-      <td class="label">Super Club</td><td>99</td><td>98</td>
-      <td>1</td><td>---</td><td>$0.00</td>
+      <td class="label">Quality Club</td><td>302</td><td>302</td>
+      <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
-      <td class="label">Super</td><td>116</td><td>118</td>
-      <td>2</td><td>---</td><td>$1,508.00</td>
+      <td class="label">Quality</td><td>203</td><td>203</td>
+      <td>0</td><td>$10</td><td>$2,030.00</td>
     </tr><tr class="totals-row">
-    <td class="label">TOTAL</td><td>2,352</td>
+    <td class="label">TOTAL</td><td>2352</td>
     <td>---</td><td>---</td><td>---</td><td>$10,750.00</td>
-  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td><td>121</td><td>$2,135.79</td></tr><tr><td class="label">All sites: 2025 4th national mailer</td><td>96</td><td>$2,259.80</td></tr><tr><td class="label">TX160 (Houston): Service Member</td><td>38</td><td>$760.00</td></tr><tr><td class="label">TX190/TX160/UT426: Edwin Greer free Works wash</td><td>8</td><td>$210.97</td></tr><tr><td class="label">TX190/TX160: Pollen free Works</td><td>6</td><td>$120.00</td></tr><tr><td class="label">All Sites (National Promo): From Us to You 4</td><td>2</td><td>$40.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">IC2WORKSTX160</td><td>117</td><td>$1,987.83</td></tr><tr><td class="label">IC2WORKSFREETX160</td><td>4</td><td>$147.96</td></tr><tr><td class="label">POLICEFIREMILITARY</td><td>38</td><td>$760.00</td></tr><tr><td class="label">EDWINGREER</td><td>8</td><td>$210.97</td></tr><tr><td class="label">POLLENUCWH</td><td>6</td><td>$120.00</td></tr><tr><td class="label">Other Individual Codes</td><td>98</td><td>$2,299.80</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
     <td>271</td>
-    <td>$5,526.56</td></tr></tbody></table><h3>Rewash Details</h3><p>45 rewashes: 40 Open Gate, 2 Quality ($20.00), 3 Works ($60.00). Total cost: $80.00</p><h3>InstaClub Membership</h3><p>New Members: 162 | Revenue: $5,482.50</p><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>TX190 &mdash; Clear Lake, TX - El Camino Real</h2><p>During Week 10 (February 28 - March 7, 2026), Clear Lake, TX - El Camino Real (TX190) processed
-    <strong>1,850</strong> total washes generating <strong>$11,491.04</strong> in gross sales
-    ($6.21 per wash). Coupons: 120 used ($2,117.06 discount).
-    13 rewashes recorded ($80.00 cost). InstaClub: 125 new members, $3,517.04 revenue.</p><h3>Member vs. Retail Wash Mix</h3><p>TX190 processed 1,850 total washes: 1,319 member (71.3%) and 531 retail (28.7%). Health Signal: <strong>Healthy</strong>.</p><p>Tier breakdown — Works: 970 member / 187 retail (83% member); Ultimate: 76 member / 62 retail (55% member); Super: 87 member / 92 retail (48% member); Quality: 186 member / 190 retail (49% member).</p><h3>Wash Details</h3><table><thead><tr>
+    <td>$5,526.56</td></tr></tbody></table><h3>Rewash Details</h3><p>45 rewashes: 40 Open Gate, 2 Quality ($20.00), 3 Works ($60.00). Total cost: $80.00</p><h3>Membership</h3><p>IC Signups This Week: 162 | IC Revenue: $5,482.50</p><p style="color:#856404;font-size:12px;">* Net new member data unavailable — showing weekly IC plan purchases only. Add membership snapshot data for true net growth.</p><h3>Cashier 5Cs Performance</h3><table><thead><tr>
+      <th>Cashier</th><th>Create</th><th>Capture</th><th>Capture %</th><th>Claim</th><th>Claim %</th><th>Conversion %</th>
+    </tr></thead><tbody><tr>
+        <td class="label">Braeden Duncan</td>
+        <td>9</td><td>3</td>
+        <td class="best">33.30% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>2</td>
+        <td>66.70% <span class="ote-yellow">⚠ 75% Below</span></td>
+        <td class="warn">0.00%</td>
+      </tr><tr>
+        <td class="label">Faith Blankenship</td>
+        <td>71</td><td>11</td>
+        <td>15.50% <span class="ote-green">✓ 100% Target</span></td>
+        <td>8</td>
+        <td>72.70% <span class="ote-green">✓ 100% Target</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Harold Bonner</td>
+        <td>39</td><td>4</td>
+        <td>10.30% <span class="ote-red">✗ 50% Below</span></td>
+        <td>3</td>
+        <td>75.00% <span class="ote-green">✓ 100% Target</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Javier Moralez</td>
+        <td>43</td><td>2</td>
+        <td class="warn">4.70% <span class="ote-red">✗ 50% Below</span></td>
+        <td>2</td>
+        <td class="best">100.00% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Kile Mingo</td>
+        <td>75</td><td>14</td>
+        <td>18.70% <span class="ote-green">✓ 100% Target</span></td>
+        <td>12</td>
+        <td>85.70% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Kimberly Romero</td>
+        <td>149</td><td>26</td>
+        <td>17.40% <span class="ote-green">✓ 100% Target</span></td>
+        <td>14</td>
+        <td>53.80% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td class="best">7.10%</td>
+      </tr><tr>
+        <td class="label">Londyn Collins</td>
+        <td>426</td><td>102</td>
+        <td>23.90% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>53</td>
+        <td class="warn">52.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>5.70%</td>
+      </tr><tr class="totals-row">
+        <td class="label">TOTAL</td>
+        <td>812</td><td>162</td>
+        <td>20.00%</td>
+        <td>94</td>
+        <td>58.00%</td>
+        <td>4.30%</td>
+      </tr></tbody></table><h3>Coaching &amp; Recognition</h3><ul><li><strong>Coaching: Braeden Duncan</strong> Strong capture (33.30%) but weak conversion (0.00%) — focus on closing techniques.</li></ul><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>TX190 &mdash; Clear Lake, TX - El Camino Real</h2><p>During Week 10 (February 28-7, 2026), Clear Lake, TX - El Camino Real (TX190) processed
+    <strong>1,850</strong> total washes generating <strong>$7,828.00</strong> in gross sales
+    ($4.23 per wash). Coupons: 120 used ($2,117.06 discount).
+    13 rewashes recorded ($80.00 cost). IC Signups: 125 this week, IC Revenue: $3,517.04.</p><h3>Window Sales KPIs (Rolling 30-Day)</h3><table><thead><tr>
+      <th>R30D Capture %</th><th>R30D NM Capture %</th><th>R30D WB Capture %</th><th>R30D NM Claim %</th><th>R30D WB Claim %</th>
+    </tr></thead><tbody><tr>
+      <td>21.40% <span class="flat">&ndash;</span> <span class="ote-green">✓ 125% Stretch</span></td>
+      <td>18.07% <span class="flat">&ndash;</span> <span class="ote-green">✓ 100% Target</span></td>
+      <td>3.33% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>59.06% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td>38.98% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+    </tr></tbody></table><h3>Wash Details</h3><table><thead><tr>
     <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
   </tr></thead><tbody><tr>
-      <td class="label">Quality Club</td><td>186</td><td>189</td>
-      <td>3</td><td>---</td><td>$0.00</td>
+      <td class="label">Works Club</td><td>970</td><td>970</td>
+      <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
-      <td class="label">Quality</td><td>190</td><td>192</td>
-      <td>2</td><td>---</td><td>$1,900.00</td>
+      <td class="label">Works</td><td>187</td><td>187</td>
+      <td>0</td><td>$20</td><td>$3,740.00</td>
     </tr><tr>
       <td class="label">Ultimate Club</td><td>76</td><td>76</td>
       <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
       <td class="label">Ultimate</td><td>62</td><td>62</td>
-      <td>0</td><td>---</td><td>$992.00</td>
-    </tr><tr>
-      <td class="label">Works Club</td><td>970</td><td>985</td>
-      <td>15</td><td>---</td><td>$0.00</td>
-    </tr><tr>
-      <td class="label">Works</td><td>187</td><td>191</td>
-      <td>4</td><td>---</td><td>$3,740.00</td>
+      <td>0</td><td>$16</td><td>$992.00</td>
     </tr><tr>
       <td class="label">Super Club</td><td>87</td><td>87</td>
       <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
-      <td class="label">Super</td><td>92</td><td>94</td>
-      <td>2</td><td>---</td><td>$1,196.00</td>
+      <td class="label">Super</td><td>92</td><td>92</td>
+      <td>0</td><td>$13</td><td>$1,196.00</td>
+    </tr><tr>
+      <td class="label">Quality Club</td><td>186</td><td>186</td>
+      <td>0</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Quality</td><td>190</td><td>190</td>
+      <td>0</td><td>$10</td><td>$1,900.00</td>
     </tr><tr class="totals-row">
-    <td class="label">TOTAL</td><td>1,850</td>
+    <td class="label">TOTAL</td><td>1850</td>
     <td>---</td><td>---</td><td>---</td><td>$7,828.00</td>
-  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td><td>94</td><td>$1,597.06</td></tr><tr><td class="label">TX190/TX160: Pollen free Works</td><td>16</td><td>$320.00</td></tr><tr><td class="label">TX190 (Houston): Sticky Note Street Card</td><td>9</td><td>$180.00</td></tr><tr><td class="label">TX190/TX160/UT426: Edwin Greer free Works wash</td><td>1</td><td>$20.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">IC2WORKSTX190</td><td>94</td><td>$1,597.06</td></tr><tr><td class="label">STICKY190</td><td>9</td><td>$180.00</td></tr><tr><td class="label">EDWINGREER</td><td>1</td><td>$20.00</td></tr><tr><td class="label">POLLENUCWH</td><td>16</td><td>$320.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
     <td>120</td>
-    <td>$2,117.06</td></tr></tbody></table><h3>Rewash Details</h3><p>13 rewashes: 9 Open Gate, 4 Works ($80.00). Total cost: $80.00</p><h3>InstaClub Membership</h3><p>New Members: 125 | Revenue: $3,517.04</p><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>UT426 &mdash; Saratoga Springs, UT - E Crossroads Blvd</h2><p>During Week 10 (February 28 - March 7, 2026), Saratoga Springs, UT - E Crossroads Blvd (UT426) processed
-    <strong>1,315</strong> total washes generating <strong>$8,971.16</strong> in gross sales
-    ($6.82 per wash). Coupons: 214 used ($5,169.16 discount).
-    8 rewashes recorded ($88.00 cost). InstaClub: 95 new members, $2,883.16 revenue.</p><h3>Member vs. Retail Wash Mix</h3><p>UT426 processed 1,315 total washes: 1,017 member (77.3%) and 298 retail (22.7%). Health Signal: <strong>Healthy</strong>.</p><p>Tier breakdown — Works: 715 member / 168 retail (80% member); Ultimate: 52 member / 13 retail (80% member); Super: 111 member / 39 retail (74% member); Quality: 139 member / 78 retail (64% member).</p><h3>Wash Details</h3><table><thead><tr>
+    <td>$2,117.06</td></tr></tbody></table><h3>Rewash Details</h3><p>13 rewashes: 9 Open Gate, 4 Works ($80.00). Total cost: $80.00</p><h3>Membership</h3><p>IC Signups This Week: 125 | IC Revenue: $3,517.04</p><p style="color:#856404;font-size:12px;">* Net new member data unavailable — showing weekly IC plan purchases only. Add membership snapshot data for true net growth.</p><h3>Cashier 5Cs Performance</h3><table><thead><tr>
+      <th>Cashier</th><th>Create</th><th>Capture</th><th>Capture %</th><th>Claim</th><th>Claim %</th><th>Conversion %</th>
+    </tr></thead><tbody><tr>
+        <td class="label">Amanda Kleinhenz</td>
+        <td>55</td><td>9</td>
+        <td>16.40% <span class="ote-green">✓ 100% Target</span></td>
+        <td>6</td>
+        <td>66.70% <span class="ote-yellow">⚠ 75% Below</span></td>
+        <td class="warn">0.00%</td>
+      </tr><tr>
+        <td class="label">Austin Nettle</td>
+        <td>8</td><td>3</td>
+        <td class="best">37.50% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>2</td>
+        <td>66.70% <span class="ote-yellow">⚠ 75% Below</span></td>
+        <td class="best">50.00%</td>
+      </tr><tr>
+        <td class="label">Crystal Chambers</td>
+        <td>71</td><td>12</td>
+        <td>16.90% <span class="ote-green">✓ 100% Target</span></td>
+        <td>7</td>
+        <td>58.30% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>14.30%</td>
+      </tr><tr>
+        <td class="label">Hayley Temple</td>
+        <td>233</td><td>48</td>
+        <td>20.60% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>30</td>
+        <td>62.50% <span class="ote-yellow">⚠ 75% Below</span></td>
+        <td>16.70%</td>
+      </tr><tr>
+        <td class="label">Lecretia Carraway</td>
+        <td>79</td><td>10</td>
+        <td class="warn">12.70% <span class="ote-red">✗ 50% Below</span></td>
+        <td>5</td>
+        <td class="warn">50.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>40.00%</td>
+      </tr><tr>
+        <td class="label">Terell Harper</td>
+        <td>142</td><td>40</td>
+        <td>28.20% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>30</td>
+        <td class="best">75.00% <span class="ote-green">✓ 100% Target</span></td>
+        <td>6.70%</td>
+      </tr><tr class="totals-row">
+        <td class="label">TOTAL</td>
+        <td>588</td><td>122</td>
+        <td>20.70%</td>
+        <td>80</td>
+        <td>65.60%</td>
+        <td>13.80%</td>
+      </tr></tbody></table><h3>Coaching &amp; Recognition</h3><ul><li><strong>Praise: Austin Nettle</strong> 50.00% conversion and 66.70% claim rate — excellent closing skills.</li><li><strong>Coaching: Terell Harper</strong> Strong capture (28.20%) but weak conversion (6.70%) — focus on closing techniques.</li></ul><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>UT426 &mdash; Saratoga Springs, UT - E Crossroads Blvd</h2><p>During Week 10 (February 28-7, 2026), Saratoga Springs, UT - E Crossroads Blvd (UT426) processed
+    <strong>1,315</strong> total washes generating <strong>$5,399.00</strong> in gross sales
+    ($4.11 per wash). Coupons: 214 used ($5,169.16 discount).
+    8 rewashes recorded ($88.00 cost). IC Signups: 95 this week, IC Revenue: $2,883.16.</p><h3>Window Sales KPIs (Rolling 30-Day)</h3><table><thead><tr>
+      <th>R30D Capture %</th><th>R30D NM Capture %</th><th>R30D WB Capture %</th><th>R30D NM Claim %</th><th>R30D WB Claim %</th>
+    </tr></thead><tbody><tr>
+      <td>21.40% <span class="flat">&ndash;</span> <span class="ote-green">✓ 125% Stretch</span></td>
+      <td>18.07% <span class="flat">&ndash;</span> <span class="ote-green">✓ 100% Target</span></td>
+      <td>3.33% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>59.06% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td>38.98% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+    </tr></tbody></table><h3>Wash Details</h3><table><thead><tr>
     <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
   </tr></thead><tbody><tr>
-      <td class="label">Quality Club</td><td>139</td><td>138</td>
-      <td>1</td><td>---</td><td>$0.00</td>
+      <td class="label">Works Club</td><td>715</td><td>715</td>
+      <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
-      <td class="label">Quality</td><td>78</td><td>78</td>
-      <td>0</td><td>---</td><td>$858.00</td>
+      <td class="label">Works</td><td>168</td><td>168</td>
+      <td>0</td><td>$22</td><td>$3,696.00</td>
     </tr><tr>
-      <td class="label">Ultimate Club</td><td>52</td><td>55</td>
-      <td>3</td><td>---</td><td>$0.00</td>
+      <td class="label">Ultimate Club</td><td>52</td><td>52</td>
+      <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
       <td class="label">Ultimate</td><td>13</td><td>13</td>
-      <td>0</td><td>---</td><td>$260.00</td>
+      <td>0</td><td>$20</td><td>$260.00</td>
     </tr><tr>
-      <td class="label">Works Club</td><td>715</td><td>707</td>
-      <td>8</td><td>---</td><td>$0.00</td>
+      <td class="label">Super Club</td><td>111</td><td>111</td>
+      <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
-      <td class="label">Works</td><td>168</td><td>200</td>
-      <td>32</td><td>---</td><td>$3,696.00</td>
+      <td class="label">Super</td><td>39</td><td>39</td>
+      <td>0</td><td>$15</td><td>$585.00</td>
     </tr><tr>
-      <td class="label">Super Club</td><td>111</td><td>108</td>
-      <td>3</td><td>---</td><td>$0.00</td>
+      <td class="label">Quality Club</td><td>139</td><td>139</td>
+      <td>0</td><td>---</td><td>$0.00</td>
     </tr><tr>
-      <td class="label">Super</td><td>39</td><td>38</td>
-      <td>1</td><td>---</td><td>$585.00</td>
+      <td class="label">Quality</td><td>78</td><td>78</td>
+      <td>0</td><td>$11</td><td>$858.00</td>
     </tr><tr class="totals-row">
-    <td class="label">TOTAL</td><td>1,315</td>
+    <td class="label">TOTAL</td><td>1315</td>
     <td>---</td><td>---</td><td>---</td><td>$5,399.00</td>
-  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">All sites: 2025 4th national mailer</td><td>174</td><td>$4,583.46</td></tr><tr><td class="label">UT426: IC2 on Super/Ultimate</td><td>18</td><td>$197.82</td></tr><tr><td class="label">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td><td>12</td><td>$167.88</td></tr><tr><td class="label">UT426 (Saratoga Springs): Operational Site Street Cards</td><td>10</td><td>$220.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">IC2WORKSUT426</td><td>12</td><td>$167.88</td></tr><tr><td class="label">STREETCARDS426</td><td>10</td><td>$220.00</td></tr><tr><td class="label">IC2ULTIMATE426</td><td>8</td><td>$87.92</td></tr><tr><td class="label">IC2SUPER426</td><td>10</td><td>$109.90</td></tr><tr><td class="label">Other Individual Codes</td><td>174</td><td>$4,583.46</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
     <td>214</td>
-    <td>$5,169.16</td></tr></tbody></table><h3>Rewash Details</h3><p>8 rewashes: 4 Works ($88.00), 4 Works Club. Total cost: $88.00</p><h3>InstaClub Membership</h3><p>New Members: 95 | Revenue: $2,883.16</p>
+    <td>$5,169.16</td></tr></tbody></table><h3>Rewash Details</h3><p>8 rewashes: 4 Works ($88.00), 4 Works Club. Total cost: $88.00</p><h3>Membership</h3><p>IC Signups This Week: 95 | IC Revenue: $2,883.16</p><p style="color:#856404;font-size:12px;">* Net new member data unavailable — showing weekly IC plan purchases only. Add membership snapshot data for true net growth.</p><h3>Cashier 5Cs Performance</h3><table><thead><tr>
+      <th>Cashier</th><th>Create</th><th>Capture</th><th>Capture %</th><th>Claim</th><th>Claim %</th><th>Conversion %</th>
+    </tr></thead><tbody><tr>
+        <td class="label">Belle Warren</td>
+        <td>72</td><td>18</td>
+        <td>25.00% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>9</td>
+        <td>50.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>11.10%</td>
+      </tr><tr>
+        <td class="label">Brady Balmforth</td>
+        <td>110</td><td>24</td>
+        <td>21.80% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>14</td>
+        <td>58.30% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td class="warn">0.00%</td>
+      </tr><tr>
+        <td class="label">Brylee Robertson</td>
+        <td>3</td><td>0</td>
+        <td class="warn">0.00% <span class="ote-red">✗ 50% Below</span></td>
+        <td>0</td>
+        <td class="warn">0.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Chow Chow</td>
+        <td>140</td><td>43</td>
+        <td>30.70% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>10</td>
+        <td>23.30% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>10.00%</td>
+      </tr><tr>
+        <td class="label">Ethan Hendrickson</td>
+        <td>2</td><td>0</td>
+        <td>0.00% <span class="ote-red">✗ 50% Below</span></td>
+        <td>0</td>
+        <td>0.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Ethan Kearney</td>
+        <td>2</td><td>0</td>
+        <td>0.00% <span class="ote-red">✗ 50% Below</span></td>
+        <td>0</td>
+        <td>0.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Kinzie Bailey</td>
+        <td>4</td><td>3</td>
+        <td class="best">75.00% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>0</td>
+        <td>0.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Max Browne</td>
+        <td>8</td><td>0</td>
+        <td>0.00% <span class="ote-red">✗ 50% Below</span></td>
+        <td>0</td>
+        <td>0.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Maxi Bedolla</td>
+        <td>13</td><td>1</td>
+        <td>7.70% <span class="ote-red">✗ 50% Below</span></td>
+        <td>1</td>
+        <td class="best">100.00% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Scott Morris</td>
+        <td>1</td><td>0</td>
+        <td>0.00% <span class="ote-red">✗ 50% Below</span></td>
+        <td>0</td>
+        <td>0.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+        <td>0.00%</td>
+      </tr><tr>
+        <td class="label">Taylor Schriever</td>
+        <td>16</td><td>6</td>
+        <td>37.50% <span class="ote-green">✓ 125% Stretch</span></td>
+        <td>4</td>
+        <td>66.70% <span class="ote-yellow">⚠ 75% Below</span></td>
+        <td class="best">25.00%</td>
+      </tr><tr class="totals-row">
+        <td class="label">TOTAL</td>
+        <td>371</td><td>95</td>
+        <td>25.60%</td>
+        <td>38</td>
+        <td>40.00%</td>
+        <td>7.90%</td>
+      </tr></tbody></table><h3>Coaching &amp; Recognition</h3><ul><li><strong>Praise: Taylor Schriever</strong> 25.00% conversion and 66.70% claim rate — excellent closing skills.</li><li><strong>Coaching: Belle Warren</strong> Strong capture (25.00%) but weak conversion (11.10%) — focus on closing techniques.</li></ul><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;">
 <h2>Strategic Recommendations</h2>
-<ol><li><strong>TX160 Rewash Review:</strong> 45 rewashes in one week ($80.00 cost). Review equipment maintenance, chemical ratios, and operator training. Target: reduce below 10 rewashes/week.</li>
-<li><strong>Coupon ROI Analysis:</strong> $12,812.78 in total coupon discounts represents 34.6% of combined gross sales ($37,076.68). Evaluate whether campaigns drive incremental volume or simply discount existing customers.</li>
-<li><strong>Benchmark TX160 Per-Wash Revenue:</strong> $7.06 per wash — highest across all sites. Document pricing strategy and upsell techniques for replication.</li>
-<li><strong>InstaClub Growth:</strong> 382 new members generating $11,882.70 in revenue. Strong capture across all sites. Continue current methodology.</li>
-<li><strong>Membership Opportunity — TX160:</strong> 70.5% member washes — 694 retail washes represent untapped conversion potential. Target improved capture rate.</li>
-<li><strong>TX160 Conversion Coaching:</strong> 720 creates but only 3 converts (0.42% close). Focus on the claim-to-convert step — cashiers are capturing customer info but not closing memberships. Consider script refinement, incentive adjustments, or shadowing TX190's Hayley Temple/Terell Harper for best practices.</li>
-<li><strong>UT426 Claim Rate Improvement:</strong> Despite leading in capture (28.6%), UT426's claim rate is only 35.3%. Ensure cashiers follow up on captured leads and present offers consistently.</li>
-<li><strong>Weekly Monitoring:</strong> Track rewash rate, coupon-to-gross ratio, per-wash revenue, and cashier close rates weekly. Establish site-specific targets and accountability.</li></ol>
+<ol><li><strong>TX160 Quality Audit:</strong> 45 rewashes in one week requires investigation of equipment maintenance, chemical ratios, and operator training. Target: reduce below 5 rewashes/week within 2 weeks.</li>
+<li><strong>Coupon ROI Analysis:</strong> $12,812.78 in total coupon discounts represents 53.4% of combined gross sales. Evaluate whether campaigns drive incremental volume or simply discount existing customers.</li>
+<li><strong>Benchmark UT426 Operations:</strong> UT426's operational metrics are best-in-class. Document their procedures and create a formal best practices guide for all sites.</li>
+<li><strong>Membership Growth:</strong> 382 new IC signups this week. Note: true net member growth requires membership snapshot data. Continue current capture methodology and monitor conversion quality at all locations.</li>
+<li><strong>Weekly Monitoring:</strong> Track rewash rate, coupon-to-gross ratio, and per-wash revenue weekly. Establish site-specific targets and accountability.</li></ol>
 </div><!-- /.content -->
 
 <div class="footer">
   Tommy's Express Car Wash &mdash; Confidential, Internal Use Only<br>
-  Generated 2026-03-08
+  Generated 2026-03-09
 </div>
 
 </div><!-- /.container -->
