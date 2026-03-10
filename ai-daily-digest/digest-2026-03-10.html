@@ -211,7 +211,7 @@
 
 <div class="exec-summary">
   <h2>Executive Summary</h2>
-  <p>OpenAI shipped GPT-5.4 last week with native computer-use capabilities and a million-token context window — the clearest signal yet that frontier labs are building models designed to operate machines, not just answer questions. Meanwhile, China's open-source push intensified: Zhipu AI's GLM-5, a 744B-parameter model trained entirely on Huawei Ascend chips under an MIT license, is posting benchmark scores that rival closed Western models. On the infrastructure side, Google Chrome shipped WebMCP in early preview, a protocol that turns any website into a structured tool for AI agents — potentially the most significant browser change since JavaScript. NIST formalized the U.S. government's role in agent standards with a new three-pillar initiative. And tomorrow brings the most consequential regulatory moment of 2026: the FTC and Commerce Department are set to issue their AI preemption rulings, which will determine whether state AI laws survive or face federal override.</p>
+  <p>OpenAI shipped GPT-5.4 last week with native computer-use capabilities and a million-token context window — the clearest signal yet that frontier labs are building models designed to operate machines, not just answer questions. Meanwhile, China's open-source push intensified: Zhipu AI's GLM-5, a 744B-parameter model trained entirely on Huawei Ascend chips under an MIT license, is posting benchmark scores that rival closed Western models. On the infrastructure side, Google Chrome shipped WebMCP in early preview, a protocol that turns any website into a structured tool for AI agents. In the Cowork ecosystem, Microsoft launched Copilot Cowork — a cloud-based AI agent built on Claude — while Anthropic expanded its connector and plugin marketplace with 13 new enterprise integrations. NIST formalized the U.S. government's role in agent standards with a new three-pillar initiative. And tomorrow brings the most consequential regulatory moment of 2026: the FTC and Commerce Department are set to issue their AI preemption rulings, which will determine whether state AI laws survive or face federal override.</p>
 </div>
 
 <!-- MODEL & PLATFORM UPDATES -->
@@ -269,6 +269,36 @@
     <h3 class="story-title"><a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">MCP &amp; A2A Now Under Linux Foundation Governance — AAIF Backed by All Major Labs</a></h3>
     <p class="story-meta"><span class="source">Linux Foundation</span> · Dec 2025 · <span class="relevance-medium">MEDIUM</span></p>
     <p class="story-summary">The Agentic AI Foundation (AAIF), launched under the Linux Foundation in December 2025 with OpenAI, Anthropic, Google, Microsoft, AWS, and Block as co-founders, has brought both MCP and A2A under unified governance. MCP's Python and TypeScript SDKs have surpassed 97 million monthly downloads, establishing it as the de facto standard for connecting AI to external tools. However, security remains a pressing concern: 30 CVEs have been filed in 60 days against MCP implementations, and 38% of scanned servers lack authentication entirely.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COWORK & CLAUDE ECOSYSTEM -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128268;</span>
+    <h2>Cowork &amp; Claude Ecosystem</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blogs.microsoft.com/blog/2026/03/09/introducing-the-first-frontier-suite-built-on-intelligence-trust/">Microsoft Launches Copilot Cowork — Cloud-Based AI Agent Powered by Claude, Integrated Across M365</a></h3>
+    <p class="story-meta"><span class="source">Microsoft / Anthropic</span> · Mar 9 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Microsoft announced Copilot Cowork, a cloud-based AI agent built in collaboration with Anthropic that executes multi-step tasks across Microsoft 365. Unlike Anthropic's local Cowork (which runs on-device), Copilot Cowork runs in the cloud inside M365 infrastructure with full access to a user's enterprise work graph — Outlook threads, Teams conversations, calendar, SharePoint files, and Excel workbooks. It can build presentations, pull data into spreadsheets, and coordinate meetings autonomously. Currently in Research Preview at $30/user/month, with broader access via Microsoft's Frontier program expected late March. A new M365 E7 bundle at $99/user/month packages it with the full suite.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Microsoft built its newest flagship M365 feature on Anthropic's Claude — not OpenAI — despite the $13B OpenAI investment. This signals that Claude's agentic capabilities (particularly Cowork's architecture) are being recognized as best-in-class for enterprise automation. For businesses already in the M365 ecosystem, Copilot Cowork could become the default way knowledge workers interact with AI agents. The cloud-based approach with full enterprise data access is a fundamentally different model than local Cowork, and the two will likely coexist for different use cases.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://claude.com/blog/cowork-plugins-across-enterprise">Anthropic Ships 13 Enterprise Connectors &amp; Private Plugin Marketplaces for Cowork</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / CNBC</span> · Feb 24 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic's February 24 enterprise push added 13 new MCP connectors to Cowork — Google Workspace (Drive, Calendar, Gmail), DocuSign, Apollo, Clay, Outreach, SimilarWeb, MSCI, LegalZoom, FactSet, WordPress, and Harvey. Alongside the connectors, Anthropic launched private plugin marketplaces for Team and Enterprise plans, letting admins curate, auto-install, and control plugin access per team. 15 open-source Knowledge Work Plugins are now available across Productivity, Marketing, Sales, HR, Legal, Finance, and more — with 85+ skills and 69+ commands. Partner-built plugins from Slack/Salesforce, LSEG, S&amp;P Global, Common Room, and Tribe AI are also available.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the most significant Cowork platform expansion since launch. The 13 connectors cover the core enterprise software stack — CRM (Apollo, Clay, Outreach), legal (DocuSign, LegalZoom, Harvey), financial data (MSCI, FactSet), and productivity (Google Workspace, WordPress). Private plugin marketplaces give IT admins the control they need for enterprise deployment. The 85+ skills across 15 plugins mean Cowork is no longer a general-purpose tool — it's becoming a role-specific AI colleague for every department.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://support.claude.com/en/articles/12138966-release-notes">Cowork Gets Scheduled Tasks, Customize Hub &amp; Claude Opus 4.6</a></h3>
+    <p class="story-meta"><span class="source">Anthropic Release Notes</span> · Feb 25 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Recent platform updates include: scheduled and recurring tasks in Cowork (type /schedule to set up automated workflows), a new Customize section in Claude Desktop that consolidates skills, plugins, and connectors in one place, Cowork availability on Pro plans (macOS), Claude as a PowerPoint add-in, Excel integration upgraded to Opus 4.6 with native pivot table and conditional formatting support, and self-serve Enterprise plan purchases without requiring a sales conversation. Claude Sonnet 4.6 also launched with a 1M token context window in beta.</p>
   </div>
 </div>
 
@@ -348,7 +378,7 @@
 <div class="footer">
   <p>Curated for Jason Bass — United Car Wash Holdings</p>
   <p>Generated Tuesday, March 10, 2026</p>
-  <p class="sources">Sources: OpenAI, TechCrunch, Zhipu AI, The Decoder, Bloomberg, VentureBeat, Google, NIST, Linux Foundation, Crunchbase, Wilson Sonsini, Kasowitz, European Commission, Deloitte, Codewave, Federal Register</p>
+  <p class="sources">Sources: OpenAI, TechCrunch, Zhipu AI, The Decoder, Bloomberg, VentureBeat, Google, NIST, Linux Foundation, Crunchbase, Wilson Sonsini, Kasowitz, European Commission, Deloitte, Codewave, Federal Register, Microsoft, Anthropic, CNBC</p>
 </div>
 
 </div>
