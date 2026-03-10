@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) directLogin();
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    // Ask parent portal to verify our session
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return; // Don't run direct-access path
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access — Supabase Google Sign-In
+  // ========================================
+  function init() {
+    try {
+      sb = window.supabase.createClient(SB_URL, SB_KEY);
+    } catch(e) {
+      console.error('Supabase init failed:', e);
+      document.body.classList.add('ucwh-authed'); // Fail open if SDK unavailable
+      return;
+    }
+
+    sb.auth.getSession().then(function(res) {
+      var session = res.data && res.data.session;
+      if (session && session.user && session.user.email) {
+        verifyUser(session.user.email);
+      } else {
+        directLogin();
+      }
+    }).catch(function() {
+      document.body.classList.add('ucwh-authed'); // Fail open on error
+    });
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function directLogin() {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128202;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">UCWH Reports</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 28px">Sign in to view this report</p>'
+      + '<button id="ucwh-google-btn" style="width:100%;padding:14px 16px;border:2px solid #334155;border-radius:10px;background:#273548;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;font-size:15px;font-weight:600;color:#f1f5f9;transition:all 0.2s">'
+      + '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>'
+      + 'Sign in with Google</button>'
+      + '<div id="ucwh-login-error" style="color:#fb7185;font-size:13px;margin-top:12px;padding:10px 14px;background:rgba(251,113,133,0.1);border-radius:8px;border-left:3px solid #fb7185;display:none;text-align:left"></div>'
+      + '<p style="font-size:12px;color:#64748b;margin-top:20px"><a href="' + PORTAL + '" style="color:#60a5fa;text-decoration:none">Go to Report Portal &rarr;</a></p>';
+
+    overlay.appendChild(box);
+
+    // Wrap original content and hide it
+    var wrapper = document.createElement('div');
+    wrapper.id = 'ucwh-original-content';
+    wrapper.style.display = 'none';
+    while (document.body.firstChild) {
+      wrapper.appendChild(document.body.firstChild);
+    }
+    document.body.appendChild(wrapper);
+    document.body.appendChild(overlay);
+
+    // Wire up Google Sign-In
+    document.getElementById('ucwh-google-btn').addEventListener('click', function() {
+      sb.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.href }
+      }).then(function(res) {
+        if (res.error) {
+          var errEl = document.getElementById('ucwh-login-error');
+          errEl.textContent = res.error.message || 'Sign-in failed';
+          errEl.style.display = 'block';
+        }
+      });
+    });
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  // Wait for DOM + Supabase SDK
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 10, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Tuesday, March 10, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>OpenAI shipped GPT-5.4 last week with native computer-use capabilities and a million-token context window — the clearest signal yet that frontier labs are building models designed to operate machines, not just answer questions. Meanwhile, China's open-source push intensified: Zhipu AI's GLM-5, a 744B-parameter model trained entirely on Huawei Ascend chips under an MIT license, is posting benchmark scores that rival closed Western models. On the infrastructure side, Google Chrome shipped WebMCP in early preview, a protocol that turns any website into a structured tool for AI agents — potentially the most significant browser change since JavaScript. NIST formalized the U.S. government's role in agent standards with a new three-pillar initiative. And tomorrow brings the most consequential regulatory moment of 2026: the FTC and Commerce Department are set to issue their AI preemption rulings, which will determine whether state AI laws survive or face federal override.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/05/openai-launches-gpt-5-4-with-pro-and-thinking-versions/">OpenAI Launches GPT-5.4 — Native Computer Use, 1M Token Context, 33% Fewer Hallucinations</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / OpenAI</span> · Mar 5 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI released GPT-5.4 and GPT-5.4 Thinking on March 5, calling it their most capable model for professional work. The headline features: a 1 million token context window (the largest OpenAI has ever offered), native computer-use capabilities that let the model autonomously operate across applications, and a 33% reduction in false claims compared to GPT-5.2. GPT-5.4 Thinking uses significantly fewer tokens to solve problems, improving both speed and cost efficiency. Available to Plus, Teams, and Pro users, with API access for Enterprise and Edu.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Native computer use built into a frontier model changes the game for agent-based automation. Instead of bolting agentic capabilities onto models through external tooling, OpenAI is making the model itself the agent. The 1M context window also opens up workflows that were previously impractical — entire codebases, full regulatory filings, or months of business data in a single prompt. For AI-first businesses, GPT-5.4 represents the kind of model that can genuinely run multi-step business processes end-to-end.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://the-decoder.com/chinese-ai-lab-zhipu-releases-glm-5-under-mit-license-claims-parity-with-top-western-models/">GLM-5: Zhipu AI's 744B Open-Source Model Trained Entirely on Huawei Ascend Chips</a></h3>
+    <p class="story-meta"><span class="source">The Decoder / Zhipu AI</span> · Feb 13 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Zhipu AI released GLM-5, a 744 billion parameter mixture-of-experts model (40B active parameters) under the MIT license — making it the strongest open-source LLM trained without any Nvidia hardware. GLM-5 scores 50.4% on Humanity's Last Exam (beating Claude Opus 4.5's 43.4%), hits 77.8% on SWE-bench Verified, and achieves the industry's lowest hallucination rate. The model is available free on Z.ai with API pricing around $0.80–$1.00 per million input tokens. Combined with DeepSeek V4 (also Huawei-trained), China now has two frontier-class models built entirely on domestic silicon.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Two data points make a trend: both DeepSeek V4 and GLM-5 were trained on Huawei Ascend chips without Nvidia GPUs, and both are posting competitive benchmark numbers. The U.S. chip export control strategy assumed this wouldn't happen at scale for years. Meanwhile, the MIT license means any business can deploy GLM-5 commercially — and at $0.80/M input tokens, it's dramatically cheaper than proprietary alternatives. Open-source models at this quality level change the build-vs-buy calculus for AI infrastructure.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/02/11/apples-siri-revamp-reportedly-delayed-again/">Apple's AI-Powered Siri Revamp Delayed Again — Key Features Pushed to iOS 26.5+</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / Bloomberg</span> · Feb 11 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Apple's long-promised AI overhaul of Siri has hit testing snags, with features originally planned for iOS 26.4 (March) now being spread across iOS 26.5 (May) and iOS 27 (September). The upgrade — powered by Google's Gemini models under a reported $1B/year deal — would bring context-aware conversations, on-screen awareness, and cross-app integration. Internal testing reportedly shows Siri sometimes failing to process queries properly and taking too long to respond, highlighting the gap between consumer AI demo reels and production-ready assistants.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://venturebeat.com/infrastructure/google-chrome-ships-webmcp-in-early-preview-turning-every-website-into-a/">Chrome Ships WebMCP — Turns Every Website Into a Structured Tool for AI Agents</a></h3>
+    <p class="story-meta"><span class="source">VentureBeat / Google</span> · Feb 13 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Google Chrome 146 Canary now includes WebMCP, a proposed web standard that lets websites expose structured tools directly to in-browser AI agents. Instead of agents guessing how to interact with a website through screenshots and clicks, WebMCP lets sites declare their capabilities as structured JSON tool schemas. A single WebMCP call can replace dozens of browser-use interactions, delivering a 67% reduction in computational overhead and pushing task accuracy to approximately 98%. The standard supports both a declarative API (adding tool metadata to existing HTML forms) and an imperative API (JavaScript-defined tool schemas). Broader rollout is expected at Google I/O and Cloud Next later this year.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> WebMCP could be the most important infrastructure development for AI agents this year. If websites adopt structured tool declarations, the entire browser-based agent paradigm shifts from fragile vision-based scraping to reliable, structured API calls. For businesses building agent workflows, this means dramatically more reliable web automation. For website operators, it creates a new imperative: declare your tools via WebMCP or become invisible to the agent economy. Watch adoption rates closely — once major commerce and SaaS platforms implement WebMCP, the network effects will be enormous.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure">NIST Launches AI Agent Standards Initiative — Three Pillars for Agent Interoperability and Security</a></h3>
+    <p class="story-meta"><span class="source">NIST</span> · Feb 17 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">NIST's Center for AI Standards and Innovation launched the AI Agent Standards Initiative on February 17, built on three strategic pillars: facilitating industry-led agent standards and U.S. leadership in international standards bodies, fostering community-led open-source protocol development (including MCP and A2A), and advancing research in AI agent security and identity. The initiative's first concrete action — a Request for Information on AI Agent Security — had a March 9 deadline. Listening sessions on sector-specific barriers to AI agent adoption begin in April, with an AI Agent Identity and Authorization concept paper due April 2.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> NIST formalizing agent standards signals that the U.S. government views agent infrastructure as critical national technology — on par with 5G and cloud computing in terms of standards priority. The three-pillar approach (standards, open-source protocols, security research) validates the MCP/A2A ecosystem as the likely foundation for enterprise agent deployments. For builders, the upcoming April listening sessions are an opportunity to influence standards before they crystallize. The identity and authorization focus is especially relevant — agent authentication will become a hard requirement for enterprise adoption.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">MCP &amp; A2A Now Under Linux Foundation Governance — AAIF Backed by All Major Labs</a></h3>
+    <p class="story-meta"><span class="source">Linux Foundation</span> · Dec 2025 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The Agentic AI Foundation (AAIF), launched under the Linux Foundation in December 2025 with OpenAI, Anthropic, Google, Microsoft, AWS, and Block as co-founders, has brought both MCP and A2A under unified governance. MCP's Python and TypeScript SDKs have surpassed 97 million monthly downloads, establishing it as the de facto standard for connecting AI to external tools. However, security remains a pressing concern: 30 CVEs have been filed in 60 days against MCP implementations, and 38% of scanned servers lack authentication entirely.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/record-setting-global-funding-february-2026-openai-anthropic/">OpenAI Closes $110B Round at $730B Valuation — Largest Private Funding Round in History</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> · Feb 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI completed the largest private funding round ever: $110 billion at a $730 billion pre-money valuation. The round was anchored by Amazon ($50B), Nvidia ($30B), and SoftBank ($30B). This single round helped drive global startup funding to a record $189 billion in February 2026. OpenAI's valuation has more than tripled in under a year, fueled by rapid enterprise adoption of GPT-5 series models and the rollout of native computer-use capabilities.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/record-setting-global-funding-february-2026-openai-anthropic/">Anthropic Raises $30B Series G at $380B Valuation</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> · Feb 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Anthropic's $30 billion Series G — the second-largest venture round in history — valued the company at $380 billion. Coming just after OpenAI's mega-round, the back-to-back fundraises underscore that the market views the AI foundation model layer as a two-horse race at the frontier. Anthropic's rapid valuation growth reflects the strength of the Claude ecosystem, MCP adoption, and growing enterprise trust in its safety-first approach.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-cloud-energy-ai-world-labs/">World Labs Raises $1B — Fei-Fei Li's 3D Foundation Model Play</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">World Labs, founded by AI pioneer Fei-Fei Li, raised $1 billion in fresh funding for its work on foundational models that generate and interact with the 3D world. The company is building spatial intelligence — AI that understands and operates in three-dimensional environments rather than just processing text and 2D images. The round reflects growing investor conviction that the next wave of AI value creation lies in bridging the digital-physical divide.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.wsgr.com/en/insights/2026-year-in-preview-ai-regulatory-developments-for-companies-to-watch-out-for.html">Tomorrow: FTC &amp; Commerce Department Issue AI Preemption Rulings</a></h3>
+    <p class="story-meta"><span class="source">Wilson Sonsini / Federal Register</span> · Due Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The most consequential AI regulatory moment of 2026 arrives tomorrow. On March 11, the FTC must issue its policy statement on how the FTC Act applies to AI — including guidance on when state laws requiring alteration of AI outputs are preempted by federal law. Simultaneously, the Commerce Department publishes its evaluation identifying state AI laws deemed to conflict with federal competitiveness policy. The rulings will determine the fate of California's Transparency in Frontier AI Act, Texas's Responsible AI Governance Act, and Colorado's AI Act (effective June 30). The DOJ's AI Litigation Task Force stands ready to challenge state laws flagged as burdensome.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> If federal preemption prevails, the compliance landscape simplifies overnight — one federal framework instead of a patchwork of state requirements. If state laws survive, every AI-powered business faces potentially divergent obligations in California, Texas, Colorado, and beyond. Either outcome demands immediate strategic response. For AI-first businesses, tomorrow's announcements will directly shape compliance budgets, product design constraints, and go-to-market timelines for the rest of 2026.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.kasowitz.com/media/viewpoints/data-privacy-ai-regulatory-and-compliance-update-2026/">EU AI Act Full Application Countdown — August 2, 2026 for High-Risk AI</a></h3>
+    <p class="story-meta"><span class="source">Kasowitz / European Commission</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The EU AI Act becomes fully applicable on August 2, 2026, with high-risk AI obligations taking effect. Companies deploying AI in employment, credit, insurance, education, or law enforcement in the EU will face mandatory risk assessments, conformity checks, and transparency requirements. The governance rules for general-purpose AI models have already been applicable since August 2025. Penalties for non-compliance can reach up to 7% of global annual turnover — the steepest AI regulatory fines in any jurisdiction.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html">Deloitte: 83% of AI Leaders Now Report Major Concerns About Generative AI</a></h3>
+    <p class="story-meta"><span class="source">Deloitte</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Deloitte's State of AI in the Enterprise 2026 report reveals a striking shift in sentiment: 83% of AI leaders now express major or extreme concern about generative AI — an eightfold increase in just two years. While AI adoption has reached 78% of organizations, the gap between adoption and maturity remains vast. Scaling is held back by data issues, weak governance frameworks, limited infrastructure, and workforce readiness gaps. Only 20% of organizations are generating revenue from AI, while 74% aspire to. The concerns center not on AI's potential but on the organizational readiness to deploy it responsibly at scale.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://codewave.com/insights/ai-enterprise-adoption-2026/">AI Agent Deployments Nearly Double in 4 Months — But Only 8.6% of Companies Have Agents in Production</a></h3>
+    <p class="story-meta"><span class="source">Codewave / Enterprise Surveys</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The share of organizations with deployed AI agents nearly doubled from 7.2% in August 2025 to 13.2% by December 2025, signaling accelerating momentum in agent adoption. Yet as of early 2026, only 8.6% of companies have agents running in full production environments. The bottleneck isn't technology — it's the governance, error-handling, and human-in-the-loop infrastructure needed to trust agents with real business decisions. Industries leading adoption include healthcare (diagnostics and personalized care), financial services (fraud detection and risk management), and professional services (document automation).</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Tuesday, March 10, 2026</p>
+  <p class="sources">Sources: OpenAI, TechCrunch, Zhipu AI, The Decoder, Bloomberg, VentureBeat, Google, NIST, Linux Foundation, Crunchbase, Wilson Sonsini, Kasowitz, European Commission, Deloitte, Codewave, Federal Register</p>
+</div>
+
+</div>
+</body>
+</html>
