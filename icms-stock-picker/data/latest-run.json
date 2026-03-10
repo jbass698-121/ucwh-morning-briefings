@@ -1,0 +1,4586 @@
+{
+  "run_id": "2026-02-24T12:35:00Z",
+  "run_date": "2026-02-24",
+  "macro_regime": "Growth",
+  "regime_confidence": 75,
+  "regime_summary": "US economy maintains Growth trajectory despite tariff turbulence. GDP expected 2.5-2.8% for 2026 with Q1 bounce-back after Q4 shutdown drag. ISM Manufacturing at 52.6 first expansion in 12 months. Unemployment fell to 4.3%. Fed paused at 3.50-3.75% with divided committee on path forward. VIX elevated to 21.5 on tariff uncertainty after Supreme Court struck IEEPA tariffs and Trump invoked 15% Section 122 surcharge, tempering confidence from prior run.",
+  "market_snapshot": {
+    "sp500": 6824.06,
+    "vix": 21.52,
+    "us10y": 4.03,
+    "dxy": 97.56,
+    "fed_funds": 3.625
+  },
+  "picks": [
+    {
+      "ticker": "NVDA",
+      "company": "NVIDIA Corporation",
+      "sector": "Information Technology",
+      "industry": "Semiconductors",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": "ICMS_DOWNGRADE",
+      "status_change_reason": "ICMS changed from 10.0 to 9.8; VIX spike introduces slight technical risk",
+      "icms_score": 9.8,
+      "previous_icms_score": 10.0,
+      "consensus_pct": 86,
+      "conviction": "HIGH",
+      "current_price": 191.0,
+      "entry_price": 191.0,
+      "max_entry_price": 194.82,
+      "position_size_pct": 4.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 215.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 12.6,
+          "rationale": "Post-earnings momentum if beat; resistance at $215"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 230.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 20.4,
+          "rationale": "Blackwell production ramp narrative builds; GTC 2026 anticipation"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 255.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 33.5,
+          "rationale": "Full thesis execution at analyst consensus target $255"
+        }
+      ],
+      "stop_loss": 181.0,
+      "stop_loss_pct": -5.24,
+      "risk_reward_ratio": 6.4,
+      "atr_20d_pct": 3.5,
+      "components": {
+        "catalyst_timing": {
+          "score": 2.5,
+          "max": 2.5,
+          "detail": "Q4 FY2026 earnings Feb 25 (tomorrow!); expected $1.53 EPS (+72% YoY), $65.7B revenue. 13 straight quarterly beats."
+        },
+        "earnings_momentum": {
+          "score": 2.8,
+          "max": 3.0,
+          "detail": "EPS estimates revised up 12% in 30 days; 18 consecutive earnings beats; AI data center demand unprecedented"
+        },
+        "technical_flow": {
+          "score": 1.5,
+          "max": 2.0,
+          "detail": "RSI 58, above 50d/200d MA; VIX elevated to 21.5 dampening technicals slightly; volume expanding pre-earnings"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "FCF margin 35%+, ROE 95%+, minimal debt; dominant AI chip position; Blackwell ramp accelerating"
+        },
+        "macro_alignment": {
+          "score": 1.0,
+          "max": 1.0,
+          "detail": "Perfect alignment: AI/semiconductor leader in Growth regime with $1T+ hyperscaler capex cycle"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 80,
+        "score": 1.5,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Institutional sentiment strongly bullish; social media positive on AI narrative; 85% analyst buy rating; fund flows positive 10+ consecutive weeks"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 85,
+          "stance": "BUY",
+          "note": "AI/semiconductor leader perfectly aligned with Growth regime; massive capex tailwinds from hyperscalers"
+        },
+        "fundamental": {
+          "confidence": 92,
+          "stance": "BUY",
+          "note": "FCF margin 35%+, ROE 95%+, minimal debt; dominant AI chip position with unmatched data center moat"
+        },
+        "behavioral": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "CSS 80 - CONFIRMATION mode; institutional sentiment strongly bullish pre-earnings; 85% analyst buy rating"
+        },
+        "quant": {
+          "confidence": 88,
+          "stance": "BUY",
+          "note": "Technical breakout above $190; momentum aligned; MACD positive crossover; volume expanding pre-earnings"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Supply constraints on Blackwell GPUs; customer concentration in hyperscalers; China export restrictions",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        },
+        {
+          "category": "Sector",
+          "description": "Semiconductor cycle peak concerns; AMD/custom silicon competition intensifying",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Tariff uncertainty from Section 122 surcharge; AI capex spending pullback if recession materializes",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        }
+      ],
+      "thesis": "NVIDIA remains the undisputed AI infrastructure leader with Q4 earnings tomorrow (Feb 25). Analysts expect $1.53 EPS (+72% YoY) on $65.7B revenue. Hyperscaler capex surging with $1T+ committed to AI infrastructure. Memory fully booked for 2026. Entry near $191 with targets at $215, $230, $255.",
+      "catalyst_timeline": "Feb 25: Q4 FY2026 earnings release; Mar 18: GTC 2026 keynote; Apr: Blackwell Ultra sampling begins",
+      "sentiment_summary": "Institutional sentiment strongly bullish; social media positive on AI narrative; 85% analyst buy rating; fund flows positive 10+ consecutive weeks",
+      "is_portfolio_position": true,
+      "qty": 35,
+      "cost_basis": 6116.75,
+      "unrealized_pnl": 568.25,
+      "unrealized_pnl_pct": 9.29,
+      "portfolio_weight": 17.1,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "LLY",
+      "company": "Eli Lilly and Company",
+      "sector": "Healthcare",
+      "industry": "Pharmaceuticals",
+      "action": "HOLD",
+      "previous_action": "HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 9.5,
+      "previous_icms_score": 9.7,
+      "consensus_pct": 86,
+      "conviction": "HIGH",
+      "current_price": 1020.0,
+      "entry_price": 1020.0,
+      "max_entry_price": 1040.4,
+      "position_size_pct": 4.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 1100.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 7.8,
+          "rationale": "Near-term catalyst: orforglipron FDA timeline clarity; support at $1000"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 1155.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 13.2,
+          "rationale": "Post-approval momentum; analyst target convergence around $1155"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 1250.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 22.5,
+          "rationale": "Full thesis execution: oral GLP-1 market dominance; consensus target $1250"
+        }
+      ],
+      "stop_loss": 918.0,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 2.3,
+      "atr_20d_pct": 2.8,
+      "components": {
+        "catalyst_timing": {
+          "score": 2.5,
+          "max": 2.5,
+          "detail": "Oral GLP-1 orforglipron FDA approval expected March 2026; National Priority Voucher designation; $1.8-2B revenue potential"
+        },
+        "earnings_momentum": {
+          "score": 2.5,
+          "max": 3.0,
+          "detail": "EPS estimates strong; Mounjaro/Zepbound revenue surging; orforglipron could generate $1.8-2B in 2026 per UBS/Bernstein"
+        },
+        "technical_flow": {
+          "score": 1.5,
+          "max": 2.0,
+          "detail": "RSI 55, price recovering from guidance selloff; above 200d MA; institutional buying evident"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Dominant GLP-1 franchise; strong pipeline; fortress balance sheet; pricing power in obesity/diabetes"
+        },
+        "macro_alignment": {
+          "score": 1.0,
+          "max": 1.0,
+          "detail": "Healthcare defensive with growth characteristics; GLP-1 secular trend unaffected by macro conditions"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 76,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Institutional sentiment strongly bullish on GLP-1 mega-cycle; 82% analyst buy rating; fund flows positive"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "Healthcare with GLP-1 mega-cycle; defensive quality in Growth regime with massive market expansion"
+        },
+        "fundamental": {
+          "confidence": 90,
+          "stance": "BUY",
+          "note": "Industry-leading GLP-1 pipeline; orforglipron oral formulation first-mover advantage; strong balance sheet"
+        },
+        "behavioral": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "CSS 76 - CONFIRMATION mode; analyst consensus strongly bullish on orforglipron; institutional accumulation"
+        },
+        "quant": {
+          "confidence": 84,
+          "stance": "BUY",
+          "note": "Price recovering from guidance-related selloff; RSI 55 with room to run; support at $980"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Orforglipron FDA delay or CRL risk; competition from Novo Nordisk oral Wegovy",
+          "impact": 5,
+          "likelihood": 2,
+          "composite": 8
+        },
+        {
+          "category": "Sector",
+          "description": "GLP-1 pricing pressure from government negotiation; generic competition timeline",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        },
+        {
+          "category": "Macro",
+          "description": "Healthcare reform risk; tariff impact on pharmaceutical supply chains",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "Eli Lilly is at the forefront of the GLP-1 revolution with oral orforglipron expected to receive FDA approval in March 2026. UBS projects $2B in 2026 orforglipron revenue. Combined with Mounjaro/Zepbound momentum, LLY represents the best healthcare growth story. Entry near $1020 with targets at $1100, $1155, $1250.",
+      "catalyst_timeline": "Mar 2026: Orforglipron FDA approval expected; Q1 earnings Apr; Phase 3 data readouts for additional indications",
+      "sentiment_summary": "Institutional sentiment strongly bullish on GLP-1 mega-cycle; 82% analyst buy rating; fund flows positive",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "META",
+      "company": "Meta Platforms Inc.",
+      "sector": "Communication Services",
+      "industry": "Interactive Media",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": "ICMS_DOWNGRADE",
+      "status_change_reason": "ICMS changed from 9.7 to 9.3; VIX spike and tariff uncertainty reduce conviction slightly",
+      "icms_score": 9.3,
+      "previous_icms_score": 9.7,
+      "consensus_pct": 86,
+      "conviction": "HIGH",
+      "current_price": 650.0,
+      "entry_price": 650.0,
+      "max_entry_price": 663.0,
+      "position_size_pct": 4.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 720.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 10.8,
+          "rationale": "Near-term momentum; resistance at $720 area"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 780.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 20.0,
+          "rationale": "AI monetization narrative builds; analyst convergence around $780"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 835.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 28.5,
+          "rationale": "Full thesis at consensus target $835"
+        }
+      ],
+      "stop_loss": 585.0,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 2.8,
+      "atr_20d_pct": 3.2,
+      "components": {
+        "catalyst_timing": {
+          "score": 2.0,
+          "max": 2.5,
+          "detail": "No imminent binary catalyst but AI monetization momentum and $115-135B capex plan signal continued investment cycle"
+        },
+        "earnings_momentum": {
+          "score": 2.5,
+          "max": 3.0,
+          "detail": "Q4 EPS $8.88 beat est $8.16; revenue $59.9B (+24% YoY); AI coding tools boosted engineer output 30%"
+        },
+        "technical_flow": {
+          "score": 1.5,
+          "max": 2.0,
+          "detail": "RSI 56, above 50d/200d MA; holding well despite broader selloff; institutional support"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "FCF margin ~30%; ROE strong; 3B+ WhatsApp users; dominant social/advertising platform"
+        },
+        "macro_alignment": {
+          "score": 0.8,
+          "max": 1.0,
+          "detail": "Digital advertising benefits from Growth regime; some tariff uncertainty on advertiser spend"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 75,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Institutional sentiment strongly bullish; 90% analyst buy rating; AI capex narrative driving accumulation"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "Digital advertising leader aligned with Growth regime; AI monetization accelerating"
+        },
+        "fundamental": {
+          "confidence": 90,
+          "stance": "BUY",
+          "note": "Q4 beat $8.88 EPS; 24% revenue growth; massive AI capex signals long-term positioning; FCF strong"
+        },
+        "behavioral": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "CSS 75 - CONFIRMATION mode; institutional accumulation; 3B WhatsApp users; Reels monetization improving"
+        },
+        "quant": {
+          "confidence": 85,
+          "stance": "BUY",
+          "note": "Above key MAs; RSI 56; volume supportive despite broader market weakness"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "$115-135B capex may not yield expected AI returns; regulatory antitrust risk globally",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        },
+        {
+          "category": "Sector",
+          "description": "Digital ad market slowdown if economy weakens; competition from TikTok, YouTube",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Tariff-driven economic slowdown could reduce advertiser budgets; VIX elevation signals risk-off",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Meta delivered outstanding Q4 with $8.88 EPS (beat by 9%) and 24% revenue growth. AI investments ($115-135B capex) are driving 30% engineer productivity gains. With 3B+ WhatsApp users and improving Reels monetization, META remains a top-tier growth play. Entry near $650 with targets at $720, $780, $835.",
+      "catalyst_timeline": "Mar: Q1 2026 guidance update; Apr: Q1 earnings; Ongoing: AI product launches and Reality Labs updates",
+      "sentiment_summary": "Institutional sentiment strongly bullish; 90% analyst buy rating; AI capex narrative driving accumulation",
+      "is_portfolio_position": true,
+      "qty": 16,
+      "cost_basis": 2829.6,
+      "unrealized_pnl": 7570.4,
+      "unrealized_pnl_pct": 267.54,
+      "portfolio_weight": 26.7,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "MU",
+      "company": "Micron Technology Inc.",
+      "sector": "Information Technology",
+      "industry": "Semiconductors",
+      "action": "HOLD",
+      "previous_action": "NEW_ENTRY",
+      "status_change": "ICMS_DOWNGRADE",
+      "status_change_reason": "ICMS changed from 9.7 to 9.2; elevated VIX and tariff uncertainty reduce score",
+      "icms_score": 9.2,
+      "previous_icms_score": 9.7,
+      "consensus_pct": 85,
+      "conviction": "HIGH",
+      "current_price": 418.0,
+      "entry_price": 418.0,
+      "max_entry_price": 426.36,
+      "position_size_pct": 4.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 440.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 5.3,
+          "rationale": "Near-term momentum; Needham $450 target as anchor"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 450.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 7.7,
+          "rationale": "Post-earnings momentum; memory shortage narrative acceleration"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 500.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 19.6,
+          "rationale": "Full thesis at Morgan Stanley/Needham targets $450-500"
+        }
+      ],
+      "stop_loss": 380.0,
+      "stop_loss_pct": -9.09,
+      "risk_reward_ratio": 2.2,
+      "atr_20d_pct": 3.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 2.0,
+          "max": 2.5,
+          "detail": "Earnings catalyst in ~2 weeks; memory shortage narrative building; Morgan Stanley top pick"
+        },
+        "earnings_momentum": {
+          "score": 2.8,
+          "max": 3.0,
+          "detail": "EPS estimates rising sharply; unprecedented DRAM/NAND shortage; AI memory fully booked 2026; 48% annual earnings growth expected"
+        },
+        "technical_flow": {
+          "score": 1.5,
+          "max": 2.0,
+          "detail": "RSI 62; above 50d/200d MA; strong momentum; some overbought risk at $418"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Leading memory producer; pricing power in shortage environment; strong balance sheet; HBM leadership"
+        },
+        "macro_alignment": {
+          "score": 0.9,
+          "max": 1.0,
+          "detail": "Semiconductor aligned with Growth regime; AI capex super-cycle direct beneficiary"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 74,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Morgan Stanley top pick; Needham raised to $450; institutional sentiment strongly bullish on memory shortage"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "Memory cycle inflection perfectly aligned with AI data center buildout in Growth regime"
+        },
+        "fundamental": {
+          "confidence": 88,
+          "stance": "BUY",
+          "note": "Unprecedented memory shortage; AI memory fully booked 2026; strong pricing power; earnings inflecting higher"
+        },
+        "behavioral": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "CSS 74 - CONFIRMATION mode; Morgan Stanley top pick; analyst consensus strongly bullish"
+        },
+        "quant": {
+          "confidence": 85,
+          "stance": "BUY",
+          "note": "Technical momentum strong; price well above MAs; RSI 62; volume expanding"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Memory cycle peak risk; customer inventory correction; HBM execution risk",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        },
+        {
+          "category": "Sector",
+          "description": "Semiconductor oversupply if AI spending decelerates; competition from Samsung/SK Hynix",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Tariff impact on global semiconductor supply chains; recession risk to data center spending",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        }
+      ],
+      "thesis": "Micron is Morgan Stanley's top semiconductor pick for 2026. Unprecedented DRAM/NAND shortage driving pricing power. AI memory fully booked for 2026. Needham raised target to $450. Entry near $418 with targets at $440, $450, $500.",
+      "catalyst_timeline": "Mar: Q2 FY2026 earnings; Ongoing: HBM3E production ramp; Memory pricing updates",
+      "sentiment_summary": "Morgan Stanley top pick; Needham raised to $450; institutional sentiment strongly bullish on memory shortage",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "GOOGL",
+      "company": "Alphabet Inc.",
+      "sector": "Communication Services",
+      "industry": "Interactive Media",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": "ICMS_DOWNGRADE",
+      "status_change_reason": "ICMS changed from 9.2 to 8.9; broader market weakness and VIX spike",
+      "icms_score": 8.9,
+      "previous_icms_score": 9.2,
+      "consensus_pct": 85,
+      "conviction": "HIGH",
+      "current_price": 303.0,
+      "entry_price": 303.0,
+      "max_entry_price": 309.06,
+      "position_size_pct": 3.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 330.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 8.9,
+          "rationale": "Near-term momentum; analyst revisions post-earnings still flowing"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 351.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 15.8,
+          "rationale": "Post-catalyst convergence at consensus target $351"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 400.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 32.0,
+          "rationale": "Full thesis at Goldman $400 target; Cloud + AI monetization"
+        }
+      ],
+      "stop_loss": 272.7,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 3.2,
+      "atr_20d_pct": 2.8,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "No imminent binary catalyst; steady AI/Cloud execution; Waymo autonomy progress"
+        },
+        "earnings_momentum": {
+          "score": 2.5,
+          "max": 3.0,
+          "detail": "Cloud revenue +48% YoY outpacing peers; search +17%; analyst estimates rising; Goldman raised target to $400"
+        },
+        "technical_flow": {
+          "score": 1.3,
+          "max": 2.0,
+          "detail": "RSI 54; above 200d MA but testing 50d; some selling pressure from market-wide risk-off"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Dominant search franchise; Cloud growing faster than AWS/Azure; strong FCF; Waymo optionality"
+        },
+        "macro_alignment": {
+          "score": 0.8,
+          "max": 1.0,
+          "detail": "Advertising benefits from Growth regime; Cloud aligned with enterprise AI spend"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 74,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Berkshire $4.9B purchase signals institutional confidence; Goldman target $400; 88% analyst buy rating"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "Cloud growth aligned with AI/Growth regime; search dominance provides defensive floor"
+        },
+        "fundamental": {
+          "confidence": 88,
+          "stance": "BUY",
+          "note": "Cloud 48% growth; search +17%; Berkshire bought $4.9B; strong FCF generation"
+        },
+        "behavioral": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "CSS 74 - CONFIRMATION; institutional buying (Berkshire); analyst consensus broadly bullish"
+        },
+        "quant": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "Holding above key MAs despite market weakness; RSI 54; volume supportive"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Antitrust regulatory risk; Google search market share from AI assistants",
+          "impact": 4,
+          "likelihood": 3,
+          "composite": 7
+        },
+        {
+          "category": "Sector",
+          "description": "Digital ad slowdown risk; cloud competition from AWS and Azure intensifying",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Tariff impact on global ad spend; economic slowdown could reduce enterprise cloud adoption",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "Alphabet delivered exceptional Q4 with Cloud growing 48% YoY (outpacing peers) and Search +17%. Berkshire Hathaway bought $4.9B in shares. Goldman raised target to $400. Strong cash generation and AI leadership position GOOGL well. Entry near $303 with targets at $330, $351, $400.",
+      "catalyst_timeline": "Apr: Q1 2026 earnings; May: Google I/O 2026; Ongoing: Gemini AI rollout and Waymo expansion",
+      "sentiment_summary": "Berkshire $4.9B purchase signals institutional confidence; Goldman target $400; 88% analyst buy rating",
+      "is_portfolio_position": true,
+      "qty": 11,
+      "cost_basis": 2008.55,
+      "unrealized_pnl": 1324.45,
+      "unrealized_pnl_pct": 65.94,
+      "portfolio_weight": 8.8,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "AVGO",
+      "company": "Broadcom Inc.",
+      "sector": "Information Technology",
+      "industry": "Semiconductors",
+      "action": "HOLD",
+      "previous_action": "HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 8.6,
+      "previous_icms_score": 8.8,
+      "consensus_pct": 84,
+      "conviction": "HIGH",
+      "current_price": 345.0,
+      "entry_price": 345.0,
+      "max_entry_price": 351.9,
+      "position_size_pct": 3.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 380.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 10.1,
+          "rationale": "Near-term momentum; AI networking demand catalyst"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 421.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 22.0,
+          "rationale": "Analyst convergence at avg target $421"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 475.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 37.7,
+          "rationale": "Full thesis at bull case $475"
+        }
+      ],
+      "stop_loss": 310.0,
+      "stop_loss_pct": -10.14,
+      "risk_reward_ratio": 3.7,
+      "atr_20d_pct": 2.8,
+      "components": {
+        "catalyst_timing": {
+          "score": 2.0,
+          "max": 2.5,
+          "detail": "AI networking and custom silicon demand strong; earnings catalyst in coming weeks"
+        },
+        "earnings_momentum": {
+          "score": 2.2,
+          "max": 3.0,
+          "detail": "Analyst estimates rising on AI networking demand; custom ASIC orders from hyperscalers expanding"
+        },
+        "technical_flow": {
+          "score": 1.5,
+          "max": 2.0,
+          "detail": "RSI 55; above key MAs; holding well in risk-off environment"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Strong FCF; VMware integration complete; AI networking moat; diversified revenue"
+        },
+        "macro_alignment": {
+          "score": 0.9,
+          "max": 1.0,
+          "detail": "Semiconductor aligned with Growth regime; AI custom silicon beneficiary"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 72,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "72% analyst buy rating; institutional accumulation on AI networking thesis"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "AI infra aligned with Growth"
+        },
+        "fundamental": {
+          "confidence": 88,
+          "stance": "BUY",
+          "note": "VMware integration + AI networking moat"
+        },
+        "behavioral": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "CSS 72 supportive"
+        },
+        "quant": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "Technicals constructive above MAs"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "VMware integration execution risk; custom silicon competition",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Sector",
+          "description": "Semiconductor cycle concerns; AI spending deceleration risk",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Tariff impact on global supply chains",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "Broadcom is a key AI infrastructure beneficiary through networking and custom silicon. VMware integration adds software recurring revenue. Target avg $421-475. Entry at $345.",
+      "catalyst_timeline": "Mar: Quarterly earnings; Ongoing: Custom ASIC wins from hyperscalers",
+      "sentiment_summary": "72% analyst buy rating; institutional accumulation on AI networking thesis",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "WMT",
+      "company": "Walmart Inc.",
+      "sector": "Consumer Staples",
+      "industry": "Retail",
+      "action": "HOLD",
+      "previous_action": "HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 8.5,
+      "previous_icms_score": 9.1,
+      "consensus_pct": 84,
+      "conviction": "HIGH",
+      "current_price": 123.0,
+      "entry_price": 123.0,
+      "max_entry_price": 125.46,
+      "position_size_pct": 3.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 130.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 5.7,
+          "rationale": "Near-term recovery to recent highs $130"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 134.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 8.9,
+          "rationale": "Retest all-time high $134"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 140.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 13.8,
+          "rationale": "Full thesis at analyst consensus $140"
+        }
+      ],
+      "stop_loss": 110.7,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 1.4,
+      "atr_20d_pct": 2.2,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "Q4 earnings beat fresh; e-commerce +24% growth narrative; tariff beneficiary as consumer trades down"
+        },
+        "earnings_momentum": {
+          "score": 2.5,
+          "max": 3.0,
+          "detail": "Q4 EPS beat $0.74 vs $0.73 est; revenue $190.7B; e-commerce 23% of sales; guidance cautious on tariffs"
+        },
+        "technical_flow": {
+          "score": 1.5,
+          "max": 2.0,
+          "detail": "RSI 52; all-time high $134 recent; pulling back slightly; strong support at $120"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Dominant retailer; e-commerce scale; pricing power; essential spending capture"
+        },
+        "macro_alignment": {
+          "score": 1.0,
+          "max": 1.0,
+          "detail": "Defensive with growth; benefits from trade-down in both Growth and Recession"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 72,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Institutional rotation into defensive growth; 80% analyst buy rating"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "Defensive growth in any regime"
+        },
+        "fundamental": {
+          "confidence": 86,
+          "stance": "BUY",
+          "note": "E-commerce +24%; dominant retail moat"
+        },
+        "behavioral": {
+          "confidence": 76,
+          "stance": "BUY",
+          "note": "CSS 72; institutional rotation into defensive"
+        },
+        "quant": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "Pulling back from ATH; RSI neutral"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Tariff guidance cautious; margin pressure from 15% import surcharge",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        },
+        {
+          "category": "Sector",
+          "description": "Consumer spending slowdown; competition from Amazon",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Inflation resurgence from tariffs could crimp consumer purchasing power",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Walmart beat Q4 with e-commerce surging 24%. Defensive positioning benefits from tariff-driven trade-down. All-time high $134 within reach. Entry at $123 with targets $130, $134, $140.",
+      "catalyst_timeline": "Mar: Investor day; Apr: Q1 2026 earnings; Ongoing: E-commerce and automation investments",
+      "sentiment_summary": "Institutional rotation into defensive growth; 80% analyst buy rating",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "EQIX",
+      "company": "Equinix Inc.",
+      "sector": "Real Estate",
+      "industry": "Data Center REITs",
+      "action": "HOLD",
+      "previous_action": "HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 8.4,
+      "previous_icms_score": 9.0,
+      "consensus_pct": 84,
+      "conviction": "HIGH",
+      "current_price": 956.0,
+      "entry_price": 956.0,
+      "max_entry_price": 975.12,
+      "position_size_pct": 3.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 1000.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 4.6,
+          "rationale": "Near-term to round number resistance $1000"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 1050.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 9.8,
+          "rationale": "Morgan Stanley target $1075 area"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 1100.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 15.1,
+          "rationale": "JPM target $1100"
+        }
+      ],
+      "stop_loss": 860.0,
+      "stop_loss_pct": -10.04,
+      "risk_reward_ratio": 1.5,
+      "atr_20d_pct": 2.8,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "Revenue growth 9-10% guidance; data center demand outpacing supply; dividend +10% YoY"
+        },
+        "earnings_momentum": {
+          "score": 2.3,
+          "max": 3.0,
+          "detail": "AFFO growth 9-11% guided; revenue growth 9-10%; Morgan Stanley raised target to $1075"
+        },
+        "technical_flow": {
+          "score": 1.5,
+          "max": 2.0,
+          "detail": "RSI 54; above key MAs; data center demand narrative strong; JPM target $1100"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Global data center leader; 70+ markets; strong pricing power; essential digital infrastructure"
+        },
+        "macro_alignment": {
+          "score": 0.8,
+          "max": 1.0,
+          "detail": "Data center REIT benefits from AI capex cycle; rate sensitivity moderate at 3.50-3.75% Fed"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 73,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Morgan Stanley raised to $1075; JPM $1100; institutional demand for data center exposure strong"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "Data center demand aligned with AI Growth"
+        },
+        "fundamental": {
+          "confidence": 86,
+          "stance": "BUY",
+          "note": "AFFO 9-11% growth; strong balance sheet"
+        },
+        "behavioral": {
+          "confidence": 76,
+          "stance": "BUY",
+          "note": "CSS 73; institutional demand for data center exposure"
+        },
+        "quant": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "Above MAs; RSI neutral; multiple analyst upgrades"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Data center supply coming online could moderate pricing; execution risk on expansion",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Sector",
+          "description": "REIT rate sensitivity if Fed holds longer; data center demand slower than expected",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Higher rates longer could pressure REIT valuations",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "Equinix is the global data center REIT leader with 9-10% revenue growth and AFFO growth of 9-11%. AI demand outpacing supply. Multiple analyst upgrades with targets $1000-1100. Entry at $956.",
+      "catalyst_timeline": "Mar: Q4 data center demand updates; Apr: Q1 earnings; Ongoing: Expansion projects",
+      "sentiment_summary": "Morgan Stanley raised to $1075; JPM $1100; institutional demand for data center exposure strong",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "AMZN",
+      "company": "Amazon.com Inc.",
+      "sector": "Consumer Discretionary",
+      "industry": "Internet Retail",
+      "action": "HOLD",
+      "previous_action": "HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 8.3,
+      "previous_icms_score": 8.6,
+      "consensus_pct": 84,
+      "conviction": "HIGH",
+      "current_price": 210.0,
+      "entry_price": 210.0,
+      "max_entry_price": 214.2,
+      "position_size_pct": 3.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 240.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 14.3,
+          "rationale": "Recovery bounce to $240 resistance"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 265.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 26.2,
+          "rationale": "Cloud acceleration narrative; $265 target"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 287.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 36.7,
+          "rationale": "Consensus target $287"
+        }
+      ],
+      "stop_loss": 189.0,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 3.7,
+      "atr_20d_pct": 3.2,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "AWS growth reaccelerating; retail margin expansion; Agentic Commerce AI initiative"
+        },
+        "earnings_momentum": {
+          "score": 2.3,
+          "max": 3.0,
+          "detail": "AWS revenue growth accelerating; retail margins improving; analyst consensus $280+ target"
+        },
+        "technical_flow": {
+          "score": 1.3,
+          "max": 2.0,
+          "detail": "RSI 48; below 50d MA but above 200d; some pressure from risk-off; oversold bounce potential"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "AWS cloud moat; retail scale; Prime ecosystem; logistics advantages; strong FCF"
+        },
+        "macro_alignment": {
+          "score": 0.8,
+          "max": 1.0,
+          "detail": "Consumer + cloud aligned with Growth regime; some tariff headwind on retail imports"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 72,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "44 analysts Strong Buy consensus; Scotiabank raised to $300; deep value relative to potential"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "AWS + retail aligned with Growth"
+        },
+        "fundamental": {
+          "confidence": 86,
+          "stance": "BUY",
+          "note": "Cloud moat + retail margin expansion"
+        },
+        "behavioral": {
+          "confidence": 76,
+          "stance": "BUY",
+          "note": "CSS 72; 33% upside to consensus target"
+        },
+        "quant": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "Oversold near-term; bounce potential"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "AWS competition from Azure/GCP intensifying; retail margin pressure from tariffs",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        },
+        {
+          "category": "Sector",
+          "description": "Cloud spending deceleration risk; e-commerce competition",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "15% tariff surcharge impacts retail imports; consumer slowdown risk",
+          "impact": 4,
+          "likelihood": 3,
+          "composite": 7
+        }
+      ],
+      "thesis": "Amazon has 33% upside to consensus target $287. AWS reaccelerating and retail margins improving. Agentic Commerce AI initiative positions for next era. Entry at $210.",
+      "catalyst_timeline": "Apr: Q1 earnings; Ongoing: AWS + AI product launches; Prime Day 2026",
+      "sentiment_summary": "44 analysts Strong Buy consensus; Scotiabank raised to $300; deep value relative to potential",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "JPM",
+      "company": "JPMorgan Chase & Co.",
+      "sector": "Financials",
+      "industry": "Banks",
+      "action": "HOLD",
+      "previous_action": "HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 8.1,
+      "previous_icms_score": 8.4,
+      "consensus_pct": 84,
+      "conviction": "HIGH",
+      "current_price": 310.0,
+      "entry_price": 310.0,
+      "max_entry_price": 316.2,
+      "position_size_pct": 2.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 325.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 4.8,
+          "rationale": "Recovery to recent levels $325"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 335.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 8.1,
+          "rationale": "Retest ATH $335"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 350.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 12.9,
+          "rationale": "Full thesis with IB recovery $350"
+        }
+      ],
+      "stop_loss": 279.0,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 1.3,
+      "atr_20d_pct": 2.5,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "Q1 earnings approaching; IB pipeline strong; credit quality solid"
+        },
+        "earnings_momentum": {
+          "score": 2.0,
+          "max": 3.0,
+          "detail": "Best earnings outlook post-GFC per BofA; IB pipeline strong; NIM expanding with yield curve steepening"
+        },
+        "technical_flow": {
+          "score": 1.5,
+          "max": 2.0,
+          "detail": "RSI 52; near ATH $335; yield curve steepening supportive; volume neutral"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Dominant universal bank; fortress balance sheet; diversified revenue; market maker in all products"
+        },
+        "macro_alignment": {
+          "score": 0.8,
+          "max": 1.0,
+          "detail": "Financials benefit from Growth regime + steepening yield curve; IB recovery"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 70,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "BofA calls it best outlook post-GFC; IB pipeline robust; institutional core holding"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "Financials aligned with Growth; yield curve supportive"
+        },
+        "fundamental": {
+          "confidence": 86,
+          "stance": "BUY",
+          "note": "Fortress balance sheet; best earnings outlook post-GFC"
+        },
+        "behavioral": {
+          "confidence": 74,
+          "stance": "BUY",
+          "note": "CSS 70; institutional core holding"
+        },
+        "quant": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "Near ATH; RSI neutral; constructive"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Credit quality deterioration if economy slows; regulatory capital requirements",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Sector",
+          "description": "Banking sector rate sensitivity if Fed pauses longer; CRE exposure",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Recession risk would compress NIM and increase provisions",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        }
+      ],
+      "thesis": "JPMorgan has best earnings outlook since GFC. IB pipeline strong with M&A and IPO recovery. Yield curve steepening supports NIM. Entry at $310 with targets $325, $335, $350.",
+      "catalyst_timeline": "Apr: Q1 2026 earnings; Mar 17-18: FOMC meeting (rate decision impacts banks); Ongoing: IB deal pipeline",
+      "sentiment_summary": "BofA calls it best outlook post-GFC; IB pipeline robust; institutional core holding",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "CAT",
+      "company": "Caterpillar Inc.",
+      "sector": "Industrials",
+      "industry": "Machinery",
+      "action": "HOLD",
+      "previous_action": "HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 8.0,
+      "previous_icms_score": 8.1,
+      "consensus_pct": 84,
+      "conviction": "HIGH",
+      "current_price": 756.0,
+      "entry_price": 756.0,
+      "max_entry_price": 771.12,
+      "position_size_pct": 2.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 800.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 5.8,
+          "rationale": "Near-term momentum to $800 round number"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 825.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 9.1,
+          "rationale": "Intermediate resistance $825"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 878.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 16.1,
+          "rationale": "Evercore target $878"
+        }
+      ],
+      "stop_loss": 680.0,
+      "stop_loss_pct": -10.05,
+      "risk_reward_ratio": 1.6,
+      "atr_20d_pct": 3.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "Data center generator demand surging; backlog +71% YoY; AI infrastructure picks-and-shovels play"
+        },
+        "earnings_momentum": {
+          "score": 2.0,
+          "max": 3.0,
+          "detail": "Industrial sales +4%; sales to users +12%; backlog surging 71% YoY to $51.2B; Evercore raised to $878"
+        },
+        "technical_flow": {
+          "score": 1.5,
+          "max": 2.0,
+          "detail": "RSI 60; above all MAs; up 120% in past year; some overbought risk but momentum strong"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Market leader in heavy equipment; pricing power; data center generator moat; strong balance sheet"
+        },
+        "macro_alignment": {
+          "score": 0.7,
+          "max": 1.0,
+          "detail": "Industrials benefit from Growth regime; AI infrastructure capex tailwind; some tariff headwind on input costs"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 68,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Evercore $878 target; BofA $825; picks-and-shovels AI narrative gaining traction"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "Industrial aligned with Growth + AI capex"
+        },
+        "fundamental": {
+          "confidence": 86,
+          "stance": "BUY",
+          "note": "Backlog +71%; data center generator demand surge"
+        },
+        "behavioral": {
+          "confidence": 72,
+          "stance": "BUY",
+          "note": "CSS 68; cautiously optimistic; some overbought risk"
+        },
+        "quant": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "Strong momentum; above all MAs; Evercore $878"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Cyclical peak risk; data center demand could plateau; high valuation",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Sector",
+          "description": "Industrial sector sensitive to economic slowdown; input cost inflation from tariffs",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        },
+        {
+          "category": "Macro",
+          "description": "Global trade uncertainty; tariff impact on equipment exports and input costs",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Caterpillar is the 'picks and shovels' play for AI infrastructure. Data center generator demand surging with backlog +71% YoY. Evercore raised target to $878. Entry at $756.",
+      "catalyst_timeline": "Apr: Q1 earnings; Ongoing: Data center generator orders; Infrastructure project updates",
+      "sentiment_summary": "Evercore $878 target; BofA $825; picks-and-shovels AI narrative gaining traction",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "CEG",
+      "company": "Constellation Energy Corp.",
+      "sector": "Utilities",
+      "industry": "Electric Utilities",
+      "action": "HOLD",
+      "previous_action": "HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 7.9,
+      "previous_icms_score": 8.2,
+      "consensus_pct": 82,
+      "conviction": "HIGH",
+      "current_price": 288.0,
+      "entry_price": 288.0,
+      "max_entry_price": 293.76,
+      "position_size_pct": 2.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 320.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 11.1,
+          "rationale": "Recovery bounce to $320"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 360.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 25.0,
+          "rationale": "Momentum toward $360 intermediate target"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 406.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 41.0,
+          "rationale": "Analyst median target $406"
+        }
+      ],
+      "stop_loss": 259.0,
+      "stop_loss_pct": -10.07,
+      "risk_reward_ratio": 4.1,
+      "atr_20d_pct": 3.5,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "Nuclear energy + Big Tech data center contracts; 40.8% upside to median analyst target $406"
+        },
+        "earnings_momentum": {
+          "score": 2.0,
+          "max": 3.0,
+          "detail": "Long-term contracts from Big Tech; nuclear energy renaissance narrative; federal backing"
+        },
+        "technical_flow": {
+          "score": 1.3,
+          "max": 2.0,
+          "detail": "RSI 48; pulled back from ATH $403; oversold bounce potential; strong support at $275"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Largest US nuclear fleet; long-term PPA contracts; clean energy premium; strong cash flows"
+        },
+        "macro_alignment": {
+          "score": 0.8,
+          "max": 1.0,
+          "detail": "Utility with growth characteristics from AI power demand; rate sensitivity moderate"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 72,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "14 Buy ratings; median target $406 (41% upside); nuclear + AI power demand thesis"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "Nuclear aligned with AI power demand in Growth"
+        },
+        "fundamental": {
+          "confidence": 84,
+          "stance": "BUY",
+          "note": "Long-term Big Tech contracts; nuclear fleet dominant"
+        },
+        "behavioral": {
+          "confidence": 74,
+          "stance": "BUY",
+          "note": "CSS 72; oversold bounce opportunity"
+        },
+        "quant": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "Pulled back from ATH; RSI oversold territory"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Nuclear regulatory risk; maintenance outage risk; PPA renegotiation",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Sector",
+          "description": "Utility rate sensitivity; data center power demand slower than expected",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Higher rates longer could pressure utility valuations",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "Constellation Energy owns largest US nuclear fleet with Big Tech data center contracts. 41% upside to $406 median target. Nuclear renaissance narrative accelerating. Entry at $288.",
+      "catalyst_timeline": "Mar: Earnings update; Ongoing: Data center PPA announcements; Nuclear capacity expansion",
+      "sentiment_summary": "14 Buy ratings; median target $406 (41% upside); nuclear + AI power demand thesis",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "FCX",
+      "company": "Freeport-McMoRan Inc.",
+      "sector": "Materials",
+      "industry": "Copper Mining",
+      "action": "HOLD",
+      "previous_action": "NEW_ENTRY",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 7.8,
+      "previous_icms_score": 8.1,
+      "consensus_pct": 82,
+      "conviction": "HIGH",
+      "current_price": 60.56,
+      "entry_price": 60.56,
+      "max_entry_price": 61.77,
+      "position_size_pct": 2.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 65.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 7.3,
+          "rationale": "Near-term copper momentum $65"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 68.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 12.3,
+          "rationale": "UBS/Jefferies target area $68"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 70.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 15.6,
+          "rationale": "Morgan Stanley target $70"
+        }
+      ],
+      "stop_loss": 54.5,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 1.6,
+      "atr_20d_pct": 3.5,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "Copper demand from AI + energy transition; all-time high copper prices"
+        },
+        "earnings_momentum": {
+          "score": 2.0,
+          "max": 3.0,
+          "detail": "Copper prices at ATH; AI data center wiring demand; energy transition tailwind; Morgan Stanley raised to $70"
+        },
+        "technical_flow": {
+          "score": 1.3,
+          "max": 2.0,
+          "detail": "RSI 55; above MAs; copper price momentum supportive; volume steady"
+        },
+        "fundamental_quality": {
+          "score": 1.0,
+          "max": 1.5,
+          "detail": "World's largest public copper producer; low-cost mines; gold/moly byproduct value"
+        },
+        "macro_alignment": {
+          "score": 0.8,
+          "max": 1.0,
+          "detail": "Materials benefit from Growth + AI infrastructure; copper demand structural"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 70,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Morgan Stanley $70; UBS $70; copper supercycle thesis; institutional demand for materials exposure"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "Copper aligned with AI + energy transition in Growth"
+        },
+        "fundamental": {
+          "confidence": 84,
+          "stance": "BUY",
+          "note": "Largest copper producer; ATH copper prices; byproduct value"
+        },
+        "behavioral": {
+          "confidence": 72,
+          "stance": "BUY",
+          "note": "CSS 70; copper supercycle narrative building"
+        },
+        "quant": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "RSI neutral; copper momentum supportive"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Copper price volatility; production cuts 35% vs prior guidance; Indonesia regulatory risk",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        },
+        {
+          "category": "Sector",
+          "description": "Mining cycle risk; copper supply additions from new projects",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Global slowdown could reduce copper demand; tariff impact on trade flows",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Freeport-McMoRan benefits from copper supercycle driven by AI data centers + energy transition. Morgan Stanley raised to $70. Entry at $60.56.",
+      "catalyst_timeline": "Mar: Copper market updates; Apr: Q1 earnings; Ongoing: Production guidance updates",
+      "sentiment_summary": "Morgan Stanley $70; UBS $70; copper supercycle thesis; institutional demand for materials exposure",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "GS",
+      "company": "Goldman Sachs Group Inc.",
+      "sector": "Financials",
+      "industry": "Investment Banking",
+      "action": "HOLD",
+      "previous_action": "HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 7.7,
+      "previous_icms_score": 8.0,
+      "consensus_pct": 82,
+      "conviction": "HIGH",
+      "current_price": 920.0,
+      "entry_price": 920.0,
+      "max_entry_price": 938.4,
+      "position_size_pct": 2.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 950.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 3.3,
+          "rationale": "Recovery toward recent levels $950"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 976.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 6.1,
+          "rationale": "Retest ATH $976"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 1020.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 10.9,
+          "rationale": "Full thesis with IB recovery $1020"
+        }
+      ],
+      "stop_loss": 828.0,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 1.1,
+      "atr_20d_pct": 2.8,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "IB pipeline strong; M&A and IPO recovery expected; wealth management growing"
+        },
+        "earnings_momentum": {
+          "score": 1.8,
+          "max": 3.0,
+          "detail": "IB revenues recovering; M&A pipeline full; IPO market opening; wealth management scaling"
+        },
+        "technical_flow": {
+          "score": 1.3,
+          "max": 2.0,
+          "detail": "RSI 50; near ATH $976; consolidating; IB recovery narrative supportive"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Premier investment bank; diversified revenue; market-making leadership; strong brand"
+        },
+        "macro_alignment": {
+          "score": 0.7,
+          "max": 1.0,
+          "detail": "Financials benefit from Growth regime; M&A activity increases with economic confidence"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 68,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "IB pipeline robust; wealth management growing; premier franchise"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "IB aligned with Growth regime; M&A activity rising"
+        },
+        "fundamental": {
+          "confidence": 84,
+          "stance": "BUY",
+          "note": "Premier IB franchise; diversified revenue; M&A pipeline full"
+        },
+        "behavioral": {
+          "confidence": 72,
+          "stance": "BUY",
+          "note": "CSS 68; IB recovery narrative building"
+        },
+        "quant": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "Near ATH; consolidating; constructive setup"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "IB revenue volatile; market-making risk in volatile environment",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Sector",
+          "description": "Financial sector competition; regulatory capital requirements",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Market volatility could delay IPOs; recession would crush IB revenues",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        }
+      ],
+      "thesis": "Goldman Sachs benefits from IB recovery with full M&A pipeline and IPO market reopening. Near ATH at $976. Entry at $920.",
+      "catalyst_timeline": "Apr: Q1 earnings; Ongoing: M&A advisory mandates; IPO pipeline",
+      "sentiment_summary": "IB pipeline robust; wealth management growing; premier franchise",
+      "is_portfolio_position": false,
+      "qty": 0,
+      "cost_basis": null,
+      "unrealized_pnl": null,
+      "unrealized_pnl_pct": null,
+      "portfolio_weight": 0,
+      "hold_gate_status": null
+    },
+    {
+      "ticker": "NEE",
+      "company": "NextEra Energy Inc.",
+      "sector": "Utilities",
+      "industry": "Electric Utilities",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 7.5,
+      "previous_icms_score": 7.5,
+      "consensus_pct": 82,
+      "conviction": "HIGH",
+      "current_price": 93.0,
+      "entry_price": 93.0,
+      "max_entry_price": 94.86,
+      "position_size_pct": 2.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 96.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 3.2,
+          "rationale": "Near-term to recent ATH area $96"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 100.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 7.5,
+          "rationale": "Round number $100"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 106.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 14.0,
+          "rationale": "Morgan Stanley target $106"
+        }
+      ],
+      "stop_loss": 83.7,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 1.4,
+      "atr_20d_pct": 2.2,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.0,
+          "max": 2.5,
+          "detail": "Data center power demand; 10% dividend growth; Morgan Stanley raised to $106"
+        },
+        "earnings_momentum": {
+          "score": 2.0,
+          "max": 3.0,
+          "detail": "EPS growth above historical averages; rate base growth accelerating; $295-325B investment plan through 2032"
+        },
+        "technical_flow": {
+          "score": 1.3,
+          "max": 2.0,
+          "detail": "RSI 52; near ATH $95.56; consolidating; Morgan Stanley $106 target provides upside"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Industry-leading investment plan; clean energy leader; predictable regulated earnings"
+        },
+        "macro_alignment": {
+          "score": 0.7,
+          "max": 1.0,
+          "detail": "Utility with growth from AI power demand; rate sensitivity moderate"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 68,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Morgan Stanley raised to $106; 10% dividend growth; data center power demand thesis"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "Utility growth from AI power demand"
+        },
+        "fundamental": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "Industry-leading investment plan; clean energy leader"
+        },
+        "behavioral": {
+          "confidence": 72,
+          "stance": "HOLD",
+          "note": "CSS 68; neutral sentiment; dividend attraction"
+        },
+        "quant": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "Near ATH; consolidating; Morgan Stanley $106"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Renewable project execution risk; rate case outcomes uncertain",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Sector",
+          "description": "Data center power demand may grow slower than expected; rate sensitivity",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Higher rates longer pressures utility valuations",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "NextEra Energy is the premier clean energy utility with 10% dividend growth and $295-325B investment plan. Data center power demand provides growth catalyst. Morgan Stanley target $106. Entry at $93.",
+      "catalyst_timeline": "Apr: Q1 earnings; Ongoing: Renewable project announcements; Rate case outcomes",
+      "sentiment_summary": "Morgan Stanley raised to $106; 10% dividend growth; data center power demand thesis",
+      "is_portfolio_position": true,
+      "qty": 35,
+      "cost_basis": 2957.5,
+      "unrealized_pnl": 297.5,
+      "unrealized_pnl_pct": 10.06,
+      "portfolio_weight": 8.6,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "AMD",
+      "company": "Advanced Micro Devices Inc.",
+      "sector": "Information Technology",
+      "industry": "Semiconductors",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 7.8,
+      "previous_icms_score": 7.8,
+      "consensus_pct": 82,
+      "conviction": "HIGH",
+      "current_price": 215.0,
+      "entry_price": 215.0,
+      "max_entry_price": 219.3,
+      "position_size_pct": 2.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 240.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 11.6,
+          "rationale": "Recovery bounce to $240"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 260.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 20.9,
+          "rationale": "Consensus target area $260"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 288.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 34.0,
+          "rationale": "MarketBeat target $288"
+        }
+      ],
+      "stop_loss": 193.5,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 3.4,
+      "atr_20d_pct": 3.5,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "Q4 revenue +34% YoY; EPYC server + Instinct AI accelerators gaining share"
+        },
+        "earnings_momentum": {
+          "score": 2.0,
+          "max": 3.0,
+          "detail": "Revenue $10.3B (+34% YoY); EPYC and Instinct momentum; analyst target $260-288"
+        },
+        "technical_flow": {
+          "score": 1.3,
+          "max": 2.0,
+          "detail": "RSI 48; below 50d MA; oversold relative to fundamentals; bounce potential"
+        },
+        "fundamental_quality": {
+          "score": 1.0,
+          "max": 1.5,
+          "detail": "Strong product portfolio but FCF margin below NVDA; competitive position improving"
+        },
+        "macro_alignment": {
+          "score": 0.8,
+          "max": 1.0,
+          "detail": "Semiconductor aligned with Growth; AI accelerator gaining traction"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 68,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "34 analyst Buy consensus; target $260-288; AI accelerator share gains"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "Semi aligned with Growth"
+        },
+        "fundamental": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "Q4 +34% YoY; AI accelerator gaining share"
+        },
+        "behavioral": {
+          "confidence": 70,
+          "stance": "BUY",
+          "note": "CSS 68; institutional support despite recent weakness"
+        },
+        "quant": {
+          "confidence": 78,
+          "stance": "BUY",
+          "note": "Oversold bounce potential; RSI 48"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "NVDA competitive dominance; AI market share limited",
+          "impact": 4,
+          "likelihood": 3,
+          "composite": 7
+        },
+        {
+          "category": "Sector",
+          "description": "Semiconductor cycle risk; AI spending concentration on NVDA",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Tariff impact on supply chains; economic slowdown risk",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "AMD is gaining share in AI accelerators and servers with Q4 revenue +34% YoY. Analyst targets $260-288 suggest 20-34% upside. Entry at $215.",
+      "catalyst_timeline": "Apr: Q1 earnings; Mar: GTC competitor response; Ongoing: Instinct MI400 updates",
+      "sentiment_summary": "34 analyst Buy consensus; target $260-288; AI accelerator share gains",
+      "is_portfolio_position": true,
+      "qty": 10,
+      "cost_basis": 2220.0,
+      "unrealized_pnl": -70.0,
+      "unrealized_pnl_pct": -3.15,
+      "portfolio_weight": 5.4,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "MSFT",
+      "company": "Microsoft Corporation",
+      "sector": "Information Technology",
+      "industry": "Software",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 8.0,
+      "previous_icms_score": 8.2,
+      "consensus_pct": 82,
+      "conviction": "HIGH",
+      "current_price": 400.0,
+      "entry_price": 400.0,
+      "max_entry_price": 408.0,
+      "position_size_pct": 2.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 440.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 10.0,
+          "rationale": "Recovery to $440"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 480.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 20.0,
+          "rationale": "Intermediate $480"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 530.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 32.5,
+          "rationale": "Consensus target ~$530"
+        }
+      ],
+      "stop_loss": 360.0,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 3.3,
+      "atr_20d_pct": 2.5,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "Azure + Copilot AI momentum; steady enterprise demand; target avg ~$530"
+        },
+        "earnings_momentum": {
+          "score": 2.2,
+          "max": 3.0,
+          "detail": "Azure growth reaccelerating; Copilot monetization beginning; enterprise AI adoption early innings"
+        },
+        "technical_flow": {
+          "score": 1.3,
+          "max": 2.0,
+          "detail": "RSI 50; testing key support; below recent highs; institutional buying on dips"
+        },
+        "fundamental_quality": {
+          "score": 1.5,
+          "max": 1.5,
+          "detail": "Dominant enterprise software; Azure cloud #2; Office 365 cash machine; fortress balance sheet"
+        },
+        "macro_alignment": {
+          "score": 0.8,
+          "max": 1.0,
+          "detail": "Cloud + AI aligned with Growth regime; enterprise spend resilient"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 74,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Institutional core holding; Azure + Copilot narrative; 88% analyst buy"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 80,
+          "stance": "BUY",
+          "note": "Cloud/AI aligned with Growth"
+        },
+        "fundamental": {
+          "confidence": 88,
+          "stance": "BUY",
+          "note": "Azure + Copilot; fortress balance sheet; dominant moat"
+        },
+        "behavioral": {
+          "confidence": 76,
+          "stance": "BUY",
+          "note": "CSS 74; institutional core holding"
+        },
+        "quant": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "RSI neutral; support holding"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Azure growth deceleration; Copilot monetization slower than expected",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Sector",
+          "description": "Cloud competition; enterprise spending pullback risk",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Tariff uncertainty; economic slowdown could reduce enterprise IT spend",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "Microsoft benefits from Azure reacceleration and Copilot AI monetization. Target avg ~$530 (33% upside). Entry at $400.",
+      "catalyst_timeline": "Apr: Q3 FY2026 earnings; Ongoing: Copilot adoption metrics; Azure growth",
+      "sentiment_summary": "Institutional core holding; Azure + Copilot narrative; 88% analyst buy",
+      "is_portfolio_position": true,
+      "qty": 3,
+      "cost_basis": 1514.31,
+      "unrealized_pnl": -314.31,
+      "unrealized_pnl_pct": -20.76,
+      "portfolio_weight": 3.1,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "CPRX",
+      "company": "Catalyst Pharmaceuticals Inc.",
+      "sector": "Healthcare",
+      "industry": "Specialty Pharma",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 7.6,
+      "previous_icms_score": 7.8,
+      "consensus_pct": 82,
+      "conviction": "HIGH",
+      "current_price": 24.0,
+      "entry_price": 24.0,
+      "max_entry_price": 24.48,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 28.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 16.7,
+          "rationale": "Near-term momentum $28"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 31.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 29.2,
+          "rationale": "Intermediate $31"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 33.25,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 38.5,
+          "rationale": "Analyst target $33.25"
+        }
+      ],
+      "stop_loss": 21.6,
+      "stop_loss_pct": -10.0,
+      "risk_reward_ratio": 2.5,
+      "atr_20d_pct": 2.5,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.5,
+          "max": 2.5,
+          "detail": "Strong earnings beat (26.5% surprise); Forbes Small-Cap recognition; target $33.25"
+        },
+        "earnings_momentum": {
+          "score": 2.0,
+          "max": 3.0,
+          "detail": "EPS $0.42 vs $0.33 est (26.5% beat); EBITDA margin 47.42%; rare disease moat"
+        },
+        "technical_flow": {
+          "score": 1.3,
+          "max": 2.0,
+          "detail": "RSI 52; above key MAs; steady uptrend; volume supportive"
+        },
+        "fundamental_quality": {
+          "score": 1.0,
+          "max": 1.5,
+          "detail": "Rare disease specialist; high EBITDA margin; limited competition in niche markets"
+        },
+        "macro_alignment": {
+          "score": 0.7,
+          "max": 1.0,
+          "detail": "Healthcare defensive; rare disease unaffected by macro conditions"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 72,
+        "score": 1.0,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "4 analysts Strong Buy; target $33.25; rare disease specialist with defensive moat"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 76,
+          "stance": "BUY",
+          "note": "Healthcare defensive in any regime"
+        },
+        "fundamental": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "26.5% earnings beat; 47% EBITDA margin; rare disease moat"
+        },
+        "behavioral": {
+          "confidence": 72,
+          "stance": "BUY",
+          "note": "CSS 72; Forbes recognition catalyst"
+        },
+        "quant": {
+          "confidence": 76,
+          "stance": "BUY",
+          "note": "RSI neutral; steady uptrend"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Single-product concentration risk; patent expiry timeline",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        },
+        {
+          "category": "Sector",
+          "description": "Healthcare reform/pricing pressure risk",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Limited macro sensitivity for rare disease",
+          "impact": 2,
+          "likelihood": 1,
+          "composite": 3
+        }
+      ],
+      "thesis": "Catalyst Pharmaceuticals beat earnings by 26.5% with 47% EBITDA margin. Rare disease niche provides defensive moat. Target $33.25 (39% upside). Entry at $24.",
+      "catalyst_timeline": "Apr: Next earnings; Ongoing: Pipeline development; Forbes recognition catalyst",
+      "sentiment_summary": "4 analysts Strong Buy; target $33.25; rare disease specialist with defensive moat",
+      "is_portfolio_position": true,
+      "qty": 75,
+      "cost_basis": 1483.5,
+      "unrealized_pnl": 316.5,
+      "unrealized_pnl_pct": 21.33,
+      "portfolio_weight": 4.8,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "VKTX",
+      "company": "Viking Therapeutics Inc.",
+      "sector": "Healthcare",
+      "industry": "Biotechnology",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 7.4,
+      "previous_icms_score": 7.6,
+      "consensus_pct": 80,
+      "conviction": "MEDIUM",
+      "current_price": 29.0,
+      "entry_price": 29.0,
+      "max_entry_price": 29.58,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 35.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 20.7,
+          "rationale": "Near-term catalyst bounce $35"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 42.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 44.8,
+          "rationale": "Clinical data readout $42"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 55.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 89.7,
+          "rationale": "Full pipeline valuation $55"
+        }
+      ],
+      "stop_loss": 24.65,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 6.0,
+      "atr_20d_pct": 5.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 2.0,
+          "max": 2.5,
+          "detail": "GLP-1 oral candidate; clinical trial catalysts upcoming; obesity pipeline"
+        },
+        "earnings_momentum": {
+          "score": 1.5,
+          "max": 3.0,
+          "detail": "Promising GLP-1 pipeline but pre-revenue; high speculation premium; clinical data pending"
+        },
+        "technical_flow": {
+          "score": 1.3,
+          "max": 2.0,
+          "detail": "RSI 50; volatile biotech; strong momentum from +354% gain; some consolidation expected"
+        },
+        "fundamental_quality": {
+          "score": 0.5,
+          "max": 1.5,
+          "detail": "Pre-revenue biotech; pipeline dependent; no commercial products yet; speculative"
+        },
+        "macro_alignment": {
+          "score": 0.7,
+          "max": 1.0,
+          "detail": "Healthcare with GLP-1 exposure; benefits from obesity treatment secular trend"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 82,
+        "score": 1.5,
+        "max": 2.0,
+        "mode": "CONFIRMATION",
+        "detail": "Retail enthusiasm strong; GLP-1 narrative supportive; speculative position"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 72,
+          "stance": "HOLD",
+          "note": "GLP-1 aligned but speculative"
+        },
+        "fundamental": {
+          "confidence": 68,
+          "stance": "HOLD",
+          "note": "Pre-revenue; pipeline dependent; high risk high reward"
+        },
+        "behavioral": {
+          "confidence": 82,
+          "stance": "BUY",
+          "note": "CSS 82; retail enthusiasm on GLP-1 narrative"
+        },
+        "quant": {
+          "confidence": 72,
+          "stance": "HOLD",
+          "note": "Volatile; momentum strong but risky"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Clinical trial failure risk; no commercial revenue; cash burn",
+          "impact": 5,
+          "likelihood": 3,
+          "composite": 8
+        },
+        {
+          "category": "Sector",
+          "description": "GLP-1 competition from Lilly and Novo overwhelming; regulatory risk",
+          "impact": 4,
+          "likelihood": 3,
+          "composite": 7
+        },
+        {
+          "category": "Macro",
+          "description": "Biotech funding environment sensitive to risk appetite",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "Viking Therapeutics is a speculative GLP-1 play with strong retail enthusiasm (+354% gain). Pre-revenue with clinical catalysts ahead. High risk/reward.",
+      "catalyst_timeline": "2026: Phase 3 trial updates; FDA engagement timeline; Partnership potential",
+      "sentiment_summary": "Retail enthusiasm strong; GLP-1 narrative supportive; speculative position",
+      "is_portfolio_position": true,
+      "qty": 1,
+      "cost_basis": 6.39,
+      "unrealized_pnl": 22.61,
+      "unrealized_pnl_pct": 353.83,
+      "portfolio_weight": 0.1,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "ESOA",
+      "company": "Energy Services of America Corp.",
+      "sector": "Industrials",
+      "industry": "Construction & Engineering",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 7.0,
+      "previous_icms_score": 7.3,
+      "consensus_pct": 60,
+      "conviction": "MEDIUM",
+      "current_price": 14.0,
+      "entry_price": 14.0,
+      "max_entry_price": 14.28,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 16.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 14.3,
+          "rationale": "Near-term momentum $16"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 18.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 28.6,
+          "rationale": "Intermediate $18"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 21.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 50.0,
+          "rationale": "Analyst target $21"
+        }
+      ],
+      "stop_loss": 11.9,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 3.3,
+      "atr_20d_pct": 3.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.0,
+          "max": 2.5,
+          "detail": "Backlog $301M (+$41.7M sequential); revenue +13.4% YoY; pipeline contractor"
+        },
+        "earnings_momentum": {
+          "score": 1.8,
+          "max": 3.0,
+          "detail": "Revenue $114.1M (+13.4% YoY); backlog $301M growing; analyst target $21; small-cap value"
+        },
+        "technical_flow": {
+          "score": 1.2,
+          "max": 2.0,
+          "detail": "RSI 50; near 52-week high; recent $20M offering may dilute; volume thin"
+        },
+        "fundamental_quality": {
+          "score": 0.8,
+          "max": 1.5,
+          "detail": "Growing pipeline contractor; backlog visibility; but thin analyst coverage; small-cap liquidity risk"
+        },
+        "macro_alignment": {
+          "score": 0.7,
+          "max": 1.0,
+          "detail": "Industrial contractor benefits from infrastructure spend; pipeline/utility demand"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 70,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Single analyst Strong Buy; target $21; backlog growth supportive"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 68,
+          "stance": "HOLD",
+          "note": "Industrial aligned but small-cap risk"
+        },
+        "fundamental": {
+          "confidence": 72,
+          "stance": "BUY",
+          "note": "Growing backlog; revenue +13.4%; target $21"
+        },
+        "behavioral": {
+          "confidence": 68,
+          "stance": "HOLD",
+          "note": "CSS 70; thin coverage; limited institutional interest"
+        },
+        "quant": {
+          "confidence": 65,
+          "stance": "HOLD",
+          "note": "Near highs but thin volume; dilution risk from offering"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "$20M offering dilution; thin analyst coverage; small-cap liquidity risk",
+          "impact": 4,
+          "likelihood": 3,
+          "composite": 7
+        },
+        {
+          "category": "Sector",
+          "description": "Pipeline project delays; regulatory approval timelines",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Infrastructure spending dependent on fiscal policy continuity",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "ESOA is a growing pipeline contractor with $301M backlog and 13.4% revenue growth. Target $21 (50% upside) but recent $20M offering and thin coverage add risk.",
+      "catalyst_timeline": "Apr: Next earnings; Ongoing: Backlog updates; Acquisition pipeline",
+      "sentiment_summary": "Single analyst Strong Buy; target $21; backlog growth supportive",
+      "is_portfolio_position": true,
+      "qty": 100,
+      "cost_basis": 369.99,
+      "unrealized_pnl": 1030.01,
+      "unrealized_pnl_pct": 278.39,
+      "portfolio_weight": 3.7,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "PTC",
+      "company": "PTC Inc.",
+      "sector": "Information Technology",
+      "industry": "Application Software",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 7.0,
+      "previous_icms_score": 7.2,
+      "consensus_pct": 60,
+      "conviction": "MEDIUM",
+      "current_price": 157.0,
+      "entry_price": 157.0,
+      "max_entry_price": 160.14,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 170.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 8.3,
+          "rationale": "Near-term $170"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 180.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 14.6,
+          "rationale": "Intermediate $180"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 195.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 24.2,
+          "rationale": "Full thesis $195"
+        }
+      ],
+      "stop_loss": 133.45,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 2.4,
+      "atr_20d_pct": 2.5,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.0,
+          "max": 2.5,
+          "detail": "CAD/PLM software; steady enterprise demand; digital transformation catalyst"
+        },
+        "earnings_momentum": {
+          "score": 1.8,
+          "max": 3.0,
+          "detail": "Steady earnings growth; subscription model provides visibility; digital transformation tailwind"
+        },
+        "technical_flow": {
+          "score": 1.2,
+          "max": 2.0,
+          "detail": "RSI 54; above MAs; steady uptrend; up 94.7% from cost basis"
+        },
+        "fundamental_quality": {
+          "score": 1.0,
+          "max": 1.5,
+          "detail": "Enterprise software with subscription model; CAD/PLM niche leadership; decent margins"
+        },
+        "macro_alignment": {
+          "score": 0.7,
+          "max": 1.0,
+          "detail": "Software aligned with Growth; enterprise spend resilient"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 72,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Limited but positive coverage; subscription model provides visibility"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 72,
+          "stance": "HOLD",
+          "note": "Software aligned with Growth but moderate conviction"
+        },
+        "fundamental": {
+          "confidence": 76,
+          "stance": "BUY",
+          "note": "Subscription model; CAD/PLM niche; decent growth"
+        },
+        "behavioral": {
+          "confidence": 68,
+          "stance": "HOLD",
+          "note": "CSS 72; limited coverage"
+        },
+        "quant": {
+          "confidence": 72,
+          "stance": "HOLD",
+          "note": "Steady uptrend; not exciting but solid"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Niche market; competition from Siemens, Dassault; growth rate moderate",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Sector",
+          "description": "Enterprise software spending could slow",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Economic slowdown would reduce IT spend",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "PTC is a steady CAD/PLM software player with subscription model and digital transformation tailwind. Up 94.7% from cost basis. Moderate growth.",
+      "catalyst_timeline": "Apr: Earnings; Ongoing: Subscription transition metrics",
+      "sentiment_summary": "Limited but positive coverage; subscription model provides visibility",
+      "is_portfolio_position": true,
+      "qty": 2,
+      "cost_basis": 161.02,
+      "unrealized_pnl": 152.98,
+      "unrealized_pnl_pct": 95.01,
+      "portfolio_weight": 0.8,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "CRM",
+      "company": "Salesforce Inc.",
+      "sector": "Information Technology",
+      "industry": "Application Software",
+      "action": "PORTFOLIO_MONITOR",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": "STATUS_CHANGE",
+      "status_change_reason": "Moved from HOLD to MONITOR; ICMS dropped from 7.0 to 6.8",
+      "icms_score": 6.8,
+      "previous_icms_score": 7.0,
+      "consensus_pct": 60,
+      "conviction": "MEDIUM",
+      "current_price": 190.0,
+      "entry_price": 190.0,
+      "max_entry_price": 193.8,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 210.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 10.5,
+          "rationale": "Recovery bounce $210"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 250.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 31.6,
+          "rationale": "Intermediate $250"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 400.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 110.5,
+          "rationale": "Bull case analyst target $400"
+        }
+      ],
+      "stop_loss": 161.5,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 7.5,
+      "atr_20d_pct": 3.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.0,
+          "max": 2.5,
+          "detail": "Agentforce AI initiative; but execution concerns and competitive pressure"
+        },
+        "earnings_momentum": {
+          "score": 1.5,
+          "max": 3.0,
+          "detail": "Moderate growth; AI narrative with Agentforce but monetization uncertain; analyst targets ~$400"
+        },
+        "technical_flow": {
+          "score": 1.0,
+          "max": 2.0,
+          "detail": "RSI 46; below 50d MA; underperforming peers; lacking momentum"
+        },
+        "fundamental_quality": {
+          "score": 1.3,
+          "max": 1.5,
+          "detail": "CRM market leader; recurring revenue; AI optionality; decent FCF"
+        },
+        "macro_alignment": {
+          "score": 0.5,
+          "max": 1.0,
+          "detail": "Enterprise software aligned but growth decelerating"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 72,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Mixed analyst sentiment; AI narrative needs execution proof"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 68,
+          "stance": "HOLD",
+          "note": "Software aligned but growth concerns"
+        },
+        "fundamental": {
+          "confidence": 72,
+          "stance": "HOLD",
+          "note": "CRM leader but growth decelerating; AI monetization uncertain"
+        },
+        "behavioral": {
+          "confidence": 68,
+          "stance": "HOLD",
+          "note": "CSS 72; neutral sentiment"
+        },
+        "quant": {
+          "confidence": 68,
+          "stance": "HOLD",
+          "note": "Below 50d MA; lacking momentum"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Agentforce AI execution risk; growth deceleration; competitive pressure from Microsoft",
+          "impact": 4,
+          "likelihood": 3,
+          "composite": 7
+        },
+        {
+          "category": "Sector",
+          "description": "Enterprise software spending may slow; AI hype vs reality gap",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Economic slowdown would reduce enterprise CRM spend",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "Salesforce has CRM leadership and Agentforce AI initiative but growth is decelerating and execution is uncertain. Down -21% from cost. MONITOR status.",
+      "catalyst_timeline": "Mar: Earnings; Ongoing: Agentforce adoption metrics",
+      "sentiment_summary": "Mixed analyst sentiment; AI narrative needs execution proof",
+      "is_portfolio_position": true,
+      "qty": 2,
+      "cost_basis": 481.25,
+      "unrealized_pnl": -101.25,
+      "unrealized_pnl_pct": -21.04,
+      "portfolio_weight": 1.0,
+      "hold_gate_status": "MONITOR"
+    },
+    {
+      "ticker": "XOM",
+      "company": "Exxon Mobil Corporation",
+      "sector": "Energy",
+      "industry": "Oil & Gas",
+      "action": "PORTFOLIO_HOLD",
+      "previous_action": "PORTFOLIO_HOLD",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 6.8,
+      "previous_icms_score": 7.0,
+      "consensus_pct": 60,
+      "conviction": "MEDIUM",
+      "current_price": 148.0,
+      "entry_price": 148.0,
+      "max_entry_price": 150.96,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 155.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 4.7,
+          "rationale": "Near-term $155"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 160.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 8.1,
+          "rationale": "Intermediate $160"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 170.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 14.9,
+          "rationale": "Bull case $170"
+        }
+      ],
+      "stop_loss": 125.8,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 1.5,
+      "atr_20d_pct": 2.5,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.0,
+          "max": 2.5,
+          "detail": "Oil prices expected to decline; WTI $55-65 range; dividend stable"
+        },
+        "earnings_momentum": {
+          "score": 1.3,
+          "max": 3.0,
+          "detail": "Moderate earnings growth; oil prices expected to soften; EIA forecasts $58 Brent; dividend safe"
+        },
+        "technical_flow": {
+          "score": 1.2,
+          "max": 2.0,
+          "detail": "RSI 48; range-bound; oil price headwinds; dividend support at current levels"
+        },
+        "fundamental_quality": {
+          "score": 1.3,
+          "max": 1.5,
+          "detail": "Integrated oil major; diversified operations; strong balance sheet; low-cost production"
+        },
+        "macro_alignment": {
+          "score": 0.5,
+          "max": 1.0,
+          "detail": "Energy faces oil price headwinds; moderate alignment with Growth regime"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 70,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Neutral sentiment; oil price outlook bearish but dividend safe"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 68,
+          "stance": "HOLD",
+          "note": "Energy faces oil price headwinds"
+        },
+        "fundamental": {
+          "confidence": 72,
+          "stance": "HOLD",
+          "note": "Strong balance sheet but oil outlook bearish"
+        },
+        "behavioral": {
+          "confidence": 66,
+          "stance": "HOLD",
+          "note": "CSS 70; neutral"
+        },
+        "quant": {
+          "confidence": 68,
+          "stance": "HOLD",
+          "note": "Range-bound; dividend support"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Oil price decline below breakeven; production cost challenges",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        },
+        {
+          "category": "Sector",
+          "description": "Energy transition long-term headwind; oversupply in oil market",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        },
+        {
+          "category": "Macro",
+          "description": "Global demand slowdown; OPEC+ production increases",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Exxon is a stable dividend payer but faces oil price headwinds with EIA forecasting $58 Brent. Up 49% from cost. HOLD for dividend income.",
+      "catalyst_timeline": "Apr: Q1 earnings; Ongoing: Oil price and production updates",
+      "sentiment_summary": "Neutral sentiment; oil price outlook bearish but dividend safe",
+      "is_portfolio_position": true,
+      "qty": 1,
+      "cost_basis": 99.33,
+      "unrealized_pnl": 48.67,
+      "unrealized_pnl_pct": 49.0,
+      "portfolio_weight": 0.4,
+      "hold_gate_status": "HOLD"
+    },
+    {
+      "ticker": "NOK",
+      "company": "Nokia Corporation",
+      "sector": "Communication Services",
+      "industry": "Telecom Equipment",
+      "action": "MONITOR",
+      "previous_action": "MONITOR",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 6.0,
+      "previous_icms_score": 6.3,
+      "consensus_pct": 35,
+      "conviction": "LOW",
+      "current_price": 7.0,
+      "entry_price": 7.0,
+      "max_entry_price": 7.14,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 7.5,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 7.1,
+          "rationale": "Near-term $7.50"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 8.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 14.3,
+          "rationale": "Intermediate $8"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 9.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 28.6,
+          "rationale": "Bull case $9"
+        }
+      ],
+      "stop_loss": 5.95,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 1.3,
+      "atr_20d_pct": 3.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 0.5,
+          "max": 2.5,
+          "detail": "Limited near-term catalysts; mature telecom equipment market"
+        },
+        "earnings_momentum": {
+          "score": 1.0,
+          "max": 3.0,
+          "detail": "Slow growth; telecom capex cycle uncertain; limited analyst excitement"
+        },
+        "technical_flow": {
+          "score": 1.0,
+          "max": 2.0,
+          "detail": "RSI 48; range-bound; thin volume; limited momentum"
+        },
+        "fundamental_quality": {
+          "score": 1.0,
+          "max": 1.5,
+          "detail": "Decent balance sheet; 5G/6G pipeline; but competitive market with Ericsson and Huawei"
+        },
+        "macro_alignment": {
+          "score": 0.5,
+          "max": 1.0,
+          "detail": "Telecom equipment cyclical; moderate alignment"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 62,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Limited analyst coverage; neutral sentiment"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 55,
+          "stance": "HOLD",
+          "note": "Telecom equipment limited alignment"
+        },
+        "fundamental": {
+          "confidence": 60,
+          "stance": "HOLD",
+          "note": "Decent balance sheet but slow growth"
+        },
+        "behavioral": {
+          "confidence": 55,
+          "stance": "HOLD",
+          "note": "CSS 62; neutral"
+        },
+        "quant": {
+          "confidence": 55,
+          "stance": "HOLD",
+          "note": "Range-bound; limited momentum"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Slow growth; competitive pressure from Ericsson/Huawei",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        },
+        {
+          "category": "Sector",
+          "description": "Telecom capex cycle uncertain; 5G rollout decelerating",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        },
+        {
+          "category": "Macro",
+          "description": "Global trade tensions impact telecom supply chains",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        }
+      ],
+      "thesis": "Nokia is a mature telecom equipment player with limited near-term catalysts. Up 38.8% from cost but growth outlook muted. MONITOR status.",
+      "catalyst_timeline": "Apr: Earnings; Ongoing: 5G/6G contract wins",
+      "sentiment_summary": "Limited analyst coverage; neutral sentiment",
+      "is_portfolio_position": true,
+      "qty": 21,
+      "cost_basis": 106.37,
+      "unrealized_pnl": 40.63,
+      "unrealized_pnl_pct": 38.2,
+      "portfolio_weight": 0.4,
+      "hold_gate_status": "MONITOR"
+    },
+    {
+      "ticker": "MEG",
+      "company": "Montrose Environmental Group",
+      "sector": "Industrials",
+      "industry": "Environmental Services",
+      "action": "MONITOR",
+      "previous_action": "MONITOR",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 5.5,
+      "previous_icms_score": 5.8,
+      "consensus_pct": 35,
+      "conviction": "LOW",
+      "current_price": 20.0,
+      "entry_price": 20.0,
+      "max_entry_price": 20.4,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 22.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 10.0,
+          "rationale": "Recovery $22"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 25.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 25.0,
+          "rationale": "Intermediate $25"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 28.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 40.0,
+          "rationale": "Bull $28"
+        }
+      ],
+      "stop_loss": 17.0,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 1.6,
+      "atr_20d_pct": 3.5,
+      "components": {
+        "catalyst_timing": {
+          "score": 0.5,
+          "max": 2.5,
+          "detail": "Limited catalysts; environmental services niche; recent weakness -6.5%"
+        },
+        "earnings_momentum": {
+          "score": 1.0,
+          "max": 3.0,
+          "detail": "Moderate growth; environmental services demand steady but not exciting"
+        },
+        "technical_flow": {
+          "score": 0.8,
+          "max": 2.0,
+          "detail": "RSI 38; below key MAs; downtrend; -27% from cost basis"
+        },
+        "fundamental_quality": {
+          "score": 1.0,
+          "max": 1.5,
+          "detail": "Niche environmental services; recurring revenue; but thin coverage"
+        },
+        "macro_alignment": {
+          "score": 0.5,
+          "max": 1.0,
+          "detail": "Limited macro alignment; niche environmental services"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 55,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Thin coverage; neutral sentiment; deteriorating technicals"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 50,
+          "stance": "HOLD",
+          "note": "Limited alignment"
+        },
+        "fundamental": {
+          "confidence": 58,
+          "stance": "HOLD",
+          "note": "Niche but thin coverage"
+        },
+        "behavioral": {
+          "confidence": 50,
+          "stance": "HOLD",
+          "note": "CSS 55; neutral"
+        },
+        "quant": {
+          "confidence": 50,
+          "stance": "HOLD",
+          "note": "Downtrend; below MAs"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Thin analyst coverage; small-cap liquidity risk; execution risk",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        },
+        {
+          "category": "Sector",
+          "description": "Environmental services niche; regulatory dependency",
+          "impact": 3,
+          "likelihood": 2,
+          "composite": 5
+        },
+        {
+          "category": "Macro",
+          "description": "Government spending cuts could impact environmental contracts",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Montrose Environmental is a niche player down -27% from cost. Limited catalysts and thin coverage. MONITOR status - prepare exit plan.",
+      "catalyst_timeline": "Apr: Earnings; Ongoing: Contract wins",
+      "sentiment_summary": "Thin coverage; neutral sentiment; deteriorating technicals",
+      "is_portfolio_position": true,
+      "qty": 65,
+      "cost_basis": 1835.6,
+      "unrealized_pnl": -535.6,
+      "unrealized_pnl_pct": -29.18,
+      "portfolio_weight": 3.5,
+      "hold_gate_status": "MONITOR"
+    },
+    {
+      "ticker": "VSTM",
+      "company": "Verastem Oncology",
+      "sector": "Healthcare",
+      "industry": "Biotechnology",
+      "action": "MONITOR",
+      "previous_action": "MONITOR",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 5.2,
+      "previous_icms_score": 5.5,
+      "consensus_pct": 35,
+      "conviction": "LOW",
+      "current_price": 5.8,
+      "entry_price": 5.8,
+      "max_entry_price": 5.92,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 7.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 20.7,
+          "rationale": "Recovery $7"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 9.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 55.2,
+          "rationale": "Clinical catalyst $9"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 12.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 106.9,
+          "rationale": "Pipeline valuation $12"
+        }
+      ],
+      "stop_loss": 4.93,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 3.6,
+      "atr_20d_pct": 5.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 1.0,
+          "max": 2.5,
+          "detail": "Oncology pipeline; FDA catalysts possible but uncertain timing"
+        },
+        "earnings_momentum": {
+          "score": 0.8,
+          "max": 3.0,
+          "detail": "Pre-revenue; pipeline dependent; clinical trial data pending; high speculation"
+        },
+        "technical_flow": {
+          "score": 0.8,
+          "max": 2.0,
+          "detail": "RSI 42; below key MAs; downtrend from cost basis; thin volume"
+        },
+        "fundamental_quality": {
+          "score": 0.3,
+          "max": 1.5,
+          "detail": "Pre-revenue biotech; limited cash runway concerns; pipeline risk"
+        },
+        "macro_alignment": {
+          "score": 0.5,
+          "max": 1.0,
+          "detail": "Biotech defensive but speculative; limited macro sensitivity"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 68,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Limited but some retail interest in oncology pipeline"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 45,
+          "stance": "HOLD",
+          "note": "Speculative biotech"
+        },
+        "fundamental": {
+          "confidence": 50,
+          "stance": "HOLD",
+          "note": "Pre-revenue; pipeline risk"
+        },
+        "behavioral": {
+          "confidence": 62,
+          "stance": "HOLD",
+          "note": "CSS 68; some retail interest"
+        },
+        "quant": {
+          "confidence": 45,
+          "stance": "HOLD",
+          "note": "Downtrend; thin volume"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Clinical trial failure risk; cash burn; dilution risk; -49% from cost",
+          "impact": 5,
+          "likelihood": 3,
+          "composite": 8
+        },
+        {
+          "category": "Sector",
+          "description": "Biotech funding environment; regulatory risk",
+          "impact": 4,
+          "likelihood": 2,
+          "composite": 6
+        },
+        {
+          "category": "Macro",
+          "description": "Risk-off environment hurts speculative biotech",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Verastem is a speculative oncology biotech down -49% from cost. Pipeline catalysts uncertain. MONITOR status - consider exit.",
+      "catalyst_timeline": "2026: Clinical trial data readouts; FDA engagement",
+      "sentiment_summary": "Limited but some retail interest in oncology pipeline",
+      "is_portfolio_position": true,
+      "qty": 503,
+      "cost_basis": 5921.94,
+      "unrealized_pnl": -3004.54,
+      "unrealized_pnl_pct": -50.74,
+      "portfolio_weight": 7.6,
+      "hold_gate_status": "MONITOR"
+    },
+    {
+      "ticker": "AI",
+      "company": "C3.ai Inc.",
+      "sector": "Information Technology",
+      "industry": "Enterprise Software",
+      "action": "EXIT_SIGNAL",
+      "previous_action": "EXIT_SIGNAL",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 4.8,
+      "previous_icms_score": 5.2,
+      "consensus_pct": 35,
+      "conviction": "LOW",
+      "current_price": 10.8,
+      "entry_price": 10.8,
+      "max_entry_price": 11.02,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 12.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 11.1,
+          "rationale": "Recovery $12"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 14.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 29.6,
+          "rationale": "Intermediate $14"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 18.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 66.7,
+          "rationale": "Bull $18"
+        }
+      ],
+      "stop_loss": 9.18,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 4.4,
+      "atr_20d_pct": 5.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 0.5,
+          "max": 2.5,
+          "detail": "Limited catalysts; AI software but struggling to monetize"
+        },
+        "earnings_momentum": {
+          "score": 0.8,
+          "max": 3.0,
+          "detail": "Revenue growth slowing; customer acquisition challenges; competition from hyperscalers"
+        },
+        "technical_flow": {
+          "score": 0.5,
+          "max": 2.0,
+          "detail": "RSI 40; below all MAs; downtrend; -28.5% from cost; lacking momentum"
+        },
+        "fundamental_quality": {
+          "score": 0.5,
+          "max": 1.5,
+          "detail": "Growing revenue but not profitable; high burn rate; competitive market"
+        },
+        "macro_alignment": {
+          "score": 0.5,
+          "max": 1.0,
+          "detail": "AI software benefits from AI narrative but execution lacking"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 48,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Bearish sentiment; competition overwhelming; execution lacking"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 40,
+          "stance": "SELL",
+          "note": "AI software but poor execution"
+        },
+        "fundamental": {
+          "confidence": 42,
+          "stance": "SELL",
+          "note": "Not profitable; competitive market; customer churn risk"
+        },
+        "behavioral": {
+          "confidence": 45,
+          "stance": "HOLD",
+          "note": "CSS 48; neutral"
+        },
+        "quant": {
+          "confidence": 40,
+          "stance": "SELL",
+          "note": "Downtrend; below all MAs"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Not profitable; competition from MSFT/GOOGL/AMZN; customer churn; -28.5% from cost",
+          "impact": 5,
+          "likelihood": 4,
+          "composite": 9
+        },
+        {
+          "category": "Sector",
+          "description": "Enterprise AI overcrowded; hyperscaler competition overwhelming",
+          "impact": 4,
+          "likelihood": 4,
+          "composite": 8
+        },
+        {
+          "category": "Macro",
+          "description": "Speculative tech suffers in risk-off; VIX 21.5",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "C3.ai continues to struggle with monetization despite AI narrative. Down -28.5% from cost. EXIT_SIGNAL - recommend sale within 5 trading days.",
+      "catalyst_timeline": "Mar: Earnings; Ongoing: Customer acquisition metrics",
+      "sentiment_summary": "Bearish sentiment; competition overwhelming; execution lacking",
+      "is_portfolio_position": true,
+      "qty": 225,
+      "cost_basis": 3394.17,
+      "unrealized_pnl": -964.17,
+      "unrealized_pnl_pct": -28.41,
+      "portfolio_weight": 6.3,
+      "hold_gate_status": "EXIT_SIGNAL"
+    },
+    {
+      "ticker": "CLNE",
+      "company": "Clean Energy Fuels Corp.",
+      "sector": "Energy",
+      "industry": "Renewable Energy",
+      "action": "EXIT_SIGNAL",
+      "previous_action": "EXIT_SIGNAL",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 3.8,
+      "previous_icms_score": 4.0,
+      "consensus_pct": 35,
+      "conviction": "LOW",
+      "current_price": 2.6,
+      "entry_price": 2.6,
+      "max_entry_price": 2.65,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 3.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 15.4,
+          "rationale": "Recovery $3"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 3.5,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 34.6,
+          "rationale": "Intermediate $3.50"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 5.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 92.3,
+          "rationale": "Bull $5"
+        }
+      ],
+      "stop_loss": 2.21,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 3.9,
+      "atr_20d_pct": 5.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 0.3,
+          "max": 2.5,
+          "detail": "No near-term catalysts; RNG market challenging"
+        },
+        "earnings_momentum": {
+          "score": 0.5,
+          "max": 3.0,
+          "detail": "Revenue declining; market for RNG challenging; natural gas price volatility"
+        },
+        "technical_flow": {
+          "score": 0.3,
+          "max": 2.0,
+          "detail": "RSI 35; downtrend; below all MAs; -75% from cost; volume declining"
+        },
+        "fundamental_quality": {
+          "score": 0.3,
+          "max": 1.5,
+          "detail": "Weak financials; declining revenue; cash burn concerns"
+        },
+        "macro_alignment": {
+          "score": 0.3,
+          "max": 1.0,
+          "detail": "Energy transition but RNG niche underperforming"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 38,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Bearish sentiment; declining fundamentals"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 30,
+          "stance": "SELL",
+          "note": "RNG market deteriorating"
+        },
+        "fundamental": {
+          "confidence": 35,
+          "stance": "SELL",
+          "note": "Weak financials; declining revenue"
+        },
+        "behavioral": {
+          "confidence": 35,
+          "stance": "SELL",
+          "note": "CSS 38; bearish sentiment"
+        },
+        "quant": {
+          "confidence": 30,
+          "stance": "SELL",
+          "note": "Downtrend; breaking support"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Revenue declining; RNG market competitive; -75% from cost; cash burn",
+          "impact": 5,
+          "likelihood": 4,
+          "composite": 9
+        },
+        {
+          "category": "Sector",
+          "description": "Renewable energy competition; natural gas price pressure",
+          "impact": 4,
+          "likelihood": 3,
+          "composite": 7
+        },
+        {
+          "category": "Macro",
+          "description": "Energy transition slower than expected",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Clean Energy Fuels is in severe decline at -75% from cost. RNG market challenging. EXIT_SIGNAL - recommend sale within 5 trading days.",
+      "catalyst_timeline": "None imminent",
+      "sentiment_summary": "Bearish sentiment; declining fundamentals",
+      "is_portfolio_position": true,
+      "qty": 165,
+      "cost_basis": 1750.83,
+      "unrealized_pnl": -1321.83,
+      "unrealized_pnl_pct": -75.5,
+      "portfolio_weight": 1.1,
+      "hold_gate_status": "EXIT_SIGNAL"
+    },
+    {
+      "ticker": "ASAN",
+      "company": "Asana Inc.",
+      "sector": "Information Technology",
+      "industry": "Application Software",
+      "action": "EXIT_SIGNAL",
+      "previous_action": "EXIT_SIGNAL",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 4.2,
+      "previous_icms_score": 4.5,
+      "consensus_pct": 35,
+      "conviction": "LOW",
+      "current_price": 7.5,
+      "entry_price": 7.5,
+      "max_entry_price": 7.65,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 9.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 20.0,
+          "rationale": "Recovery $9"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 11.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 46.7,
+          "rationale": "Intermediate $11"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 15.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 100.0,
+          "rationale": "Bull $15"
+        }
+      ],
+      "stop_loss": 6.38,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 5.0,
+      "atr_20d_pct": 4.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 0.3,
+          "max": 2.5,
+          "detail": "Limited catalysts; project management market competitive"
+        },
+        "earnings_momentum": {
+          "score": 0.8,
+          "max": 3.0,
+          "detail": "Slow growth; competitive pressure from Monday.com, Notion, MS Project; not profitable"
+        },
+        "technical_flow": {
+          "score": 0.5,
+          "max": 2.0,
+          "detail": "RSI 38; below all MAs; -69% from cost; limited momentum"
+        },
+        "fundamental_quality": {
+          "score": 0.3,
+          "max": 1.5,
+          "detail": "Not profitable; competitive market; declining growth rate"
+        },
+        "macro_alignment": {
+          "score": 0.5,
+          "max": 1.0,
+          "detail": "Software aligned but execution poor"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 40,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Bearish sentiment; competitive challenges"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 35,
+          "stance": "SELL",
+          "note": "Poor execution in competitive market"
+        },
+        "fundamental": {
+          "confidence": 38,
+          "stance": "SELL",
+          "note": "Not profitable; declining growth"
+        },
+        "behavioral": {
+          "confidence": 38,
+          "stance": "SELL",
+          "note": "CSS 40; bearish"
+        },
+        "quant": {
+          "confidence": 35,
+          "stance": "SELL",
+          "note": "Downtrend; below MAs"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Not profitable; intense competition; -69% from cost; management execution concerns",
+          "impact": 5,
+          "likelihood": 4,
+          "composite": 9
+        },
+        {
+          "category": "Sector",
+          "description": "Project management market overcrowded",
+          "impact": 4,
+          "likelihood": 3,
+          "composite": 7
+        },
+        {
+          "category": "Macro",
+          "description": "Enterprise spending cuts impact small SaaS",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Asana continues to decline at -69% from cost. Competitive market and poor execution. EXIT_SIGNAL - recommend sale within 5 trading days.",
+      "catalyst_timeline": "Mar: Earnings; Ongoing: Customer metrics",
+      "sentiment_summary": "Bearish sentiment; competitive challenges",
+      "is_portfolio_position": true,
+      "qty": 14,
+      "cost_basis": 339.99,
+      "unrealized_pnl": -234.99,
+      "unrealized_pnl_pct": -69.12,
+      "portfolio_weight": 0.3,
+      "hold_gate_status": "EXIT_SIGNAL"
+    },
+    {
+      "ticker": "ATRA",
+      "company": "Atara Biotherapeutics",
+      "sector": "Healthcare",
+      "industry": "Biotechnology",
+      "action": "EXIT_SIGNAL",
+      "previous_action": "EXIT_SIGNAL",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 3.5,
+      "previous_icms_score": 4.0,
+      "consensus_pct": 35,
+      "conviction": "LOW",
+      "current_price": 4.45,
+      "entry_price": 4.45,
+      "max_entry_price": 4.54,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 5.5,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 23.6,
+          "rationale": "Recovery $5.50"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 7.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 57.3,
+          "rationale": "Catalyst $7"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 10.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 124.7,
+          "rationale": "Bull $10"
+        }
+      ],
+      "stop_loss": 3.78,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 3.7,
+      "atr_20d_pct": 5.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 0.3,
+          "max": 2.5,
+          "detail": "No near-term FDA catalysts; T-cell therapy market competitive"
+        },
+        "earnings_momentum": {
+          "score": 0.3,
+          "max": 3.0,
+          "detail": "Pre-revenue; limited pipeline progress; clinical uncertainty"
+        },
+        "technical_flow": {
+          "score": 0.3,
+          "max": 2.0,
+          "detail": "RSI 35; near 52-week lows; -75% from cost; volume thin"
+        },
+        "fundamental_quality": {
+          "score": 0.3,
+          "max": 1.5,
+          "detail": "Pre-revenue biotech; high burn rate; dilution risk; limited pipeline"
+        },
+        "macro_alignment": {
+          "score": 0.3,
+          "max": 1.0,
+          "detail": "Speculative biotech with limited macro sensitivity"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 35,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Bearish; limited institutional interest"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 30,
+          "stance": "SELL",
+          "note": "Speculative biotech with limited prospects"
+        },
+        "fundamental": {
+          "confidence": 32,
+          "stance": "SELL",
+          "note": "Pre-revenue; clinical uncertainty; cash burn"
+        },
+        "behavioral": {
+          "confidence": 32,
+          "stance": "SELL",
+          "note": "CSS 35; bearish"
+        },
+        "quant": {
+          "confidence": 30,
+          "stance": "SELL",
+          "note": "Near lows; downtrend"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Clinical trial risk; cash burn; -75% from cost; dilution risk",
+          "impact": 5,
+          "likelihood": 4,
+          "composite": 9
+        },
+        {
+          "category": "Sector",
+          "description": "Cell therapy competitive; CAR-T alternatives",
+          "impact": 4,
+          "likelihood": 3,
+          "composite": 7
+        },
+        {
+          "category": "Macro",
+          "description": "Biotech funding tight for clinical-stage companies",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Atara Biotherapeutics is -75% from cost with limited pipeline catalysts. EXIT_SIGNAL - recommend sale within 5 trading days.",
+      "catalyst_timeline": "2026: Clinical updates; Ongoing: Cash runway monitoring",
+      "sentiment_summary": "Bearish; limited institutional interest",
+      "is_portfolio_position": true,
+      "qty": 50,
+      "cost_basis": 885.69,
+      "unrealized_pnl": -663.19,
+      "unrealized_pnl_pct": -74.88,
+      "portfolio_weight": 0.6,
+      "hold_gate_status": "EXIT_SIGNAL"
+    },
+    {
+      "ticker": "PTON",
+      "company": "Peloton Interactive Inc.",
+      "sector": "Consumer Discretionary",
+      "industry": "Fitness",
+      "action": "EXIT_SIGNAL",
+      "previous_action": "EXIT_SIGNAL",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 3.2,
+      "previous_icms_score": 3.5,
+      "consensus_pct": 35,
+      "conviction": "LOW",
+      "current_price": 4.25,
+      "entry_price": 4.25,
+      "max_entry_price": 4.33,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 5.0,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 17.6,
+          "rationale": "Bounce $5"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 6.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 41.2,
+          "rationale": "Restructuring $6"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 8.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 88.2,
+          "rationale": "Bull $8"
+        }
+      ],
+      "stop_loss": 3.61,
+      "stop_loss_pct": -15.0,
+      "risk_reward_ratio": 2.4,
+      "atr_20d_pct": 5.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 0.2,
+          "max": 2.5,
+          "detail": "No meaningful catalysts; subscriber churn; restructuring ongoing"
+        },
+        "earnings_momentum": {
+          "score": 0.3,
+          "max": 3.0,
+          "detail": "Revenue declining; subscriber base eroding; not profitable; debt burden heavy"
+        },
+        "technical_flow": {
+          "score": 0.3,
+          "max": 2.0,
+          "detail": "RSI 30; oversold but no bounce catalyst; -46% from cost"
+        },
+        "fundamental_quality": {
+          "score": 0.2,
+          "max": 1.5,
+          "detail": "Challenged business model; declining revenue; heavy debt; negative FCF"
+        },
+        "macro_alignment": {
+          "score": 0.2,
+          "max": 1.0,
+          "detail": "Consumer discretionary headwind in uncertain environment"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 32,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Strongly bearish; restructuring not working"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 25,
+          "stance": "SELL",
+          "note": "Challenged consumer discretionary"
+        },
+        "fundamental": {
+          "confidence": 28,
+          "stance": "SELL",
+          "note": "Declining revenue; heavy debt; cash burn"
+        },
+        "behavioral": {
+          "confidence": 30,
+          "stance": "SELL",
+          "note": "CSS 32; bearish"
+        },
+        "quant": {
+          "confidence": 25,
+          "stance": "SELL",
+          "note": "Oversold but no catalyst"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Business model challenged; subscriber churn; heavy debt; -46% from cost",
+          "impact": 5,
+          "likelihood": 4,
+          "composite": 9
+        },
+        {
+          "category": "Sector",
+          "description": "Fitness equipment market saturated; competition from Apple Fitness+",
+          "impact": 4,
+          "likelihood": 4,
+          "composite": 8
+        },
+        {
+          "category": "Macro",
+          "description": "Consumer spending pressure from tariffs",
+          "impact": 3,
+          "likelihood": 3,
+          "composite": 6
+        }
+      ],
+      "thesis": "Peloton continues to decline with subscriber churn and heavy debt. EXIT_SIGNAL - recommend sale within 5 trading days.",
+      "catalyst_timeline": "None meaningful",
+      "sentiment_summary": "Strongly bearish; restructuring not working",
+      "is_portfolio_position": true,
+      "qty": 12,
+      "cost_basis": 93.7,
+      "unrealized_pnl": -42.7,
+      "unrealized_pnl_pct": -45.57,
+      "portfolio_weight": 0.1,
+      "hold_gate_status": "EXIT_SIGNAL"
+    },
+    {
+      "ticker": "OPK",
+      "company": "OPKO Health Inc.",
+      "sector": "Healthcare",
+      "industry": "Diagnostics",
+      "action": "EXIT_SIGNAL",
+      "previous_action": "EXIT_SIGNAL",
+      "status_change": null,
+      "status_change_reason": null,
+      "icms_score": 2.8,
+      "previous_icms_score": 3.2,
+      "consensus_pct": 35,
+      "conviction": "LOW",
+      "current_price": 1.23,
+      "entry_price": 1.23,
+      "max_entry_price": 1.25,
+      "position_size_pct": 1.5,
+      "exits": [
+        {
+          "label": "Exit 1 (7D)",
+          "target": 1.5,
+          "horizon_days": 7,
+          "projected_date": "2026-03-03",
+          "gain_pct": 22.0,
+          "rationale": "Bounce $1.50"
+        },
+        {
+          "label": "Exit 2 (14D)",
+          "target": 2.0,
+          "horizon_days": 14,
+          "projected_date": "2026-03-10",
+          "gain_pct": 62.6,
+          "rationale": "Recovery $2"
+        },
+        {
+          "label": "Exit 3 (30D)",
+          "target": 3.0,
+          "horizon_days": 30,
+          "projected_date": "2026-03-26",
+          "gain_pct": 143.9,
+          "rationale": "Bull $3"
+        }
+      ],
+      "stop_loss": 1.05,
+      "stop_loss_pct": -14.6,
+      "risk_reward_ratio": 3.1,
+      "atr_20d_pct": 5.0,
+      "components": {
+        "catalyst_timing": {
+          "score": 0.2,
+          "max": 2.5,
+          "detail": "No catalysts; diagnostics company struggling"
+        },
+        "earnings_momentum": {
+          "score": 0.2,
+          "max": 3.0,
+          "detail": "Minimal revenue growth; not profitable; management credibility issues"
+        },
+        "technical_flow": {
+          "score": 0.2,
+          "max": 2.0,
+          "detail": "RSI 28; near all-time lows; no buying interest"
+        },
+        "fundamental_quality": {
+          "score": 0.2,
+          "max": 1.5,
+          "detail": "Weak fundamentals across the board; challenged business"
+        },
+        "macro_alignment": {
+          "score": 0.2,
+          "max": 1.0,
+          "detail": "No meaningful macro alignment"
+        }
+      },
+      "behavioral_sentiment": {
+        "css": 30,
+        "score": 0.0,
+        "max": 2.0,
+        "mode": "NEUTRAL",
+        "detail": "Strongly bearish; no institutional interest"
+      },
+      "expert_votes": {
+        "macro": {
+          "confidence": 20,
+          "stance": "SELL",
+          "note": "No alignment; struggling company"
+        },
+        "fundamental": {
+          "confidence": 22,
+          "stance": "SELL",
+          "note": "Weak fundamentals; not profitable"
+        },
+        "behavioral": {
+          "confidence": 25,
+          "stance": "SELL",
+          "note": "CSS 30; strongly bearish"
+        },
+        "quant": {
+          "confidence": 20,
+          "stance": "SELL",
+          "note": "At lows; no buying interest"
+        }
+      },
+      "risks": [
+        {
+          "category": "Company-Specific",
+          "description": "Challenged business; management issues; -70% from cost; near all-time lows",
+          "impact": 5,
+          "likelihood": 5,
+          "composite": 10
+        },
+        {
+          "category": "Sector",
+          "description": "Diagnostics competitive; limited market share",
+          "impact": 4,
+          "likelihood": 4,
+          "composite": 8
+        },
+        {
+          "category": "Macro",
+          "description": "Penny stock sensitive to risk appetite",
+          "impact": 3,
+          "likelihood": 4,
+          "composite": 7
+        }
+      ],
+      "thesis": "OPKO Health is -70% from cost near all-time lows with no meaningful catalysts. EXIT_SIGNAL - recommend immediate sale.",
+      "catalyst_timeline": "None",
+      "sentiment_summary": "Strongly bearish; no institutional interest",
+      "is_portfolio_position": true,
+      "qty": 1,
+      "cost_basis": 4.15,
+      "unrealized_pnl": -2.92,
+      "unrealized_pnl_pct": -70.36,
+      "portfolio_weight": 0.0,
+      "hold_gate_status": "EXIT_SIGNAL"
+    }
+  ],
+  "portfolio_health": {
+    "total_positions": 21,
+    "positions_scored": 21,
+    "avg_icms_score": 6.3,
+    "median_icms_score": 6.8,
+    "positions_above_hold_gate": 11,
+    "positions_monitor": 4,
+    "positions_exit_signal": 6,
+    "exit_signal_tickers": [
+      "AI",
+      "CLNE",
+      "ASAN",
+      "ATRA",
+      "PTON",
+      "OPK"
+    ],
+    "strongest_position": {
+      "ticker": "NVDA",
+      "icms": 9.8
+    },
+    "weakest_position": {
+      "ticker": "OPK",
+      "icms": 2.8
+    },
+    "portfolio_weighted_icms": 8.0,
+    "total_unrealized_pnl": 4116.5,
+    "total_unrealized_pnl_pct": 11.9
+  },
+  "sector_allocation": {
+    "Information Technology": {
+      "count": 5,
+      "weight_pct": 28
+    },
+    "Healthcare": {
+      "count": 2,
+      "weight_pct": 11
+    },
+    "Communication Services": {
+      "count": 2,
+      "weight_pct": 11
+    },
+    "Financials": {
+      "count": 2,
+      "weight_pct": 11
+    },
+    "Utilities": {
+      "count": 2,
+      "weight_pct": 11
+    },
+    "Consumer Staples": {
+      "count": 1,
+      "weight_pct": 6
+    },
+    "Real Estate": {
+      "count": 1,
+      "weight_pct": 6
+    },
+    "Consumer Discretionary": {
+      "count": 1,
+      "weight_pct": 6
+    },
+    "Industrials": {
+      "count": 1,
+      "weight_pct": 6
+    },
+    "Materials": {
+      "count": 1,
+      "weight_pct": 6
+    }
+  },
+  "alerts": [
+    {
+      "ticker": "NVDA",
+      "type": "ICMS_DOWNGRADE",
+      "severity": "LOW",
+      "message": "ICMS score dropped from 10.0 to 9.8. VIX spike to 21.5 introduces slight technical risk pre-earnings.",
+      "previous_run": "2026-02-21",
+      "previous_value": "10.0",
+      "current_value": "9.8"
+    },
+    {
+      "ticker": "META",
+      "type": "ICMS_DOWNGRADE",
+      "severity": "LOW",
+      "message": "ICMS score dropped from 9.7 to 9.3. Tariff uncertainty and VIX spike reduce conviction slightly.",
+      "previous_run": "2026-02-21",
+      "previous_value": "9.7",
+      "current_value": "9.3"
+    },
+    {
+      "ticker": "MU",
+      "type": "ICMS_DOWNGRADE",
+      "severity": "LOW",
+      "message": "ICMS score dropped from 9.7 to 9.2. Market-wide risk-off dampens technical score.",
+      "previous_run": "2026-02-21",
+      "previous_value": "9.7",
+      "current_value": "9.2"
+    },
+    {
+      "ticker": "LLY",
+      "type": "ICMS_DOWNGRADE",
+      "severity": "LOW",
+      "message": "ICMS score dropped from 9.7 to 9.5. Slight reduction due to broader market weakness.",
+      "previous_run": "2026-02-21",
+      "previous_value": "9.7",
+      "current_value": "9.5"
+    },
+    {
+      "ticker": "MARKET",
+      "type": "VOLATILITY_SPIKE",
+      "severity": "HIGH",
+      "message": "VIX surged from 18.0 to 21.52 (+19.6%) on tariff uncertainty. Supreme Court struck IEEPA tariffs; Trump invoked Section 122 with 15% surcharge. S&P 500 down -1.24%.",
+      "previous_run": "2026-02-21",
+      "previous_value": "18.0",
+      "current_value": "21.52"
+    },
+    {
+      "ticker": "NVDA",
+      "type": "CATALYST_IMMINENT",
+      "severity": "HIGH",
+      "message": "NVIDIA Q4 FY2026 earnings report tomorrow (Feb 25). Expected $1.53 EPS (+72% YoY), $65.7B revenue. Massive market impact expected.",
+      "previous_run": "2026-02-21",
+      "previous_value": "5 days away",
+      "current_value": "1 day away"
+    },
+    {
+      "ticker": "PORTFOLIO",
+      "type": "EXIT_SIGNALS_PERSIST",
+      "severity": "HIGH",
+      "message": "6 positions continue EXIT_SIGNAL status: AI, CLNE, ASAN, ATRA, PTON, OPK. Combined unrealized loss: -$5,603. Recommend liquidation within 5 trading days.",
+      "previous_run": "2026-02-21",
+      "previous_value": "6 exit signals",
+      "current_value": "6 exit signals"
+    }
+  ],
+  "portfolio_changes": [
+    {
+      "ticker": "CRM",
+      "change": "DOWNGRADE",
+      "from": "HOLD",
+      "to": "MONITOR",
+      "reason": "ICMS dropped from 7.0 to 6.8; growth decelerating; Agentforce execution uncertain"
+    },
+    {
+      "ticker": "AI",
+      "change": "EXIT_SIGNAL_MAINTAINED",
+      "from": "EXIT_SIGNAL",
+      "to": "EXIT_SIGNAL",
+      "reason": "Continued poor execution; down -28.5% from cost; recommend immediate sale"
+    },
+    {
+      "ticker": "CLNE",
+      "change": "EXIT_SIGNAL_MAINTAINED",
+      "from": "EXIT_SIGNAL",
+      "to": "EXIT_SIGNAL",
+      "reason": "RNG market deteriorating; down -75% from cost; recommend immediate sale"
+    },
+    {
+      "ticker": "ASAN",
+      "change": "EXIT_SIGNAL_MAINTAINED",
+      "from": "EXIT_SIGNAL",
+      "to": "EXIT_SIGNAL",
+      "reason": "Competitive market; poor execution; down -69% from cost; recommend immediate sale"
+    },
+    {
+      "ticker": "ATRA",
+      "change": "EXIT_SIGNAL_MAINTAINED",
+      "from": "EXIT_SIGNAL",
+      "to": "EXIT_SIGNAL",
+      "reason": "Limited pipeline catalysts; down -75% from cost; recommend immediate sale"
+    },
+    {
+      "ticker": "PTON",
+      "change": "EXIT_SIGNAL_MAINTAINED",
+      "from": "EXIT_SIGNAL",
+      "to": "EXIT_SIGNAL",
+      "reason": "Business model challenged; subscriber churn; recommend immediate sale"
+    },
+    {
+      "ticker": "OPK",
+      "change": "EXIT_SIGNAL_MAINTAINED",
+      "from": "EXIT_SIGNAL",
+      "to": "EXIT_SIGNAL",
+      "reason": "Near all-time lows; no catalysts; recommend immediate sale"
+    }
+  ]
+}
