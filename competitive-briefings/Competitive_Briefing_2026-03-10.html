@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCWH Competitive Briefing — Week of March 3–10, 2026</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f1f5f9; color:#1e293b; line-height:1.6; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color:white; padding:44px 20px 36px; text-align:center; position:relative; overflow:hidden; }
+.header::after { content:''; position:absolute; bottom:0; left:0; right:0; height:4px; background:linear-gradient(90deg, #e94560, #f59e0b, #10b981, #3b82f6); }
+.header h1 { font-size:30px; font-weight:800; letter-spacing:-0.5px; margin-bottom:4px; }
+.header .subtitle { font-size:15px; color:#94a3b8; margin-bottom:6px; }
+.header .date { font-size:13px; color:#64748b; }
+.header .badge { display:inline-block; background:rgba(233,69,96,0.15); color:#e94560; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; margin-top:10px; letter-spacing:0.3px; }
+
+/* Layout */
+.container { max-width:1000px; margin:0 auto; padding:24px 20px; }
+.section-title { font-size:20px; font-weight:700; color:#0f172a; margin:32px 0 16px; padding-bottom:8px; border-bottom:3px solid #e2e8f0; display:flex; align-items:center; gap:10px; }
+.section-title .icon { font-size:22px; }
+
+/* Cards */
+.card { background:white; border-radius:12px; padding:22px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); border-left:4px solid transparent; transition:box-shadow 0.2s; }
+.card:hover { box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+.card.mister { border-left-color:#3b82f6; }
+.card.quickquack { border-left-color:#f59e0b; }
+.card.tommys { border-left-color:#e94560; }
+.card.bluewave { border-left-color:#06b6d4; }
+.card.tidalwave { border-left-color:#10b981; }
+.card.industry { border-left-color:#8b5cf6; }
+
+.card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+.card-header h3 { font-size:17px; font-weight:700; color:#0f172a; }
+.card-header .tag { font-size:11px; font-weight:600; padding:3px 10px; border-radius:12px; text-transform:uppercase; letter-spacing:0.4px; white-space:nowrap; }
+.tag-acquisition { background:#dbeafe; color:#1e40af; }
+.tag-expansion { background:#d1fae5; color:#065f46; }
+.tag-partnership { background:#fef3c7; color:#92400e; }
+.tag-financial { background:#ede9fe; color:#5b21b6; }
+.tag-leadership { background:#fce7f3; color:#9d174d; }
+.tag-legal { background:#fee2e2; color:#991b1b; }
+.tag-community { background:#e0f2fe; color:#0c4a6e; }
+.tag-membership { background:#f0fdf4; color:#166534; }
+.tag-trend { background:#f5f3ff; color:#6d28d9; }
+
+.card p { font-size:14px; color:#475569; margin-bottom:8px; }
+.card .source { font-size:12px; color:#94a3b8; font-style:italic; }
+
+/* Competitor summary grid */
+.comp-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px; margin-bottom:20px; }
+.comp-card { background:white; border-radius:12px; padding:18px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.06); position:relative; overflow:hidden; }
+.comp-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; }
+.comp-card.mister::before { background:#3b82f6; }
+.comp-card.quickquack::before { background:#f59e0b; }
+.comp-card.tommys::before { background:#e94560; }
+.comp-card.bluewave::before { background:#06b6d4; }
+.comp-card.tidalwave::before { background:#10b981; }
+.comp-card .comp-name { font-size:14px; font-weight:700; color:#0f172a; margin-bottom:2px; }
+.comp-card .comp-detail { font-size:12px; color:#64748b; }
+.comp-card .comp-count { font-size:28px; font-weight:800; color:#0f172a; margin:8px 0 2px; }
+.comp-card .comp-label { font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; }
+
+/* Priority alerts */
+.priority-box { border-radius:12px; padding:18px 22px; margin-bottom:14px; display:flex; gap:14px; align-items:flex-start; }
+.priority-box.critical { background:linear-gradient(135deg, #fef2f2, #fff1f2); border:1px solid #fecaca; }
+.priority-box.watch { background:linear-gradient(135deg, #fffbeb, #fefce8); border:1px solid #fde68a; }
+.priority-box.info { background:linear-gradient(135deg, #eff6ff, #f0f9ff); border:1px solid #bfdbfe; }
+.priority-icon { font-size:24px; flex-shrink:0; }
+.priority-content h4 { font-size:14px; font-weight:700; color:#0f172a; margin-bottom:4px; }
+.priority-content p { font-size:13px; color:#475569; }
+
+/* Table */
+table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:16px; }
+th { background:#f8fafc; padding:10px 12px; text-align:left; font-weight:600; color:#475569; border-bottom:2px solid #e2e8f0; }
+td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
+tr:hover td { background:#f8fafc; }
+
+/* Footer */
+.footer { text-align:center; padding:32px 20px; font-size:12px; color:#94a3b8; }
+.footer a { color:#64748b; text-decoration:none; }
+
+/* Responsive */
+@media (max-width:768px) {
+  .comp-grid { grid-template-columns: repeat(2, 1fr); }
+  .card-header { flex-direction:column; gap:8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>UCWH Competitive Briefing</h1>
+  <div class="subtitle">United Car Wash Holdings — Competitive Intelligence Digest</div>
+  <div class="date">Week of March 3 – 10, 2026</div>
+  <div class="badge">5 Competitors Tracked &nbsp;·&nbsp; 12 Developments</div>
+</div>
+
+<div class="container">
+
+<!-- ===== EXECUTIVE SUMMARY ===== -->
+<div class="section-title"><span class="icon">&#9889;</span> Priority Alerts</div>
+
+<div class="priority-box critical">
+  <div class="priority-icon">&#128680;</div>
+  <div class="priority-content">
+    <h4>Mister Car Wash Going Private — $3.1B Deal by Leonard Green & Partners</h4>
+    <p>MCW agreed to a $7.00/share take-private deal, a 29% premium over the 90-day VWAP. LGP already owns ~67% and has unilaterally approved the transaction. Multiple law firms are investigating fiduciary duty breaches. Once closed (expected H1 2026), MCW will delist from NASDAQ. This could signal a major strategic pivot — watch for accelerated expansion, pricing changes, or brand consolidation once freed from public-market scrutiny.</p>
+  </div>
+</div>
+
+<div class="priority-box watch">
+  <div class="priority-icon">&#128065;</div>
+  <div class="priority-content">
+    <h4>Quick Quack Deepens Texas + Sports Marketing with Houston Astros Deal</h4>
+    <p>Quick Quack became the official car wash of the Houston Astros, unlocking in-stadium activations, co-branded promotions, and community programming across the Houston market. This is a significant brand-awareness play in a key UCWH territory.</p>
+  </div>
+</div>
+
+<div class="priority-box watch">
+  <div class="priority-icon">&#128065;</div>
+  <div class="priority-content">
+    <h4>BlueWave Express / ClearWater Merger Creates 81-Site Texas Platform</h4>
+    <p>ClearWater Express Wash completed its acquisition of BlueWave Express, combining 28 ClearWater + 53 BlueWave Texas locations into an 81-site platform backed by a $370M financing facility from WhiteHorse Capital. They continue opening aggressively in San Antonio (64th location just launched).</p>
+  </div>
+</div>
+
+<div class="priority-box info">
+  <div class="priority-icon">&#128200;</div>
+  <div class="priority-content">
+    <h4>Industry Consolidation Accelerating</h4>
+    <p>The U.S. car wash market is projected to reach $2.1B by 2033 (5.8% CAGR). Express tunnel format holds 55% share. Subscription adoption is a core driver — leading platforms convert 35% of visitors to unlimited members. Southwest region leads with 45% market share.</p>
+  </div>
+</div>
+
+<!-- ===== COMPETITOR SNAPSHOT ===== -->
+<div class="section-title"><span class="icon">&#127919;</span> Competitor Snapshot</div>
+
+<div class="comp-grid">
+  <div class="comp-card mister">
+    <div class="comp-name">Mister Car Wash</div>
+    <div class="comp-detail">NYSE: MCW → Going Private</div>
+    <div class="comp-count">500+</div>
+    <div class="comp-label">Locations</div>
+  </div>
+  <div class="comp-card quickquack">
+    <div class="comp-name">Quick Quack</div>
+    <div class="comp-detail">CA · TX · AZ · CO · UT</div>
+    <div class="comp-count">218+</div>
+    <div class="comp-label">Locations</div>
+  </div>
+  <div class="comp-card tommys">
+    <div class="comp-name">Tommy's Express</div>
+    <div class="comp-detail">Franchise · #1 Entrepreneur 500</div>
+    <div class="comp-count">270+</div>
+    <div class="comp-label">Locations</div>
+  </div>
+  <div class="comp-card bluewave">
+    <div class="comp-name">BlueWave / ClearWater</div>
+    <div class="comp-detail">Texas + NorCal</div>
+    <div class="comp-count">81+</div>
+    <div class="comp-label">Combined Locations</div>
+  </div>
+  <div class="comp-card tidalwave">
+    <div class="comp-name">Tidal Wave Auto Spa</div>
+    <div class="comp-detail">Southeast Focus</div>
+    <div class="comp-count">200+</div>
+    <div class="comp-label">Locations</div>
+  </div>
+</div>
+
+<!-- ===== MISTER CAR WASH ===== -->
+<div class="section-title"><span class="icon">&#128309;</span> Mister Car Wash</div>
+
+<div class="card mister">
+  <div class="card-header">
+    <h3>$3.1B Take-Private Deal with Leonard Green & Partners</h3>
+    <span class="tag tag-financial">Financial</span>
+  </div>
+  <p>Leonard Green & Partners will acquire all outstanding MCW shares it doesn't already own (~33%) for $7.00/share. The deal represents a 29% premium to the 90-day VWAP through Feb 17, 2026. LGP has been MCW's strategic partner since 2014. A Special Committee of independent directors unanimously recommended the deal. Expected to close H1 2026.</p>
+  <div class="source">Sources: GlobeNewsWire, Yahoo Finance, MobilityPlaza</div>
+</div>
+
+<div class="card mister">
+  <div class="card-header">
+    <h3>Multiple Shareholder Investigations Launched</h3>
+    <span class="tag tag-legal">Legal</span>
+  </div>
+  <p>At least five law firms — Johnson Fistel, Kessler Topaz, Levi & Korsinsky, BFA Law, and Halper Sadeh — have opened investigations into potential fiduciary duty breaches. The core concern: LGP used its controlling 67% stake to approve the sale to itself without soliciting votes from public stockholders, potentially undervaluing shares.</p>
+  <div class="source">Sources: GlobeNewsWire, PRNewswire (multiple filings March 2–9)</div>
+</div>
+
+<div class="card mister">
+  <div class="card-header">
+    <h3>Q4 Earnings: Revenue +4%, UWC Memberships +7%</h3>
+    <span class="tag tag-financial">Financial</span>
+  </div>
+  <p>In its Feb 18 earnings report, MCW posted 4% net revenue growth, 1.6% comp-store sales increase, 7% growth in Unlimited Wash Club memberships, and opened 16 new greenfield locations in the period. The new "Titanium" premium package achieved 15%+ penetration among new members.</p>
+  <div class="source">Source: Mister Car Wash Investor Relations</div>
+</div>
+
+<!-- ===== QUICK QUACK ===== -->
+<div class="section-title"><span class="icon">&#128993;</span> Quick Quack Car Wash</div>
+
+<div class="card quickquack">
+  <div class="card-header">
+    <h3>Official Car Wash of the Houston Astros</h3>
+    <span class="tag tag-partnership">Partnership</span>
+  </div>
+  <p>Quick Quack announced a multi-faceted partnership with the Houston Astros for the 2026 season. The deal includes in-stadium activations, co-branded promotions, community programming, and exclusive game-day specials at Quick Quack locations across the Houston market.</p>
+  <div class="source">Source: International Carwash Association (carwash.org)</div>
+</div>
+
+<div class="card quickquack">
+  <div class="card-header">
+    <h3>Acquired Lightning Express Car Wash in SoCal</h3>
+    <span class="tag tag-acquisition">Acquisition</span>
+  </div>
+  <p>Quick Quack acquired Lightning Express Car Wash at 17111 Hawthorne Blvd in Lawndale, CA. The site will undergo renovations and reopen as a Quick Quack location in spring 2026, offering unlimited memberships, upgraded vacuums, and advanced technology. A fundraiser event will celebrate the reopening.</p>
+  <div class="source">Sources: carwash.com, carwash.org</div>
+</div>
+
+<div class="card quickquack">
+  <div class="card-header">
+    <h3>Employee Ownership Program Launched (4,200 Team Members)</h3>
+    <span class="tag tag-leadership">Leadership</span>
+  </div>
+  <p>Quick Quack rolled out a company-wide Ownership Program, giving all 4,200 employees equity participation. The initiative — part of a broader movement pioneered by KKR — includes financial wellness tools, engagement initiatives, and alignment around company purpose and values. New CFO Thomas Houdek was also appointed.</p>
+  <div class="source">Sources: carwash.org, CarwashBizCenter</div>
+</div>
+
+<div class="card quickquack">
+  <div class="card-header">
+    <h3>Tacoma, WA Expansion — First Pacific Northwest Location</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>Quick Quack is proposing its first Tacoma, WA location, with construction tentatively starting spring 2026 and an anticipated opening in late 2026. This would mark Quick Quack's entry into the Pacific Northwest market — a new geographic frontier beyond its current five-state footprint.</p>
+  <div class="source">Source: Local news reports</div>
+</div>
+
+<!-- ===== TOMMY'S EXPRESS ===== -->
+<div class="section-title"><span class="icon">&#128308;</span> Tommy's Express (Corporate)</div>
+
+<div class="card tommys">
+  <div class="card-header">
+    <h3>Grand Opening in San Antonio — 12808 Potranco Road</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>Tommy's Express celebrated the Grand Opening of its newest location at 12808 Potranco Road in San Antonio on March 4, 2026. This puts Tommy's directly in BlueWave/ClearWater's strongest metro — a deliberate competitive play in the San Antonio market.</p>
+  <div class="source">Source: carwash.org</div>
+</div>
+
+<div class="card tommys">
+  <div class="card-header">
+    <h3>New Taylor, Michigan Location + Hartford, WI Proposed</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>Tommy's Express opened a new location in Taylor, MI (12800 Telegraph Rd) with free washes Feb 27 – Mar 8. Meanwhile, a new Tommy's Express has been proposed for E. Sumner Street in Hartford, WI. The franchise now has 270+ locations across the US, Canada, and France with 400+ in the pipeline.</p>
+  <div class="source">Sources: carwash.com, Washington County Insider, WTVB</div>
+</div>
+
+<div class="card tommys">
+  <div class="card-header">
+    <h3>$50K+ in Community Donations Over 3 Years</h3>
+    <span class="tag tag-community">Community</span>
+  </div>
+  <p>Tommy's Express reported over $50,000 contributed to local nonprofits, schools, and community organizations over the past three years through sponsorships, direct donations, and Giveback Day initiatives. Community engagement continues to be a core brand differentiator for the franchise network.</p>
+  <div class="source">Source: Business Observer FL</div>
+</div>
+
+<!-- ===== BLUEWAVE / CLEARWATER ===== -->
+<div class="section-title"><span class="icon">&#128311;</span> BlueWave Express / ClearWater</div>
+
+<div class="card bluewave">
+  <div class="card-header">
+    <h3>ClearWater Acquisition Complete — 81-Site Texas Platform</h3>
+    <span class="tag tag-acquisition">Acquisition</span>
+  </div>
+  <p>Texas Express Wash LLC (ClearWater's controlled entity) closed the full acquisition of BlueWave Express in late November 2025. The combined platform spans 81 sites across Texas plus two Northern California locations. The deal was powered by a new $370 million committed financing facility from WhiteHorse Capital — indicating serious growth ambitions ahead.</p>
+  <div class="source">Sources: bluewaveexpress.com, carwash.com</div>
+</div>
+
+<div class="card bluewave">
+  <div class="card-header">
+    <h3>64th Location Opens in San Antonio; Former ZIPS Site Converted</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>BlueWave opened its 64th overall location and 11th in the San Antonio metro area at 14530 Blanco Road. The chain also acquired and renovated a former ZIPS Car Wash location with upgraded wash technology, water reclamation systems, and improved traffic flow. A new site near Fair Oaks Ranch also opened in late February.</p>
+  <div class="source">Sources: Community Impact, carwash.com</div>
+</div>
+
+<!-- ===== TIDAL WAVE AUTO SPA ===== -->
+<div class="section-title"><span class="icon">&#128994;</span> Tidal Wave Auto Spa</div>
+
+<div class="card tidalwave">
+  <div class="card-header">
+    <h3>New Birmingham, AL Location — 12-Day Free Wash Grand Opening</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>Tidal Wave Auto Spa opened a new location in Birmingham, Alabama, with 12 days of free premium car washes (March 4–15). New Clean Club members receive their first month for $9.97, with savings of up to $40 on unlimited plans. The company also sponsored the Bell Center 5K & Children's Run event on March 14.</p>
+  <div class="source">Sources: Newswire, carwash.org, AccessNewsWire</div>
+</div>
+
+<!-- ===== INDUSTRY TRENDS ===== -->
+<div class="section-title"><span class="icon">&#128202;</span> Industry Trends & Market Data</div>
+
+<div class="card industry">
+  <div class="card-header">
+    <h3>U.S. Car Wash Market: $1.4B (2026) → $2.1B (2033)</h3>
+    <span class="tag tag-trend">Market Data</span>
+  </div>
+  <p>The U.S. car wash market is projected to grow from $1.4B in 2026 to $2.1B by 2033, a 5.8% CAGR. Express Exterior Wash dominates with 55% market share, processing 100+ vehicles/hour. The Southwest region leads with 45% share driven by favorable weather, population growth, and year-round operations.</p>
+  <div class="source">Source: Persistence Market Research</div>
+</div>
+
+<div class="card industry">
+  <div class="card-header">
+    <h3>Subscription Adoption Driving Industry Economics</h3>
+    <span class="tag tag-membership">Membership</span>
+  </div>
+  <p>Leading car wash platforms now convert 35% of visitors into unlimited-wash members. Subscription revenue is the cornerstone of express car wash valuations, enabling predictable cash flows, rapid site clustering in high-traffic corridors, and unit-level EBITDA margins of 40–50%. Top chains average $1–2M in annual sales per location.</p>
+  <div class="source">Sources: Car Wash Advisory, MMCG Invest</div>
+</div>
+
+<!-- ===== COMPETITIVE IMPLICATIONS ===== -->
+<div class="section-title"><span class="icon">&#9881;</span> Implications for UCWH</div>
+
+<div class="card" style="border-left-color:#0f172a;">
+  <div class="card-header">
+    <h3>Strategic Takeaways This Week</h3>
+  </div>
+  <table>
+    <thead>
+      <tr><th style="width:30%">Development</th><th style="width:25%">Competitor</th><th>UCWH Implication</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>MCW Take-Private</strong></td>
+        <td>Mister Car Wash</td>
+        <td>Freed from quarterly earnings pressure, MCW may accelerate expansion, price more aggressively, or pursue acquisitions. Watch for post-close strategy shifts.</td>
+      </tr>
+      <tr>
+        <td><strong>Houston Astros Partnership</strong></td>
+        <td>Quick Quack</td>
+        <td>Sports marketing raises brand awareness in Houston — a key Texas market. Consider similar local/regional sponsorship opportunities to match visibility.</td>
+      </tr>
+      <tr>
+        <td><strong>Employee Ownership</strong></td>
+        <td>Quick Quack</td>
+        <td>Equity-based retention could give QQ a talent advantage. Monitor turnover rates and recruitment positioning against UCWH employee value proposition.</td>
+      </tr>
+      <tr>
+        <td><strong>ClearWater/BlueWave 81-Site Platform</strong></td>
+        <td>BlueWave/ClearWater</td>
+        <td>A $370M financing facility signals aggressive Texas expansion plans. San Antonio is now a three-way battleground (BlueWave + Tommy's + regional operators).</td>
+      </tr>
+      <tr>
+        <td><strong>Tommy's San Antonio Entry</strong></td>
+        <td>Tommy's Express</td>
+        <td>Corporate franchise is deliberately targeting BlueWave's strongest market. Monitor pricing strategies and membership offers in overlapping metros.</td>
+      </tr>
+      <tr>
+        <td><strong>QQ Pacific NW Expansion</strong></td>
+        <td>Quick Quack</td>
+        <td>Tacoma entry signals Quick Quack testing beyond its traditional Sun Belt footprint. New geographic competitor dynamics may emerge.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  UCWH Competitive Briefing &nbsp;·&nbsp; Generated March 10, 2026 &nbsp;·&nbsp; Covering March 3–10, 2026<br>
+  United Car Wash Holdings — Confidential Internal Report<br>
+  <a href="https://jbass698-121.github.io/ucwh-morning-briefings/competitive-briefings/">View All Competitive Briefings</a>
+</div>
+
+</body>
+</html>
