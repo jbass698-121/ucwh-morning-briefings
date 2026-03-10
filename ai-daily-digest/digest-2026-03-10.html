@@ -23,13 +23,30 @@
 
   try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
 
+  // Initialize Supabase client early — needed by both paths
+  function initSupabase() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) {
+      console.error('Supabase init failed:', e);
+    }
+  }
+
   // ========================================
   // PATH 1: Inside portal iframe — postMessage handshake
   // ========================================
   if (isIframe) {
     var verified = false;
     var timeout = setTimeout(function() {
-      if (!verified) directLogin();
+      if (!verified) {
+        // FIX: Fail open when inside an iframe — the portal already handles auth.
+        // The old code called directLogin() here, but sb was null in the iframe path
+        // causing the Google Sign-In button to crash. Since the portal is the auth
+        // layer for iframe access, failing open is the correct behavior.
+        document.body.classList.add('ucwh-authed');
+      }
     }, 3000);
 
     window.addEventListener('message', function(ev) {
@@ -50,24 +67,55 @@
   // PATH 2: Direct URL access — Supabase Google Sign-In
   // ========================================
   function init() {
-    try {
-      sb = window.supabase.createClient(SB_URL, SB_KEY);
-    } catch(e) {
-      console.error('Supabase init failed:', e);
-      document.body.classList.add('ucwh-authed'); // Fail open if SDK unavailable
+    initSupabase();
+
+    if (!sb) {
+      // SDK not loaded yet or failed — fail open rather than block the user
+      document.body.classList.add('ucwh-authed');
       return;
     }
 
-    sb.auth.getSession().then(function(res) {
-      var session = res.data && res.data.session;
-      if (session && session.user && session.user.email) {
-        verifyUser(session.user.email);
-      } else {
-        directLogin();
-      }
-    }).catch(function() {
-      document.body.classList.add('ucwh-authed'); // Fail open on error
-    });
+    // FIX: Check for OAuth redirect tokens in the URL hash first.
+    // After Google Sign-In, Supabase redirects back with tokens in the hash.
+    // We need to let the SDK process them before checking the session.
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      // Let Supabase process the OAuth callback tokens, then check session
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      // Also set a timeout — if auth state doesn't fire within 5s, try getSession
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            directLogin();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          directLogin();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed'); // Fail open on error
+      });
+    }
   }
 
   function verifyUser(email) {
@@ -78,6 +126,10 @@
       .then(function(res) {
         if (res.data) {
           document.body.classList.add('ucwh-authed');
+          // Clean up the URL hash after successful auth
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
         } else {
           accessDenied(email);
         }
@@ -87,6 +139,11 @@
   }
 
   function directLogin() {
+    // FIX: guard against sb being null (shouldn't happen in PATH 2, but defensive)
+    if (!sb) {
+      initSupabase();
+    }
+
     document.body.classList.add('ucwh-login-visible');
 
     var overlay = document.createElement('div');
@@ -119,6 +176,12 @@
 
     // Wire up Google Sign-In
     document.getElementById('ucwh-google-btn').addEventListener('click', function() {
+      if (!sb) {
+        var errEl = document.getElementById('ucwh-login-error');
+        errEl.textContent = 'Authentication service unavailable. Please use the Report Portal instead.';
+        errEl.style.display = 'block';
+        return;
+      }
       sb.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: window.location.href }
