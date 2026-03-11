@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 11, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Wednesday, March 11, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>Today is the most consequential day for AI regulation in 2026: the FTC and Commerce Department face their March 11 deadline to issue rulings on federal preemption of state AI laws — a decision that will determine whether California, Texas, and Colorado's AI acts survive or get overridden. Meanwhile, Anthropic's war with the Pentagon escalated as 30+ employees from OpenAI and Google DeepMind signed a statement backing Anthropic's lawsuit against the supply chain risk designation, with Microsoft also voicing support. On the product front, OpenAI moved to lock down AI security by acquiring Promptfoo — a red-teaming platform used by 25% of Fortune 500 companies — while Alibaba released Qwen 3.5 Small, a model series so efficient its 2B variant runs on any recent iPhone in airplane mode. Anthropic's Claude Code was crowned the most-used AI coding assistant in a landmark developer survey, overtaking GitHub Copilot and Cursor in just eight months. And in funding, Yann LeCun's AMI Labs closed a $1.03B round to build world models that learn from reality rather than language — a direct challenge to the LLM paradigm.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://llm-stats.com/llm-updates">Alibaba Qwen 3.5 Small — Four Dense Models That Run On-Device With 4GB RAM</a></h3>
+    <p class="story-meta"><span class="source">Alibaba / LLM Stats</span> · Mar 1 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Alibaba released the Qwen 3.5 Small Model Series on March 1, delivering four dense model variants at 0.8B, 2B, 4B, and 9B parameters. The standout: the 9B model matches GPT-OSS-120B (a model 13x its size) on benchmarks, while the 2B variant runs on any recent iPhone in airplane mode with just 4GB of RAM. This positions Qwen 3.5 Small as one of the most capable on-device AI deployments available, enabling fully offline inference for privacy-sensitive and latency-critical applications.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> On-device AI at this quality level changes the deployment calculus for AI-first businesses. A 2B model that fits in 4GB of RAM and matches much larger models on core tasks means you can ship AI features that work offline, with zero API costs, and full data privacy. For agent infrastructure, small models like these become ideal for local routing, tool selection, and pre-processing — keeping the expensive frontier calls for tasks that truly need them. Watch for Qwen 3.5 Small to show up in embedded devices, POS systems, and edge deployments.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/09/openai-acquires-promptfoo-to-secure-its-ai-agents/">OpenAI Acquires Promptfoo — AI Security Platform Used by 25% of Fortune 500</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / OpenAI</span> · Mar 9 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI announced the acquisition of Promptfoo, an AI security startup founded in 2024 that helps enterprises identify and remediate vulnerabilities in AI systems during development. Promptfoo's red-teaming and evaluation tools are already trusted by over 25% of Fortune 500 companies. OpenAI will integrate Promptfoo's technology directly into OpenAI Frontier, their platform for building and operating AI coworkers. The acquisition signals that as AI agents gain autonomy, securing them against adversarial attacks and prompt injection becomes a core platform requirement — not an afterthought.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> OpenAI buying a security-first evaluation platform validates what builders already know: as agents handle real business processes, the attack surface expands dramatically. Promptfoo's integration into OpenAI Frontier means red-teaming and vulnerability scanning will become native platform features, not third-party add-ons. For anyone deploying agents at scale, this acquisition is a signal to invest in systematic evaluation and adversarial testing now — the industry is moving toward security-by-default for agentic systems.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.sci-tech-today.com/news/march-2026-ai-models-avalanche/">12+ AI Models in One Week — The March 2026 Avalanche Reshaping the Landscape</a></h3>
+    <p class="story-meta"><span class="source">Sci-Tech Today</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Major labs are now shipping updates every 2-3 weeks instead of months. The February-March wave included Gemini 3.1 Pro ($2/M input tokens), Claude Opus 4.6, Claude Sonnet 4.6 (1M context in beta), GPT-5.3 Codex, Grok 4.20, Mercury 2, ByteDance Seed 2.0, MiniMax M2.5, and DeepSeek V4. Frontier performance that cost $500/month a year ago now runs at $50 for startups. The focus is shifting from ever-larger models toward making AI deployable — smaller models for edge, embedded intelligence in devices, and systems that integrate cleanly into human workflows.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://dev.to/alexmercedcoder/ai-weekly-claude-code-dominates-mcp-goes-mainstream-week-of-march-5-2026-15af">Claude Code Crowned Most-Used AI Coding Assistant — Overtakes Copilot and Cursor</a></h3>
+    <p class="story-meta"><span class="source">DEV Community / Developer Survey</span> · Mar 5 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">A landmark developer survey crowned Claude Code as the most-used AI coding assistant, overtaking both GitHub Copilot and Cursor in just eight months since its May 2025 launch. Anthropic's enterprise business has seen subscriptions quadruple since the start of the year, with Claude Code's run-rate revenue surpassing $2.5 billion. The results reflect Claude Code's terminal-native, agentic approach to development — where the model doesn't just suggest code, but autonomously executes multi-step coding tasks including file creation, testing, and deployment.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Claude Code becoming the dominant coding tool in under a year validates the agentic paradigm over the autocomplete paradigm. Copilot and Cursor focus on inline suggestions; Claude Code operates as an autonomous developer that executes entire workflows. For AI-first businesses, this means the developer tooling market has decisively shifted toward agent-based systems — and the same pattern will repeat in every knowledge work category. The $2.5B run-rate also signals that Anthropic's revenue trajectory is accelerating faster than any AI lab in history.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.hungyichen.com/en/insights/ai-agent-protocol-wars">MCP Dev Summit Set for April 2-3 in NYC — Protocol Wars Crystallize Around Three Layers</a></h3>
+    <p class="story-meta"><span class="source">Agentic AI Foundation</span> · Apr 2-3 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The first MCP Dev Summit is scheduled for April 2-3, 2026 in New York City, hosted by the Agentic AI Foundation under the Linux Foundation. The event comes as the agent protocol landscape has crystallized into three complementary layers: MCP for agent-to-tool connectivity (97M+ monthly SDK downloads), A2A for agent-to-agent communication (100+ enterprise supporters), and WebMCP for browser-native tool exposure. MCP has evolved beyond simple data fetching — servers can now execute code to filter and transform data before sending it to the LLM, and Tool Annotations support human-in-the-loop warnings for high-stakes actions.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COWORK & CLAUDE ECOSYSTEM -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128268;</span>
+    <h2>Cowork &amp; Claude Ecosystem</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://dataconomy.com/2026/03/10/anthropic-launches-ai-powered-code-review-for-claude-code/">Anthropic Launches Code Review — Multi-Agent System That Catches Bugs Human Reviewers Miss</a></h3>
+    <p class="story-meta"><span class="source">Dataconomy / Anthropic</span> · Mar 10 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic released Code Review, a multi-agent code review system built into Claude Code that dispatches teams of AI agents to scrutinize every pull request for bugs, logic errors, and security vulnerabilities that human reviewers routinely miss. The feature is now in research preview for Team and Enterprise plans. Each review spawns specialized sub-agents focused on different aspects — security, performance, correctness, and style — that collaborate to produce a comprehensive assessment. This represents one of the first production multi-agent systems shipping as a native platform feature.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Code Review is a proof-of-concept for the multi-agent architecture pattern at enterprise scale. Instead of a single model doing everything, specialized agents collaborate on a complex task — each with a narrow focus and higher accuracy in its domain. This is the template for how AI-first businesses should think about building agent systems: decompose complex workflows into specialized sub-agents that coordinate rather than relying on a single monolithic model. Expect this pattern to spread across Cowork for non-code workflows next.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.axios.com/2026/03/09/anthropic-sues-pentagon-supply-chain-risk-label">Anthropic vs. Pentagon Escalates — 30+ OpenAI &amp; DeepMind Employees Back Lawsuit, Microsoft Voices Support</a></h3>
+    <p class="story-meta"><span class="source">Axios / CNN / CNBC</span> · Mar 9-10 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic's legal battle with the Pentagon intensified this week. After being designated a "supply chain risk" — a label historically reserved for foreign adversaries — Anthropic filed two federal lawsuits alleging illegal retaliation. The designation came after negotiations broke down over Anthropic's insistence that Claude not be used for mass surveillance of U.S. citizens or autonomous weapons. Over 30 employees from OpenAI and Google DeepMind signed a statement supporting Anthropic's position, and Microsoft publicly backed Anthropic. CFO Krishna Rao warned the designation could reduce Anthropic's 2026 revenue by "multiple billions of dollars."</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is an unprecedented moment for AI safety in practice — a frontier lab taking a multi-billion-dollar revenue hit to enforce ethical red lines on government use. The cross-company employee support (from OpenAI and DeepMind) and Microsoft's backing suggest the broader AI industry views this as a line-in-the-sand moment. For businesses building on Claude, monitor the financial implications closely: if the Pentagon designation stands, it could affect Anthropic's burn rate and investment capacity, potentially impacting the pace of product development.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/09/yann-lecuns-ami-labs-raises-1-03-billion-to-build-world-models/">AMI Labs Raises $1.03B at $3.5B Valuation — Yann LeCun's Bet Against LLMs</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / MIT Technology Review</span> · Mar 9 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">AMI Labs, co-founded by Turing Award winner Yann LeCun after leaving Meta, raised $1.03 billion at a $3.5 billion pre-money valuation. AMI is building "world models" — AI that learns from reality and physical environments rather than just language. LeCun has been vocal that LLMs are fundamentally limited and that the next breakthrough requires models that understand the 3D world through sensory experience. The round is one of the largest seed-to-Series A raises in AI history, reflecting deep investor conviction in the post-LLM thesis.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> LeCun's bet is the most well-funded challenge to the LLM paradigm yet. If world models prove viable, they could unlock AI capabilities that text-trained models fundamentally can't achieve — spatial reasoning, physical manipulation, and embodied intelligence. For AI-first businesses, this is a signal to watch but not pivot on: LLMs will dominate enterprise workflows for the foreseeable future, but world models could open entirely new categories of AI-powered products in robotics, manufacturing, and spatial computing within 3-5 years.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/">Two Unicorns Minted in One Day — Goodfire ($1.25B) and Fundamental ($1.4B)</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">AI interpretability startup Goodfire hit a $1.25 billion valuation, while structured data infrastructure company Fundamental reached $1.4 billion — both in the same day. Goodfire's rise reflects growing enterprise demand for explainable AI as regulatory pressure mounts, while Fundamental's valuation signals that precision data infrastructure is hitting an inflection point. Separately, Legora, an AI platform built for lawyers, raised $550 million Series D at a $5.55 billion valuation, and MatX secured $500 million Series B for custom chips optimized for LLM workloads.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/record-setting-global-funding-february-2026-openai-anthropic/">February 2026: $195B+ in AI Capital — The Most Consequential Month in Venture History</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">February 2026 closed with an estimated $195 billion or more in tracked AI-related capital deployment, making it the most consequential month in the history of venture finance. The figure was driven by mega-rounds from OpenAI ($110B), Anthropic ($30B), and xAI ($20B), plus large infrastructure bets on Nscale ($2B), World Labs ($1B), and AMI Labs ($1.03B). Capital is increasingly concentrating in three categories: frontier model development, AI infrastructure and compute, and vertical AI applications with clear enterprise traction.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.mondaq.com/unitedstates/new-technology/1755166/march-2026-federal-deadlines-that-will-reshape-the-ai-regulatory-landscape">TODAY: FTC &amp; Commerce Department AI Preemption Deadlines Arrive</a></h3>
+    <p class="story-meta"><span class="source">Mondaq / Baker Botts / IAPP</span> · Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The most consequential AI regulatory deadlines of 2026 land today. The FTC must issue its policy statement explaining how the FTC Act applies to AI and when state laws requiring alteration of AI outputs are preempted by federal law. Simultaneously, the Commerce Department must publish its evaluation identifying state AI laws that conflict with federal competitiveness policy. However, legal experts note the FTC's preemption authority is limited — a policy statement alone may not suffice, and a lengthy rulemaking process would be required for binding preemption. The DOJ's AI Litigation Task Force stands ready to challenge flagged state laws, but courts will ultimately decide whether California's TFAIA, Texas's RAIGA, and Colorado's AI Act survive.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Watch the actual language of today's announcements carefully. If the FTC issues a broad preemption statement, it creates immediate legal uncertainty — state AGs will likely challenge it, and courts will take months or years to resolve. If the FTC takes a narrow approach, the state patchwork remains, and every AI business needs state-by-state compliance strategies. Either way, the practical impact on builders is the same in the short term: plan for compliance with existing state laws while monitoring the federal challenge. The real resolution will come from the courts, not today's statements.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.corporatecomplianceinsights.com/2026-operational-guide-cybersecurity-ai-governance-emerging-risks/">SEC 2026 Priorities: AI &amp; Cybersecurity Displace Crypto as Top Regulatory Focus</a></h3>
+    <p class="story-meta"><span class="source">Corporate Compliance Insights</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The SEC's 2026 examination priorities reveal a significant shift: AI and cybersecurity concerns have displaced cryptocurrency as the industry's top regulatory focus. AI is now classified as a clear area of operational risk, linked to cybersecurity, disclosures, and internal use for critical business functions. Meanwhile, the cyber insurance market is transforming: carriers are introducing "AI Security Riders" requiring documented adversarial red-teaming, model-level risk assessments, and specialized safeguards as prerequisites for underwriting coverage.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.eweek.com/news/meta-ai-yann-lecun-ami-world-models-startup/">Samsung Targets 800M Gemini-Equipped Devices by End of 2026</a></h3>
+    <p class="story-meta"><span class="source">Samsung / Google</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Samsung Electronics announced a goal to double its footprint of mobile devices equipped with Google's Gemini AI, aiming for 800 million units by year-end 2026. The push extends advanced generative AI features beyond flagship devices into mid-tier and budget smartphones. Combined with Alibaba's Qwen 3.5 Small models running on 4GB devices, the industry is clearly pivoting toward ubiquitous on-device AI. IDC separately predicts AI copilots will be embedded in 80% of enterprise workplace applications by end of 2026.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://lucidworks.com/blog/enterprise-ai-adoption-in-2026-trends-gaps-and-strategic-insights">The Enterprise AI Gap: 78% Adopted, Only 20% Generating Revenue</a></h3>
+    <p class="story-meta"><span class="source">Lucidworks / Deloitte</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">While 78% of organizations have adopted AI in some form and AI agent deployments nearly doubled in four months (7.2% to 13.2%), only 20% of organizations are generating actual revenue from AI — despite 74% aspiring to. The gap persists because of data quality issues, weak governance frameworks, limited infrastructure, and workforce readiness. Healthcare and financial services lead in production deployments, with industries focused on diagnostics, fraud detection, and document automation showing the most traction. The enterprise AI market remains a story of acceleration in adoption but a persistent gap between deployment and monetization.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Wednesday, March 11, 2026</p>
+  <p class="sources">Sources: Alibaba, TechCrunch, OpenAI, Sci-Tech Today, DEV Community, Agentic AI Foundation, Anthropic, Dataconomy, Axios, CNN, CNBC, MIT Technology Review, AI Funding Tracker, Crunchbase, Mondaq, Baker Botts, IAPP, Corporate Compliance Insights, Samsung, Google, Lucidworks, Deloitte, IDC</p>
+</div>
+
+</div>
+</body>
+</html>
