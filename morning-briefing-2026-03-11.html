@@ -1,6 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UCWH Morning Briefing — Wednesday, March 11, 2026</title>
@@ -70,9 +233,9 @@ td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
 <body>
 
 <div class="header">
-  <h1>UCWH Morning Briefing</h1>
-  <div class="subtitle">Data for Tuesday, March 10, 2026</div>
-  <div class="date">Wednesday, March 11, 2026</div>
+  <h1>UCWH Morning Briefing — Wednesday, March 11, 2026</h1>
+  <div class="subtitle">United Car Wash Holdings — Tommy's Express</div>
+  <div class="date">Wednesday, March 11, 2026 · Data for yesterday (Tuesday, March 10, 2026)</div>
 </div>
 
 <div class="container">
@@ -503,7 +666,7 @@ td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
     <div class="stat-card">
       <div class="label">Plan Mix</div>
       <div class="value">Works Heavy</div>
-      <div class="change">14 Works / 2 Super</div>
+      <div class="change">17 Works / 2 Super</div>
     </div>
     <div class="stat-card">
       <div class="label">Avg/Member</div>
@@ -538,7 +701,7 @@ td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
 
     <div class="action-item">
       <span class="num">5</span><span class="title">Increase InstaClub Promotion (Slight Enrollment Dip)</span>
-      <p>19 new members ($677.81) is slightly below trend. Consider targeted onsite signage, SMS promotions, or social media to re-energize enrollment. Works plan is dominant (14/16); evaluate Super plan value proposition.</p>
+      <p>19 new members ($677.81) is slightly below trend. Consider targeted onsite signage, SMS promotions, or social media to re-energize enrollment. Works plan is dominant (17/19); evaluate Super plan value proposition.</p>
     </div>
   </div>
 
@@ -547,24 +710,24 @@ td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
 
   <div class="stat-grid">
     <div class="stat-card">
-      <div class="label">Forecast Methodology</div>
-      <div class="value">Historical Avg</div>
-      <div class="change">Per day, 1,235</div>
+      <div class="label">Forecast Model</div>
+      <div class="value">V2 ML</div>
+      <div class="change">wash-forecast skill</div>
     </div>
     <div class="stat-card">
       <div class="label">Best Day</div>
-      <div class="value">Sunday</div>
-      <div class="change">Warm 85°F Houston</div>
+      <div class="value">Saturday</div>
+      <div class="change">572 fleet washes</div>
     </div>
     <div class="stat-card">
       <div class="label">Worst Day</div>
       <div class="value">Wednesday</div>
-      <div class="change">Rain 0.573"</div>
+      <div class="change">Rain 0.811" Houston</div>
     </div>
     <div class="stat-card">
       <div class="label">5-Day Total</div>
-      <div class="value">6,175</div>
-      <div class="change">Expected volume</div>
+      <div class="value">2,608</div>
+      <div class="change">~18% MAPE TX, ~32% UT</div>
     </div>
   </div>
 
@@ -585,65 +748,65 @@ td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
       <tr>
         <td>Mar 11</td>
         <td><strong>Wed (Today)</strong></td>
-        <td>🌧️ Rain 77°F/58°F 0.573" 18mph</td>
-        <td>☀️ Clear 51°F/25°F 0.000" 19mph</td>
-        <td>494</td>
-        <td>416</td>
-        <td>325</td>
-        <td><span style="color:#ef4444;">1,235</span></td>
+        <td>⛈️ Heavy rain 78°F/58°F 0.811" 19mph</td>
+        <td>⛅ Partly cloudy 51°F/25°F 0.000" 19mph</td>
+        <td>177</td>
+        <td>141</td>
+        <td>163</td>
+        <td><span style="color:#ef4444;">481</span></td>
       </tr>
       <tr>
         <td>Mar 12</td>
         <td><strong>Thu</strong></td>
         <td>☀️ Clear 59°F/44°F 0.000" 19mph</td>
         <td>☁️ Overcast 69°F/36°F 0.000" 21mph</td>
-        <td>494</td>
-        <td>416</td>
-        <td>325</td>
-        <td>1,235</td>
+        <td>194</td>
+        <td>155</td>
+        <td>133</td>
+        <td>482</td>
       </tr>
       <tr>
         <td>Mar 13</td>
         <td><strong>Fri</strong></td>
-        <td>☀️ Clear 77°F/55°F 0.000" 12mph</td>
+        <td>☀️ Clear 76°F/54°F 0.000" 12mph</td>
         <td>☁️ Overcast 68°F/44°F 0.000" 14mph</td>
-        <td>494</td>
-        <td>416</td>
-        <td>325</td>
-        <td>1,235</td>
+        <td>222</td>
+        <td>174</td>
+        <td>138</td>
+        <td>534</td>
       </tr>
       <tr>
         <td>Mar 14</td>
         <td><strong>Sat</strong></td>
         <td>☀️ Clear 80°F/59°F 0.000" 13mph</td>
         <td>☁️ Overcast 60°F/48°F 0.000" 15mph</td>
-        <td>494</td>
-        <td>416</td>
-        <td>325</td>
-        <td>1,235</td>
+        <td>235</td>
+        <td>180</td>
+        <td>157</td>
+        <td>572</td>
       </tr>
       <tr>
         <td>Mar 15</td>
         <td><strong>Sun</strong></td>
         <td>☁️ Overcast 85°F/63°F 0.000" 12mph</td>
         <td>☁️ Overcast 59°F/42°F 0.000" 9mph</td>
-        <td>494</td>
-        <td>416</td>
-        <td>325</td>
-        <td><span style="color:#10b981;">1,235</span></td>
+        <td>225</td>
+        <td>179</td>
+        <td>135</td>
+        <td><span style="color:#10b981;">539</span></td>
       </tr>
       <tr class="forecast-total">
         <td colspan="4"><strong>5-Day Total Forecast</strong></td>
-        <td><strong>2,470</strong></td>
-        <td><strong>2,080</strong></td>
-        <td><strong>1,625</strong></td>
-        <td><strong>6,175</strong></td>
+        <td><strong>1,053</strong></td>
+        <td><strong>829</strong></td>
+        <td><strong>726</strong></td>
+        <td><strong>2,608</strong></td>
       </tr>
     </tbody>
   </table>
 
   <div class="card">
-    <p style="font-size:13px; color:#475569;"><strong>Methodology:</strong> Forecast uses historical daily averages (1,235 washes/day fleet) applied to each site's relative performance and weather impact factors. Wednesday (today) reflects expected rain impact; Thursday–Sunday recovery assumes normal conditions with slight uplift on warm weekend days. Actual results will vary based on operational factors, local events, and traffic patterns. This forecast does not account for potential promotional activities or staffing changes.</p>
+    <p style="font-size:13px; color:#475569;"><strong>Methodology:</strong> V2 ML model (Random Forest for TX sites, Gradient Boosting for UT426) trained on Sep 2025–Mar 2026 data. Predictions integrate subscriber counts, 7-day wash history moving averages, day-of-week patterns, and weather conditions. Wednesday (today) reflects heavy rain impact in Houston (0.811"); Thursday–Friday recovery as skies clear; Saturday peaks with warm, clear conditions. Expected MAPE: ~18% for TX160/TX190, ~32% for UT426. Use 15–20% buffer for staffing at TX sites, 25–35% for UT426.</p>
   </div>
 
 </div>
