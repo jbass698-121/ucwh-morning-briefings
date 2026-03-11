@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCWH Reports Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --bg: #f8fafc;
+            --bg-dark: #1e293b;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f172a;
+                --text: #f1f5f9;
+                --text-light: #cbd5e1;
+                --border: #334155;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .updated {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .report-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .report-card {
+                background: #1e293b;
+            }
+        }
+
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);
+            border-color: var(--primary);
+        }
+
+        .report-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .report-card p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .date {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .not-available {
+            color: #dc2626;
+        }
+
+        footer {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 1.8rem; }
+            .reports-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>UCWH Reports Portal</h1>
+            <p class="subtitle">Latest reports across all categories</p>
+            <p class="updated">Updated: 2026-03-11 13:26 UTC</p>
+        </header>
+
+        <div class="reports-grid">
+                    <section class="report-card">
+            <h2>Morning Briefing</h2>
+            <p>Daily operational summary</p>
+            <a href="  Morning Briefing: morning-briefing-2026-03-11.html
+https://jbass698-121.github.io/ucwh-morning-briefings/morning-briefing-2026-03-11.html" class="btn">View Latest</a>
+            <p class="date">2026-03-11</p>
+        </section>
+        <section class="report-card">
+            <h2>CEO Insights</h2>
+            <p>Weekly executive dashboard (Mondays)</p>
+            <a href="  CEO Insights: CEO_Dashboard_Insights_2026-03-09.html
+https://jbass698-121.github.io/ucwh-morning-briefings/CEO_Dashboard_Insights_2026-03-09.html" class="btn">View Latest</a>
+            <p class="date">2026-03-11</p>
+        </section>
+        <section class="report-card">
+            <h2>Hourly Inspection</h2>
+            <p>Weekly inspection analysis (Sundays)</p>
+            <a href="  Hourly Inspection: Hourly_Inspection_Report_2026-03-01.html
+https://jbass698-121.github.io/ucwh-morning-briefings/Hourly_Inspection_Report_2026-03-01.html" class="btn">View Latest</a>
+            <p class="date">2026-03-11</p>
+        </section>
+        <section class="report-card">
+            <h2>Weekly Report</h2>
+            <p>Comprehensive weekly analysis</p>
+            <a href="https://jbass698-121.github.io/ucwh-morning-briefings/Weekly_Report_2026-02-28_to_03-07.html" class="btn">View Latest</a>
+            <p class="date">2026-03-11</p>
+        </section>
+        <section class="report-card">
+            <h2>Monthly Report</h2>
+            <p>Complete monthly summary and metrics</p>
+            <a href="https://jbass698-121.github.io/ucwh-morning-briefings/Monthly_Report_2026-02.html" class="btn">View Latest</a>
+            <p class="date">2026-03-11</p>
+        </section>
+
+        </div>
+
+        <footer>
+            <p>Hosted on GitHub Pages | Updated automatically</p>
+            <p>&copy; 2026 UCWH</p>
+        </footer>
+    </div>
+</body>
+</html>
