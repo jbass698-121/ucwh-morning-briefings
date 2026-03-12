@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCW Tommy's OpCo — Financial Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface2: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent: #38bdf8;
+  --green: #34d399;
+  --red: #f87171;
+  --yellow: #fbbf24;
+  --blue: #60a5fa;
+  --border: #475569;
+  --tx160: #2563eb;
+  --tx190: #059669;
+  --ut426: #d97706;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,-apple-system,sans-serif; }
+.container { max-width:1400px; margin:0 auto; padding:20px; }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e293b 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 40px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--tx160), var(--tx190), var(--ut426));
+}
+.header h1 { font-size:28px; font-weight:700; margin-bottom:4px; }
+.header .subtitle { color:var(--text-muted); font-size:14px; }
+.header .date-range { color:var(--accent); font-size:13px; margin-top:8px; }
+
+/* Trend indicator */
+.trend { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; padding:2px 8px; border-radius:12px; }
+.trend.up { color:var(--green); background:rgba(52,211,153,0.1); }
+.trend.down { color:var(--red); background:rgba(248,113,113,0.1); }
+.trend.neutral { color:var(--text-muted); background:rgba(148,163,184,0.1); }
+
+/* KPI Cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.kpi-card.tx160::before { background: var(--tx160); }
+.kpi-card.tx190::before { background: var(--tx190); }
+.kpi-card.ut426::before { background: var(--ut426); }
+.kpi-card.combined::before { background: linear-gradient(90deg, var(--tx160), var(--tx190), var(--ut426)); }
+.kpi-label { font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+.kpi-value { font-size:24px; font-weight:700; }
+.kpi-sub { font-size:12px; color:var(--text-muted); margin-top:4px; }
+
+/* Site pills */
+.site-pills { display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
+.site-pill {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 16px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:24px;
+  font-size:13px;
+  font-weight:500;
+}
+.site-dot { width:10px; height:10px; border-radius:50%; }
+
+/* Chart sections */
+.chart-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.chart-section h2 { font-size:18px; font-weight:600; margin-bottom:4px; }
+.chart-section .section-sub { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+.chart-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(450px,1fr)); gap:20px; }
+.chart-box { position:relative; background:var(--bg); border-radius:8px; padding:16px; min-height:300px; }
+.chart-box h3 { font-size:14px; font-weight:600; margin-bottom:12px; color:var(--text-muted); }
+
+/* Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.data-table th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--border);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(71,85,105,0.4);
+}
+.data-table tr:hover td { background:rgba(56,189,248,0.05); }
+.data-table .num { text-align:right; font-variant-numeric:tabular-nums; }
+.data-table .neg { color:var(--red); }
+.data-table .pos { color:var(--green); }
+.data-table .cat-row td { font-weight:700; background:rgba(71,85,105,0.15); border-bottom:2px solid var(--border); }
+.data-table .total-row td { font-weight:700; border-top:2px solid var(--border); font-size:14px; }
+
+/* Trend direction cards */
+.direction-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:16px; }
+.direction-card {
+  background:var(--bg);
+  border-radius:8px;
+  padding:16px;
+  border-left:3px solid var(--border);
+}
+.direction-card.improving { border-left-color:var(--green); }
+.direction-card.worsening { border-left-color:var(--red); }
+.direction-card.stable { border-left-color:var(--yellow); }
+.direction-card h4 { font-size:14px; margin-bottom:4px; }
+.direction-card .detail { font-size:12px; color:var(--text-muted); }
+
+/* Tabs */
+.tab-bar { display:flex; gap:4px; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:0; }
+.tab-btn {
+  padding:10px 20px;
+  border:none;
+  background:transparent;
+  color:var(--text-muted);
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:all 0.2s;
+}
+.tab-btn:hover { color:var(--text); }
+.tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+/* Responsive */
+@media (max-width:768px) {
+  .chart-grid { grid-template-columns:1fr; }
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .header { padding:20px; }
+  .header h1 { font-size:22px; }
+}
+
+/* Footer */
+.footer {
+  text-align:center;
+  padding:24px;
+  color:var(--text-muted);
+  font-size:12px;
+  border-top:1px solid var(--border);
+  margin-top:32px;
+}
+
+/* Single month notice */
+.notice {
+  background:rgba(251,191,36,0.1);
+  border:1px solid rgba(251,191,36,0.3);
+  border-radius:8px;
+  padding:12px 16px;
+  font-size:13px;
+  color:var(--yellow);
+  margin-bottom:20px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>UCW Tommy's OpCo</h1>
+  <div class="subtitle">Financial Performance Dashboard</div>
+  <div class="date-range" id="dateRange"></div>
+</div>
+
+<div class="site-pills">
+  <div class="site-pill"><div class="site-dot" style="background:var(--tx160)"></div>TX160 — FM1960</div>
+  <div class="site-pill"><div class="site-dot" style="background:var(--tx190)"></div>TX190 — ECR</div>
+  <div class="site-pill"><div class="site-dot" style="background:var(--ut426)"></div>UT426 — Utah</div>
+</div>
+
+<div id="singleMonthNotice" class="notice" style="display:none;">
+  📊 Showing single-month snapshot. Add more months to see trend arrows, direction indicators, and month-over-month comparisons.
+</div>
+
+<!-- KPI summary -->
+<div class="kpi-grid" id="kpiGrid"></div>
+
+<!-- Tab navigation -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="overview">Overview</button>
+  <button class="tab-btn" data-tab="revenue">Revenue</button>
+  <button class="tab-btn" data-tab="expenses">Expenses & COGS</button>
+  <button class="tab-btn" data-tab="detailed">Detailed P&L</button>
+  <button class="tab-btn" data-tab="trends" id="trendsTab">Trends</button>
+</div>
+
+<!-- OVERVIEW TAB -->
+<div class="tab-content active" id="tab-overview">
+  <div class="chart-section">
+    <h2>P&L Summary by Site</h2>
+    <div class="section-sub">Revenue, COGS, Expenses, and Net Income at a glance</div>
+    <div class="chart-grid">
+      <div class="chart-box"><h3>Income vs Expenses</h3><canvas id="chartOverviewBar"></canvas></div>
+      <div class="chart-box"><h3>Gross Margin %</h3><canvas id="chartGrossMargin"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-section">
+    <h2>Revenue Composition</h2>
+    <div class="section-sub">How each site generates revenue</div>
+    <div class="chart-grid">
+      <div class="chart-box"><h3>Revenue Breakdown (Latest Month)</h3><canvas id="chartRevenueStack"></canvas></div>
+      <div class="chart-box"><h3>Expense Categories (Latest Month)</h3><canvas id="chartExpenseCat"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- REVENUE TAB -->
+<div class="tab-content" id="tab-revenue">
+  <div class="chart-section">
+    <h2>Revenue Analysis</h2>
+    <div class="section-sub">Revenue streams broken down by type and site</div>
+    <div class="chart-grid">
+      <div class="chart-box"><h3>Revenue by Type</h3><canvas id="chartRevType"></canvas></div>
+      <div class="chart-box"><h3>Membership vs Non-Membership</h3><canvas id="chartMembershipPie"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-section" id="revenueTrendSection" style="display:none;">
+    <h2>Revenue Over Time</h2>
+    <div class="section-sub">Monthly revenue trend per site</div>
+    <div class="chart-box" style="background:var(--bg);border-radius:8px;padding:16px;"><canvas id="chartRevTrend"></canvas></div>
+  </div>
+</div>
+
+<!-- EXPENSES TAB -->
+<div class="tab-content" id="tab-expenses">
+  <div class="chart-section">
+    <h2>Cost of Goods Sold</h2>
+    <div class="section-sub">Direct costs by site</div>
+    <div class="chart-grid">
+      <div class="chart-box"><h3>COGS Breakdown</h3><canvas id="chartCOGS"></canvas></div>
+      <div class="chart-box"><h3>COGS as % of Revenue</h3><canvas id="chartCOGSPct"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-section">
+    <h2>Operating Expenses</h2>
+    <div class="section-sub">Where the money goes</div>
+    <div class="chart-grid">
+      <div class="chart-box"><h3>Top Expense Categories</h3><canvas id="chartTopExp"></canvas></div>
+      <div class="chart-box"><h3>Payroll vs Other Expenses</h3><canvas id="chartPayrollVsOther"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-section" id="cogsTrendSection" style="display:none;">
+    <h2>COGS & Expense Trends</h2>
+    <div class="section-sub">Monthly trend — watch for COGS rising and margins shrinking</div>
+    <div class="chart-box" style="background:var(--bg);border-radius:8px;padding:16px;"><canvas id="chartCOGSTrend"></canvas></div>
+  </div>
+</div>
+
+<!-- DETAILED P&L TAB -->
+<div class="tab-content" id="tab-detailed">
+  <div class="chart-section">
+    <h2>Detailed Profit & Loss — Latest Month</h2>
+    <div class="section-sub" id="detailedSubtitle"></div>
+    <div style="overflow-x:auto;" id="detailedTableContainer"></div>
+  </div>
+</div>
+
+<!-- TRENDS TAB -->
+<div class="tab-content" id="tab-trends">
+  <div class="chart-section">
+    <h2>Direction Indicators</h2>
+    <div class="section-sub">Which way are key metrics heading? (requires 2+ months)</div>
+    <div class="direction-grid" id="directionGrid"></div>
+  </div>
+  <div class="chart-section">
+    <h2>Key Metrics Over Time</h2>
+    <div class="section-sub">Net Income, Gross Profit, and Total Expenses month by month</div>
+    <div class="chart-box" style="background:var(--bg);border-radius:8px;padding:16px;"><canvas id="chartKeyTrends"></canvas></div>
+  </div>
+  <div class="chart-section">
+    <h2>Margin Trends</h2>
+    <div class="section-sub">Gross margin and net margin over time</div>
+    <div class="chart-box" style="background:var(--bg);border-radius:8px;padding:16px;"><canvas id="chartMarginTrend"></canvas></div>
+  </div>
+</div>
+
+<div class="footer">
+  Generated on March 12, 2026 at 05:30 AM • UCW Tommy's OpCo Financial Dashboard<br>
+  Data covers 1 month(s) • Dashboard auto-updates when new monthly data is added
+</div>
+
+</div>
+
+<script>
+const ALL_DATA = [{"month": "2026-01", "date_range": "January 1-31, 2026", "sites": {"UCW TX160": {"display_name": "TX160 - FM1960", "site_raw": "UCW TX160 - FM1960", "date_range": "January 1-31, 2026", "line_items": {"4101": {"name": "Cash Revenue", "amount": 3291.0, "category": "Car Wash Revenue", "raw_label": "4101 Cash"}, "4102": {"name": "Credit Card Revenue", "amount": 16952.85, "category": "Car Wash Revenue", "raw_label": "4102 Credit Card"}, "4103": {"name": "Membership Revenue", "amount": 31079.28, "category": "Car Wash Revenue", "raw_label": "4103 Membership Revenue"}, "4302": {"name": "Detail Kits", "amount": 400.0, "category": "Merchandise Sales", "raw_label": "4302 Detail Kits"}, "4502": {"name": "Gift Cards Redeemed", "amount": 80.97, "category": "Other Income", "raw_label": "4502 Gift Cards Redemmed"}, "5002": {"name": "Credit Card Fees", "amount": 860.64, "category": "Cost of Goods Sold", "raw_label": "5002 Credit Card Fees"}, "5003": {"name": "Royalty Fees", "amount": 2054.69, "category": "Cost of Goods Sold", "raw_label": "5003 Royalty Fees"}, "5005": {"name": "Gift Cards (COGS)", "amount": 36.99, "category": "Cost of Goods Sold", "raw_label": "5005 Gift Cards"}, "5008": {"name": "Technology Fee", "amount": 392.0, "category": "Cost of Goods Sold", "raw_label": "5008 Technology Fee"}, "5009": {"name": "Brand Development", "amount": 513.67, "category": "Cost of Goods Sold", "raw_label": "5009 Brand Development"}, "6009": {"name": "Credit Card Charges", "amount": 23.07, "category": "Operating Expenses", "raw_label": "6009 Credit Card Charges"}, "6014": {"name": "Internet Services", "amount": 629.05, "category": "Operating Expenses", "raw_label": "6014 Internet Services"}, "6016": {"name": "Meals & Entertainment", "amount": 785.37, "category": "Operating Expenses", "raw_label": "6016 Meals and Entertainment"}, "6018": {"name": "Office Supplies", "amount": 518.29, "category": "Operating Expenses", "raw_label": "6018 Office Supplies"}, "6022": {"name": "Software Expense", "amount": 1185.01, "category": "Operating Expenses", "raw_label": "6022 Software Expense"}, "6023": {"name": "TCW Operating", "amount": 5360.44, "category": "Operating Expenses", "raw_label": "6023 TCW Operating"}, "6024": {"name": "Tommy's Express Supplies", "amount": 273.98, "category": "Operating Expenses", "raw_label": "6024 Tommy's Express Supplies"}, "6101": {"name": "Advertising & Promotion", "amount": 2011.84, "category": "Marketing", "raw_label": "6101 Advertising and Promotion"}, "6202": {"name": "Accounting Software", "amount": 1436.65, "category": "Professional Services", "raw_label": "6202 Accounting Software"}, "6301": {"name": "Rent", "amount": 7916.67, "category": "Occupancy", "raw_label": "6301 Rent"}, "6302": {"name": "Insurance", "amount": 4652.08, "category": "Occupancy", "raw_label": "6302 Insurance Expense"}, "6401": {"name": "Electricity", "amount": 1190.44, "category": "Utilities", "raw_label": "6401 Electricity"}, "6402": {"name": "Gas", "amount": 4.09, "category": "Utilities", "raw_label": "6402 Gas"}, "6403": {"name": "Sewer", "amount": 124.49, "category": "Utilities", "raw_label": "6403 Sewer"}, "6406": {"name": "Water", "amount": 4120.07, "category": "Utilities", "raw_label": "6406 Water"}, "6600": {"name": "6600 Travel Expense", "amount": 139.87, "category": "Travel", "raw_label": "6600 Travel Expense"}, "6601": {"name": "Airlines", "amount": 1957.95, "category": "Travel", "raw_label": "6601 Airlines"}, "6602": {"name": "Hotels", "amount": 703.03, "category": "Travel", "raw_label": "6602 Hotels"}, "6603": {"name": "Rental Cars", "amount": 2078.96, "category": "Travel", "raw_label": "6603 Rental Cars"}, "6701": {"name": "Salaries", "amount": 26284.48, "category": "Payroll", "raw_label": "6701 Salaries"}, "6702": {"name": "Payroll Tax", "amount": 2238.11, "category": "Payroll", "raw_label": "6702 Payroll Tax Expenses"}, "6717": {"name": "Guaranteed Payments", "amount": 4167.0, "category": "Payroll", "raw_label": "6717 Guaranteed Payment"}, "7006": {"name": "Miscellaneous", "amount": 27.47, "category": "Other Expenses", "raw_label": "7006 Miscellaneous"}, "9999": {"name": "Ask My Accountant", "amount": -797.0, "category": "Other Expenses", "raw_label": "9999 Ask My Accountant"}}, "categories": {"4100 Car Wash Revenue": 51323.13, "4300 Merchandise Sales": 400.0, "5000 Car Wash Expenses": 3857.99, "6000 Operating Business Expneses": 8775.21, "6100 Marketing": 2011.84, "6200 Professional Services": 1436.65, "6300 Occupancy": 12568.75, "6400 Utilities": 5439.09, "6600 Travel Expense": 4879.81, "6700 Payroll Expenses": 32689.59, "Other Expenses": -769.53}, "summary": {"total_income": 51804.1, "total_cogs": 3857.99, "gross_profit": 47946.11, "total_expenses": 67800.94, "net_operating_income": -19854.83, "net_income": -19085.300000000003}}, "UCW TX190": {"display_name": "TX190 - ECR", "site_raw": "UCW TX190 - ECR", "date_range": "January 1-31, 2026", "line_items": {"4101": {"name": "Cash Revenue", "amount": 3520.0, "category": "Car Wash Revenue", "raw_label": "4101 Cash"}, "4102": {"name": "Credit Card Revenue", "amount": 15985.96, "category": "Car Wash Revenue", "raw_label": "4102 Credit Card"}, "4103": {"name": "Membership Revenue", "amount": 28748.71, "category": "Car Wash Revenue", "raw_label": "4103 Membership Revenue"}, "4302": {"name": "Detail Kits", "amount": 160.0, "category": "Merchandise Sales", "raw_label": "4302 Detail Kits"}, "4502": {"name": "Gift Cards Redeemed", "amount": 146.28, "category": "Other Income", "raw_label": "4502 Gift Cards Redemmed"}, "5002": {"name": "Credit Card Fees", "amount": 816.51, "category": "Cost of Goods Sold", "raw_label": "5002 Credit Card Fee"}, "5003": {"name": "Royalty Fees", "amount": 1927.16, "category": "Cost of Goods Sold", "raw_label": "5003 Royalty Fees"}, "5005": {"name": "Gift Cards (COGS)", "amount": 221.94, "category": "Cost of Goods Sold", "raw_label": "5005 Gift Cards"}, "5008": {"name": "Technology Fee", "amount": 392.0, "category": "Cost of Goods Sold", "raw_label": "5008 Technology Fee"}, "5009": {"name": "Brand Development", "amount": 481.79, "category": "Cost of Goods Sold", "raw_label": "5009 Brand Development"}, "6009": {"name": "Credit Card Charges", "amount": 195.0, "category": "Operating Expenses", "raw_label": "6009 Credit Card Charges"}, "6014": {"name": "Internet Services", "amount": 694.81, "category": "Operating Expenses", "raw_label": "6014 Internet Services"}, "6016": {"name": "Meals & Entertainment", "amount": 161.75, "category": "Operating Expenses", "raw_label": "6016 Meals and Entertainment"}, "6018": {"name": "Office Supplies", "amount": 139.95, "category": "Operating Expenses", "raw_label": "6018 Office Supplies"}, "6022": {"name": "Software Expense", "amount": 1041.49, "category": "Operating Expenses", "raw_label": "6022 Software Expense"}, "6023": {"name": "TCW Operating", "amount": 7245.1, "category": "Operating Expenses", "raw_label": "6023 TCW Operating"}, "6101": {"name": "Advertising & Promotion", "amount": 2021.25, "category": "Marketing", "raw_label": "6101 Advertising and Promotion"}, "6202": {"name": "Accounting Software", "amount": 1560.22, "category": "Professional Services", "raw_label": "6202 Accounting Software"}, "6301": {"name": "Rent", "amount": 63805.0, "category": "Occupancy", "raw_label": "6301 Rent Expense"}, "6401": {"name": "Electricity", "amount": 5047.37, "category": "Utilities", "raw_label": "6401 Electricity"}, "6402": {"name": "Gas", "amount": 47.37, "category": "Utilities", "raw_label": "6402 Gas"}, "6404": {"name": "Trash", "amount": 269.68, "category": "Utilities", "raw_label": "6404 Trash"}, "6405": {"name": "Telephone", "amount": 396.71, "category": "Utilities", "raw_label": "6405 Telephone"}, "6406": {"name": "Water", "amount": 1462.2, "category": "Utilities", "raw_label": "6406 Water"}, "6602": {"name": "Hotels", "amount": 328.47, "category": "Travel", "raw_label": "6602 Hotels"}, "6701": {"name": "Salaries", "amount": 21911.08, "category": "Payroll", "raw_label": "6701 Salaries"}, "6702": {"name": "Payroll Tax", "amount": 328.2, "category": "Payroll", "raw_label": "6702 Payroll Tax Expenses"}, "6703": {"name": "Payroll Processing", "amount": 835.04, "category": "Payroll", "raw_label": "6703 Payroll Processing Fee"}, "6717": {"name": "Guaranteed Payments", "amount": 4167.0, "category": "Payroll", "raw_label": "6717 Guaranteed Payments"}}, "categories": {"4100 Car Wash Revenue": 48254.67, "4300 Merchandise Sales": 160.0, "5000 Car Wash Expenses": 3839.4, "6000 Operating Business Expneses": 9478.1, "6100 Marketing": 2021.25, "6200 Professional Services": 1560.22, "6300 Occupancy": 63805.0, "6400 Utilities": 7223.33, "6600 Travel Expense": 328.47, "6700 Payroll Expenses": 27241.32}, "summary": {"total_income": 48560.95, "total_cogs": 3839.4, "gross_profit": 44721.55, "total_expenses": 111657.69, "net_operating_income": -66936.14, "net_income": -66936.14000000001}}, "UCW UT426": {"display_name": "UT426 - Utah", "site_raw": "UCW UT LLC", "date_range": "January 1-31, 2026", "line_items": {"4101": {"name": "Cash Revenue", "amount": 530.0, "category": "Car Wash Revenue", "raw_label": "4101 Cash"}, "4102": {"name": "Credit Card Revenue", "amount": 11136.94, "category": "Car Wash Revenue", "raw_label": "4102 Credit Cards"}, "4103": {"name": "Membership Revenue", "amount": 25098.27, "category": "Car Wash Revenue", "raw_label": "4103 Membership Revenue"}, "4502": {"name": "Gift Cards Redeemed", "amount": 215.94, "category": "Other Income", "raw_label": "4502 Gift Cards Redemmed"}, "5002": {"name": "Credit Card Fees", "amount": 711.25, "category": "Cost of Goods Sold", "raw_label": "5002 Credit Card Fees"}, "5003": {"name": "Royalty Fees", "amount": 1479.25, "category": "Cost of Goods Sold", "raw_label": "5003 Royalty Fees"}, "5008": {"name": "Technology Fee", "amount": 392.0, "category": "Cost of Goods Sold", "raw_label": "5008 Technology Fee"}, "5009": {"name": "Brand Development", "amount": 369.82, "category": "Cost of Goods Sold", "raw_label": "5009 Brand Development"}, "6009": {"name": "Credit Card Charges", "amount": 195.0, "category": "Operating Expenses", "raw_label": "6009 Credit Card Charges"}, "6010": {"name": "Customer Claims", "amount": 1802.9, "category": "Operating Expenses", "raw_label": "6010 Customer Claims"}, "6014": {"name": "Internet Services", "amount": 433.77, "category": "Operating Expenses", "raw_label": "6014 Internet Services"}, "6015": {"name": "Landscaping", "amount": 356.9, "category": "Operating Expenses", "raw_label": "6015 Landscaping"}, "6016": {"name": "Meals & Entertainment", "amount": 1304.95, "category": "Operating Expenses", "raw_label": "6016 Meals and Entertainment"}, "6018": {"name": "Office Supplies", "amount": 180.03, "category": "Operating Expenses", "raw_label": "6018 Office Supplies"}, "6020": {"name": "Postage & Delivery", "amount": 222.0, "category": "Operating Expenses", "raw_label": "6020 Postage and Delivery"}, "6022": {"name": "Software Expense", "amount": 107.44, "category": "Operating Expenses", "raw_label": "6022 Software Expense"}, "6023": {"name": "TCW Operating", "amount": 430.24, "category": "Operating Expenses", "raw_label": "6023 TCW Operating"}, "6100": {"name": "6100 Marketing", "amount": 510.0, "category": "Marketing", "raw_label": "6100 Marketing"}, "6101": {"name": "Advertising & Promotion", "amount": 3668.36, "category": "Marketing", "raw_label": "6101 Advertising and Promotion"}, "6202": {"name": "Accounting Software", "amount": 123.57, "category": "Professional Services", "raw_label": "6202 Accounting Software"}, "6203": {"name": "Legal Fees", "amount": 6392.87, "category": "Professional Services", "raw_label": "6203 Legal Fee"}, "6301": {"name": "Rent", "amount": 52011.53, "category": "Occupancy", "raw_label": "6301 Rent"}, "6401": {"name": "Electricity", "amount": 3383.5, "category": "Utilities", "raw_label": "6401 Electricity"}, "6402": {"name": "Gas", "amount": 2777.09, "category": "Utilities", "raw_label": "6402 Gas"}, "6403": {"name": "Sewer", "amount": 0.0, "category": "Utilities", "raw_label": "6403 Sewer"}, "6406": {"name": "Water", "amount": 4335.06, "category": "Utilities", "raw_label": "6406 Water"}, "6601": {"name": "Airlines", "amount": -694.19, "category": "Travel", "raw_label": "6601 Airlines"}, "6602": {"name": "Hotels", "amount": 4586.18, "category": "Travel", "raw_label": "6602 Hotels"}, "6701": {"name": "Salaries", "amount": 23313.65, "category": "Payroll", "raw_label": "6701 Salaries"}, "6702": {"name": "Payroll Tax", "amount": 2226.52, "category": "Payroll", "raw_label": "6702 Payroll Tax Expenses"}, "6703": {"name": "Payroll Processing", "amount": 594.98, "category": "Payroll", "raw_label": "6703 Payroll Processing Fees"}, "6717": {"name": "Guaranteed Payments", "amount": 4167.0, "category": "Payroll", "raw_label": "6717 Guaranteed Payment"}, "6903": {"name": "Vehicle Repairs & Maintenance", "amount": 200.84, "category": "Other Expenses", "raw_label": "6903 Vehicle repairs and maintenance"}, "7006": {"name": "Miscellaneous", "amount": 36.9, "category": "Other Expenses", "raw_label": "7006 Miscellaneous"}}, "categories": {"4100 Car Wash Revenue": 36765.21, "5000 Car Wash Expenses": 2952.32, "6000 Operating Business Expneses": 5033.23, "6100 Marketing": 4178.36, "6200 Professional Service": 6516.44, "6300 Occupancy": 52011.53, "6400 Utilities": 10495.65, "6600 Travel Expense": 3891.99, "6700 Payroll Expenses": 30302.15, "Other Expenses": 237.74}, "summary": {"total_income": 36981.15, "total_cogs": 2952.32, "gross_profit": 34028.83, "total_expenses": 112429.35, "net_operating_income": -78400.52, "net_income": -78638.26000000001}}}}];
+const SITE_COLORS = {"UCW TX160": {"primary": "#2563eb", "light": "rgba(37,99,235,0.15)", "border": "rgba(37,99,235,0.8)"}, "UCW TX190": {"primary": "#059669", "light": "rgba(5,150,105,0.15)", "border": "rgba(5,150,105,0.8)"}, "UCW UT426": {"primary": "#d97706", "light": "rgba(217,119,6,0.15)", "border": "rgba(217,119,6,0.8)"}};
+const SITE_IDS = ["UCW TX160","UCW TX190","UCW UT426"];
+const SITE_SHORT = {"UCW TX160":"TX160","UCW TX190":"TX190","UCW UT426":"UT426"};
+const MONTH_NAMES = {"01":"Jan","02":"Feb","03":"Mar","04":"Apr","05":"May","06":"Jun","07":"Jul","08":"Aug","09":"Sep","10":"Oct","11":"Nov","12":"Dec"};
+
+function fmtMonth(m) {
+  const p = m.split("-");
+  return (MONTH_NAMES[p[1]]||p[1]) + " " + p[0];
+}
+function fmtCurrency(v) {
+  if (v == null) return "—";
+  const neg = v < 0;
+  const abs = Math.abs(v);
+  const s = abs >= 1000 ? "$" + abs.toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:0}) : "$" + abs.toFixed(2);
+  return neg ? "(" + s + ")" : s;
+}
+function fmtPct(v) { return v == null ? "—" : (v >= 0 ? "" : "") + v.toFixed(1) + "%"; }
+function trendArrow(curr, prev, invertGood) {
+  if (prev == null || curr == null) return '<span class="trend neutral">—</span>';
+  const diff = curr - prev;
+  const pct = prev !== 0 ? ((diff/Math.abs(prev))*100).toFixed(1) : "∞";
+  let good = diff > 0;
+  if (invertGood) good = !good;
+  if (Math.abs(diff) < 0.5) return '<span class="trend neutral">→ flat</span>';
+  const arrow = diff > 0 ? "↑" : "↓";
+  const cls = good ? "up" : "down";
+  return `<span class="trend ${cls}">${arrow} ${Math.abs(pct)}%</span>`;
+}
+
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = 'rgba(71,85,105,0.3)';
+Chart.defaults.font.family = "'Segoe UI',system-ui,sans-serif";
+
+const latest = ALL_DATA[ALL_DATA.length - 1];
+const prev = ALL_DATA.length >= 2 ? ALL_DATA[ALL_DATA.length - 2] : null;
+
+// Date range
+const dr = document.getElementById("dateRange");
+if (ALL_DATA.length === 1) {
+  dr.textContent = fmtMonth(latest.month);
+} else {
+  dr.textContent = fmtMonth(ALL_DATA[0].month) + " — " + fmtMonth(latest.month) + " (" + ALL_DATA.length + " months)";
+}
+
+// Single month notice
+if (ALL_DATA.length === 1) {
+  document.getElementById("singleMonthNotice").style.display = "block";
+}
+
+// KPIs
+(function() {
+  const grid = document.getElementById("kpiGrid");
+  let totalRev = 0, totalCOGS = 0, totalExp = 0, totalNet = 0;
+  SITE_IDS.forEach(sid => {
+    const s = latest.sites[sid];
+    if (!s) return;
+    const rev = s.summary.total_income || 0;
+    const net = s.summary.net_income || 0;
+    totalRev += rev;
+    totalCOGS += (s.summary.total_cogs || 0);
+    totalExp += (s.summary.total_expenses || 0);
+    totalNet += net;
+    const cls = sid.includes("TX160") ? "tx160" : sid.includes("TX190") ? "tx190" : "ut426";
+    const prevSite = prev ? prev.sites[sid] : null;
+    const prevRev = prevSite ? prevSite.summary.total_income||0 : null;
+    const prevNet = prevSite ? prevSite.summary.net_income||0 : null;
+    grid.innerHTML += `
+      <div class="kpi-card ${cls}">
+        <div class="kpi-label">${SITE_SHORT[sid]} Revenue</div>
+        <div class="kpi-value">${fmtCurrency(rev)}</div>
+        <div class="kpi-sub">${trendArrow(rev, prevRev, false)} Net: ${fmtCurrency(net)}</div>
+      </div>`;
+  });
+  const prevTotalRev = prev ? SITE_IDS.reduce((a,sid) => a + ((prev.sites[sid]||{}).summary||{}).total_income||0, 0) : null;
+  const prevTotalNet = prev ? SITE_IDS.reduce((a,sid) => a + ((prev.sites[sid]||{}).summary||{}).net_income||0, 0) : null;
+  const gm = totalRev > 0 ? ((totalRev - totalCOGS)/totalRev*100) : 0;
+  grid.innerHTML += `
+    <div class="kpi-card combined">
+      <div class="kpi-label">Combined Revenue</div>
+      <div class="kpi-value">${fmtCurrency(totalRev)}</div>
+      <div class="kpi-sub">${trendArrow(totalRev, prevTotalRev, false)}</div>
+    </div>
+    <div class="kpi-card combined">
+      <div class="kpi-label">Combined Net Income</div>
+      <div class="kpi-value">${fmtCurrency(totalNet)}</div>
+      <div class="kpi-sub">${trendArrow(totalNet, prevTotalNet, false)}</div>
+    </div>
+    <div class="kpi-card combined">
+      <div class="kpi-label">Gross Margin</div>
+      <div class="kpi-value">${fmtPct(gm)}</div>
+      <div class="kpi-sub">COGS: ${fmtCurrency(totalCOGS)}</div>
+    </div>`;
+})();
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// OVERVIEW: Income vs Expenses bar chart
+(function() {
+  const labels = SITE_IDS.map(s => SITE_SHORT[s]);
+  const income = SITE_IDS.map(s => (latest.sites[s]||{}).summary?.total_income || 0);
+  const cogs = SITE_IDS.map(s => (latest.sites[s]||{}).summary?.total_cogs || 0);
+  const expenses = SITE_IDS.map(s => (latest.sites[s]||{}).summary?.total_expenses || 0);
+  const net = SITE_IDS.map(s => (latest.sites[s]||{}).summary?.net_income || 0);
+  new Chart(document.getElementById("chartOverviewBar"), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label:'Income', data:income, backgroundColor:'rgba(52,211,153,0.7)', borderRadius:4 },
+        { label:'COGS', data:cogs, backgroundColor:'rgba(251,191,36,0.7)', borderRadius:4 },
+        { label:'OpEx', data:expenses, backgroundColor:'rgba(248,113,113,0.7)', borderRadius:4 },
+        { label:'Net Income', data:net, backgroundColor: net.map(v => v >= 0 ? 'rgba(96,165,250,0.7)' : 'rgba(248,113,113,0.4)'), borderRadius:4 },
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: ctx => ctx.dataset.label + ': ' + fmtCurrency(ctx.raw) } } },
+      scales:{ y:{ ticks:{ callback:v => fmtCurrency(v) } } }
+    }
+  });
+})();
+
+// OVERVIEW: Gross Margin doughnut
+(function() {
+  const data = SITE_IDS.map(s => {
+    const site = latest.sites[s];
+    if (!site) return 0;
+    const rev = site.summary.total_income || 1;
+    return parseFloat(((site.summary.gross_profit||0)/rev*100).toFixed(1));
+  });
+  new Chart(document.getElementById("chartGrossMargin"), {
+    type: 'bar',
+    data: {
+      labels: SITE_IDS.map(s => SITE_SHORT[s]),
+      datasets: [{ label:'Gross Margin %', data, backgroundColor: SITE_IDS.map(s => SITE_COLORS[s].primary), borderRadius:4 }]
+    },
+    options: {
+      indexAxis:'y',
+      responsive:true,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: ctx => ctx.raw + '%' } } },
+      scales:{ x:{ max:100, ticks:{ callback:v => v+'%' } } }
+    }
+  });
+})();
+
+// OVERVIEW: Revenue breakdown stacked bar
+(function() {
+  const cash = SITE_IDS.map(s => (latest.sites[s]||{}).line_items?.['4101']?.amount || 0);
+  const cc = SITE_IDS.map(s => (latest.sites[s]||{}).line_items?.['4102']?.amount || 0);
+  const mem = SITE_IDS.map(s => (latest.sites[s]||{}).line_items?.['4103']?.amount || 0);
+  const other = SITE_IDS.map(s => {
+    const site = latest.sites[s];
+    if (!site) return 0;
+    const total = site.summary.total_income || 0;
+    return Math.max(0, total - (cash[SITE_IDS.indexOf(s)] + cc[SITE_IDS.indexOf(s)] + mem[SITE_IDS.indexOf(s)]));
+  });
+  new Chart(document.getElementById("chartRevenueStack"), {
+    type: 'bar',
+    data: {
+      labels: SITE_IDS.map(s => SITE_SHORT[s]),
+      datasets: [
+        { label:'Cash', data:cash, backgroundColor:'rgba(96,165,250,0.7)', borderRadius:2 },
+        { label:'Credit Card', data:cc, backgroundColor:'rgba(167,139,250,0.7)', borderRadius:2 },
+        { label:'Membership', data:mem, backgroundColor:'rgba(52,211,153,0.7)', borderRadius:2 },
+        { label:'Other', data:other, backgroundColor:'rgba(148,163,184,0.5)', borderRadius:2 },
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: ctx => ctx.dataset.label + ': ' + fmtCurrency(ctx.raw) } } },
+      scales:{ x:{ stacked:true }, y:{ stacked:true, ticks:{ callback:v => fmtCurrency(v) } } }
+    }
+  });
+})();
+
+// OVERVIEW: Expense categories
+(function() {
+  const cats = {};
+  SITE_IDS.forEach(sid => {
+    const site = latest.sites[sid];
+    if (!site) return;
+    Object.values(site.line_items).forEach(item => {
+      if (item.amount > 0 && !item.category.includes("Revenue") && item.category !== "Merchandise Sales" && item.category !== "Other Income") {
+        const cat = item.category;
+        cats[cat] = (cats[cat]||0) + item.amount;
+      }
+    });
+  });
+  const sorted = Object.entries(cats).sort((a,b) => b[1]-a[1]);
+  const colors = ['rgba(96,165,250,0.7)','rgba(167,139,250,0.7)','rgba(52,211,153,0.7)','rgba(251,191,36,0.7)','rgba(248,113,113,0.7)','rgba(236,72,153,0.7)','rgba(148,163,184,0.5)','rgba(56,189,248,0.7)'];
+  new Chart(document.getElementById("chartExpenseCat"), {
+    type: 'doughnut',
+    data: {
+      labels: sorted.map(e => e[0]),
+      datasets: [{ data: sorted.map(e => e[1]), backgroundColor: sorted.map((_,i) => colors[i%colors.length]) }]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'right', labels:{ boxWidth:12, padding:8, font:{ size:11 } } }, tooltip:{ callbacks:{ label: ctx => ctx.label + ': ' + fmtCurrency(ctx.raw) } } }
+    }
+  });
+})();
+
+// REVENUE TAB: Revenue by type
+(function() {
+  const types = ['Cash Revenue','Credit Card Revenue','Membership Revenue'];
+  const datasets = types.map((t, ti) => {
+    const colors = ['rgba(96,165,250,0.7)','rgba(167,139,250,0.7)','rgba(52,211,153,0.7)'];
+    return {
+      label: t,
+      data: SITE_IDS.map(sid => {
+        const site = latest.sites[sid];
+        if (!site) return 0;
+        const item = Object.values(site.line_items).find(li => li.name === t);
+        return item ? item.amount : 0;
+      }),
+      backgroundColor: colors[ti],
+      borderRadius: 4
+    };
+  });
+  new Chart(document.getElementById("chartRevType"), {
+    type: 'bar',
+    data: { labels: SITE_IDS.map(s => SITE_SHORT[s]), datasets },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: ctx => ctx.dataset.label + ': ' + fmtCurrency(ctx.raw) } } },
+      scales:{ y:{ ticks:{ callback:v => fmtCurrency(v) } } }
+    }
+  });
+})();
+
+// REVENUE TAB: Membership pie
+(function() {
+  const memData = SITE_IDS.map(sid => {
+    const site = latest.sites[sid];
+    if (!site) return { mem:0, other:0 };
+    const mem = site.line_items['4103']?.amount || 0;
+    const total = site.summary.total_income || 0;
+    return { mem, other: total - mem };
+  });
+  new Chart(document.getElementById("chartMembershipPie"), {
+    type: 'bar',
+    data: {
+      labels: SITE_IDS.map(s => SITE_SHORT[s]),
+      datasets: [
+        { label:'Membership', data: memData.map(d => d.mem), backgroundColor:'rgba(52,211,153,0.7)', borderRadius:4 },
+        { label:'Non-Membership', data: memData.map(d => d.other), backgroundColor:'rgba(148,163,184,0.5)', borderRadius:4 },
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: ctx => ctx.dataset.label + ': ' + fmtCurrency(ctx.raw) } } },
+      scales:{ x:{ stacked:true }, y:{ stacked:true, ticks:{ callback:v => fmtCurrency(v) } } }
+    }
+  });
+})();
+
+// EXPENSES TAB: COGS breakdown
+(function() {
+  const cogsAccts = ['5002','5003','5005','5008','5009'];
+  const datasets = SITE_IDS.map(sid => ({
+    label: SITE_SHORT[sid],
+    data: cogsAccts.map(a => (latest.sites[sid]||{}).line_items?.[a]?.amount || 0),
+    backgroundColor: SITE_COLORS[sid].primary,
+    borderRadius: 4
+  }));
+  new Chart(document.getElementById("chartCOGS"), {
+    type: 'bar',
+    data: {
+      labels: cogsAccts.map(a => {
+        const names = {"5002":"CC Fees","5003":"Royalties","5005":"Gift Cards","5008":"Tech Fee","5009":"Brand Dev"};
+        return names[a]||a;
+      }),
+      datasets
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label: ctx => ctx.dataset.label + ': ' + fmtCurrency(ctx.raw) } } },
+      scales:{ y:{ ticks:{ callback:v => fmtCurrency(v) } } }
+    }
+  });
+})();
+
+// EXPENSES: COGS as % of Revenue
+(function() {
+  const data = SITE_IDS.map(sid => {
+    const site = latest.sites[sid];
+    if (!site) return 0;
+    const rev = site.summary.total_income || 1;
+    return parseFloat(((site.summary.total_cogs||0)/rev*100).toFixed(1));
+  });
+  new Chart(document.getElementById("chartCOGSPct"), {
+    type:'bar',
+    data: {
+      labels: SITE_IDS.map(s => SITE_SHORT[s]),
+      datasets:[{ label:'COGS %', data, backgroundColor: SITE_IDS.map(s => SITE_COLORS[s].primary), borderRadius:4 }]
+    },
+    options: {
+      indexAxis:'y', responsive:true,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label:ctx=>ctx.raw+'%' } } },
+      scales:{ x:{ ticks:{ callback:v=>v+'%' } } }
+    }
+  });
+})();
+
+// EXPENSES: Top expense categories per site
+(function() {
+  const catNames = ["Payroll","Occupancy","Operating Expenses","Marketing","Utilities","Travel","Professional Services"];
+  const catKeys = {"Payroll":"6700 Payroll Expenses","Occupancy":"6300 Occupancy","Operating Expenses":"6000 Operating Business Expneses","Marketing":"6100 Marketing","Utilities":"6400 Utilities","Travel":"6600 Travel Expense","Professional Services":"6200 Professional Services"};
+  const altKeys = {"Professional Services":"6200 Professional Service"};
+  const datasets = SITE_IDS.map(sid => ({
+    label: SITE_SHORT[sid],
+    data: catNames.map(cn => {
+      const site = latest.sites[sid];
+      if (!site) return 0;
+      let val = site.categories[catKeys[cn]] || 0;
+      if (val === 0 && altKeys[cn]) val = site.categories[altKeys[cn]] || 0;
+      return val;
+    }),
+    backgroundColor: SITE_COLORS[sid].primary,
+    borderRadius: 4
+  }));
+  new Chart(document.getElementById("chartTopExp"), {
+    type:'bar',
+    data: { labels:catNames, datasets },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:ctx=>ctx.dataset.label+': '+fmtCurrency(ctx.raw) } } },
+      scales:{ y:{ ticks:{ callback:v=>fmtCurrency(v) } } }
+    }
+  });
+})();
+
+// EXPENSES: Payroll vs Other
+(function() {
+  const payroll = SITE_IDS.map(sid => {
+    const site = latest.sites[sid];
+    if (!site) return 0;
+    return site.categories["6700 Payroll Expenses"] || 0;
+  });
+  const other = SITE_IDS.map((sid,i) => {
+    const site = latest.sites[sid];
+    if (!site) return 0;
+    return (site.summary.total_expenses||0) - payroll[i];
+  });
+  new Chart(document.getElementById("chartPayrollVsOther"), {
+    type:'bar',
+    data: {
+      labels: SITE_IDS.map(s => SITE_SHORT[s]),
+      datasets: [
+        { label:'Payroll', data:payroll, backgroundColor:'rgba(236,72,153,0.7)', borderRadius:4 },
+        { label:'Other OpEx', data:other, backgroundColor:'rgba(148,163,184,0.5)', borderRadius:4 },
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:ctx=>ctx.dataset.label+': '+fmtCurrency(ctx.raw) } } },
+      scales:{ x:{ stacked:true }, y:{ stacked:true, ticks:{ callback:v=>fmtCurrency(v) } } }
+    }
+  });
+})();
+
+// DETAILED P&L TABLE
+(function() {
+  document.getElementById("detailedSubtitle").textContent = fmtMonth(latest.month);
+  const acctOrder = [
+    {cat:"Income", accts:["4101","4102","4103","4302","4502"], totalKey:"total_income"},
+    {cat:"Cost of Goods Sold", accts:["5002","5003","5005","5008","5009"], totalKey:"total_cogs"},
+    {cat:"Gross Profit", isCalc:true, key:"gross_profit"},
+    {cat:"Expenses", subcats:[
+      {name:"Operating", accts:["6009","6010","6014","6015","6016","6018","6020","6022","6023","6024"]},
+      {name:"Marketing", accts:["6101"]},
+      {name:"Professional Services", accts:["6202","6203"]},
+      {name:"Occupancy", accts:["6301","6302"]},
+      {name:"Utilities", accts:["6401","6402","6403","6404","6405","6406"]},
+      {name:"Travel", accts:["6601","6602","6603"]},
+      {name:"Payroll", accts:["6701","6702","6703","6717"]},
+    ], totalKey:"total_expenses"},
+    {cat:"Net Operating Income", isCalc:true, key:"net_operating_income"},
+    {cat:"Other", accts:["6903","7006","9999"]},
+    {cat:"Net Income", isCalc:true, key:"net_income"},
+  ];
+
+  const ACCT_NAMES = {"4101": "Cash Revenue", "4102": "Credit Card Revenue", "4103": "Membership Revenue", "4302": "Detail Kits", "4502": "Gift Cards Redeemed", "5002": "Credit Card Fees", "5003": "Royalty Fees", "5005": "Gift Cards (COGS)", "5008": "Technology Fee", "5009": "Brand Development", "6009": "CC Charges", "6010": "Customer Claims", "6014": "Internet", "6015": "Landscaping", "6016": "Meals & Ent.", "6018": "Office Supplies", "6020": "Postage", "6022": "Software", "6023": "TCW Operating", "6024": "Tommy's Supplies", "6101": "Advertising", "6202": "Accounting SW", "6203": "Legal Fees", "6301": "Rent", "6302": "Insurance", "6401": "Electricity", "6402": "Gas", "6403": "Sewer", "6404": "Trash", "6405": "Telephone", "6406": "Water", "6601": "Airlines", "6602": "Hotels", "6603": "Rental Cars", "6701": "Salaries", "6702": "Payroll Tax", "6703": "Payroll Processing", "6717": "Guaranteed Payments", "6903": "Vehicle Repairs", "7006": "Misc", "9999": "Ask My Accountant"};
+
+  function getVal(sid, acct) {
+    return (latest.sites[sid]||{}).line_items?.[acct]?.amount ?? null;
+  }
+  function getSummary(sid, key) {
+    return (latest.sites[sid]||{}).summary?.[key] ?? null;
+  }
+
+  let html = '<table class="data-table"><thead><tr><th>Account</th>';
+  SITE_IDS.forEach(s => html += '<th class="num">' + SITE_SHORT[s] + '</th>');
+  html += '<th class="num">Combined</th></tr></thead><tbody>';
+
+  function addLineRow(acct) {
+    let total = 0, hasAny = false;
+    let cells = SITE_IDS.map(sid => {
+      const v = getVal(sid, acct);
+      if (v != null) { hasAny = true; total += v; }
+      const cls = v != null && v < 0 ? "num neg" : "num";
+      return '<td class="' + cls + '">' + fmtCurrency(v) + '</td>';
+    }).join('');
+    if (!hasAny) return '';
+    const tcls = total < 0 ? "num neg" : "num";
+    return '<tr><td>&nbsp;&nbsp;&nbsp;' + (ACCT_NAMES[acct]||acct) + '</td>' + cells + '<td class="' + tcls + '">' + fmtCurrency(total) + '</td></tr>';
+  }
+
+  function addTotalRow(label, key) {
+    let total = 0;
+    let cells = SITE_IDS.map(sid => {
+      const v = getSummary(sid, key);
+      if (v != null) total += v;
+      const cls = v != null && v < 0 ? "num neg" : "num";
+      return '<td class="' + cls + '">' + fmtCurrency(v) + '</td>';
+    }).join('');
+    const tcls = total < 0 ? "num neg" : "num";
+    return '<tr class="total-row"><td><strong>' + label + '</strong></td>' + cells + '<td class="' + tcls + '"><strong>' + fmtCurrency(total) + '</strong></td></tr>';
+  }
+
+  acctOrder.forEach(section => {
+    if (section.isCalc) {
+      html += addTotalRow(section.cat, section.key);
+      return;
+    }
+    html += '<tr class="cat-row"><td colspan="' + (SITE_IDS.length + 2) + '">' + section.cat + '</td></tr>';
+    if (section.accts) {
+      section.accts.forEach(a => html += addLineRow(a));
+    }
+    if (section.subcats) {
+      section.subcats.forEach(sub => {
+        let subHtml = '';
+        sub.accts.forEach(a => subHtml += addLineRow(a));
+        if (subHtml) {
+          html += '<tr><td style="padding-left:8px;color:#94a3b8;font-weight:600;font-size:12px;">' + sub.name + '</td>' + '<td></td>'.repeat(SITE_IDS.length+1) + '</tr>';
+          html += subHtml;
+        }
+      });
+    }
+    if (section.totalKey) {
+      html += addTotalRow('Total ' + section.cat, section.totalKey);
+    }
+  });
+  html += '</tbody></table>';
+  document.getElementById("detailedTableContainer").innerHTML = html;
+})();
+
+// TRENDS (multi-month)
+if (ALL_DATA.length >= 2) {
+  document.getElementById("revenueTrendSection").style.display = "block";
+  document.getElementById("cogsTrendSection").style.display = "block";
+
+  const monthLabels = ALL_DATA.map(d => fmtMonth(d.month));
+
+  // Revenue trend
+  new Chart(document.getElementById("chartRevTrend"), {
+    type:'line',
+    data: {
+      labels: monthLabels,
+      datasets: SITE_IDS.map(sid => ({
+        label: SITE_SHORT[sid],
+        data: ALL_DATA.map(d => (d.sites[sid]||{}).summary?.total_income || 0),
+        borderColor: SITE_COLORS[sid].primary,
+        backgroundColor: SITE_COLORS[sid].light,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4
+      }))
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:ctx=>ctx.dataset.label+': '+fmtCurrency(ctx.raw) } } },
+      scales:{ y:{ ticks:{ callback:v=>fmtCurrency(v) } } }
+    }
+  });
+
+  // COGS trend
+  new Chart(document.getElementById("chartCOGSTrend"), {
+    type:'line',
+    data: {
+      labels: monthLabels,
+      datasets: [
+        ...SITE_IDS.map(sid => ({
+          label: SITE_SHORT[sid] + ' COGS',
+          data: ALL_DATA.map(d => (d.sites[sid]||{}).summary?.total_cogs || 0),
+          borderColor: SITE_COLORS[sid].primary,
+          borderDash: [5,5],
+          tension: 0.3,
+          pointRadius: 4
+        })),
+        ...SITE_IDS.map(sid => ({
+          label: SITE_SHORT[sid] + ' Expenses',
+          data: ALL_DATA.map(d => (d.sites[sid]||{}).summary?.total_expenses || 0),
+          borderColor: SITE_COLORS[sid].primary,
+          tension: 0.3,
+          pointRadius: 4
+        })),
+      ]
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:ctx=>ctx.dataset.label+': '+fmtCurrency(ctx.raw) } } },
+      scales:{ y:{ ticks:{ callback:v=>fmtCurrency(v) } } }
+    }
+  });
+
+  // Key trends
+  new Chart(document.getElementById("chartKeyTrends"), {
+    type:'line',
+    data: {
+      labels: monthLabels,
+      datasets: SITE_IDS.map(sid => ({
+        label: SITE_SHORT[sid] + ' Net Income',
+        data: ALL_DATA.map(d => (d.sites[sid]||{}).summary?.net_income || 0),
+        borderColor: SITE_COLORS[sid].primary,
+        backgroundColor: SITE_COLORS[sid].light,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 5
+      }))
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom' }, tooltip:{ callbacks:{ label:ctx=>ctx.dataset.label+': '+fmtCurrency(ctx.raw) } } },
+      scales:{ y:{ ticks:{ callback:v=>fmtCurrency(v) } } }
+    }
+  });
+
+  // Margin trend
+  new Chart(document.getElementById("chartMarginTrend"), {
+    type:'line',
+    data: {
+      labels: monthLabels,
+      datasets: SITE_IDS.flatMap(sid => [
+        {
+          label: SITE_SHORT[sid] + ' Gross Margin',
+          data: ALL_DATA.map(d => {
+            const s = (d.sites[sid]||{}).summary||{};
+            const rev = s.total_income || 1;
+            return parseFloat(((s.gross_profit||0)/rev*100).toFixed(1));
+          }),
+          borderColor: SITE_COLORS[sid].primary,
+          tension: 0.3,
+          pointRadius: 4
+        },
+        {
+          label: SITE_SHORT[sid] + ' Net Margin',
+          data: ALL_DATA.map(d => {
+            const s = (d.sites[sid]||{}).summary||{};
+            const rev = s.total_income || 1;
+            return parseFloat(((s.net_income||0)/rev*100).toFixed(1));
+          }),
+          borderColor: SITE_COLORS[sid].primary,
+          borderDash: [5,5],
+          tension: 0.3,
+          pointRadius: 4
+        }
+      ])
+    },
+    options: {
+      responsive:true,
+      plugins:{ legend:{ position:'bottom', labels:{ font:{ size:11 } } }, tooltip:{ callbacks:{ label:ctx=>ctx.dataset.label+': '+ctx.raw+'%' } } },
+      scales:{ y:{ ticks:{ callback:v=>v+'%' } } }
+    }
+  });
+
+  // Direction indicators
+  (function() {
+    const grid = document.getElementById("directionGrid");
+    const metrics = [
+      { label:"Total Revenue", key:"total_income", invert:false },
+      { label:"Gross Profit", key:"gross_profit", invert:false },
+      { label:"COGS", key:"total_cogs", invert:true },
+      { label:"Operating Expenses", key:"total_expenses", invert:true },
+      { label:"Net Income", key:"net_income", invert:false },
+    ];
+    metrics.forEach(m => {
+      SITE_IDS.forEach(sid => {
+        const curr = (latest.sites[sid]||{}).summary?.[m.key] || 0;
+        const prv = (prev.sites[sid]||{}).summary?.[m.key] || 0;
+        const diff = curr - prv;
+        const pct = prv !== 0 ? ((diff/Math.abs(prv))*100).toFixed(1) : "N/A";
+        let cls = "stable", emoji = "→", word = "Stable";
+        let isGood = diff > 0;
+        if (m.invert) isGood = !isGood;
+        if (Math.abs(diff) > 0.5) {
+          cls = isGood ? "improving" : "worsening";
+          emoji = diff > 0 ? "↑" : "↓";
+          word = isGood ? "Improving" : "Needs Attention";
+        }
+        grid.innerHTML += `
+          <div class="direction-card ${cls}">
+            <h4>${emoji} ${SITE_SHORT[sid]} — ${m.label}</h4>
+            <div class="detail">${fmtCurrency(prv)} → ${fmtCurrency(curr)} (${pct}%) • ${word}</div>
+          </div>`;
+      });
+    });
+  })();
+} else {
+  // Single month — show placeholder in trends
+  document.getElementById("directionGrid").innerHTML = '<div class="direction-card stable"><h4>Add a second month to see trend directions</h4><div class="detail">Drop another monthly Excel file into the monthly-excels folder and re-run the update script.</div></div>';
+  document.getElementById("chartKeyTrends").parentElement.innerHTML = '<div style="text-align:center;padding:60px;color:#94a3b8;">Trend charts appear after 2+ months of data</div>';
+  document.getElementById("chartMarginTrend").parentElement.innerHTML = '<div style="text-align:center;padding:60px;color:#94a3b8;">Margin trends appear after 2+ months of data</div>';
+}
+</script>
+</body>
+</html>
