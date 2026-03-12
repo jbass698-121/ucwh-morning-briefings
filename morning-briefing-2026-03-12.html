@@ -27,7 +27,6 @@
   .site-card .metric .val { font-weight: 600; }
   .alert { padding: 14px 18px; border-radius: 10px; margin-bottom: 12px; font-size: 14px; }
   .alert-danger { background: #fef2f2; border-left: 4px solid #ef4444; }
-  .alert-warning { background: #fffbeb; border-left: 4px solid #f59e0b; }
   .alert-success { background: #f0fdf4; border-left: 4px solid #22c55e; }
   .alert-info { background: #eff6ff; border-left: 4px solid #3b82f6; }
   .alert .alert-title { font-weight: 700; margin-bottom: 4px; }
@@ -40,48 +39,46 @@
   .forecast-table td { text-align: center; }
   .forecast-table td:first-child { text-align: left; }
   .footer { text-align: center; font-size: 12px; color: #94a3b8; padding: 20px; }
+  .sub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 12px; }
+  .sub-card { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 14px; text-align: center; }
+  .sub-card .sub-label { font-size: 11px; color: #0369a1; text-transform: uppercase; }
+  .sub-card .sub-val { font-size: 20px; font-weight: 700; color: #0c4a6e; }
   @media (max-width: 768px) {
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
-    .site-grid { grid-template-columns: 1fr; }
+    .site-grid, .sub-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 <div class="container">
-
-<!-- HEADER -->
 <div class="header">
   <h1>UCWH Morning Briefing — Thursday, March 12, 2026</h1>
   <div class="subtitle">United Car Wash Holdings — Tommy's Express</div>
-  <div class="date">Data for yesterday (Wednesday, March 11, 2026) &nbsp;|&nbsp; Yesterday's Weather: Houston 🌧️ Moderate rain, 78°/65°F, 0.22" rain &nbsp;·&nbsp; Utah ☀️ Clear sky, 49°/26°F</div>
+  <div class="date">Data for yesterday (Wednesday, March 11, 2026) &nbsp;|&nbsp; Houston 🌧️ Moderate rain, 78°/65°F, 0.22" rain &nbsp;·&nbsp; Utah ☀️ Clear sky, 49°/26°F</div>
 </div>
 
-<!-- AI INSIGHTS -->
 <div class="section">
   <div class="section-title">🤖 AI Insights</div>
   <div class="alert alert-danger">
     <div class="alert-title">⚠️ Significant Volume & Revenue Drop</div>
-    <div class="alert-text">Fleet washes fell 35.1% WoW (397 vs 612) and gross revenue dropped 47.8% ($1,585.86 vs $3,036.73). Houston saw moderate rain (0.22") yesterday — weather impact is evident across both TX sites.</div>
+    <div class="alert-text">Fleet washes fell 35.1% WoW (397 vs 612) and gross revenue dropped 47.8% ($1,585.86 vs $3,036.73). Houston saw moderate rain (0.22") yesterday — weather impact is evident across both TX sites. Single-wash traffic was particularly affected with only 73 pay-per-wash transactions fleet-wide.</div>
   </div>
   <div class="alert alert-info">
-    <div class="alert-title">📊 Club Membership Mix Above 80%</div>
-    <div class="alert-text">Club wash percentage averaged 81.7% across all sites (TX160: 81.3%, TX190: 85.7%, UT426: 78.1%). High club mix means revenue per wash is compressed, but subscriber retention is driving consistent volume.</div>
+    <div class="alert-title">📊 Club Mix Above 80% Across All Sites</div>
+    <div class="alert-text">Club wash percentage averaged 81.7% (TX160: 81.3%, TX190: 85.7%, UT426: 78.1%). High club penetration means revenue per wash is compressed, but subscriber retention is driving consistent base volume even on rainy days.</div>
   </div>
   <div class="alert alert-success">
     <div class="alert-title">✅ Excellent Wash Quality — 0.8% Rewash Rate</div>
-    <div class="alert-text">Only 3 rewashes across 397 total washes (0.8%). TX160 had 2, TX190 had 1, UT426 had 0. Well below the 3% target across all sites.</div>
+    <div class="alert-text">Only 3 rewashes across 397 total washes (0.8%). TX160: 2, TX190: 1, UT426: 0. Well below the 3% target across all sites.</div>
   </div>
   <div class="alert alert-info">
-    <div class="alert-title">📈 5-Day Forecast Shows Recovery</div>
-    <div class="alert-text">Clear skies forecast for Houston today and tomorrow should drive volume recovery. The ML model predicts fleet totals of 633-684 washes Thu-Sat, peaking Saturday with 80°F and dry conditions. Expect ~18% error margin for TX sites.</div>
+    <div class="alert-title">📈 5-Day Forecast Shows Clear-Weather Recovery</div>
+    <div class="alert-text">Clear skies forecast for Houston today and tomorrow should drive volume recovery. The ML model predicts fleet totals of 643–695 washes Thu–Sat, peaking Saturday at 695 with 80°F and dry conditions in Houston. Expected MAPE: ~18% for TX sites, ~32% for UT426. Plan staffing for the Saturday peak.</div>
   </div>
 </div>
 
-<!-- WASH PERFORMANCE SCORECARD -->
 <div class="section">
   <div class="section-title">🚗 Wash Performance Scorecard</div>
-  
-  <!-- Fleet Summary -->
   <div class="stat-grid">
     <div class="stat-card">
       <div class="label">Total Washes</div>
@@ -105,7 +102,6 @@
     </div>
   </div>
 
-  <!-- Per-Site Cards -->
   <div class="site-grid">
     <div class="site-card">
       <h4>TX160 — FM 1960, Houston</h4>
@@ -134,218 +130,113 @@
   </div>
 </div>
 
-<!-- REWASH & COUPON ANALYSIS -->
 <div class="section">
-  <div class="section-title">🔄 Rewash & Coupon Analysis</div>
-  
-  <h4 style="font-size:14px; color:#475569; margin-bottom:10px;">Rewash Summary</h4>
-  <table>
-    <thead><tr><th>Site</th><th>Total Rewashes</th><th>Rate</th><th>Cost</th><th>Status</th></tr></thead>
-    <tbody>
-      <tr>
-        <td><strong>TX160 — FM 1960</strong></td>
-        <td>2</td>
-        <td>1.3%</td>
-        <td>$0.00</td>
-        <td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:12px">✓ Good</span></td>
-      </tr>
-      <tr>
-        <td><strong>TX190 — El Camino Real</strong></td>
-        <td>1</td>
-        <td>0.8%</td>
-        <td>$0.00</td>
-        <td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:12px">✓ Good</span></td>
-      </tr>
-      <tr>
-        <td><strong>UT426 — Crossroads Blvd</strong></td>
-        <td>0</td>
-        <td>0.0%</td>
-        <td>$0.00</td>
-        <td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:12px">✓ Good</span></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h4 style="font-size:14px; color:#475569; margin: 20px 0 10px;">Top Coupon/Promo Activity</h4>
-  <table>
-    <thead><tr><th>Promotion</th><th>Site</th><th>Uses</th><th>Discount</th><th>Avg/Use</th></tr></thead>
-    <tbody>
-      <tr>
-        <td>POLICEFIREMILITARY</td>
-        <td>TX160</td>
-        <td>7</td>
-        <td>$140.00</td>
-        <td>$20.00</td>
-      </tr>
-      <tr>
-        <td>IC2WORKSTX160</td>
-        <td>TX160</td>
-        <td>5</td>
-        <td>$84.95</td>
-        <td>$16.99</td>
-      </tr>
-      <tr>
-        <td>IC2WORKSTX190</td>
-        <td>TX190</td>
-        <td>4</td>
-        <td>$67.96</td>
-        <td>$16.99</td>
-      </tr>
-      <tr>
-        <td>POLLENUCWH</td>
-        <td>TX160</td>
-        <td>3</td>
-        <td>$60.00</td>
-        <td>$20.00</td>
-      </tr>
-      <tr>
-        <td>STREETCARDS426</td>
-        <td>UT426</td>
-        <td>2</td>
-        <td>$44.00</td>
-        <td>$22.00</td>
-      </tr>
-      <tr>
-        <td>IC2WORKSUT426</td>
-        <td>UT426</td>
-        <td>3</td>
-        <td>$41.97</td>
-        <td>$13.99</td>
-      </tr>
-      <tr>
-        <td>TCXKRMCK</td>
-        <td>UT426</td>
-        <td>1</td>
-        <td>$22.00</td>
-        <td>$22.00</td>
-      </tr>
-      <tr>
-        <td>KHUS9CC7MM7R</td>
-        <td>UT426</td>
-        <td>1</td>
-        <td>$22.00</td>
-        <td>$22.00</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="section-title">👥 Subscriber Snapshot</div>
+  <p style="font-size:13px; color:#64748b; margin-bottom:12px;">Live data from UCWH Dashboard</p>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="label">Fleet Paying</div><div class="value">3,041</div></div>
+    <div class="stat-card"><div class="label">Fleet Trial</div><div class="value">1,404</div></div>
+    <div class="stat-card"><div class="label">Fleet Active</div><div class="value">4,588</div></div>
+    <div class="stat-card"><div class="label">Trial Conversion Opportunity</div><div class="value">31%</div></div>
+  </div>
+  <div class="sub-grid">
+    <div class="sub-card">
+      <div class="sub-label">TX160</div>
+      <div class="sub-val">1,710</div>
+      <div style="font-size:11px;color:#475569;margin-top:4px">1,077 paying · 598 trial</div>
+    </div>
+    <div class="sub-card">
+      <div class="sub-label">TX190</div>
+      <div class="sub-val">1,458</div>
+      <div style="font-size:11px;color:#475569;margin-top:4px">998 paying · 388 trial</div>
+    </div>
+    <div class="sub-card">
+      <div class="sub-label">UT426</div>
+      <div class="sub-val">1,420</div>
+      <div style="font-size:11px;color:#475569;margin-top:4px">966 paying · 418 trial</div>
+    </div>
+  </div>
 </div>
 
-<!-- INSTACLUB MEMBERSHIP -->
+<div class="section">
+  <div class="section-title">🔄 Rewash & Coupon Analysis</div>
+  <h4 style="font-size:14px; color:#475569; margin-bottom:10px;">Rewash Summary</h4>
+  <table><thead><tr><th>Site</th><th>Total Rewashes</th><th>Rate</th><th>Cost</th><th>Status</th></tr></thead><tbody>
+    <tr><td><strong>TX160 — FM 1960</strong></td><td>2</td><td>1.3%</td><td>$0.00</td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:12px">✓ Good</span></td></tr>
+    <tr><td><strong>TX190 — El Camino Real</strong></td><td>1</td><td>0.8%</td><td>$0.00</td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:12px">✓ Good</span></td></tr>
+    <tr><td><strong>UT426 — Crossroads Blvd</strong></td><td>0</td><td>0.0%</td><td>$0.00</td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:12px">✓ Good</span></td></tr>
+  </tbody></table>
+  <h4 style="font-size:14px; color:#475569; margin: 20px 0 10px;">Top Coupon/Promo Activity</h4>
+  <table><thead><tr><th>Promotion</th><th>Site</th><th>Uses</th><th>Discount</th><th>Avg/Use</th></tr></thead><tbody>
+    <tr><td>POLICEFIREMILITARY</td><td>TX160</td><td>7</td><td>$140.00</td><td>$20.00</td></tr>
+    <tr><td>IC2WORKSTX160</td><td>TX160</td><td>5</td><td>$84.95</td><td>$16.99</td></tr>
+    <tr><td>IC2WORKSTX190</td><td>TX190</td><td>4</td><td>$67.96</td><td>$16.99</td></tr>
+    <tr><td>POLLENUCWH</td><td>TX160</td><td>3</td><td>$60.00</td><td>$20.00</td></tr>
+    <tr><td>STREETCARDS426</td><td>UT426</td><td>2</td><td>$44.00</td><td>$22.00</td></tr>
+    <tr><td>IC2WORKSUT426</td><td>UT426</td><td>3</td><td>$41.97</td><td>$13.99</td></tr>
+    <tr><td>TCXKRMCK</td><td>UT426</td><td>1</td><td>$22.00</td><td>$22.00</td></tr>
+    <tr><td>KHUS9CC7MM7R</td><td>UT426</td><td>1</td><td>$22.00</td><td>$22.00</td></tr>
+  </tbody></table>
+</div>
+
 <div class="section">
   <div class="section-title">🏷️ InstaClub Membership</div>
-  
   <div class="site-grid">
     <div class="site-card">
       <h4>TX160 — FM 1960</h4>
       <div class="metric"><span class="label">New Members</span><span class="val">5</span></div>
       <div class="metric"><span class="label">IC Revenue</span><span class="val">$184.95</span></div>
-      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:11px">5 #1</span></div>
+      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:11px">5 Works, TX</span></div>
     </div>
     <div class="site-card">
       <h4>TX190 — El Camino Real</h4>
       <div class="metric"><span class="label">New Members</span><span class="val">4</span></div>
       <div class="metric"><span class="label">IC Revenue</span><span class="val">$147.96</span></div>
-      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:11px">4 #1</span></div>
+      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:11px">4 Works, TX</span></div>
     </div>
     <div class="site-card">
       <h4>UT426 — Crossroads Blvd</h4>
       <div class="metric"><span class="label">New Members</span><span class="val">5</span></div>
       <div class="metric"><span class="label">IC Revenue</span><span class="val">$164.95</span></div>
-      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:11px">3 #1, 1 #2, 1 #3</span></div>
+      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:11px">3 Works, UT, 1 Ultimate, UT, 1 Super, UT</span></div>
     </div>
   </div>
-  
-  <!-- Fleet InstaClub Summary -->
   <div class="stat-grid" style="margin-top:16px;">
-    <div class="stat-card">
-      <div class="label">Total New Members</div>
-      <div class="value">14</div>
-    </div>
-    <div class="stat-card">
-      <div class="label">Total IC Revenue</div>
-      <div class="value">$497.86</div>
-    </div>
-    <div class="stat-card">
-      <div class="label">% of Gross Sales</div>
-      <div class="value">31.4%</div>
-    </div>
-    <div class="stat-card">
-      <div class="label">Fleet Plan Mix</div>
-      <div class="value" style="font-size:14px">12 Works / 1 Ultimate / 1 Super</div>
-    </div>
+    <div class="stat-card"><div class="label">Total New Members</div><div class="value">14</div></div>
+    <div class="stat-card"><div class="label">Total IC Revenue</div><div class="value">$497.86</div></div>
+    <div class="stat-card"><div class="label">% of Gross Sales</div><div class="value">31.4%</div></div>
+    <div class="stat-card"><div class="label">Fleet Plan Mix</div><div class="value" style="font-size:14px">12 Works / 1 Ultimate / 1 Super</div></div>
   </div>
 </div>
 
-<!-- 5-DAY FORECAST -->
 <div class="section">
   <div class="section-title">📊 5-Day Wash Volume Forecast</div>
-  <p style="font-size:13px; color:#64748b; margin-bottom:12px;">V2 ML Model (coefficient fallback) · Subscriber-driven with weather adjustments · Expected MAPE: ~18% TX sites, ~32% UT426</p>
-  
-  <table class="forecast-table">
-    <thead>
-      <tr><th style="text-align:left">Date</th><th>TX160</th><th>TX190</th><th>UT426</th><th>Fleet Total</th><th>Weather</th></tr>
-    </thead>
-    <tbody>
-      <tr style="background:#e8f5e9">
-        <td><strong>Thu</strong> 03-12</td>
-        <td>259</td>
-        <td>170</td>
-        <td>204</td>
-        <td><strong>633</strong></td>
-        <td style="font-size:12px">HOU: ☀️ 64°F · UT: ☁️ 69°F</td>
-      </tr>
-      <tr style="background:#e8f5e9">
-        <td><strong>Fri</strong> 03-13</td>
-        <td>270</td>
-        <td>181</td>
-        <td>222</td>
-        <td><strong>673</strong></td>
-        <td style="font-size:12px">HOU: ☀️ 76°F · UT: ☁️ 70°F</td>
-      </tr>
-      <tr style="background:#e8f5e9">
-        <td><strong>Sat</strong> 03-14</td>
-        <td>278</td>
-        <td>186</td>
-        <td>220</td>
-        <td><strong>684</strong></td>
-        <td style="font-size:12px">HOU: ☁️ 80°F · UT: 🌦️ 64°F</td>
-      </tr>
-      <tr style="background:#e8f5e9">
-        <td><strong>Sun</strong> 03-15</td>
-        <td>265</td>
-        <td>180</td>
-        <td>224</td>
-        <td><strong>669</strong></td>
-        <td style="font-size:12px">HOU: 🌦️ 84°F · UT: ☁️ 45°F</td>
-      </tr>
-      <tr style="background:#e8f5e9">
-        <td><strong>Mon</strong> 03-16</td>
-        <td>252</td>
-        <td>166</td>
-        <td>203</td>
-        <td><strong>621</strong></td>
-        <td style="font-size:12px">HOU: ☁️ 58°F · UT: ☁️ 49°F</td>
-      </tr>
-    </tbody>
-  </table>
+  <p style="font-size:13px; color:#64748b; margin-bottom:4px;">V2 ML Model (coefficient fallback) · Trained Sep 2025–Mar 2026 · Integrates 4,588 active subscribers, 14-day wash history, day-of-week patterns, and weather</p>
+  <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Expected MAPE: ~18% for TX160/TX190, ~32% for UT426. Use 15–20% buffer for staffing at TX sites, 25–35% for UT426.</p>
+  <table class="forecast-table"><thead><tr><th style="text-align:left">Date</th><th>TX160</th><th>TX190</th><th>UT426</th><th>Fleet Total</th><th>Weather</th></tr></thead><tbody>
+    <tr style="background:#e8f5e9"><td><strong>Thu</strong> 03-12</td><td>264</td><td>173</td><td>206</td><td><strong>643</strong></td><td style="font-size:12px">HOU: ☀️ 64°F · UT: ☁️ 69°F</td></tr>
+    <tr style="background:#e8f5e9"><td><strong>Fri</strong> 03-13</td><td>275</td><td>184</td><td>224</td><td><strong>683</strong></td><td style="font-size:12px">HOU: ☀️ 76°F · UT: ☁️ 70°F</td></tr>
+    <tr style="background:#e8f5e9"><td><strong>Sat</strong> 03-14</td><td>283</td><td>190</td><td>222</td><td><strong>695</strong></td><td style="font-size:12px">HOU: ☁️ 80°F · UT: 🌦️ 64°F</td></tr>
+    <tr style="background:#e8f5e9"><td><strong>Sun</strong> 03-15</td><td>270</td><td>183</td><td>226</td><td><strong>679</strong></td><td style="font-size:12px">HOU: 🌦️ 84°F · UT: ☁️ 45°F</td></tr>
+    <tr style="background:#e8f5e9"><td><strong>Mon</strong> 03-16</td><td>257</td><td>170</td><td>204</td><td><strong>631</strong></td><td style="font-size:12px">HOU: ☁️ 58°F · UT: ☁️ 49°F</td></tr>
+  </tbody></table>
 </div>
 
-<!-- RECOMMENDED ACTIONS -->
 <div class="section">
   <div class="section-title">📋 Recommended Actions</div>
   <div style="font-size:14px; line-height:1.8;">
-    <p style="margin-bottom:14px;">1. <strong>TX160 & TX190 — Capitalize on Clear Weather Recovery.</strong> Yesterday's rain suppressed volume to 269 combined washes (36% below last week). Today's forecast shows clear skies and 64°F in Houston — ensure full staffing to capture the rebound, with the ML model projecting 633 fleet washes.</p>
-    <p style="margin-bottom:14px;">2. <strong>All Sites — Sustain Low Rewash Rate.</strong> Only 3 rewashes across 397 washes (0.8%) demonstrates strong wash quality. Continue monitoring tunnel output quality checks, especially TX160 which had 2 of the 3 fleet rewashes.</p>
-    <p style="margin-bottom:14px;">3. <strong>TX160 — Drive InstaClub Signups.</strong> TX160 enrolled only 5 new members yesterday vs 12 last Wednesday. With 81.3% club mix already strong, focus window attendants on converting the remaining single-wash customers (28 yesterday). The BOGO Works codes saw 5 redemptions — ensure codes are actively promoted.</p>
-    <p style="margin-bottom:14px;">4. <strong>UT426 — Monitor Saturday Peak Staffing.</strong> The forecast projects 220 washes Saturday at 80°F with overcast skies (±32% confidence). Given UT426's higher variance, plan staffing for 286 wash capacity to handle potential upside.</p>
-    <p style="margin-bottom:14px;">5. <strong>Fleet — Track Coupon ROI.</strong> 11 distinct promotions were redeemed across all sites yesterday. The Service Member discount at TX160 (7 uses, $140.00 in discounts) and BOGO codes continue to drive trial conversion — review redemption-to-retention metrics monthly.</p>
+    <p style="margin-bottom:14px;">1. <strong>TX160 & TX190 — Capitalize on Clear Weather Recovery.</strong> Yesterday's rain suppressed combined TX volume to 269 washes (36% below last week). Today's forecast shows clear skies and 64°F in Houston — ensure full staffing to capture the rebound. The ML model projects 643 fleet washes today, scaling to 695 by Saturday.</p>
+    <p style="margin-bottom:14px;">2. <strong>All Sites — Sustain Low Rewash Rate.</strong> Only 3 rewashes across 397 washes (0.8%) demonstrates strong wash quality. Continue monitoring tunnel output quality checks at all sites.</p>
+    <p style="margin-bottom:14px;">3. <strong>Fleet — Convert Trial Members.</strong> With 1,404 trial members across the fleet (31% of active), prioritize conversion campaigns. TX160 has the largest trial pool (598) representing significant revenue upside if converted to paying members.</p>
+    <p style="margin-bottom:14px;">4. <strong>UT426 — Plan Saturday Staffing for Peak.</strong> The forecast projects 222 washes Saturday with 64°F and light drizzle (±32% confidence). Given UT426's higher variance, plan staffing for 288 wash capacity to handle potential upside.</p>
+    <p style="margin-bottom:14px;">5. <strong>All Sites — Track Coupon ROI.</strong> 11 distinct promotions redeemed yesterday. The BOGO Works codes drove 12 redemptions across all sites — monitor conversion-to-retention to validate continued investment in these programs.</p>
   </div>
 </div>
 
-<!-- FOOTER -->
 <div class="footer">
-  Data: Tommy's Manager API, March 11, 2026 · Subscriber data: Weekly Collector, March 10, 2026 · Weather: Open-Meteo · Forecast: wash-forecast V2.0 (coefficient fallback)<br>
-  Generated Thursday, March 12, 2026 at 03:55 AM CT &nbsp;|&nbsp; UCWH Morning Briefing System v3.3
+  Data: Tommy's Manager API &amp; UCWH Dashboard (live), March 11–12, 2026 · Weather: Open-Meteo · Forecast: wash-forecast V2.0 (coefficient fallback)<br>
+  Subscribers: UCWH Dashboard (live) — 3,041 paying, 1,404 trial, 4,588 active fleet-wide<br>
+  Generated Thursday, March 12, 2026 at 04:48 AM CT &nbsp;|&nbsp; UCWH Morning Briefing System v3.3
 </div>
 
 </div>
