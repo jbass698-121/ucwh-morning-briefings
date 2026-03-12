@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 12, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Thursday, March 12, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>OpenAI's GPT-5.4 is now the model to beat, launching last week with a 1M-token context window, native computer-use mode, and 33% fewer factual errors — consolidating coding, reasoning, and agentic capabilities into a single frontier model. DeepSeek V4 countered with 1 trillion parameters and a tiered KV-cache architecture that cuts memory 40%. On the Claude side, Claude Code shipped a /loop command and cron scheduling, making recurring agentic workflows native, while Cowork got a new plugin marketplace and skills management UI for Team and Enterprise plans. Apple confirmed that Gemini-powered Siri launches with iOS 26.4 later this month, chaining up to 10 sequential actions from a single voice command. In regulation, Anthropic escalated its Pentagon fight by filing an emergency stay motion against the supply-chain risk designation, while the AI industry awaits the fallout from yesterday's FTC preemption deadline. MCP gateways are crystallizing into the production infrastructure layer for agent deployments, with ContextForge, Portkey, and Bifrost leading the charge.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/05/openai-launches-gpt-5-4-with-pro-and-thinking-versions/">OpenAI Launches GPT-5.4 — 1M Context, Native Computer Use, 33% Fewer Errors</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / OpenAI</span> · Mar 5 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI released GPT-5.4 on March 5 in three variants: standard, Thinking (reasoning), and Pro (high-performance). The model consolidates the coding strengths of GPT-5.3-Codex with improved reasoning and native computer-use capability — the model can autonomously navigate desktops, browsers, and applications. It ships with a 1M-token API context window (the largest from OpenAI), 33% fewer factual errors than GPT-5.2, and 18% fewer errors in overall responses. It scored record marks on OSWorld-Verified and WebArena-Verified computer-use benchmarks, plus 83% on OpenAI's GDPval knowledge-work test.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> GPT-5.4 is the clearest signal yet that frontier models are converging on the same capability stack: coding + reasoning + computer use + massive context. The native computer-use mode puts OpenAI in direct competition with Claude's existing computer-use capabilities, and the 1M-token context matches Sonnet 4.6's beta window. For agent builders, this means multi-model strategies are getting easier — you can swap providers without losing capability classes. The 33% error reduction also pushes GPT-5.4 into territory where autonomous agents become more reliable for production workflows.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/new-ai-model-releases-news-march-2026/">DeepSeek V4 — 1 Trillion Parameters With 40% Memory Reduction via Tiered KV-Cache</a></h3>
+    <p class="story-meta"><span class="source">DeepSeek / LLM Stats</span> · Mar 3 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">DeepSeek launched V4 with 1 trillion parameters and four major architectural innovations: the MODEL1 architecture with tiered KV-cache storage slashes memory usage by 40%, sparse FP8 decoding delivers 1.8x inference speedup, an enhanced pre-training curriculum improves training efficiency by 30%, and the Conditional Memory with Engram architecture enables efficient retrieval across 1M+ token contexts. DeepSeek V4 continues China's strategy of building competitive frontier models at a fraction of the cost of Western labs.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The tiered KV-cache and sparse FP8 innovations are the real story here — DeepSeek is solving the inference cost problem that makes trillion-parameter models impractical for most deployments. A 40% memory reduction and 1.8x speedup means V4 could be served on significantly cheaper hardware. For AI-first businesses evaluating multi-model architectures, DeepSeek V4 represents a cost-competitive alternative for high-throughput workloads where you need scale but can tolerate the geopolitical risk of a Chinese model provider.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.integrate.io/blog/best-mcp-gateways-and-ai-agent-security-tools/">MCP Gateways Emerge as the Production Infrastructure Layer for AI Agents</a></h3>
+    <p class="story-meta"><span class="source">Integrate.io / DEV Community</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">As AI agents move from pilots to production, MCP gateways have crystallized into a critical infrastructure category. These platforms act as centralized control planes between agents and their tools, enforcing authentication, authorization, rate limits, and monitoring for every tool call. Three leaders have emerged: ContextForge (open-source, IBM-backed, acts as gateway + proxy + registry), Portkey (managed platform for enterprise MCP deployment), and Bifrost (high-performance Go gateway with native MCP + LLM routing through a single OpenAI-compatible API across 12+ providers). With MCP now at 97M+ monthly SDK downloads, the next bottleneck isn't protocol adoption — it's production-grade governance of tool access.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> If you're deploying agents in production, an MCP gateway is quickly becoming as essential as an API gateway was for microservices. Without centralized governance, every agent-tool connection becomes a security and compliance liability. ContextForge is worth watching for its open-source approach, while Portkey is the managed option for teams that don't want to run infrastructure. This is the "boring but critical" layer that separates agent demos from agent businesses.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.techrepublic.com/article/ai-adoption-trends-enterprise/">Constrained Autonomy: The Agentic AI Pattern That Actually Ships to Production</a></h3>
+    <p class="story-meta"><span class="source">TechRepublic / Deloitte</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Despite the hype around fully autonomous AI agents, only 8.6% of companies have agents deployed in production, while 63.7% report no formalized AI agent initiative at all. The pattern that's actually working is "constrained autonomy" — high-performing teams deploy smaller, scoped agents tied to clear workflows with guardrails that match the risk profile. Rather than building a single general-purpose agent, successful deployments decompose processes into narrow agents with explicit tool boundaries and human checkpoints at decision points.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COWORK & CLAUDE ECOSYSTEM -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128268;</span>
+    <h2>Cowork &amp; Claude Ecosystem</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://github.com/anthropics/claude-code/releases">Claude Code Ships /loop Command and Cron Scheduling for Recurring Agentic Workflows</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / GitHub</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Claude Code's latest update introduces the /loop command, which runs a prompt or slash command on a recurring interval within a session, plus native cron scheduling tools for recurring prompts. The update also added a rebindable voice:pushToTalk keybinding, expanded the bash auto-allowlist (adding fmt, comm, cmp, numfmt, expr, test, printf, and more), and a quality-of-life improvement where pressing Up after interrupting Claude restores the interrupted prompt and rewinds the conversation in one step. These features make Claude Code the first AI coding assistant with built-in task automation primitives.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The /loop command and cron scheduling turn Claude Code from a reactive tool into a proactive one. Instead of manually invoking Claude for repetitive tasks, you can set up recurring workflows: continuous test monitoring, periodic code quality checks, automated documentation updates, or scheduled data processing. This is the same pattern that makes Cowork's scheduled tasks powerful — now it's available in the developer terminal. For AI-first businesses, this means your development workflows can be automated end-to-end without leaving Claude's ecosystem.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://venturebeat.com/orchestration/anthropic-says-claude-code-transformed-programming-now-claude-cowork-is">Cowork Gets Plugin Marketplace and Skills Management for Team &amp; Enterprise Plans</a></h3>
+    <p class="story-meta"><span class="source">VentureBeat / Anthropic</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Anthropic launched a new Customize section in Claude Desktop that groups skills, plugins, and connectors in one unified interface. A new plugin marketplace and admin controls rolled out for Team and Enterprise plans, giving IT administrators oversight of which plugins their teams can install and use. Separately, Claude Code access is now included with every Team plan standard seat — no longer requiring a separate subscription. Cowork is also now available to Pro plan users on Claude Desktop for macOS.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-cloud-energy-ai-world-labs/">Nscale Raises $2B Series C for AI-Optimized Hyperscale Data Centers</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase / Nvidia</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">London-based Nscale, backed by Nvidia, closed a $2 billion Series C to build and operate hyperscale data centers purpose-built for AI workloads. The round signals that the infrastructure bottleneck for AI compute is far from solved — demand for GPU-optimized facilities continues to outpace supply. Nscale's focus on European-based infrastructure also addresses growing data sovereignty requirements under the EU AI Act, positioning it as the go-to provider for enterprises that need high-performance AI compute within EU borders.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/">Legora Raises $550M Series D at $5.55B — AI for Lawyers Hits Inflection Point</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Swedish legal AI platform Legora raised $550 million in a Series D round, valuing the company at $5.55 billion. The round reflects accelerating enterprise adoption of AI in legal workflows — document review, contract analysis, regulatory compliance, and case research. The legal vertical has emerged as one of the fastest-growing segments for AI deployment, driven by clear ROI (reducing paralegal hours on document review by 60-80%) and a profession that generates massive volumes of structured, text-heavy data ideally suited for LLMs.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://moderndiplomacy.eu/2026/03/11/anthropic-challenges-pentagon-blacklisting/">Anthropic Files Emergency Stay Against Pentagon Supply-Chain Risk Designation</a></h3>
+    <p class="story-meta"><span class="source">Modern Diplomacy / Washington Post / CNN</span> · Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic escalated its legal battle on Wednesday by filing an emergency stay motion with the U.S. Court of Appeals for the D.C. Circuit, seeking to halt the Pentagon's supply-chain risk designation while litigation proceeds. The company now has two active federal lawsuits: a 48-page complaint in the Northern District of California alleging the designation is unlawful retaliation, and a narrower appeal in the D.C. Circuit targeting the Pentagon's formal finding. The dispute centers on Anthropic's refusal to allow Claude to be used for fully autonomous weapons or mass domestic surveillance. Google AI chief Jeff Dean and employees from OpenAI and Google DeepMind signed an amicus brief supporting Anthropic. CFO Krishna Rao has warned the designation could cost multiple billions in 2026 revenue.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The emergency stay filing is a critical juncture — if granted, it would freeze the supply-chain designation while courts adjudicate the merits, giving Anthropic time to operate normally with federal customers. If denied, the financial impact accelerates immediately. For businesses building on Claude, track this closely: Google's deepening Pentagon AI push (reported by CNBC) suggests the government is already redirecting AI spending to providers without ethical redlines. The cross-industry amicus support is remarkable but may not translate to legal relief. Budget for optionality in your model stack.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.wsgr.com/en/insights/2026-year-in-preview-ai-regulatory-developments-for-companies-to-watch-out-for.html">Post-Deadline Watch: FTC and Commerce AI Preemption Rulings Now Overdue</a></h3>
+    <p class="story-meta"><span class="source">Wilson Sonsini / King &amp; Spalding / IAPP</span> · Mar 12 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The March 11 deadlines for the FTC and Commerce Department to issue AI preemption guidance have passed. The FTC was directed to publish a policy statement on how the FTC Act applies to AI and when state laws requiring alteration of AI outputs are preempted by federal law. Commerce was to identify state AI laws that conflict with federal competitiveness policy. Legal experts have noted that the FTC's preemption authority is inherently limited — a policy statement alone cannot override state law, and binding preemption would require a lengthy rulemaking process or Congressional action. The DOJ's AI Litigation Task Force is positioned to challenge flagged state laws, but courts will ultimately decide whether California's TFAIA, Texas's RAIGA, and Colorado's AI Act survive.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/01/12/googles-gemini-to-power-apples-ai-features-like-siri/">Gemini-Powered Siri Launches This Month — Chains 10 Actions From a Single Voice Command</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / Apple / CNBC</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Apple confirmed that the Gemini-powered Siri launches with iOS 26.4 later this month, marking the biggest upgrade to Siri since its 2011 debut. The new Siri can chain up to 10 sequential actions from a single natural language request — for example, booking a flight, adding it to your calendar, and texting someone your arrival time in one command. Google's 1.2 trillion parameter Gemini model runs on Apple's Private Cloud Compute servers, keeping user data isolated from Google's infrastructure. The partnership gives Gemini distribution across Apple's estimated 1.5 billion active devices.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the largest single distribution event for an AI model in history — Gemini reaches 1.5 billion Apple devices in a single software update. The 10-action chaining capability is essentially an agentic workflow disguised as a voice assistant. For AI-first businesses, two implications: first, consumer expectations for AI assistants are about to leap — users will expect every product to chain multi-step actions from natural language. Second, the Apple-Google partnership validates the model-as-infrastructure pattern where the AI layer is invisible to the end user. Watch for this to pressure every device manufacturer to ship comparable agentic capabilities.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.ibm.com/think/news/ai-tech-trends-predictions-2026">IBM: 2026 Is the Year Quantum Computers Outperform Classical Machines</a></h3>
+    <p class="story-meta"><span class="source">IBM</span> · 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">IBM has publicly stated that 2026 will mark the first time a quantum computer outperforms a classical computer on a practical problem — a milestone known as quantum advantage. The breakthrough is expected to impact drug development, materials science, financial optimization, and cryptography. Separately, Gartner predicts 70% of enterprises will use industry cloud platforms by end of 2026 (up from under 15% in 2023), and on-device AI is going mainstream as advances in efficient model design and hardware acceleration enable powerful inference without cloud connectivity.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Thursday, March 12, 2026</p>
+  <p class="sources">Sources: OpenAI, TechCrunch, DeepSeek, Anthropic, GitHub, VentureBeat, Integrate.io, DEV Community, TechRepublic, Deloitte, Crunchbase, Nvidia, AI Funding Tracker, Modern Diplomacy, Washington Post, CNN, Wilson Sonsini, King &amp; Spalding, IAPP, Apple, CNBC, Google, IBM, Gartner</p>
+</div>
+
+</div>
+</body>
+</html>
