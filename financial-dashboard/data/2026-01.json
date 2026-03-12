@@ -1,0 +1,670 @@
+{
+  "month": "2026-01",
+  "date_range": "January 1-31, 2026",
+  "sites": {
+    "UCW TX160": {
+      "display_name": "TX160 - FM1960",
+      "site_raw": "UCW TX160 - FM1960",
+      "date_range": "January 1-31, 2026",
+      "line_items": {
+        "4101": {
+          "name": "Cash Revenue",
+          "amount": 3291.0,
+          "category": "Car Wash Revenue",
+          "raw_label": "4101 Cash"
+        },
+        "4102": {
+          "name": "Credit Card Revenue",
+          "amount": 16952.85,
+          "category": "Car Wash Revenue",
+          "raw_label": "4102 Credit Card"
+        },
+        "4103": {
+          "name": "Membership Revenue",
+          "amount": 31079.28,
+          "category": "Car Wash Revenue",
+          "raw_label": "4103 Membership Revenue"
+        },
+        "4302": {
+          "name": "Detail Kits",
+          "amount": 400.0,
+          "category": "Merchandise Sales",
+          "raw_label": "4302 Detail Kits"
+        },
+        "4502": {
+          "name": "Gift Cards Redeemed",
+          "amount": 80.97,
+          "category": "Other Income",
+          "raw_label": "4502 Gift Cards Redemmed"
+        },
+        "5002": {
+          "name": "Credit Card Fees",
+          "amount": 860.64,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5002 Credit Card Fees"
+        },
+        "5003": {
+          "name": "Royalty Fees",
+          "amount": 2054.69,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5003 Royalty Fees"
+        },
+        "5005": {
+          "name": "Gift Cards (COGS)",
+          "amount": 36.99,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5005 Gift Cards"
+        },
+        "5008": {
+          "name": "Technology Fee",
+          "amount": 392.0,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5008 Technology Fee"
+        },
+        "5009": {
+          "name": "Brand Development",
+          "amount": 513.67,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5009 Brand Development"
+        },
+        "6009": {
+          "name": "Credit Card Charges",
+          "amount": 23.07,
+          "category": "Operating Expenses",
+          "raw_label": "6009 Credit Card Charges"
+        },
+        "6014": {
+          "name": "Internet Services",
+          "amount": 629.05,
+          "category": "Operating Expenses",
+          "raw_label": "6014 Internet Services"
+        },
+        "6016": {
+          "name": "Meals & Entertainment",
+          "amount": 785.37,
+          "category": "Operating Expenses",
+          "raw_label": "6016 Meals and Entertainment"
+        },
+        "6018": {
+          "name": "Office Supplies",
+          "amount": 518.29,
+          "category": "Operating Expenses",
+          "raw_label": "6018 Office Supplies"
+        },
+        "6022": {
+          "name": "Software Expense",
+          "amount": 1185.01,
+          "category": "Operating Expenses",
+          "raw_label": "6022 Software Expense"
+        },
+        "6023": {
+          "name": "TCW Operating",
+          "amount": 5360.44,
+          "category": "Operating Expenses",
+          "raw_label": "6023 TCW Operating"
+        },
+        "6024": {
+          "name": "Tommy's Express Supplies",
+          "amount": 273.98,
+          "category": "Operating Expenses",
+          "raw_label": "6024 Tommy's Express Supplies"
+        },
+        "6101": {
+          "name": "Advertising & Promotion",
+          "amount": 2011.84,
+          "category": "Marketing",
+          "raw_label": "6101 Advertising and Promotion"
+        },
+        "6202": {
+          "name": "Accounting Software",
+          "amount": 1436.65,
+          "category": "Professional Services",
+          "raw_label": "6202 Accounting Software"
+        },
+        "6301": {
+          "name": "Rent",
+          "amount": 7916.67,
+          "category": "Occupancy",
+          "raw_label": "6301 Rent"
+        },
+        "6302": {
+          "name": "Insurance",
+          "amount": 4652.08,
+          "category": "Occupancy",
+          "raw_label": "6302 Insurance Expense"
+        },
+        "6401": {
+          "name": "Electricity",
+          "amount": 1190.44,
+          "category": "Utilities",
+          "raw_label": "6401 Electricity"
+        },
+        "6402": {
+          "name": "Gas",
+          "amount": 4.09,
+          "category": "Utilities",
+          "raw_label": "6402 Gas"
+        },
+        "6403": {
+          "name": "Sewer",
+          "amount": 124.49,
+          "category": "Utilities",
+          "raw_label": "6403 Sewer"
+        },
+        "6406": {
+          "name": "Water",
+          "amount": 4120.07,
+          "category": "Utilities",
+          "raw_label": "6406 Water"
+        },
+        "6600": {
+          "name": "6600 Travel Expense",
+          "amount": 139.87,
+          "category": "Travel",
+          "raw_label": "6600 Travel Expense"
+        },
+        "6601": {
+          "name": "Airlines",
+          "amount": 1957.95,
+          "category": "Travel",
+          "raw_label": "6601 Airlines"
+        },
+        "6602": {
+          "name": "Hotels",
+          "amount": 703.03,
+          "category": "Travel",
+          "raw_label": "6602 Hotels"
+        },
+        "6603": {
+          "name": "Rental Cars",
+          "amount": 2078.96,
+          "category": "Travel",
+          "raw_label": "6603 Rental Cars"
+        },
+        "6701": {
+          "name": "Salaries",
+          "amount": 26284.48,
+          "category": "Payroll",
+          "raw_label": "6701 Salaries"
+        },
+        "6702": {
+          "name": "Payroll Tax",
+          "amount": 2238.11,
+          "category": "Payroll",
+          "raw_label": "6702 Payroll Tax Expenses"
+        },
+        "6717": {
+          "name": "Guaranteed Payments",
+          "amount": 4167.0,
+          "category": "Payroll",
+          "raw_label": "6717 Guaranteed Payment"
+        },
+        "7006": {
+          "name": "Miscellaneous",
+          "amount": 27.47,
+          "category": "Other Expenses",
+          "raw_label": "7006 Miscellaneous"
+        },
+        "9999": {
+          "name": "Ask My Accountant",
+          "amount": -797.0,
+          "category": "Other Expenses",
+          "raw_label": "9999 Ask My Accountant"
+        }
+      },
+      "categories": {
+        "4100 Car Wash Revenue": 51323.13,
+        "4300 Merchandise Sales": 400.0,
+        "5000 Car Wash Expenses": 3857.99,
+        "6000 Operating Business Expneses": 8775.21,
+        "6100 Marketing": 2011.84,
+        "6200 Professional Services": 1436.65,
+        "6300 Occupancy": 12568.75,
+        "6400 Utilities": 5439.09,
+        "6600 Travel Expense": 4879.81,
+        "6700 Payroll Expenses": 32689.59,
+        "Other Expenses": -769.53
+      },
+      "summary": {
+        "total_income": 51804.1,
+        "total_cogs": 3857.99,
+        "gross_profit": 47946.11,
+        "total_expenses": 67800.94,
+        "net_operating_income": -19854.83,
+        "net_income": -19085.300000000003
+      }
+    },
+    "UCW TX190": {
+      "display_name": "TX190 - ECR",
+      "site_raw": "UCW TX190 - ECR",
+      "date_range": "January 1-31, 2026",
+      "line_items": {
+        "4101": {
+          "name": "Cash Revenue",
+          "amount": 3520.0,
+          "category": "Car Wash Revenue",
+          "raw_label": "4101 Cash"
+        },
+        "4102": {
+          "name": "Credit Card Revenue",
+          "amount": 15985.96,
+          "category": "Car Wash Revenue",
+          "raw_label": "4102 Credit Card"
+        },
+        "4103": {
+          "name": "Membership Revenue",
+          "amount": 28748.71,
+          "category": "Car Wash Revenue",
+          "raw_label": "4103 Membership Revenue"
+        },
+        "4302": {
+          "name": "Detail Kits",
+          "amount": 160.0,
+          "category": "Merchandise Sales",
+          "raw_label": "4302 Detail Kits"
+        },
+        "4502": {
+          "name": "Gift Cards Redeemed",
+          "amount": 146.28,
+          "category": "Other Income",
+          "raw_label": "4502 Gift Cards Redemmed"
+        },
+        "5002": {
+          "name": "Credit Card Fees",
+          "amount": 816.51,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5002 Credit Card Fee"
+        },
+        "5003": {
+          "name": "Royalty Fees",
+          "amount": 1927.16,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5003 Royalty Fees"
+        },
+        "5005": {
+          "name": "Gift Cards (COGS)",
+          "amount": 221.94,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5005 Gift Cards"
+        },
+        "5008": {
+          "name": "Technology Fee",
+          "amount": 392.0,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5008 Technology Fee"
+        },
+        "5009": {
+          "name": "Brand Development",
+          "amount": 481.79,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5009 Brand Development"
+        },
+        "6009": {
+          "name": "Credit Card Charges",
+          "amount": 195.0,
+          "category": "Operating Expenses",
+          "raw_label": "6009 Credit Card Charges"
+        },
+        "6014": {
+          "name": "Internet Services",
+          "amount": 694.81,
+          "category": "Operating Expenses",
+          "raw_label": "6014 Internet Services"
+        },
+        "6016": {
+          "name": "Meals & Entertainment",
+          "amount": 161.75,
+          "category": "Operating Expenses",
+          "raw_label": "6016 Meals and Entertainment"
+        },
+        "6018": {
+          "name": "Office Supplies",
+          "amount": 139.95,
+          "category": "Operating Expenses",
+          "raw_label": "6018 Office Supplies"
+        },
+        "6022": {
+          "name": "Software Expense",
+          "amount": 1041.49,
+          "category": "Operating Expenses",
+          "raw_label": "6022 Software Expense"
+        },
+        "6023": {
+          "name": "TCW Operating",
+          "amount": 7245.1,
+          "category": "Operating Expenses",
+          "raw_label": "6023 TCW Operating"
+        },
+        "6101": {
+          "name": "Advertising & Promotion",
+          "amount": 2021.25,
+          "category": "Marketing",
+          "raw_label": "6101 Advertising and Promotion"
+        },
+        "6202": {
+          "name": "Accounting Software",
+          "amount": 1560.22,
+          "category": "Professional Services",
+          "raw_label": "6202 Accounting Software"
+        },
+        "6301": {
+          "name": "Rent",
+          "amount": 63805.0,
+          "category": "Occupancy",
+          "raw_label": "6301 Rent Expense"
+        },
+        "6401": {
+          "name": "Electricity",
+          "amount": 5047.37,
+          "category": "Utilities",
+          "raw_label": "6401 Electricity"
+        },
+        "6402": {
+          "name": "Gas",
+          "amount": 47.37,
+          "category": "Utilities",
+          "raw_label": "6402 Gas"
+        },
+        "6404": {
+          "name": "Trash",
+          "amount": 269.68,
+          "category": "Utilities",
+          "raw_label": "6404 Trash"
+        },
+        "6405": {
+          "name": "Telephone",
+          "amount": 396.71,
+          "category": "Utilities",
+          "raw_label": "6405 Telephone"
+        },
+        "6406": {
+          "name": "Water",
+          "amount": 1462.2,
+          "category": "Utilities",
+          "raw_label": "6406 Water"
+        },
+        "6602": {
+          "name": "Hotels",
+          "amount": 328.47,
+          "category": "Travel",
+          "raw_label": "6602 Hotels"
+        },
+        "6701": {
+          "name": "Salaries",
+          "amount": 21911.08,
+          "category": "Payroll",
+          "raw_label": "6701 Salaries"
+        },
+        "6702": {
+          "name": "Payroll Tax",
+          "amount": 328.2,
+          "category": "Payroll",
+          "raw_label": "6702 Payroll Tax Expenses"
+        },
+        "6703": {
+          "name": "Payroll Processing",
+          "amount": 835.04,
+          "category": "Payroll",
+          "raw_label": "6703 Payroll Processing Fee"
+        },
+        "6717": {
+          "name": "Guaranteed Payments",
+          "amount": 4167.0,
+          "category": "Payroll",
+          "raw_label": "6717 Guaranteed Payments"
+        }
+      },
+      "categories": {
+        "4100 Car Wash Revenue": 48254.67,
+        "4300 Merchandise Sales": 160.0,
+        "5000 Car Wash Expenses": 3839.4,
+        "6000 Operating Business Expneses": 9478.1,
+        "6100 Marketing": 2021.25,
+        "6200 Professional Services": 1560.22,
+        "6300 Occupancy": 63805.0,
+        "6400 Utilities": 7223.33,
+        "6600 Travel Expense": 328.47,
+        "6700 Payroll Expenses": 27241.32
+      },
+      "summary": {
+        "total_income": 48560.95,
+        "total_cogs": 3839.4,
+        "gross_profit": 44721.55,
+        "total_expenses": 111657.69,
+        "net_operating_income": -66936.14,
+        "net_income": -66936.14000000001
+      }
+    },
+    "UCW UT426": {
+      "display_name": "UT426 - Utah",
+      "site_raw": "UCW UT LLC",
+      "date_range": "January 1-31, 2026",
+      "line_items": {
+        "4101": {
+          "name": "Cash Revenue",
+          "amount": 530.0,
+          "category": "Car Wash Revenue",
+          "raw_label": "4101 Cash"
+        },
+        "4102": {
+          "name": "Credit Card Revenue",
+          "amount": 11136.94,
+          "category": "Car Wash Revenue",
+          "raw_label": "4102 Credit Cards"
+        },
+        "4103": {
+          "name": "Membership Revenue",
+          "amount": 25098.27,
+          "category": "Car Wash Revenue",
+          "raw_label": "4103 Membership Revenue"
+        },
+        "4502": {
+          "name": "Gift Cards Redeemed",
+          "amount": 215.94,
+          "category": "Other Income",
+          "raw_label": "4502 Gift Cards Redemmed"
+        },
+        "5002": {
+          "name": "Credit Card Fees",
+          "amount": 711.25,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5002 Credit Card Fees"
+        },
+        "5003": {
+          "name": "Royalty Fees",
+          "amount": 1479.25,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5003 Royalty Fees"
+        },
+        "5008": {
+          "name": "Technology Fee",
+          "amount": 392.0,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5008 Technology Fee"
+        },
+        "5009": {
+          "name": "Brand Development",
+          "amount": 369.82,
+          "category": "Cost of Goods Sold",
+          "raw_label": "5009 Brand Development"
+        },
+        "6009": {
+          "name": "Credit Card Charges",
+          "amount": 195.0,
+          "category": "Operating Expenses",
+          "raw_label": "6009 Credit Card Charges"
+        },
+        "6010": {
+          "name": "Customer Claims",
+          "amount": 1802.9,
+          "category": "Operating Expenses",
+          "raw_label": "6010 Customer Claims"
+        },
+        "6014": {
+          "name": "Internet Services",
+          "amount": 433.77,
+          "category": "Operating Expenses",
+          "raw_label": "6014 Internet Services"
+        },
+        "6015": {
+          "name": "Landscaping",
+          "amount": 356.9,
+          "category": "Operating Expenses",
+          "raw_label": "6015 Landscaping"
+        },
+        "6016": {
+          "name": "Meals & Entertainment",
+          "amount": 1304.95,
+          "category": "Operating Expenses",
+          "raw_label": "6016 Meals and Entertainment"
+        },
+        "6018": {
+          "name": "Office Supplies",
+          "amount": 180.03,
+          "category": "Operating Expenses",
+          "raw_label": "6018 Office Supplies"
+        },
+        "6020": {
+          "name": "Postage & Delivery",
+          "amount": 222.0,
+          "category": "Operating Expenses",
+          "raw_label": "6020 Postage and Delivery"
+        },
+        "6022": {
+          "name": "Software Expense",
+          "amount": 107.44,
+          "category": "Operating Expenses",
+          "raw_label": "6022 Software Expense"
+        },
+        "6023": {
+          "name": "TCW Operating",
+          "amount": 430.24,
+          "category": "Operating Expenses",
+          "raw_label": "6023 TCW Operating"
+        },
+        "6100": {
+          "name": "6100 Marketing",
+          "amount": 510.0,
+          "category": "Marketing",
+          "raw_label": "6100 Marketing"
+        },
+        "6101": {
+          "name": "Advertising & Promotion",
+          "amount": 3668.36,
+          "category": "Marketing",
+          "raw_label": "6101 Advertising and Promotion"
+        },
+        "6202": {
+          "name": "Accounting Software",
+          "amount": 123.57,
+          "category": "Professional Services",
+          "raw_label": "6202 Accounting Software"
+        },
+        "6203": {
+          "name": "Legal Fees",
+          "amount": 6392.87,
+          "category": "Professional Services",
+          "raw_label": "6203 Legal Fee"
+        },
+        "6301": {
+          "name": "Rent",
+          "amount": 52011.53,
+          "category": "Occupancy",
+          "raw_label": "6301 Rent"
+        },
+        "6401": {
+          "name": "Electricity",
+          "amount": 3383.5,
+          "category": "Utilities",
+          "raw_label": "6401 Electricity"
+        },
+        "6402": {
+          "name": "Gas",
+          "amount": 2777.09,
+          "category": "Utilities",
+          "raw_label": "6402 Gas"
+        },
+        "6403": {
+          "name": "Sewer",
+          "amount": 0.0,
+          "category": "Utilities",
+          "raw_label": "6403 Sewer"
+        },
+        "6406": {
+          "name": "Water",
+          "amount": 4335.06,
+          "category": "Utilities",
+          "raw_label": "6406 Water"
+        },
+        "6601": {
+          "name": "Airlines",
+          "amount": -694.19,
+          "category": "Travel",
+          "raw_label": "6601 Airlines"
+        },
+        "6602": {
+          "name": "Hotels",
+          "amount": 4586.18,
+          "category": "Travel",
+          "raw_label": "6602 Hotels"
+        },
+        "6701": {
+          "name": "Salaries",
+          "amount": 23313.65,
+          "category": "Payroll",
+          "raw_label": "6701 Salaries"
+        },
+        "6702": {
+          "name": "Payroll Tax",
+          "amount": 2226.52,
+          "category": "Payroll",
+          "raw_label": "6702 Payroll Tax Expenses"
+        },
+        "6703": {
+          "name": "Payroll Processing",
+          "amount": 594.98,
+          "category": "Payroll",
+          "raw_label": "6703 Payroll Processing Fees"
+        },
+        "6717": {
+          "name": "Guaranteed Payments",
+          "amount": 4167.0,
+          "category": "Payroll",
+          "raw_label": "6717 Guaranteed Payment"
+        },
+        "6903": {
+          "name": "Vehicle Repairs & Maintenance",
+          "amount": 200.84,
+          "category": "Other Expenses",
+          "raw_label": "6903 Vehicle repairs and maintenance"
+        },
+        "7006": {
+          "name": "Miscellaneous",
+          "amount": 36.9,
+          "category": "Other Expenses",
+          "raw_label": "7006 Miscellaneous"
+        }
+      },
+      "categories": {
+        "4100 Car Wash Revenue": 36765.21,
+        "5000 Car Wash Expenses": 2952.32,
+        "6000 Operating Business Expneses": 5033.23,
+        "6100 Marketing": 4178.36,
+        "6200 Professional Service": 6516.44,
+        "6300 Occupancy": 52011.53,
+        "6400 Utilities": 10495.65,
+        "6600 Travel Expense": 3891.99,
+        "6700 Payroll Expenses": 30302.15,
+        "Other Expenses": 237.74
+      },
+      "summary": {
+        "total_income": 36981.15,
+        "total_cogs": 2952.32,
+        "gross_profit": 34028.83,
+        "total_expenses": 112429.35,
+        "net_operating_income": -78400.52,
+        "net_income": -78638.26000000001
+      }
+    }
+  }
+}
