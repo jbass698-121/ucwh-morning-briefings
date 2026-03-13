@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 13, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Friday, March 13, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>OpenAI officially retired GPT-5.1 this week, completing its consolidation around the GPT-5.4 family as the sole frontier offering. Google's Gemini 3.1 Pro is now dominating 13 of 16 major benchmarks with a 1M-token context window, intensifying the three-way race with Anthropic and OpenAI. The first week of March unleashed an unprecedented avalanche of 12+ model releases from Alibaba, Tencent, ByteDance, and Meta — with Alibaba's Qwen 3.5 Small matching models 13x its size while running entirely on-device. The MCP ecosystem hit a governance inflection point as the Linux Foundation launched the Agentic AI Foundation (AAIF), bringing MCP, goose, and AGENTS.md under a neutral home. Meanwhile, state legislatures are sprinting: Washington passed three AI bills, Utah enacted nine, and Florida's AI Bill of Rights appears dead on arrival as the House adjourns today. Cowork shipped Windows support with full feature parity, and enterprise plugin marketplace templates now span HR through investment banking.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://releasebot.io/updates/openai">OpenAI Retires GPT-5.1 — Consolidates Around GPT-5.4 as Sole Frontier Family</a></h3>
+    <p class="story-meta"><span class="source">OpenAI / Releasebot</span> · Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI officially retired GPT-5.1 Instant, GPT-5.1 Thinking, and GPT-5.1 Pro from ChatGPT on March 11. Existing conversations automatically migrate to GPT-5.3 Instant, GPT-5.4 Thinking, or GPT-5.4 Pro respectively. This follows the February 13 retirement of GPT-4o, GPT-4.1, GPT-4.1 mini, o4-mini, and earlier GPT-5 variants. OpenAI's model lineup is now fully consolidated around the GPT-5.3/5.4 generation, with Enterprise workspaces losing legacy access as of February 19.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> If any of your agent pipelines or API integrations still reference GPT-5.1 model strings, they're now broken or silently redirected. Audit your model configurations immediately. The rapid deprecation pace — four generations of models sunset in under two months — signals OpenAI's push to reduce serving costs by eliminating legacy model infrastructure. For multi-model strategies, pin to the latest version and build in graceful fallback logic.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.sci-tech-today.com/news/march-2026-ai-models-avalanche/">March Model Avalanche: 12+ Releases in One Week From Alibaba, Tencent, ByteDance &amp; Meta</a></h3>
+    <p class="story-meta"><span class="source">Sci-Tech Today / LLM Stats</span> · Mar 1–8 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The first week of March produced the most concentrated burst of AI releases in recent memory. Alibaba's Qwen 3.5 Small (0.8B–9B parameters) matches or surpasses models 13x its size while running entirely on-device. Helios generates minute-long videos at 20 FPS on a single GPU as a fully open-weight model. ByteDance and Tsinghua's CUDA Agent uses agentic reinforcement learning for automatic CUDA kernel generation. Tencent's HunyuanVideo post-training code enables real-time interactive world models at 24 FPS. The open-source ecosystem is now rivaling proprietary alternatives in video, code optimization, and on-device inference.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Qwen 3.5 Small is the headline for agent builders — a 9B model that matches 117B performance means you can run capable agents on edge hardware without cloud dependency. For AI-first businesses, this accelerates the shift toward hybrid architectures: frontier models for complex reasoning, small models for latency-sensitive or cost-sensitive inference. Helios and HunyuanVideo open-weight releases also eliminate the video generation moat that proprietary labs held just months ago.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://llm-stats.com/llm-updates">Gemini 3.1 Pro Dominates 13 of 16 Benchmarks With 77% on ARC-AGI-2</a></h3>
+    <p class="story-meta"><span class="source">Google DeepMind / LLM Stats</span> · Feb 19 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Google's Gemini 3.1 Pro, released February 19, has established itself as the most advanced Pro-tier model across the industry. It dominates 13 of 16 major benchmarks, features a 1M-token context window, scores 77.1% on ARC-AGI-2, and provides multimodal reasoning across text, images, audio, video, and code. The model's benchmark sweep puts Google in a strong position heading into the Apple Siri partnership launch later this month.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">Linux Foundation Launches Agentic AI Foundation — MCP Gets a Neutral Home</a></h3>
+    <p class="story-meta"><span class="source">Linux Foundation / Anthropic / Block / OpenAI</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Linux Foundation announced the Agentic AI Foundation (AAIF), anchored by three cornerstone project contributions: Anthropic's Model Context Protocol (MCP), Block's goose agent framework, and OpenAI's AGENTS.md specification. AAIF provides vendor-neutral governance for the protocols that define how AI agents connect to tools (MCP), communicate with each other (A2A), and declare their capabilities (AGENTS.md). The next MCP Dev Summit is scheduled for April 2–3 in New York City.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> MCP moving under the Linux Foundation is the clearest signal yet that it's become infrastructure, not a proprietary advantage. Vendor-neutral governance means enterprises can commit to MCP without single-vendor lock-in concerns — the same pattern that made Kubernetes ubiquitous. If you're building MCP servers or connectors, the AAIF governance structure means your investments are now protected by open-source institutional backing. The April Dev Summit is worth attending for anyone building agent infrastructure.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/">2026 MCP Roadmap: Transport Scalability, Agent Comms, Enterprise Governance</a></h3>
+    <p class="story-meta"><span class="source">MCP Blog / AAIF</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The updated MCP roadmap for 2026 tackles the scaling problems that emerged as deployments moved from demos to production. Streamable HTTP — the transport that lets MCP servers run as remote services — has surfaced gaps with load balancers, horizontal scaling, and service discovery. The roadmap prioritizes stateful session management, registry/crawler discoverability, SSO-integrated auth, and configuration portability. MCP has now crossed 97 million monthly SDK downloads across Python and TypeScript, and every major AI provider (Anthropic, OpenAI, Google, Microsoft, Amazon) has adopted it.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The roadmap confirms that MCP's growing pains are exactly the enterprise infrastructure problems you'd expect at 97M downloads: auth, scaling, discovery, and governance. If you're deploying MCP servers in production, the transport scalability improvements directly address the load-balancer and session-stickiness headaches you've likely encountered. The registry/crawler discoverability work also means MCP servers will become findable programmatically — a prerequisite for agent marketplaces and tool discovery at scale.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COWORK & CLAUDE ECOSYSTEM -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128268;</span>
+    <h2>Cowork &amp; Claude Ecosystem</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://venturebeat.com/orchestration/anthropic-says-claude-code-transformed-programming-now-claude-cowork-is">Cowork Ships Windows Support With Full Feature Parity — Plus Enterprise Plugin Templates</a></h3>
+    <p class="story-meta"><span class="source">VentureBeat / Anthropic</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Claude Cowork launched on Windows with full feature parity with macOS — all capabilities including plugins, file access, multi-step task execution, and MCP connectors now work on both platforms. Anthropic also introduced prebuilt enterprise plugin templates spanning HR, design, engineering, operations, financial analysis, investment banking, equity research, private equity, and wealth management. Enterprise administrators can now build private plugin marketplaces tailored to their organizations, giving IT teams granular control over which plugins are available to staff.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Windows parity doubles Cowork's addressable market overnight — most enterprise desktops still run Windows. The prebuilt plugin templates for financial verticals (investment banking, equity research, private equity) signal Anthropic is targeting high-value professional services where automation ROI is immediately quantifiable. If you're building skills or plugins for Cowork, the private marketplace infrastructure means there's now a distribution channel for selling vertical-specific automation to enterprises.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://releasebot.io/updates/anthropic/claude-code">Claude Code Adds /copy Write Mode and Simplified Effort Levels</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / GitHub</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Beyond the /loop command covered yesterday, Claude Code's latest update includes a 'w' key in /copy that writes focused selections directly to a file, an optional description argument to /plan for documenting intent, and simplified effort levels consolidated to low/medium/high with new visual symbols. These quality-of-life improvements continue Claude Code's evolution from a coding assistant into a full development environment with built-in workflow primitives.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-ai-openai-semiconductors-matx/">OpenAI Closes $110B at $730B Valuation — Amazon, SoftBank, Nvidia Lead</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase / WSJ</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI closed the largest private funding round in history at $110 billion, with a $730 billion pre-money valuation. Amazon contributed $50 billion, SoftBank $30 billion, and Nvidia $30 billion. The round cements OpenAI's position as the most valuable private company and gives it a war chest to fund compute infrastructure, model training, and its expanding product suite. For context, Anthropic's recent $30B Series G valued it at $380 billion — making the two leading AI labs collectively worth over $1 trillion in private market value.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The $110B round isn't just about capital — it's about infrastructure lock-in. Amazon's $50B contribution likely comes with massive AWS compute commitments, SoftBank brings distribution across its global portfolio companies, and Nvidia's $30B deepens the GPU supply partnership. For AI-first businesses, this signals that the foundation model layer is becoming a multi-hundred-billion-dollar infrastructure play where the top labs are functionally becoming cloud providers. Diversify your model dependencies accordingly.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">Perplexity AI Closes $400M Series E at $24B — Crosses 1B Monthly Queries</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker / DST Global</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Perplexity AI closed a $400 million Series E led by DST Global at a $24 billion valuation. The AI search company crossed 1 billion monthly queries in Q1 2026, validating the AI-native search paradigm. The round positions Perplexity as the leading challenger to Google in AI-powered information retrieval, with revenue reportedly growing 10x year-over-year from enterprise API contracts and consumer subscriptions.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.transparencycoalition.ai/news/ai-legislative-update-march13-2026">State AI Legislation Sprint: Washington Passes 3 Bills, Utah Enacts 9, Florida Bill Stalls</a></h3>
+    <p class="story-meta"><span class="source">Transparency Coalition / State Legislatures</span> · Mar 13 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">State legislatures are sprinting to pass AI bills before session deadlines. Washington led with three bills gaining final approval: HB 1170 (AI disclosure requirements), HB 2225 (chatbot safety for minors including self-harm protocols), and SB 5395 (AI use in health insurance). Utah enacted nine AI-related bills covering school technology limits, deepfake protections, and human decision-making in medical contexts. Virginia advanced three measures on AI fraud, independent verification organizations, and social media duty of care for minors. Florida's SB 482 (AI Bill of Rights) passed the Senate but appears dead in the House as it adjourns today. Michigan joins New York and California in considering bills requiring large AI model developers to establish safety protocols.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The state-level velocity is staggering — over 15 AI bills advanced in a single week across six states. For AI-first businesses, the compliance surface area is expanding rapidly. Washington's HB 2225 (chatbot safety with self-harm protocols) and Utah's human-decision-in-medicine requirements will directly impact anyone deploying conversational AI or health-adjacent agents. The Florida stall is notable: even in a business-friendly state, comprehensive AI rights frameworks face legislative headwinds. Track the Michigan/New York/California developer safety protocol bills — those will define the compliance bar for foundation model providers.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.corporatecomplianceinsights.com/2026-operational-guide-cybersecurity-ai-governance-emerging-risks/">AI Security Riders Now Required by Insurers — Red-Teaming Becomes a Coverage Prerequisite</a></h3>
+    <p class="story-meta"><span class="source">Corporate Compliance Insights / Insurance Industry</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Insurers have begun introducing "AI Security Riders" that require documented evidence of adversarial red-teaming, model-level risk assessments, and specialized safeguards as prerequisites for underwriting coverage. This development reflects AI governance shifting from voluntary principles to enforceable, market-driven requirements. Organizations deploying AI now need documented AI inventories, risk classifications, third-party due diligence, and model lifecycle controls to maintain their insurance coverage.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://nvidianews.nvidia.com/news/nvidia-releases-new-physical-ai-models-as-global-partners-unveil-next-generation-robots">NVIDIA Releases Physical AI Models — Unites 2M Robotics Devs With Hugging Face's 13M Community</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA / Hugging Face</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">NVIDIA announced new open models, frameworks, and AI infrastructure for physical AI, partnering with Hugging Face to integrate its open-source Isaac and GR00T robotics technologies into the LeRobot framework. This merges NVIDIA's 2 million robotics developers with Hugging Face's 13 million AI builders. The move coincides with humanoid robotics emerging as 2026's breakout investment category, with the sector projected to draw $20B+ in funding this year. NVIDIA's play is to become the infrastructure layer for physical AI the same way it dominates LLM training compute.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The NVIDIA-Hugging Face partnership creates the largest unified robotics development community in history. For AI-first businesses, this signals that physical AI and embodied agents are moving from research to production infrastructure. The $20B+ projected investment in humanoid robotics means the agent orchestration patterns you're building today for software agents will likely extend to physical agents within 12–18 months. If MCP becomes the protocol for software tool access, watch for a physical-AI equivalent to emerge from the Isaac/GR00T ecosystem.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.techrepublic.com/article/ai-adoption-trends-enterprise/">Samsung Targets 800M Gemini-Equipped Devices by Year-End — AI Goes Mass-Market</a></h3>
+    <p class="story-meta"><span class="source">TechRepublic / Samsung</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Samsung announced an ambitious goal to double its footprint of mobile devices equipped with Google's Gemini AI, aiming for 800 million units by end of 2026. The push extends advanced generative AI features to mid-tier and budget devices, not just flagships. Combined with Apple's Gemini-powered Siri launching this month on 1.5 billion devices, Google's Gemini is on track to reach 2.3 billion devices by year-end — making it the most widely distributed AI model in history by an order of magnitude.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Friday, March 13, 2026</p>
+  <p class="sources">Sources: OpenAI, Releasebot, Sci-Tech Today, LLM Stats, Google DeepMind, Linux Foundation, Anthropic, Block, MCP Blog, VentureBeat, Crunchbase, WSJ, AI Funding Tracker, DST Global, Transparency Coalition, Corporate Compliance Insights, NVIDIA, Hugging Face, TechRepublic, Samsung</p>
+</div>
+
+</div>
+</body>
+</html>
