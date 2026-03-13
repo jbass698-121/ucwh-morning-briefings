@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monthly Supply Order | UCWH</title>
+<style>
+  :root {
+    --red: #C0392B;
+    --red-dark: #A93226;
+    --dark: #1a1a2e;
+    --dark2: #16213e;
+    --card-bg: #ffffff;
+    --bg: #f4f6f9;
+    --text: #2c3e50;
+    --text-light: #7f8c8d;
+    --border: #e0e4e8;
+    --green: #27ae60;
+    --green-dark: #219a52;
+    --blue: #2980b9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* Hero Banner */
+  .hero {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 50%, var(--red) 100%);
+    color: white; padding: 32px 24px; text-align: center;
+  }
+  .hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  .hero p { font-size: 14px; opacity: 0.85; }
+
+  /* Site Selector */
+  .site-bar {
+    background: white; border-bottom: 2px solid var(--border);
+    padding: 16px 24px; display: flex; align-items: center; gap: 16px;
+    flex-wrap: wrap; justify-content: space-between;
+  }
+  .site-bar label { font-weight: 600; font-size: 14px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+  .site-bar select {
+    padding: 10px 16px; border: 2px solid var(--border); border-radius: 8px;
+    font-size: 16px; font-weight: 600; background: white; min-width: 280px; cursor: pointer;
+  }
+  .site-bar select:focus { border-color: var(--red); outline: none; }
+  .order-date { font-size: 13px; color: var(--text-light); }
+
+  /* Container */
+  .container { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Section Headers */
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 2px solid var(--red);
+  }
+  .section-header h2 { font-size: 18px; color: var(--dark); }
+  .section-header .badge {
+    background: var(--red); color: white; font-size: 11px; padding: 2px 8px;
+    border-radius: 10px; font-weight: 600;
+  }
+
+  /* Product Table */
+  .product-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 24px; }
+  .product-table thead th {
+    background: var(--dark); color: white; padding: 12px 16px;
+    text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+  }
+  .product-table thead th:last-child { text-align: center; width: 120px; }
+  .product-table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .product-table tbody tr:hover { background: #fafbfc; }
+  .product-table tbody tr.has-qty { background: #f0faf4; }
+  .product-table tbody tr.has-qty:hover { background: #e5f7ed; }
+  .product-table td { padding: 14px 16px; vertical-align: middle; }
+  .product-table td:last-child { text-align: center; }
+
+  .product-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%; font-weight: 700; font-size: 14px;
+    margin-right: 10px; flex-shrink: 0;
+  }
+  .product-num.detergent { background: var(--red); color: white; }
+  .product-num.supply { background: var(--blue); color: white; }
+
+  .product-name { font-weight: 600; font-size: 15px; }
+  .product-desc { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+  .product-size { font-size: 13px; color: var(--text-light); }
+
+  /* Quantity Input */
+  .qty-input {
+    width: 80px; padding: 8px 12px; border: 2px solid var(--border); border-radius: 8px;
+    font-size: 16px; font-weight: 600; text-align: center; transition: border-color 0.2s;
+  }
+  .qty-input:focus { border-color: var(--red); outline: none; }
+  .qty-input:not([value=""]):not([value="0"]) { border-color: var(--green); background: #f0faf4; }
+
+  /* Summary Bar */
+  .summary-bar {
+    position: sticky; bottom: 0; background: white; border-top: 2px solid var(--border);
+    padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.08); z-index: 10; flex-wrap: wrap; gap: 12px;
+  }
+  .summary-info { font-size: 14px; color: var(--text-light); }
+  .summary-info strong { color: var(--text); font-size: 18px; }
+  .summary-actions { display: flex; gap: 10px; }
+
+  .btn {
+    padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-submit { background: var(--green); color: white; }
+  .btn-submit:hover { background: var(--green-dark); transform: translateY(-1px); }
+  .btn-submit:disabled { background: #bdc3c7; cursor: not-allowed; transform: none; }
+  .btn-clear { background: transparent; color: var(--text-light); border: 2px solid var(--border); }
+  .btn-clear:hover { border-color: var(--red); color: var(--red); }
+
+  /* Toast */
+  .toast {
+    position: fixed; top: 24px; right: 24px; padding: 16px 24px; border-radius: 10px;
+    color: white; font-weight: 600; font-size: 14px; z-index: 100;
+    transform: translateX(120%); transition: transform 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .toast.show { transform: translateX(0); }
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red); }
+
+  /* Modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 50; align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: white; border-radius: 16px; padding: 32px; max-width: 480px;
+    width: 90%; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+  .modal h3 { font-size: 20px; margin-bottom: 8px; }
+  .modal p { font-size: 14px; color: var(--text-light); margin-bottom: 20px; line-height: 1.5; }
+  .modal .btn { margin: 0 6px; }
+  .modal .order-summary { text-align: left; background: var(--bg); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; max-height: 200px; overflow-y: auto; }
+  .modal .order-summary .line { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .modal .order-summary .line:last-child { border: none; }
+
+  /* Spinner */
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 22px; }
+    .product-table td { padding: 10px 12px; }
+    .product-num { width: 26px; height: 26px; font-size: 12px; margin-right: 6px; }
+    .qty-input { width: 64px; padding: 6px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Monthly Supply Order</h1>
+  <p>Tommy's Express Detergent Line &mdash; United Car Wash Holdings</p>
+</div>
+
+<div class="site-bar">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <label for="site-select">Ordering for:</label>
+    <select id="site-select">
+      <option value="">-- Select Your Site --</option>
+      <option value="UT426">UT426 &mdash; Saratoga Springs (E Crossroads Blvd)</option>
+      <option value="UT253">UT253 &mdash; Lehi</option>
+      <option value="UT259">UT259 &mdash; Orem</option>
+    </select>
+  </div>
+  <div class="order-date" id="order-date"></div>
+</div>
+
+<div class="container">
+
+  <!-- DETERGENTS -->
+  <div class="section-header">
+    <h2>Detergents</h2>
+    <span class="badge">Tommy's Express Line</span>
+  </div>
+
+  <table class="product-table" id="detergent-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Default Size</th>
+        <th>Qty (drums)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-product-url="/Tommy-Pre-Soak" data-sku="C-1-30-A" data-name="Tommy's Express #1 (Pre-Soak)" data-options='{"detergent-formula":"1","detergent-size":"1"}'>
+        <td><span class="product-num detergent">1</span><span class="product-name">Pre-Soak</span><div class="product-desc">High pH alkaline &mdash; Presoak Arch, Bumper Blaster, Chemical Tire</div></td>
+        <td class="product-size">30 Gal / Formula A</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="0"></td>
+      </tr>
+      <tr data-product-url="/Tommys-Express-Scent" data-sku="C-2" data-name="Tommy's Express #2 (Scent)" data-options='{"detergent-formula":"1","detergent-size":"1"}'>
+        <td><span class="product-num detergent">2</span><span class="product-name">Scent</span><div class="product-desc">Fragrance application &mdash; applied through arch or foam</div></td>
+        <td class="product-size">30 Gal / Formula A</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="1"></td>
+      </tr>
+      <tr data-product-url="/Tommys-Express-Brite-3" data-sku="C-3" data-name="Tommy's Express #3 (Brite)" data-options='{"detergent-formula":"1","detergent-size":"1"}'>
+        <td><span class="product-num detergent">3</span><span class="product-name">Brite</span><div class="product-desc">Low pH polish &mdash; adds shine and surface brightness</div></td>
+        <td class="product-size">30 Gal / Formula A</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="2"></td>
+      </tr>
+      <tr data-product-url="/Tommy-Vacation-Scent-4" data-sku="C-4" data-name="Tommy's Express #4 (Vacation Scent)" data-options='{"detergent-formula":"1","detergent-size":"1"}'>
+        <td><span class="product-num detergent">4</span><span class="product-name">Vacation Scent</span><div class="product-desc">Premium upgrade scent &mdash; tropical fragrance</div></td>
+        <td class="product-size">30 Gal / Formula A</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="3"></td>
+      </tr>
+      <tr data-product-url="/Tommys-Express-Ceramic-Body-Wax_2" data-sku="C-5" data-name="Tommy's Express #5 (Ceramic Body Wax)" data-options='{"detergent-formula":"1","detergent-size":"1"}'>
+        <td><span class="product-num detergent">5</span><span class="product-name">Ceramic Body Wax</span><div class="product-desc">Ceramic coating protection &mdash; hydrophobic finish</div></td>
+        <td class="product-size">30 Gal / Formula A</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="4"></td>
+      </tr>
+      <tr data-product-url="/Tommys-Express-Guard-6_4" data-sku="C-6" data-name="Tommy's Express #6 (Guard)" data-options='{"detergent-formula":"1","detergent-size":"1"}'>
+        <td><span class="product-num detergent">6</span><span class="product-name">Guard</span><div class="product-desc">Surface sealant &mdash; paint protection and UV shield</div></td>
+        <td class="product-size">30 Gal / Formula A</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="5"></td>
+      </tr>
+      <tr data-product-url="/Tommys-Express-Drying-Agent-7" data-sku="C-7" data-name="Tommy's Express #7 (Drying Agent)" data-options='{"detergent-formula":"1","detergent-size":"1"}'>
+        <td><span class="product-num detergent">7</span><span class="product-name">Drying Agent</span><div class="product-desc">Sheeting/beading agent &mdash; accelerates air dry</div></td>
+        <td class="product-size">30 Gal / Formula A</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="6"></td>
+      </tr>
+      <tr data-product-url="/Tommys-Express-Tire-Gloss-8" data-sku="C-8" data-name="Tommy's Express #8 (Tire Gloss)" data-options='{"detergent-formula":"1","detergent-size":"1"}'>
+        <td><span class="product-num detergent">8</span><span class="product-name">Tire Gloss</span><div class="product-desc">Tire shine application &mdash; wet-look finish</div></td>
+        <td class="product-size">30 Gal / Formula A</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="7"></td>
+      </tr>
+      <tr data-product-url="/Tommys-Express-9-Cloth-Floor-and-Windows-Cleaner" data-sku="C-9" data-name="Tommy's Express #9 (Cloth, Floor, Windows Cleaner)" data-options='{}'>
+        <td><span class="product-num detergent">9</span><span class="product-name">Cloth/Floor/Windows Cleaner</span><div class="product-desc">Multi-surface cleaner for tunnel maintenance</div></td>
+        <td class="product-size">5 Gal</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="8"></td>
+      </tr>
+      <tr data-product-url="/Tommy-Bay-Cleaner-10" data-sku="C-10" data-name="Tommy's Express #10 (Building, Concrete, Equipment Cleaner)" data-options='{}'>
+        <td><span class="product-num detergent">10</span><span class="product-name">Building/Concrete/Equipment Cleaner</span><div class="product-desc">Heavy-duty exterior and equipment wash</div></td>
+        <td class="product-size">5 Gal</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="9"></td>
+      </tr>
+      <tr data-product-url="/Tommy-Line-Cleaner-5-Gallon" data-sku="LINE-CLN-5" data-name="Tommy Line Cleaner - 5 Gallon" data-options='{}'>
+        <td><span class="product-num supply">LC</span><span class="product-name">Line Cleaner</span><div class="product-desc">Chemical line flush &mdash; prevents buildup and clogs</div></td>
+        <td class="product-size">5 Gal</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="10"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SCENT KITS -->
+  <div class="section-header">
+    <h2>Scent Kits</h2>
+    <span class="badge">Launch Packages</span>
+  </div>
+  <table class="product-table" id="kits-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Type</th>
+        <th>Qty</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-product-url="/Tommys-Express-Scent-Strategy-Launch-Kit-Non-VersaDial-Package" data-sku="SCENT-KIT-NV" data-name="Scent Strategy Launch Kit (Non VersaDial)" data-options='{}'>
+        <td><span class="product-num supply">SK</span><span class="product-name">Scent Strategy Launch Kit</span><div class="product-desc">Non VersaDial Package</div></td>
+        <td class="product-size">Kit</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="11"></td>
+      </tr>
+      <tr data-product-url="/Tommys-Express-Scent-Strategy-Launch-Kit-VersaDial-Package" data-sku="SCENT-KIT-VD" data-name="Scent Strategy Launch Kit (VersaDial)" data-options='{}'>
+        <td><span class="product-num supply">SK</span><span class="product-name">Scent Strategy Launch Kit</span><div class="product-desc">VersaDial Package</div></td>
+        <td class="product-size">Kit</td>
+        <td><input type="number" class="qty-input" min="0" max="99" value="0" data-idx="12"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Notes -->
+  <div class="section-header">
+    <h2>Order Notes</h2>
+  </div>
+  <div style="background:white;border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:120px;">
+    <textarea id="order-notes" placeholder="Any special instructions, rush requests, or comments..." style="width:100%;min-height:80px;border:2px solid var(--border);border-radius:8px;padding:12px;font-family:inherit;font-size:14px;resize:vertical;"></textarea>
+  </div>
+
+</div>
+
+<!-- Summary Bar -->
+<div class="summary-bar">
+  <div class="summary-info">
+    <strong id="total-items">0</strong> items across <strong id="total-products">0</strong> products
+  </div>
+  <div class="summary-actions">
+    <button class="btn btn-clear" onclick="clearAll()">Clear All</button>
+    <button class="btn btn-submit" id="submit-btn" onclick="showConfirm()" disabled>Submit Order</button>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <h3>Confirm Your Order</h3>
+    <p id="confirm-site"></p>
+    <div class="order-summary" id="confirm-summary"></div>
+    <div id="confirm-notes-section" style="display:none;text-align:left;margin-bottom:12px;">
+      <strong style="font-size:12px;color:var(--text-light);">NOTES:</strong>
+      <p id="confirm-notes" style="font-size:13px;background:var(--bg);padding:8px 12px;border-radius:6px;margin-top:4px;"></p>
+    </div>
+    <button class="btn btn-clear" onclick="hideConfirm()">Go Back</button>
+    <button class="btn btn-submit" id="confirm-submit-btn" onclick="submitOrder()">Confirm &amp; Submit</button>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal">
+    <div style="font-size:48px;margin-bottom:12px;">&#10003;</div>
+    <h3 style="color:var(--green);">Order Submitted!</h3>
+    <p id="success-msg">Your order has been saved and will be processed shortly.</p>
+    <button class="btn btn-submit" onclick="resetForm()" style="margin-top:8px;">Place Another Order</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ---- CONFIG ----
+const GITHUB_REPO = 'jbass698-121/ucwh-morning-briefings';
+const GITHUB_SUBFOLDER = 'supply-orders';
+const GITHUB_ORDERS_PATH = `${GITHUB_SUBFOLDER}/orders`;
+
+// ---- DATE ----
+const now = new Date();
+const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('order-date').textContent = `Order period: ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+
+// ---- QUANTITY TRACKING ----
+const inputs = document.querySelectorAll('.qty-input');
+inputs.forEach(input => {
+  input.addEventListener('input', updateSummary);
+  input.addEventListener('focus', function() { if (this.value === '0') this.value = ''; });
+  input.addEventListener('blur', function() { if (this.value === '') this.value = '0'; updateSummary(); });
+});
+
+function updateSummary() {
+  let totalItems = 0;
+  let totalProducts = 0;
+  inputs.forEach(input => {
+    const v = parseInt(input.value) || 0;
+    const row = input.closest('tr');
+    if (v > 0) {
+      totalItems += v;
+      totalProducts++;
+      row.classList.add('has-qty');
+      input.style.borderColor = '#27ae60';
+      input.style.background = '#f0faf4';
+    } else {
+      row.classList.remove('has-qty');
+      input.style.borderColor = '';
+      input.style.background = '';
+    }
+  });
+  document.getElementById('total-items').textContent = totalItems;
+  document.getElementById('total-products').textContent = totalProducts;
+  document.getElementById('submit-btn').disabled = totalProducts === 0 || !document.getElementById('site-select').value;
+}
+
+document.getElementById('site-select').addEventListener('change', updateSummary);
+
+function clearAll() {
+  inputs.forEach(i => { i.value = '0'; });
+  document.getElementById('order-notes').value = '';
+  updateSummary();
+}
+
+// ---- CONFIRMATION ----
+function getOrderLines() {
+  const lines = [];
+  document.querySelectorAll('tr[data-product-url]').forEach(row => {
+    const qty = parseInt(row.querySelector('.qty-input').value) || 0;
+    if (qty > 0) {
+      lines.push({
+        name: row.dataset.name,
+        sku: row.dataset.sku,
+        url: row.dataset.productUrl,
+        options: JSON.parse(row.dataset.options || '{}'),
+        quantity: qty
+      });
+    }
+  });
+  return lines;
+}
+
+function showConfirm() {
+  const site = document.getElementById('site-select');
+  if (!site.value) { showToast('Please select a site first', 'error'); return; }
+
+  const lines = getOrderLines();
+  if (lines.length === 0) { showToast('Add at least one product', 'error'); return; }
+
+  document.getElementById('confirm-site').textContent =
+    `Submitting order for ${site.options[site.selectedIndex].text}`;
+
+  const summaryEl = document.getElementById('confirm-summary');
+  summaryEl.innerHTML = lines.map(l =>
+    `<div class="line"><span>${l.name}</span><span><strong>${l.quantity}</strong></span></div>`
+  ).join('');
+
+  const notes = document.getElementById('order-notes').value.trim();
+  const notesSection = document.getElementById('confirm-notes-section');
+  if (notes) {
+    notesSection.style.display = 'block';
+    document.getElementById('confirm-notes').textContent = notes;
+  } else {
+    notesSection.style.display = 'none';
+  }
+
+  document.getElementById('confirm-modal').classList.add('show');
+}
+
+function hideConfirm() {
+  document.getElementById('confirm-modal').classList.remove('show');
+}
+
+// ---- SUBMIT ORDER ----
+async function submitOrder() {
+  const btn = document.getElementById('confirm-submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Submitting...';
+
+  const site = document.getElementById('site-select').value;
+  const siteName = document.getElementById('site-select').options[document.getElementById('site-select').selectedIndex].text;
+  const lines = getOrderLines();
+  const notes = document.getElementById('order-notes').value.trim();
+
+  const order = {
+    orderId: `${site}-${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${Date.now()}`,
+    site: site,
+    siteName: siteName,
+    orderDate: now.toISOString(),
+    orderMonth: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,
+    status: 'pending',
+    lines: lines,
+    notes: notes,
+    totalItems: lines.reduce((s, l) => s + l.quantity, 0),
+    totalProducts: lines.length,
+    submittedBy: siteName,
+    shopBaseUrl: 'https://shop.tommycarwash.com',
+    apiEndpoints: {
+      addToCart: '/sca-dev-2024-2-0/services/LiveOrder.Line.Service.ss',
+      getCart: '/sca-dev-2024-2-0/services/LiveOrder.Service.ss',
+      getItem: '/api/items',
+      getOptions: '/sca-dev-2024-2-0_ss2/extensions/AnchorGroup/ItemCustomizationOptions/1.1.0/Modules/ItemCustomizationOptions/SuiteScript2/ItemCustomizationOptions.Service.ss'
+    }
+  };
+
+  const filename = `order_${order.orderId}.json`;
+  const filePath = `${GITHUB_ORDERS_PATH}/${filename}`;
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(order, null, 2))));
+
+  try {
+    // Upload order JSON to GitHub repo
+    const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${getToken()}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      },
+      body: JSON.stringify({
+        message: `New supply order: ${site} — ${monthNames[now.getMonth()]} ${now.getFullYear()}`,
+        content: content
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.message || 'GitHub upload failed');
+    }
+
+    // Also update the latest orders index
+    await updateOrderIndex(order);
+
+    hideConfirm();
+    document.getElementById('success-msg').textContent =
+      `Order for ${siteName} has been saved. ${order.totalItems} items across ${order.totalProducts} products will be added to the cart for approval.`;
+    document.getElementById('success-modal').classList.add('show');
+
+  } catch(e) {
+    showToast('Error: ' + e.message, 'error');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Confirm &amp; Submit';
+  }
+}
+
+async function updateOrderIndex(newOrder) {
+  const indexPath = `${GITHUB_ORDERS_PATH}/index.json`;
+  let orders = [];
+  let sha = null;
+
+  try {
+    const existing = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${indexPath}`, {
+      headers: {
+        'Authorization': `Bearer ${getToken()}`,
+        'Accept': 'application/vnd.github+json'
+      }
+    });
+    if (existing.ok) {
+      const data = await existing.json();
+      sha = data.sha;
+      orders = JSON.parse(atob(data.content));
+    }
+  } catch(e) { /* first order, no index yet */ }
+
+  // Add summary (not full order, just metadata)
+  orders.push({
+    orderId: newOrder.orderId,
+    site: newOrder.site,
+    siteName: newOrder.siteName,
+    orderDate: newOrder.orderDate,
+    orderMonth: newOrder.orderMonth,
+    totalItems: newOrder.totalItems,
+    totalProducts: newOrder.totalProducts,
+    status: newOrder.status,
+    filename: `order_${newOrder.orderId}.json`
+  });
+
+  const body = {
+    message: `Update order index: ${newOrder.site}`,
+    content: btoa(unescape(encodeURIComponent(JSON.stringify(orders, null, 2))))
+  };
+  if (sha) body.sha = sha;
+
+  await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${indexPath}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${getToken()}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    },
+    body: JSON.stringify(body)
+  });
+}
+
+function getToken() {
+  // Token is loaded from localStorage (set once per browser)
+  return localStorage.getItem('ucwh_github_token') || '';
+}
+
+function resetForm() {
+  document.getElementById('success-modal').classList.remove('show');
+  clearAll();
+  document.getElementById('site-select').value = '';
+  updateSummary();
+}
+
+// ---- TOAST ----
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ---- TOKEN SETUP ----
+// Simple one-time setup prompt
+(function() {
+  if (!getToken()) {
+    const bar = document.createElement('div');
+    bar.id = 'setup-bar';
+    bar.style.cssText = 'background:#FFF3CD;border-bottom:2px solid #FFC107;padding:12px 24px;text-align:center;font-size:14px;';
+    bar.innerHTML = `
+      <strong>First-time setup:</strong> Enter your GitHub token to enable order submission.
+      <input id="token-input" type="password" placeholder="ghp_..." style="margin:0 8px;padding:6px 12px;border:1px solid #ccc;border-radius:6px;width:300px;">
+      <button onclick="saveToken()" style="padding:6px 16px;background:#27ae60;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Save</button>
+    `;
+    document.body.insertBefore(bar, document.body.firstChild.nextSibling);
+  }
+})();
+
+function saveToken() {
+  const token = document.getElementById('token-input').value.trim();
+  if (token) {
+    localStorage.setItem('ucwh_github_token', token);
+    document.getElementById('setup-bar').remove();
+    showToast('Token saved! You can now submit orders.', 'success');
+  }
+}
+</script>
+</body>
+</html>
