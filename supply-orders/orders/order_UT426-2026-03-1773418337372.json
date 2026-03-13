@@ -1,0 +1,66 @@
+{
+  "orderId": "UT426-2026-03-1773418337372",
+  "site": "UT426",
+  "siteName": "UT426 — Saratoga Springs (E Crossroads Blvd)",
+  "orderDate": "2026-03-13T16:10:49.748Z",
+  "orderMonth": "2026-03",
+  "status": "pending",
+  "lines": [
+    {
+      "name": "Tommy's Express #2 (Scent)",
+      "sku": "C-2",
+      "url": "/Tommys-Express-Scent",
+      "options": {
+        "detergent-size": "2",
+        "detergent-formula": "5"
+      },
+      "selectedSize": "EasyChem 5 Gal",
+      "selectedFormula": "Lemon Scent",
+      "quantity": 2
+    },
+    {
+      "name": "Tommy's Express #7 (Drying Agent)",
+      "sku": "C-7",
+      "url": "/Tommys-Express-Drying-Agent-7",
+      "options": {
+        "detergent-size": "1",
+        "detergent-formula": "1"
+      },
+      "selectedSize": "30 Gal",
+      "selectedFormula": "Formula A",
+      "quantity": 1
+    },
+    {
+      "name": "Tommy's Express #8 (Tire Gloss)",
+      "sku": "C-8",
+      "url": "/Tommys-Express-Tire-Gloss-8",
+      "options": {
+        "detergent-size": "1",
+        "detergent-formula": "2"
+      },
+      "selectedSize": "30 Gallons",
+      "selectedFormula": "Formula B",
+      "quantity": 2
+    },
+    {
+      "name": "Tommy's Express #9 (Cloth, Floor, Windows Cleaner)",
+      "sku": "C-9",
+      "url": "/Tommys-Express-9-Cloth-Floor-and-Windows-Cleaner",
+      "options": {},
+      "selectedSize": "",
+      "selectedFormula": "",
+      "quantity": 1
+    }
+  ],
+  "notes": "",
+  "totalItems": 6,
+  "totalProducts": 4,
+  "submittedBy": "UT426 — Saratoga Springs (E Crossroads Blvd)",
+  "shopBaseUrl": "https://shop.tommycarwash.com",
+  "apiEndpoints": {
+    "addToCart": "/sca-dev-2024-2-0/services/LiveOrder.Line.Service.ss",
+    "getCart": "/sca-dev-2024-2-0/services/LiveOrder.Service.ss",
+    "getItem": "/api/items",
+    "getOptions": "/sca-dev-2024-2-0_ss2/extensions/AnchorGroup/ItemCustomizationOptions/1.1.0/Modules/ItemCustomizationOptions/SuiteScript2/ItemCustomizationOptions.Service.ss"
+  }
+}
