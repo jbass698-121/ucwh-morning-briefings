@@ -1,185 +1,75 @@
 {
-  "inception_date": "2026-03-10",
+  "inception_date": "2026-03-13",
   "starting_capital": 10000.0,
-  "cash": 0.0,
+  "cash": 5422.32,
+  "version": "v4.4",
+  "version_note": "Fresh start with ICMS v4.4 \u2014 geopolitical awareness and diamond hunting strategy. Previous v4.3 portfolio closed at $9,856.92 (-1.43%). Reset to $10,000 for clean v4.4 comparison.",
   "positions": [
     {
-      "ticker": "NVDA",
-      "shares": 5.2356,
-      "entry_price": 191.0,
-      "entry_date": "2026-03-10",
-      "cost_basis": 1000.0,
-      "exit_targets": [
-        215.0,
-        230.0,
-        255.0
-      ],
-      "stop_loss": 175.72,
-      "partial_sells": [],
-      "icms_at_entry": 9.8,
-      "source_run": "2026-02-24T12:35:00Z"
+      "ticker": "WPM",
+      "shares": 6,
+      "entry_price": 145.73,
+      "entry_date": "2026-03-13",
+      "current_price": 145.73,
+      "stop_loss": 131.92,
+      "target_price": 166.44,
+      "icms_score": 5.74,
+      "unrealized_pnl": 0.0,
+      "unrealized_pnl_pct": 0.0
     },
     {
-      "ticker": "LLY",
-      "shares": 0.9804,
-      "entry_price": 1020.0,
-      "entry_date": "2026-03-10",
-      "cost_basis": 1000.0,
-      "exit_targets": [
-        1100.0,
-        1155.0,
-        1250.0
-      ],
-      "stop_loss": 938.4,
-      "partial_sells": [],
-      "icms_at_entry": 9.5,
-      "source_run": "2026-02-24T12:35:00Z"
+      "ticker": "MRVL",
+      "shares": 11,
+      "entry_price": 87.67,
+      "entry_date": "2026-03-13",
+      "current_price": 87.67,
+      "stop_loss": 78.99,
+      "target_price": 100.69,
+      "icms_score": 5.27,
+      "unrealized_pnl": 0.0,
+      "unrealized_pnl_pct": 0.0
     },
     {
-      "ticker": "META",
-      "shares": 1.5385,
-      "entry_price": 650.0,
-      "entry_date": "2026-03-10",
-      "cost_basis": 1000.0,
-      "exit_targets": [
-        720.0,
-        780.0,
-        835.0
-      ],
-      "stop_loss": 598.0,
-      "partial_sells": [],
-      "icms_at_entry": 9.3,
-      "source_run": "2026-02-24T12:35:00Z"
-    },
-    {
-      "ticker": "MU",
-      "shares": 2.3923,
-      "entry_price": 418.0,
-      "entry_date": "2026-03-10",
-      "cost_basis": 1000.0,
-      "exit_targets": [
-        440.0,
-        450.0,
-        500.0
-      ],
-      "stop_loss": 384.56,
-      "partial_sells": [],
-      "icms_at_entry": 9.2,
-      "source_run": "2026-02-24T12:35:00Z"
-    },
-    {
-      "ticker": "GOOGL",
-      "shares": 3.3003,
-      "entry_price": 303.0,
-      "entry_date": "2026-03-10",
-      "cost_basis": 1000.0,
-      "exit_targets": [
-        330.0,
-        351.0,
-        400.0
-      ],
-      "stop_loss": 278.76,
-      "partial_sells": [],
-      "icms_at_entry": 8.9,
-      "source_run": "2026-02-24T12:35:00Z"
-    },
-    {
-      "ticker": "AVGO",
-      "shares": 2.8986,
-      "entry_price": 345.0,
-      "entry_date": "2026-03-10",
-      "cost_basis": 1000.0,
-      "exit_targets": [
-        380.0,
-        421.0,
-        475.0
-      ],
-      "stop_loss": 317.4,
-      "partial_sells": [],
-      "icms_at_entry": 8.6,
-      "source_run": "2026-02-24T12:35:00Z"
+      "ticker": "GWRE",
+      "shares": 6,
+      "entry_price": 157.63,
+      "entry_date": "2026-03-13",
+      "current_price": 157.63,
+      "stop_loss": 140.98,
+      "target_price": 182.6,
+      "icms_score": 5.14,
+      "unrealized_pnl": 0.0,
+      "unrealized_pnl_pct": 0.0
     },
     {
       "ticker": "WMT",
-      "shares": 8.1301,
-      "entry_price": 123.0,
-      "entry_date": "2026-03-10",
-      "cost_basis": 1000.0,
-      "exit_targets": [
-        130.0,
-        134.0,
-        140.0
-      ],
-      "stop_loss": 113.16,
-      "partial_sells": [],
-      "icms_at_entry": 8.5,
-      "source_run": "2026-02-24T12:35:00Z"
+      "shares": 7,
+      "entry_price": 125.33,
+      "entry_date": "2026-03-13",
+      "current_price": 125.33,
+      "stop_loss": 118.36,
+      "target_price": 135.78,
+      "icms_score": 5.02,
+      "unrealized_pnl": 0.0,
+      "unrealized_pnl_pct": 0.0
     },
     {
-      "ticker": "EQIX",
-      "shares": 1.046,
-      "entry_price": 956.0,
-      "entry_date": "2026-03-10",
-      "cost_basis": 1000.0,
-      "exit_targets": [
-        1000.0,
-        1050.0,
-        1100.0
-      ],
-      "stop_loss": 879.52,
-      "partial_sells": [],
-      "icms_at_entry": 8.4,
-      "source_run": "2026-02-24T12:35:00Z"
-    },
-    {
-      "ticker": "AMZN",
-      "shares": 4.7619,
-      "entry_price": 210.0,
-      "entry_date": "2026-03-10",
-      "cost_basis": 1000.0,
-      "exit_targets": [
-        240.0,
-        265.0,
-        287.0
-      ],
-      "stop_loss": 193.2,
-      "partial_sells": [],
-      "icms_at_entry": 8.3,
-      "source_run": "2026-02-24T12:35:00Z"
-    },
-    {
-      "ticker": "JPM",
-      "shares": 3.2258,
-      "entry_price": 310.0,
-      "entry_date": "2026-03-10",
-      "cost_basis": 1000.0,
-      "exit_targets": [
-        325.0,
-        335.0,
-        350.0
-      ],
-      "stop_loss": 285.2,
-      "partial_sells": [],
-      "icms_at_entry": 8.1,
-      "source_run": "2026-02-24T12:35:00Z"
+      "ticker": "NEM",
+      "shares": 8,
+      "entry_price": 114.48,
+      "entry_date": "2026-03-13",
+      "current_price": 114.48,
+      "stop_loss": 102.97,
+      "target_price": 131.74,
+      "icms_score": 5.0,
+      "unrealized_pnl": 0.0,
+      "unrealized_pnl_pct": 0.0
     }
   ],
   "closed_trades": [],
-  "daily_snapshots": [
-    {
-      "date": "2026-03-10",
-      "portfolio_value": 9895.37,
-      "cash": 0.0,
-      "positions_value": 9895.37,
-      "total_positions": 10,
-      "daily_return_pct": 0.0,
-      "cumulative_return_pct": 0.0,
-      "sp500_value": 6781.48,
-      "sp500_cumulative_pct": 0.0
-    }
-  ],
+  "daily_snapshots": [],
   "performance_metrics": {
-    "total_trades": 0,
+    "total_trades": 5,
     "winning_trades": 0,
     "losing_trades": 0,
     "win_rate": 0.0,
