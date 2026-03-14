@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UCWH Coupon Report — 2026-03-13</title>
+  <style>
+    :root {
+      --primary: #1a1a2e;
+      --accent: #e94560;
+      --accent-light: #ff6b6b;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #333;
+      --text-light: #666;
+      --border: #e0e0e0;
+      --success: #2ecc71;
+      --warning: #f39c12;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #16213e 50%, #0f3460 100%);
+      color: white; padding: 32px 24px; text-align: center;
+    }
+    .hero h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+    .hero .subtitle { font-size: 1rem; opacity: 0.85; }
+    .hero .date { font-size: 0.9rem; opacity: 0.7; margin-top: 8px; }
+    .hero .badge { display: inline-block; background: rgba(233,69,96,0.3); border: 1px solid rgba(233,69,96,0.6); border-radius: 20px; padding: 2px 12px; font-size: 0.75rem; margin-top: 8px; }
+
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px; padding: 24px; max-width: 1200px; margin: -20px auto 0;
+    }
+    .summary-card {
+      background: var(--card-bg); border-radius: 12px; padding: 20px; text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-top: 3px solid var(--accent);
+    }
+    .summary-card .value { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+    .summary-card .label { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+    .summary-card .sub { font-size: 0.7rem; color: var(--text-light); margin-top: 2px; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px 40px; }
+    .section { margin-top: 32px; }
+    .section h2 {
+      font-size: 1.2rem; font-weight: 600; color: var(--primary);
+      border-bottom: 2px solid var(--accent); padding-bottom: 8px; margin-bottom: 16px;
+    }
+
+    .card {
+      background: var(--card-bg); border-radius: 12px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    thead { background: #f0f2f5; }
+    th { padding: 10px 12px; font-weight: 600; color: var(--primary); text-align: center; white-space: nowrap; }
+    td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: center; }
+    tr:hover { background: #f8f9ff; }
+    .zero { color: #ccc; }
+
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+    .tag-purpose { background: #e8f4f8; color: #2980b9; }
+    .tag-medium { background: #fdf2e9; color: #e67e22; }
+
+    .site-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px; margin-top: 16px;
+    }
+    .site-card {
+      background: var(--card-bg); border-radius: 12px; padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .site-card h3 { font-size: 1rem; color: var(--primary); margin-bottom: 4px; }
+    .site-card .site-stats { display: flex; gap: 16px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text-light); }
+    .site-card .site-stats strong { color: var(--primary); }
+
+    .insight-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px; margin-top: 16px;
+    }
+    .insight-card {
+      background: var(--card-bg); border-radius: 12px; padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .insight-card h3 { font-size: 0.95rem; color: var(--primary); margin-bottom: 12px; }
+    .insight-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.85rem; border-bottom: 1px solid #f0f0f0; }
+    .insight-row:last-child { border-bottom: none; }
+
+    .note { display: block; font-size: 0.75rem; color: var(--text-light); font-style: italic; text-align: center; margin-top: 8px; }
+    .footer { text-align: center; padding: 24px; font-size: 0.75rem; color: #999; }
+    .footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🎟️ UCWH Coupon Report</h1>
+  <div class="subtitle">Friday, March 13, 2026</div>
+  <div class="date">Data Source: Power BI Marketing Analytics</div>
+  <div class="badge">v2 — Campaign-Level Detail</div>
+</div>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="value">363</div>
+    <div class="label">Captures Yesterday</div>
+    <div class="sub">767 YTD</div>
+  </div>
+  <div class="summary-card">
+    <div class="value">578</div>
+    <div class="label">Claims Yesterday</div>
+    <div class="sub">670 YTD</div>
+  </div>
+  <div class="summary-card">
+    <div class="value">$908</div>
+    <div class="label">Marginal Cost</div>
+    <div class="sub">@ $2.50/wash</div>
+  </div>
+  <div class="summary-card">
+    <div class="value">$12,380</div>
+    <div class="label">Revenue Yesterday</div>
+    <div class="sub">$12,561 YTD</div>
+  </div>
+  <div class="summary-card">
+    <div class="value">36</div>
+    <div class="label">Convert to FP</div>
+    <div class="sub">Full-price conversions</div>
+  </div>
+</div>
+
+<span class="note">Yesterday's activity computed via daily delta (today's YTD minus previous day's YTD)</span>
+
+<div class="container">
+
+  <!-- Site Overview -->
+  <div class="section">
+    <h2>📊 Site Overview — Yesterday</h2>
+    <div class="site-grid">
+      
+      <div class="site-card">
+        <h3>TX160 — Houston FM 1960</h3>
+        <div class="site-stats">
+          <span>Captures: <strong>0</strong></span>
+          <span>Claims: <strong>0</strong></span>
+          <span>Revenue: <strong>$0</strong></span>
+        </div>
+        <div class="site-stats">
+          <span>YTD Captures: <strong>0</strong></span>
+          <span>YTD Claims: <strong>0</strong></span>
+        </div>
+      </div>
+      <div class="site-card">
+        <h3>TX190 — Humble / Clear Lake</h3>
+        <div class="site-stats">
+          <span>Captures: <strong>363</strong></span>
+          <span>Claims: <strong>578</strong></span>
+          <span>Revenue: <strong>$12,380</strong></span>
+        </div>
+        <div class="site-stats">
+          <span>YTD Captures: <strong>767</strong></span>
+          <span>YTD Claims: <strong>670</strong></span>
+        </div>
+      </div>
+      <div class="site-card">
+        <h3>UT426 — Saratoga Springs</h3>
+        <div class="site-stats">
+          <span>Captures: <strong>0</strong></span>
+          <span>Claims: <strong>0</strong></span>
+          <span>Revenue: <strong>$0</strong></span>
+        </div>
+        <div class="site-stats">
+          <span>YTD Captures: <strong>0</strong></span>
+          <span>YTD Claims: <strong>0</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insights: Purpose & Medium breakdown -->
+  <div class="section">
+    <h2>🔍 Insights — Yesterday by Purpose & Medium</h2>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <h3>By Purpose</h3>
+        
+        <div class="insight-row">
+          <span><span class="tag tag-purpose">New Subscriptions</span></span>
+          <span>262 captures / $12,024</span>
+        </div>
+        <div class="insight-row">
+          <span><span class="tag tag-purpose">Visits</span></span>
+          <span>9 captures / $0</span>
+        </div>
+      </div>
+      <div class="insight-card">
+        <h3>By Medium</h3>
+        
+        <div class="insight-row">
+          <span><span class="tag tag-medium">Window Offer (PoP)</span></span>
+          <span>262 captures / $12,024</span>
+        </div>
+        <div class="insight-row">
+          <span><span class="tag tag-medium">Guerrilla-Marketing</span></span>
+          <span>8 captures / $0</span>
+        </div>
+        <div class="insight-row">
+          <span><span class="tag tag-medium">Event</span></span>
+          <span>1 captures / $0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Combined Campaign Table -->
+  <div class="section">
+    <h2>📋 All Campaigns — Combined (Jan 1 – Mar 13)</h2>
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;">Campaign</th>
+            <th>Purpose</th>
+            <th>Medium</th>
+            <th>Yesterday Captures</th>
+            <th>Yesterday Claims</th>
+            <th>Revenue</th>
+            <th>Marginal Cost</th>
+            <th>YTD Captures</th>
+            <th>YTD Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td style="text-align:left;font-weight:500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+            <td><span class="tag tag-purpose">New Subscriptions</span></td>
+            <td><span class="tag tag-medium">Window Offer (PoP)</span></td>
+            <td>262</td>
+            <td>546</td>
+            <td>$12,024</td>
+            <td>$655</td>
+            <td>548</td>
+            <td>$12,024</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190 (Houston): Sticky Note Street Card</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>56</td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$140</td>
+            <td>56</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190 (El Camino Real): Additional Vehicle Free Month</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>14</td>
+            <td>14</td>
+            <td>$250</td>
+            <td>$35</td>
+            <td>14</td>
+            <td>$250</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190 (Houston El Camino): Doorhanger Works Wash</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>10</td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$25</td>
+            <td>10</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190/TX160: Pollen free Works</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Guerrilla-Marketing</span></td>
+            <td>5</td>
+            <td>5</td>
+            <td><span class="zero">$0</span></td>
+            <td>$13</td>
+            <td>98</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Corp: Purchasing 1 Month Quality GCs</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>4</td>
+            <td>4</td>
+            <td><span class="zero">$0</span></td>
+            <td>$10</td>
+            <td>4</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">GC 1M Works</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>3</td>
+            <td>3</td>
+            <td><span class="zero">$0</span></td>
+            <td>$8</td>
+            <td>3</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Gift Cards: 1 Month Works (2)</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>3</td>
+            <td>3</td>
+            <td>$74</td>
+            <td>$8</td>
+            <td>3</td>
+            <td>$74</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190/TX160/UT426: Edwin Greer free Works wash</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Guerrilla-Marketing</span></td>
+            <td>3</td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$8</td>
+            <td>3</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">All Sites (National Promo): From Us to You 4</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Event</span></td>
+            <td>1</td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$3</td>
+            <td>1</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Gift Cards: 3 Month Quality (2)</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>1</td>
+            <td>1</td>
+            <td><span class="zero">$0</span></td>
+            <td>$3</td>
+            <td>1</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190 (El Camino Real): Public Service Industry Discount</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>1</td>
+            <td>1</td>
+            <td>$32</td>
+            <td>$3</td>
+            <td>1</td>
+            <td>$32</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190: Street Cards for June Deployment</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">handout</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>8</td>
+            <td>$37</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX160/TX190: March street card blitz</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Guerrilla-Marketing</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>3</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">2025 12 Days of TXmas</td>
+            <td><span class="tag tag-purpose">New Subscriptions</span></td>
+            <td><span class="tag tag-medium">Email-Marketing</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>2</td>
+            <td>$37</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">2025 4th national mailer</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Direct-Mail</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>2</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">2026 Q1 win-back campaign</td>
+            <td><span class="tag tag-purpose">Re-Activations</span></td>
+            <td><span class="tag tag-medium">Email-Marketing</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>2</td>
+            <td>$40</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">All Sites: TX-M-1562 Free Works Wash Card Bulk Order</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">handout</span></td>
+            <td><span class="zero">0</span></td>
+            <td>1</td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>2</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">SMS Acquisition</td>
+            <td><span class="tag tag-purpose">New Subscriptions</span></td>
+            <td><span class="tag tag-medium">SMS</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>2</td>
+            <td>$37</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">All Sites: 2026 Valentines Day BOGO wash</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Event</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>1</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Guest Services (Corp): Codes to Fix Member Accounts</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>1</td>
+            <td>$0</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Win-back $20</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">Email</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>1</td>
+            <td>$20</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Win-back $9.99</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">Email</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>$0</td>
+            <td>1</td>
+            <td>$10</td>
+          </tr>
+          <tr style="font-weight:700;background:#f0f2f5;">
+            <td style="text-align:left;" colspan="3">TOTAL</td>
+            <td>363</td>
+            <td>578</td>
+            <td>$12,380</td>
+            <td>$908</td>
+            <td>767</td>
+            <td>$12,561</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  
+    <div class="section">
+      <h2>🎪 Special Promotions</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left;">Promotion</th>
+              <th>Site</th>
+              <th>Package</th>
+              <th>Yesterday</th>
+              <th>Yesterday Rev</th>
+              <th>YTD Count</th>
+              <th>YTD Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td style="text-align:left;font-weight:500;">Spring Clean</td>
+              <td>TX190</td>
+              <td>Works</td>
+              <td><span class="zero">0</span></td>
+              <td><span class="zero">$0</span></td>
+              <td>80</td>
+              <td>$45</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;font-weight:500;">Tunnel of Terror</td>
+              <td>TX190</td>
+              <td>Works</td>
+              <td><span class="zero">0</span></td>
+              <td><span class="zero">$0</span></td>
+              <td>235</td>
+              <td>$4,150</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;font-weight:500;">Veterans Day</td>
+              <td>TX190</td>
+              <td>Works</td>
+              <td><span class="zero">0</span></td>
+              <td><span class="zero">$0</span></td>
+              <td>50</td>
+              <td>$0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  <!-- Per-Site Breakdown -->
+  
+  <div class="section">
+    <h2>🏢 TX160 — Houston FM 1960</h2>
+    <div class="card">
+      <p style="color: #888; font-style: italic; padding: 12px;">No coupon activity</p>
+    </div>
+  </div>
+  <div class="section">
+    <h2>🏢 TX190 — Humble / Clear Lake</h2>
+    <div class="card">
+      
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;">Campaign</th>
+            <th>Purpose</th>
+            <th>Medium</th>
+            <th>Yesterday Captures</th>
+            <th>Yesterday Claims</th>
+            <th>Revenue</th>
+            <th>YTD Captures</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td style="text-align:left;font-weight:500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+            <td><span class="tag tag-purpose">New Subscriptions</span></td>
+            <td><span class="tag tag-medium">Window Offer (PoP)</span></td>
+            <td>262</td>
+            <td>546</td>
+            <td>$12,024</td>
+            <td>548</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190 (Houston): Sticky Note Street Card</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>56</td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>56</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190 (El Camino Real): Additional Vehicle Free Month</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>14</td>
+            <td>14</td>
+            <td>$250</td>
+            <td>14</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190 (Houston El Camino): Doorhanger Works Wash</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>10</td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190/TX160: Pollen free Works</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Guerrilla-Marketing</span></td>
+            <td>5</td>
+            <td>5</td>
+            <td><span class="zero">$0</span></td>
+            <td>98</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Corp: Purchasing 1 Month Quality GCs</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>4</td>
+            <td>4</td>
+            <td><span class="zero">$0</span></td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">GC 1M Works</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>3</td>
+            <td>3</td>
+            <td><span class="zero">$0</span></td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Gift Cards: 1 Month Works (2)</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>3</td>
+            <td>3</td>
+            <td>$74</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190/TX160/UT426: Edwin Greer free Works wash</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Guerrilla-Marketing</span></td>
+            <td>3</td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">All Sites (National Promo): From Us to You 4</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Event</span></td>
+            <td>1</td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Gift Cards: 3 Month Quality (2)</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>1</td>
+            <td>1</td>
+            <td><span class="zero">$0</span></td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190 (El Camino Real): Public Service Industry Discount</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td>1</td>
+            <td>1</td>
+            <td>$32</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX190: Street Cards for June Deployment</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">handout</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">2025 12 Days of TXmas</td>
+            <td><span class="tag tag-purpose">New Subscriptions</span></td>
+            <td><span class="tag tag-medium">Email-Marketing</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">2025 4th national mailer</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Direct-Mail</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">2026 Q1 win-back campaign</td>
+            <td><span class="tag tag-purpose">Re-Activations</span></td>
+            <td><span class="tag tag-medium">Email-Marketing</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">SMS Acquisition</td>
+            <td><span class="tag tag-purpose">New Subscriptions</span></td>
+            <td><span class="tag tag-medium">SMS</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">All Sites: 2026 Valentines Day BOGO wash</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Event</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Guest Services (Corp): Codes to Fix Member Accounts</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">—</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Win-back $20</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">Email</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">Win-back $9.99</td>
+            <td><span class="tag tag-purpose">—</span></td>
+            <td><span class="tag tag-medium">Email</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">TX160/TX190: March street card blitz</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">Guerrilla-Marketing</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">0</span></td>
+            <td><span class="zero">$0</span></td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;font-weight:500;">All Sites: TX-M-1562 Free Works Wash Card Bulk Order</td>
+            <td><span class="tag tag-purpose">Visits</span></td>
+            <td><span class="tag tag-medium">handout</span></td>
+            <td><span class="zero">0</span></td>
+            <td>1</td>
+            <td><span class="zero">$0</span></td>
+            <td>2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="section">
+    <h2>🏢 UT426 — Saratoga Springs</h2>
+    <div class="card">
+      <p style="color: #888; font-style: italic; padding: 12px;">No coupon activity</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    Generated 2026-03-14 11:09:21 UTC
+    · Data source: Power BI Multi-Marketing (daily delta approach)
+    · <a href="https://manager.tommys-express.com/253/analytics">Tommy Manager Analytics</a>
+  </div>
+</div>
+
+</body>
+</html>
