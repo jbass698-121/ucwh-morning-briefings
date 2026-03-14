@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 14, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Saturday, March 14, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>Microsoft dropped the biggest enterprise AI partnership bombshell of the year: Copilot Cowork, built on Anthropic's Claude, now runs agentic workflows across the entire Microsoft 365 suite — despite Microsoft's $13B investment in OpenAI. Anthropic doubled down on ecosystem lock-in with a zero-commission Claude Marketplace (launching with Snowflake, Harvey, and GitLab) and a $100M Claude Partner Network that already has Accenture training 30,000 professionals on Claude. NVIDIA GTC 2026 kicks off Monday with Jensen Huang expected to unveil Vera Rubin details, NemoClaw (an open-source agent platform), and laptop CPUs that could challenge Apple silicon. On the regulatory front, the FTC's March 11 deadline for its AI preemption policy statement has arrived, setting up a historic federal-vs-state showdown over who controls AI governance. Meanwhile, Nscale closed a $2B Series C — Europe's largest AI infrastructure round — as the race for AI compute capacity intensifies globally.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blogs.nvidia.com/blog/gtc-2026-news/">NVIDIA GTC 2026 Kicks Off Monday — Vera Rubin, NemoClaw Agent Platform, and Laptop CPUs Expected</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA / The Register / CNBC</span> · Mar 14 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">NVIDIA's annual GTC conference opens March 16–19 in San Jose with Jensen Huang's keynote at the SAP Center expected to be the most consequential hardware announcement of the year. Analysts anticipate details on the Vera Rubin microarchitecture (successor to Blackwell), processors specialized for agentic AI workloads, and NemoClaw — a rumored open-source AI agent platform backed by up to $26B in open-source model investment. In a surprise pivot, NVIDIA is also expected to unveil N1 and N1X laptop CPUs using Arm architecture, directly challenging Apple silicon and Qualcomm in the consumer PC market. Thirty thousand attendees are expected across ten venues.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> GTC is where NVIDIA sets the infrastructure agenda for the next 12 months. The Vera Rubin architecture will define your compute cost curve for 2027+ model training and inference. NemoClaw as an open-source agent platform could become a critical piece of the stack alongside MCP — watch for how it integrates with existing agent frameworks. The laptop CPU play signals NVIDIA wants to own the full inference stack from data center to edge device, which has direct implications for on-device agent deployment strategies.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://openai.com/index/introducing-gpt-5-2/">GPT-5.2 Thinking Sets New SWE-Bench Pro Record at 55.6%</a></h3>
+    <p class="story-meta"><span class="source">OpenAI</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">OpenAI's GPT-5.2 Thinking model established a new state of the art on SWE-Bench Pro at 55.6%, a rigorous evaluation of real-world software engineering tasks. The model also ships with improved capabilities for creating spreadsheets, building presentations, writing code, perceiving images, understanding long contexts, using tools, and handling complex multi-step projects. This positions GPT-5.2 as OpenAI's most capable model for agentic coding workflows, directly competing with Claude Code's dominance in developer adoption.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://winbuzzer.com/2026/03/10/microsoft-copilot-cowork-anthropic-claude-m365-agent-xcxwbn/">Microsoft Launches Copilot Cowork Powered by Anthropic's Claude — Agents Go Enterprise-Wide</a></h3>
+    <p class="story-meta"><span class="source">Microsoft / Anthropic / VentureBeat / Fortune</span> · Mar 10 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Microsoft unveiled Copilot Cowork, a cloud-based AI agent built in collaboration with Anthropic that executes multi-step tasks across the full Microsoft 365 suite. The agent accesses a user's complete enterprise work graph — Outlook threads, Teams conversations, calendar history, SharePoint files, and Excel workbooks — to autonomously complete workflows. Currently in Research Preview, broader access arrives through Microsoft's new Frontier program in late March at $30/user/month on top of existing M365 Copilot licenses. The new M365 E7 bundle prices at $99/user/month. Despite a $13 billion investment in OpenAI, Microsoft chose Anthropic's Claude technology for its most ambitious M365 agent feature — a seismic signal about model diversity in enterprise AI.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the clearest proof point that enterprises are adopting multi-model strategies over single-vendor loyalty. Microsoft — OpenAI's largest backer — built its flagship agent product on Claude. For anyone building agent infrastructure, the implication is clear: design for model portability from day one. The $30/user/month price point also sets the market rate for enterprise agent access, which will anchor pricing for competing offerings. If you're building MCP connectors or skills, Copilot Cowork's access to the M365 graph creates enormous surface area for agent-driven automation.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://siliconangle.com/2026/03/06/anthropic-launches-claude-marketplace-third-party-cloud-services/">Anthropic Launches Zero-Commission Claude Marketplace — Enterprise App Store for the AI Era</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / SiliconANGLE / PYMNTS</span> · Mar 6 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic launched the Claude Marketplace, an enterprise purchasing platform where customers with committed annual API spending can allocate budget to third-party applications built on Claude. Six launch partners span diverse verticals: Snowflake and GitLab (cloud/developer platforms), Harvey (legal workflow automation), Replit and Lovable (application development), and Rogo (investment analysis). In a critical differentiator, Anthropic is taking zero commission on transactions at launch — a direct challenge to the 15–30% marketplace fees charged by AWS, Azure, and Google Cloud.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The zero-commission model is a land grab. Anthropic is sacrificing marketplace revenue to consolidate enterprise procurement under the Claude ecosystem, making it harder for customers to shift spending to competitors. For builders of AI-first applications, the Claude Marketplace is now a distribution channel where your existing Anthropic spend commitment effectively subsidizes customer acquisition. If you're building vertical SaaS on Claude (legal, finance, development), getting into this marketplace early — before commission rates inevitably rise — is a strategic priority.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COWORK & CLAUDE ECOSYSTEM -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128268;</span>
+    <h2>Cowork &amp; Claude Ecosystem</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.anthropic.com/news/claude-partner-network">Anthropic Commits $100M to Claude Partner Network — Accenture Training 30K, Cognizant Opens to 350K</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / The Next Web</span> · Mar 12 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic launched the Claude Partner Network with an initial $100 million 2026 investment in partner training, certification, and global go-to-market support. The program introduces the first Claude technical certification — Claude Certified Architect, Foundations — alongside a Code Modernization starter kit for legacy codebase migration. Major consulting firms are already scaling: Accenture is training 30,000 professionals on Claude, Cognizant has opened Claude access across its entire 350,000-person workforce, Infosys integrated Claude into its agentic AI platform, and Deloitte joined as an enterprise deployment partner. Anthropic is also scaling its partner-facing headcount fivefold with dedicated Applied AI engineers and technical architects.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> When the Big Four consulting firms train hundreds of thousands of people on your platform, enterprise adoption becomes self-reinforcing — those consultants bring Claude into every client engagement. The Claude Certified Architect credential creates a professional ecosystem comparable to AWS or Salesforce certifications, which historically precede explosive enterprise adoption curves. The Code Modernization starter kit signals that legacy migration is Anthropic's highest-conviction enterprise use case — if you're building services in this space, the partner network gives you direct co-marketing and sales enablement support.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://time.com/article/2026/03/11/anthropic-claude-disruptive-company-pentagon/">Anthropic Revenue Trajectory: Claude Code Hits $2.5B ARR, On Track to Surpass OpenAI by Year-End</a></h3>
+    <p class="story-meta"><span class="source">Time / Industry Reports</span> · Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Claude Code's annualized revenue surged from $1B at end of 2025 to $2.5B by February 2026 — a 150% increase in under two months. A survey of nearly 1,000 software engineers found that 95% use AI tools at least weekly, with Claude Code leading adoption ahead of GitHub Copilot and Cursor. At this growth rate, Anthropic is on track to surpass OpenAI's total revenue by the end of 2026. The $285 billion selloff in enterprise software stocks triggered by Claude Cowork's January launch continues to ripple through the sector, as investors reprice companies whose core functionality overlaps with Claude's expanding capabilities.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Claude Code going from $1B to $2.5B ARR in two months is the fastest revenue ramp in enterprise software history. The 95% weekly AI tool usage stat confirms that AI-assisted development is no longer early adoption — it's the baseline. The $285B software stock selloff is the market's verdict that agent-driven automation will compress traditional SaaS margins. If you're building on the Claude ecosystem, you're riding the fastest-growing enterprise platform in the market. If you're competing with it, the window for differentiation is narrowing rapidly.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">Nscale Closes $2B Series C — Europe's Largest AI Infrastructure Round</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">London-based Nscale secured a $2 billion Series C, marking one of Europe's largest technology financings ever. The AI infrastructure startup builds and operates hyperscale data centers optimized for AI model training and inference. The round comes as global demand for AI compute capacity far outstrips supply, with hyperscalers and sovereign AI initiatives competing for data center buildouts. Nscale's raise signals that the AI infrastructure layer is attracting capital at a pace rivaling the foundation model companies themselves.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> A $2B infra round in Europe signals that AI compute is becoming a geopolitical asset, not just a technical one. For AI-first businesses, the emergence of non-hyperscaler compute providers like Nscale creates negotiating leverage on GPU pricing and availability. The European sovereignty angle is particularly relevant as EU AI Act compliance requirements may favor EU-based infrastructure providers for training and inference workloads.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">Wayve Raises $1.2B Series D at $8.6B — Autonomous Driving Meets Embodied AI</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker / Eclipse / SoftBank</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">British autonomous driving startup Wayve closed a $1.2 billion Series D at an $8.6 billion valuation, led by Eclipse, Balderton Capital, and SoftBank Vision Fund 2, with Microsoft, NVIDIA, and Uber as strategic investors. Wayve's approach — using end-to-end learned driving models rather than hand-coded rules — aligns with the broader industry shift toward foundation models for physical AI. The round comes as humanoid robotics and embodied AI emerge as 2026's breakout investment category, projected to attract $20B+ this year.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">NVIDIA Invests $2B in Nebius — Former Yandex Spinout Plans Multi-Gigawatt AI Data Centers</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA / Nebius</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Nebius, the Yandex spinout focused on AI infrastructure, received a $2 billion strategic equity investment from NVIDIA, bringing its total funding to $2.7 billion. The company is rapidly scaling with plans for multi-gigawatt data centers to meet surging demand for AI model training and deployment. NVIDIA's investment continues its pattern of funding the compute supply chain rather than competing directly with model providers — a strategy that positions NVIDIA to profit regardless of which foundation model companies win.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.mondaq.com/unitedstates/new-technology/1755166/march-2026-federal-deadlines-that-will-reshape-the-ai-regulatory-landscape">FTC AI Preemption Deadline Arrives — Federal vs. State AI Governance Showdown Begins</a></h3>
+    <p class="story-meta"><span class="source">Baker Botts / IAPP / Mondaq</span> · Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The March 11 deadline for the FTC to issue its AI policy statement on federal preemption of state laws has arrived, triggered by Trump's December 2025 executive order "Ensuring a National Policy Framework for Artificial Intelligence." The FTC was directed to describe when state AI laws requiring "alteration of truthful outputs" are preempted by federal deceptive-practices law. The Commerce Department was simultaneously directed to identify "burdensome" state AI laws for referral to the AI Litigation Task Force. Legal experts question the viability of the preemption theory, noting that FTC policy statements are interpretive rather than binding, and courts may reject the premise that correcting for bias constitutes deception. California's TFAIA and Texas's RAIGA — both effective January 1, 2026 — are the most prominent potential targets.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the most consequential AI regulatory moment of 2026 so far. If federal preemption succeeds, companies deploying AI nationwide would face one set of rules instead of a patchwork of 50 state laws — dramatically reducing compliance costs. But the legal theory is untested, and courts are likely to challenge it. For AI-first businesses, the practical advice is to continue building to the strictest state standards (California's TFAIA) while monitoring the federal preemption litigation. The outcome will determine whether AI governance centralizes federally or remains a state-by-state compliance maze.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.techpolicy.press/the-ftcs-ai-preemption-authority-is-limited/">EU Digital Omnibus Debate Heats Up — €150B Savings Promise vs. "Biggest Attack on Digital Rights"</a></h3>
+    <p class="story-meta"><span class="source">TechPolicy.Press / EU Commission</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The EU Digital Omnibus — a sweeping legislative package that would consolidate and simplify Europe's digital regulations — is generating fierce debate. The European Commission promises €150 billion in annual savings for businesses through regulatory streamlining, while privacy advocate Max Schrems has called it "the biggest attack on Europeans' digital rights in years." The proposal's AI governance implications are significant: the Commission has already proposed extending the EU AI Act's high-risk AI deadlines from August 2026 to December 2027, giving companies an additional 16 months to comply. For AI companies operating globally, the Omnibus outcome will determine whether Europe becomes more or less burdensome as a compliance jurisdiction.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://medium.com/@urano10/the-future-of-ai-models-in-2026-whats-actually-coming-410141f3c979">LeCun Leaves Meta to Launch World Model Lab — Reportedly Seeking $5B Valuation</a></h3>
+    <p class="story-meta"><span class="source">Industry Reports / Medium</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Yann LeCun, Meta's longtime Chief AI Scientist and a Turing Award laureate, has departed to launch his own world model lab, reportedly seeking a $5 billion valuation. LeCun has long argued that world models — AI systems that learn internal representations of how the physical world works — are the path to more capable and efficient AI, rather than scaling language models. His departure from Meta and the eye-popping valuation target signal growing investor conviction that world models represent the next paradigm shift beyond LLMs. Signs of the trend are multiplying across the industry, with 2026 shaping up as a breakout year for the approach.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> LeCun betting his career on world models — and investors reportedly backing him at $5B before a product ships — is a leading indicator that the "just scale LLMs" thesis is facing its first serious paradigm challenger. For agent builders, world models could fundamentally change how agents reason about physical tasks, plan multi-step actions, and interact with the real world. This doesn't obsolete LLM-based agents, but it suggests that the most capable agents of 2027–2028 may combine LLM reasoning with world model simulation. Track this space as a potential architectural inflection point.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.techrepublic.com/article/ai-adoption-trends-enterprise/">Enterprise AI Readiness Gap: 85% Want Agentic AI, 76% Admit They're Not Ready</a></h3>
+    <p class="story-meta"><span class="source">TechRepublic / Industry Surveys</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">New enterprise surveys reveal a striking disconnect: 85% of enterprises aim to become agentic within three years, but 76% acknowledge their operations are not ready to support that shift. The gap spans data infrastructure, security governance, workflow integration, and organizational change management. Meanwhile, the data science platform market is projected to grow from $109B in 2025 to $284B by 2031, with cloud-based analytics platforms leading adoption. The readiness gap represents an enormous services opportunity for companies that can bridge the distance between enterprise ambition and operational reality.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Saturday, March 14, 2026</p>
+  <p class="sources">Sources: NVIDIA, The Register, CNBC, Fortune, OpenAI, Microsoft, Anthropic, VentureBeat, SiliconANGLE, PYMNTS, The Next Web, Time, AI Funding Tracker, Eclipse, SoftBank, Baker Botts, IAPP, Mondaq, TechPolicy.Press, EU Commission, TechRepublic, Mordor Intelligence</p>
+</div>
+
+</div>
+</body>
+</html>
