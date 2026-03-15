@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hourly Task Inspection Report &mdash; 2026-03-08 to 2026-03-14</title>
+<style>
+:root {
+  --primary: #1a365d;
+  --primary-light: #2a4a7f;
+  --accent: #3182ce;
+  --bg: #f7fafc;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --text: #2d3748;
+  --text-light: #718096;
+  --good: #27ae60;
+  --warning: #f39c12;
+  --critical: #e74c3c;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+.hero {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  padding: 2rem 2rem 1.5rem;
+}
+.hero h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem; }
+.hero .subtitle { opacity: 0.85; font-size: 1rem; }
+.hero .week { font-size: 1.1rem; opacity: 0.9; margin-top: 0.5rem; }
+.nav-bar {
+  background: var(--primary-light);
+  padding: 0.5rem 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.nav-link {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.nav-link:hover { background: rgba(255,255,255,0.15); color: white; }
+.container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+.global-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.global-metric {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 1.25rem;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  border-top: 3px solid var(--accent);
+}
+.global-metric .gm-value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+.global-metric .gm-label { font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem; }
+.site-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid var(--border);
+}
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.site-header h2 { font-size: 1.3rem; color: var(--primary); }
+.site-header .subtitle { font-size: 0.85rem; color: var(--text-light); }
+.rate-display {
+  border: 3px solid;
+  border-radius: 12px;
+  padding: 0.5rem 1.25rem;
+  text-align: center;
+  min-width: 110px;
+}
+.rate-number { font-size: 1.6rem; font-weight: 700; }
+.rate-label { font-size: 0.75rem; color: var(--text-light); }
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+.metric-card {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 0.75rem;
+  text-align: center;
+}
+.metric-value { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+.metric-value.risk-critical { color: var(--critical); }
+.metric-value.risk-warning { color: var(--warning); }
+.metric-value.risk-good { color: var(--good); }
+.metric-label { font-size: 0.75rem; color: var(--text-light); }
+.section-row { display: flex; gap: 1.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.section-half { flex: 1; min-width: 280px; }
+h3 { font-size: 1rem; color: var(--primary); margin-bottom: 0.75rem; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 1rem; }
+.data-table th {
+  background: var(--primary);
+  color: white;
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+.data-table tr:hover { background: #f0f4f8; }
+.task-name { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.badge-high { background: #fde8e8; color: var(--critical); }
+.badge-medium { background: #fef3cd; color: #856404; }
+.badge-low { background: #d4edda; color: #155724; }
+.badge-good { background: #d4edda; color: var(--good); }
+.badge-warning { background: #fef3cd; color: #856404; }
+.badge-critical { background: #fde8e8; color: var(--critical); }
+.risk-bar {
+  display: flex;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 28px;
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.risk-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  min-width: 40px;
+}
+.risk-high { background: var(--critical); }
+.risk-medium { background: var(--warning); }
+.risk-low { background: var(--good); }
+.daily-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 120px;
+  padding-top: 10px;
+}
+.chart-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+.bar-fill {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  height: var(--h);
+  min-height: 4px;
+  transition: height 0.3s;
+}
+.bar-label {
+  font-size: 0.65rem;
+  color: var(--text-light);
+  margin-top: 4px;
+  white-space: nowrap;
+}
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+}
+@media (max-width: 768px) {
+  .hero { padding: 1.5rem 1rem; }
+  .hero h1 { font-size: 1.3rem; }
+  .container { padding: 1rem; }
+  .section-row { flex-direction: column; }
+  .task-name { max-width: 180px; }
+}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>Hourly Task Inspection Report</h1>
+  <div class="subtitle">Tommy's Express Car Wash &mdash; All Sites</div>
+  <div class="week">Week of 2026-03-08 to 2026-03-14</div>
+</div>
+<div class="nav-bar">
+  <span style="color:rgba(255,255,255,0.6); font-size:0.85rem;">Jump to:</span>
+  <a href="#site-265" class="nav-link">FM 1960</a> <a href="#site-253" class="nav-link">El Camino Real</a> <a href="#site-259" class="nav-link">E Crossroads Blvd</a>
+</div>
+<div class="container">
+  <div class="global-metrics">
+    <div class="global-metric">
+      <div class="gm-value">80.8%</div>
+      <div class="gm-label">Overall Completion Rate</div>
+    </div>
+    <div class="global-metric">
+      <div class="gm-value">3,181</div>
+      <div class="gm-label">Total Expired Slots</div>
+    </div>
+    <div class="global-metric">
+      <div class="gm-value">16,574</div>
+      <div class="gm-label">Total Inspection Slots</div>
+    </div>
+    <div class="global-metric">
+      <div class="gm-value">7h</div>
+      <div class="gm-label">Worst Streak (Any Site)</div>
+    </div>
+    <div class="global-metric">
+      <div class="gm-value">3</div>
+      <div class="gm-label">Sites Reporting</div>
+    </div>
+  </div>
+
+
+    <div class="site-card" id="site-265">
+      <div class="site-header">
+        <div>
+          <h2>Site 265: Houston, TX - FM 1960</h2>
+          <span class="subtitle">55 hourly tasks &middot; 5,470 total inspection slots</span>
+        </div>
+        <div class="rate-display" style="border-color: #e74c3c">
+          <div class="rate-number" style="color: #e74c3c">79.3%</div>
+          <div class="rate-label">Completion</div>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value">1,131</div>
+          <div class="metric-label">Expired Slots</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">5h</div>
+          <div class="metric-label">Worst Streak</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value risk-critical">2</div>
+          <div class="metric-label">High Risk Tasks</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">53</div>
+          <div class="metric-label">Medium Risk</div>
+        </div>
+      </div>
+
+      <div class="section-row">
+        <div class="section-half">
+          <h3>Daily Breakdown</h3>
+          <table class="data-table">
+            <thead><tr><th>Day</th><th>Expired</th><th>Total</th><th>Completion</th></tr></thead>
+            <tbody>
+            <tr>
+              <td>Sun 03-08</td>
+              <td>271</td>
+              <td>812</td>
+              <td><span class="badge badge-critical">66.6%</span></td>
+            </tr>
+            <tr>
+              <td>Mon 03-09</td>
+              <td>164</td>
+              <td>758</td>
+              <td><span class="badge badge-critical">78.4%</span></td>
+            </tr>
+            <tr>
+              <td>Tue 03-10</td>
+              <td>103</td>
+              <td>758</td>
+              <td><span class="badge badge-warning">86.4%</span></td>
+            </tr>
+            <tr>
+              <td>Wed 03-11</td>
+              <td>55</td>
+              <td>758</td>
+              <td><span class="badge badge-good">92.7%</span></td>
+            </tr>
+            <tr>
+              <td>Thu 03-12</td>
+              <td>163</td>
+              <td>758</td>
+              <td><span class="badge badge-critical">78.5%</span></td>
+            </tr>
+            <tr>
+              <td>Fri 03-13</td>
+              <td>110</td>
+              <td>758</td>
+              <td><span class="badge badge-warning">85.5%</span></td>
+            </tr>
+            <tr>
+              <td>Sat 03-14</td>
+              <td>210</td>
+              <td>758</td>
+              <td><span class="badge badge-critical">72.3%</span></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-half">
+          <h3>Risk Distribution</h3>
+          <div class="risk-bar">
+            <div class="risk-segment risk-high" style="width:5%">2 High</div>
+            <div class="risk-segment risk-medium" style="width:96%">53 Med</div>
+          </div>
+          <h3>Daily Completion Trend</h3>
+          <div class="daily-chart">
+            <div class="chart-bar" style="--h:66.6%"><div class="bar-fill" style="background:#e74c3c"></div><span class="bar-label">Sun 03-08</span></div>            <div class="chart-bar" style="--h:78.4%"><div class="bar-fill" style="background:#e74c3c"></div><span class="bar-label">Mon 03-09</span></div>            <div class="chart-bar" style="--h:86.4%"><div class="bar-fill" style="background:#f39c12"></div><span class="bar-label">Tue 03-10</span></div>            <div class="chart-bar" style="--h:92.7%"><div class="bar-fill" style="background:#27ae60"></div><span class="bar-label">Wed 03-11</span></div>            <div class="chart-bar" style="--h:78.5%"><div class="bar-fill" style="background:#e74c3c"></div><span class="bar-label">Thu 03-12</span></div>            <div class="chart-bar" style="--h:85.5%"><div class="bar-fill" style="background:#f39c12"></div><span class="bar-label">Fri 03-13</span></div>            <div class="chart-bar" style="--h:72.3%"><div class="bar-fill" style="background:#e74c3c"></div><span class="bar-label">Sat 03-14</span></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Top 10 Tasks Needing Attention</h3>
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Task Name</th><th>Exp/Total</th><th>Exp %</th><th>Max Streak</th><th>2+ Streaks</th><th>Risk</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td>1</td>
+              <td class="task-name">Clean all Interior Wash Bay Windows</td>
+              <td>4/8</td>
+              <td>50.0%</td>
+              <td>2h</td>
+              <td>2</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td class="task-name">04-Wash Bay: Entrance Belt Flush</td>
+              <td>27/109</td>
+              <td>24.8%</td>
+              <td>5h</td>
+              <td>8</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td class="task-name">53-Check Guest Bathroom</td>
+              <td>21/101</td>
+              <td>20.8%</td>
+              <td>4h</td>
+              <td>5</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td class="task-name">24-Check Reclaim Ozone Unit is Operational</td>
+              <td>21/101</td>
+              <td>20.8%</td>
+              <td>4h</td>
+              <td>5</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td class="task-name">23-Check Reclaim System in AUTO</td>
+              <td>21/101</td>
+              <td>20.8%</td>
+              <td>4h</td>
+              <td>5</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td class="task-name">26 - RO System TDS is Below 20ppm</td>
+              <td>21/101</td>
+              <td>20.8%</td>
+              <td>4h</td>
+              <td>5</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td class="task-name">48-Blower Room: Relax/Go Light Operating</td>
+              <td>21/101</td>
+              <td>20.8%</td>
+              <td>4h</td>
+              <td>5</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td class="task-name">50-Vacuums: Empty Vacuum Canister and Clean Filter</td>
+              <td>21/101</td>
+              <td>20.8%</td>
+              <td>4h</td>
+              <td>5</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td class="task-name">15-Wash Bay: Check Motor/Chain/Bearing on all Motors</td>
+              <td>21/101</td>
+              <td>20.8%</td>
+              <td>4h</td>
+              <td>5</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td class="task-name">28-Backroom: VFD's Operating</td>
+              <td>21/101</td>
+              <td>20.8%</td>
+              <td>4h</td>
+              <td>5</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="site-card" id="site-253">
+      <div class="site-header">
+        <div>
+          <h2>Site 253: Clear Lake, TX - El Camino Real</h2>
+          <span class="subtitle">55 hourly tasks &middot; 5,470 total inspection slots</span>
+        </div>
+        <div class="rate-display" style="border-color: #f39c12">
+          <div class="rate-number" style="color: #f39c12">88.0%</div>
+          <div class="rate-label">Completion</div>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value">656</div>
+          <div class="metric-label">Expired Slots</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">4h</div>
+          <div class="metric-label">Worst Streak</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value ">0</div>
+          <div class="metric-label">High Risk Tasks</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">54</div>
+          <div class="metric-label">Medium Risk</div>
+        </div>
+      </div>
+
+      <div class="section-row">
+        <div class="section-half">
+          <h3>Daily Breakdown</h3>
+          <table class="data-table">
+            <thead><tr><th>Day</th><th>Expired</th><th>Total</th><th>Completion</th></tr></thead>
+            <tbody>
+            <tr>
+              <td>Sun 03-08</td>
+              <td>163</td>
+              <td>812</td>
+              <td><span class="badge badge-critical">79.9%</span></td>
+            </tr>
+            <tr>
+              <td>Mon 03-09</td>
+              <td>109</td>
+              <td>758</td>
+              <td><span class="badge badge-warning">85.6%</span></td>
+            </tr>
+            <tr>
+              <td>Tue 03-10</td>
+              <td>56</td>
+              <td>758</td>
+              <td><span class="badge badge-good">92.6%</span></td>
+            </tr>
+            <tr>
+              <td>Wed 03-11</td>
+              <td>109</td>
+              <td>758</td>
+              <td><span class="badge badge-warning">85.6%</span></td>
+            </tr>
+            <tr>
+              <td>Thu 03-12</td>
+              <td>55</td>
+              <td>758</td>
+              <td><span class="badge badge-good">92.7%</span></td>
+            </tr>
+            <tr>
+              <td>Fri 03-13</td>
+              <td>85</td>
+              <td>758</td>
+              <td><span class="badge badge-warning">88.8%</span></td>
+            </tr>
+            <tr>
+              <td>Sat 03-14</td>
+              <td>24</td>
+              <td>758</td>
+              <td><span class="badge badge-good">96.8%</span></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-half">
+          <h3>Risk Distribution</h3>
+          <div class="risk-bar">
+            <div class="risk-segment risk-medium" style="width:98%">54 Med</div>
+            <div class="risk-segment risk-low" style="width:5%">1 Low</div>
+          </div>
+          <h3>Daily Completion Trend</h3>
+          <div class="daily-chart">
+            <div class="chart-bar" style="--h:79.9%"><div class="bar-fill" style="background:#e74c3c"></div><span class="bar-label">Sun 03-08</span></div>            <div class="chart-bar" style="--h:85.6%"><div class="bar-fill" style="background:#f39c12"></div><span class="bar-label">Mon 03-09</span></div>            <div class="chart-bar" style="--h:92.6%"><div class="bar-fill" style="background:#27ae60"></div><span class="bar-label">Tue 03-10</span></div>            <div class="chart-bar" style="--h:85.6%"><div class="bar-fill" style="background:#f39c12"></div><span class="bar-label">Wed 03-11</span></div>            <div class="chart-bar" style="--h:92.7%"><div class="bar-fill" style="background:#27ae60"></div><span class="bar-label">Thu 03-12</span></div>            <div class="chart-bar" style="--h:88.8%"><div class="bar-fill" style="background:#f39c12"></div><span class="bar-label">Fri 03-13</span></div>            <div class="chart-bar" style="--h:96.8%"><div class="bar-fill" style="background:#27ae60"></div><span class="bar-label">Sat 03-14</span></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Top 10 Tasks Needing Attention</h3>
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Task Name</th><th>Exp/Total</th><th>Exp %</th><th>Max Streak</th><th>2+ Streaks</th><th>Risk</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td>1</td>
+              <td class="task-name">04-Wash Bay: Entrance Belt Flush</td>
+              <td>19/109</td>
+              <td>17.4%</td>
+              <td>4h</td>
+              <td>7</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td class="task-name">53-Check Guest Bathroom</td>
+              <td>13/101</td>
+              <td>12.9%</td>
+              <td>3h</td>
+              <td>3</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td class="task-name">07-Wash Bay: Wheel Blasters (Nozzles/Timing)</td>
+              <td>13/101</td>
+              <td>12.9%</td>
+              <td>3h</td>
+              <td>3</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td class="task-name">15-Wash Bay: Check Motor/Chain/Bearing on all Motors</td>
+              <td>13/101</td>
+              <td>12.9%</td>
+              <td>3h</td>
+              <td>3</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td class="task-name">35-Wash Bay: Rinse all Wash Bay Floors and all Brushes</td>
+              <td>13/101</td>
+              <td>12.9%</td>
+              <td>3h</td>
+              <td>3</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td class="task-name">21-Wash Bay: Water Breaking/Beading Up</td>
+              <td>13/101</td>
+              <td>12.9%</td>
+              <td>3h</td>
+              <td>3</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td class="task-name">20-Wash Bay: Spot Free Rinse (Nozzles/Timing/Lights)</td>
+              <td>13/101</td>
+              <td>12.9%</td>
+              <td>3h</td>
+              <td>3</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td class="task-name">19-Wash Bay: Rain Away (Drying Agent) (Nozzles/Timing/Lights)</td>
+              <td>13/101</td>
+              <td>12.9%</td>
+              <td>3h</td>
+              <td>3</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td class="task-name">18-Wash Bay: Tommy Guard (Nozzles/Timing/Lights)</td>
+              <td>13/101</td>
+              <td>12.9%</td>
+              <td>3h</td>
+              <td>3</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td class="task-name">16-Wash Bay: Ceramic Body Wax/Pre-Rinse (Nozzles/Timing/Lights)</td>
+              <td>13/101</td>
+              <td>12.9%</td>
+              <td>3h</td>
+              <td>3</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="site-card" id="site-259">
+      <div class="site-header">
+        <div>
+          <h2>Site 259: Saratoga Springs, UT - E Crossroads Blvd</h2>
+          <span class="subtitle">58 hourly tasks &middot; 5,634 total inspection slots</span>
+        </div>
+        <div class="rate-display" style="border-color: #e74c3c">
+          <div class="rate-number" style="color: #e74c3c">75.3%</div>
+          <div class="rate-label">Completion</div>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value">1,394</div>
+          <div class="metric-label">Expired Slots</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">7h</div>
+          <div class="metric-label">Worst Streak</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value risk-critical">58</div>
+          <div class="metric-label">High Risk Tasks</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">0</div>
+          <div class="metric-label">Medium Risk</div>
+        </div>
+      </div>
+
+      <div class="section-row">
+        <div class="section-half">
+          <h3>Daily Breakdown</h3>
+          <table class="data-table">
+            <thead><tr><th>Day</th><th>Expired</th><th>Total</th><th>Completion</th></tr></thead>
+            <tbody>
+            <tr>
+              <td>Sun 03-08</td>
+              <td>387</td>
+              <td>828</td>
+              <td><span class="badge badge-critical">53.3%</span></td>
+            </tr>
+            <tr>
+              <td>Mon 03-09</td>
+              <td>223</td>
+              <td>773</td>
+              <td><span class="badge badge-critical">71.2%</span></td>
+            </tr>
+            <tr>
+              <td>Tue 03-10</td>
+              <td>168</td>
+              <td>773</td>
+              <td><span class="badge badge-critical">78.3%</span></td>
+            </tr>
+            <tr>
+              <td>Wed 03-11</td>
+              <td>222</td>
+              <td>773</td>
+              <td><span class="badge badge-critical">71.3%</span></td>
+            </tr>
+            <tr>
+              <td>Thu 03-12</td>
+              <td>167</td>
+              <td>773</td>
+              <td><span class="badge badge-critical">78.4%</span></td>
+            </tr>
+            <tr>
+              <td>Fri 03-13</td>
+              <td>57</td>
+              <td>773</td>
+              <td><span class="badge badge-good">92.6%</span></td>
+            </tr>
+            <tr>
+              <td>Sat 03-14</td>
+              <td>115</td>
+              <td>773</td>
+              <td><span class="badge badge-warning">85.1%</span></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-half">
+          <h3>Risk Distribution</h3>
+          <div class="risk-bar">
+            <div class="risk-segment risk-high" style="width:100%">58 High</div>
+          </div>
+          <h3>Daily Completion Trend</h3>
+          <div class="daily-chart">
+            <div class="chart-bar" style="--h:53.3%"><div class="bar-fill" style="background:#e74c3c"></div><span class="bar-label">Sun 03-08</span></div>            <div class="chart-bar" style="--h:71.2%"><div class="bar-fill" style="background:#e74c3c"></div><span class="bar-label">Mon 03-09</span></div>            <div class="chart-bar" style="--h:78.3%"><div class="bar-fill" style="background:#e74c3c"></div><span class="bar-label">Tue 03-10</span></div>            <div class="chart-bar" style="--h:71.3%"><div class="bar-fill" style="background:#e74c3c"></div><span class="bar-label">Wed 03-11</span></div>            <div class="chart-bar" style="--h:78.4%"><div class="bar-fill" style="background:#e74c3c"></div><span class="bar-label">Thu 03-12</span></div>            <div class="chart-bar" style="--h:92.6%"><div class="bar-fill" style="background:#27ae60"></div><span class="bar-label">Fri 03-13</span></div>            <div class="chart-bar" style="--h:85.1%"><div class="bar-fill" style="background:#f39c12"></div><span class="bar-label">Sat 03-14</span></div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Top 10 Tasks Needing Attention</h3>
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Task Name</th><th>Exp/Total</th><th>Exp %</th><th>Max Streak</th><th>2+ Streaks</th><th>Risk</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td>1</td>
+              <td class="task-name">Wash Towels</td>
+              <td>7/8</td>
+              <td>87.5%</td>
+              <td>7h</td>
+              <td>1</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td class="task-name">Wash Towels (2)</td>
+              <td>7/8</td>
+              <td>87.5%</td>
+              <td>7h</td>
+              <td>1</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td class="task-name">Clean all Interior Wash Bay Windows</td>
+              <td>3/8</td>
+              <td>37.5%</td>
+              <td>2h</td>
+              <td>1</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td class="task-name">04-Wash Bay: Entrance Belt Flush</td>
+              <td>33/110</td>
+              <td>30.0%</td>
+              <td>7h</td>
+              <td>8</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td class="task-name">54-Vacuums: Verify Wash Quality</td>
+              <td>26/102</td>
+              <td>25.5%</td>
+              <td>6h</td>
+              <td>6</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td class="task-name">53-Check Guest Bathroom</td>
+              <td>25/102</td>
+              <td>24.5%</td>
+              <td>6h</td>
+              <td>5</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td class="task-name">24-Check Reclaim Ozone Unit is Operational</td>
+              <td>25/102</td>
+              <td>24.5%</td>
+              <td>6h</td>
+              <td>5</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td class="task-name">23-Check Reclaim System in AUTO</td>
+              <td>25/102</td>
+              <td>24.5%</td>
+              <td>6h</td>
+              <td>5</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td class="task-name">26 - RO System TDS is Below 20ppm</td>
+              <td>25/102</td>
+              <td>24.5%</td>
+              <td>6h</td>
+              <td>5</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td class="task-name">48-Blower Room: Relax/Go Light Operating</td>
+              <td>25/102</td>
+              <td>24.5%</td>
+              <td>6h</td>
+              <td>5</td>
+              <td><span class="badge badge-high">High</span></td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
+<div class="footer">
+  Generated by UCWH Automated Reporting &mdash; Data from Tommy Manager API<br>
+  Report covers Sunday 2026-03-08 through Saturday 2026-03-14
+</div>
+</body>
+</html>
