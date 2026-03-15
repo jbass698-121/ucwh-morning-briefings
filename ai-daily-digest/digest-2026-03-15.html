@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 15, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Sunday, March 15, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>The eve of NVIDIA GTC 2026 brings a Sunday packed with positioning moves. Apple confirmed its rebuilt Siri — powered by Google's Gemini under a white-labeled $1B/year deal — ships with iOS 26.4 this month, making agentic multi-step actions mainstream on 1.5 billion devices. The MCP 2026 Roadmap dropped this week with a bombshell: MCP servers will soon act as autonomous agents themselves, enabling "fractal" agentic systems — and MCP has now crossed 97 million monthly SDK downloads. Anthropic's Claude Cowork shipped shared context across Excel and PowerPoint plus a wave of new connectors (Google Drive, Gmail, DocuSign, and more), deepening its grip on enterprise workflows. On the capital front, OpenAI's $110B round — the largest private financing in history — reshuffled cloud alliances with Amazon investing $50B and becoming OpenAI's exclusive enterprise cloud partner. Legora's $550M Series D at $5.55B confirms that vertical AI built on Claude is attracting serious capital. And Google's $1B commitment to Form Energy's 100-hour iron-air battery for a Minnesota data center signals that AI's insatiable energy demand is spawning entirely new infrastructure categories.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://apple.gadgethacks.com/news/apples-new-siri-gets-google-gemini-ai-power-in-2026/">Apple's Rebuilt Siri Ships This Month — Gemini-Powered, 10-Step Action Chains, On-Screen Awareness</a></h3>
+    <p class="story-meta"><span class="source">Apple / Google / CNBC / Gadget Hacks</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Apple confirmed that iOS 26.4 will ship this month with a fundamentally rebuilt Siri powered by Google's 1.2 trillion parameter Gemini model running on Apple's Private Cloud Compute. The new Siri can chain up to 10 sequential actions from a single natural language request — booking a flight, adding it to a calendar, and texting an arrival time in one command. On-screen context awareness lets Siri read and reference whatever's currently displayed: a restaurant in Safari triggers a reservation, a flight confirmation in Mail gets auto-added to the calendar. Under a multiyear deal worth roughly $1B/year, Gemini is entirely white-labeled with no Google branding visible to users. Apple retains full control over UI, data routing, and privacy enforcement.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the moment agentic AI reaches 1.5 billion devices in consumer hands. Siri chaining 10 actions from a single command is functionally an agent — and it normalizes the concept of autonomous multi-step task completion for everyday users. For anyone building agent infrastructure or MCP connectors, Apple's move validates the core thesis and massively expands the addressable market. The white-label Gemini deal also signals that the "model layer" is becoming a commodity input — the value is in the orchestration, UX, and ecosystem integration on top.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://releasebot.io/updates/openai">OpenAI Sunsets GPT-5.1, Migrates All Users to GPT-5.3/5.4 — Model Lifecycle Accelerates</a></h3>
+    <p class="story-meta"><span class="source">OpenAI / Releasebot</span> · Mar 11 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">As of March 11, GPT-5.1 models (Instant, Thinking, and Pro) are no longer available in ChatGPT, with existing conversations automatically continuing on GPT-5.3 Instant, GPT-5.4 Thinking, or GPT-5.4 Pro. The deprecation came just weeks after GPT-5.2 set new SWE-Bench records. OpenAI also shipped dynamic interactive visual explanations for 70+ math and science concepts, an experimental code mode for isolated coding workflows, and WebSocket health-check endpoints for enterprise deployments. The accelerating model lifecycle — three generations deprecated in a single quarter — reflects the breakneck pace of capability improvement across the industry.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="http://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/">MCP 2026 Roadmap: Servers Become Agents, 97M Monthly Downloads, Dev Summit NYC in April</a></h3>
+    <p class="story-meta"><span class="source">Model Context Protocol Blog / The New Stack / AAIF</span> · Mar 12 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The 2026 MCP Roadmap published March 12 reveals the protocol's most ambitious evolution yet: extensions that allow MCP servers to act as autonomous agents themselves. A "Travel Agent" MCP server could negotiate with a "Booking Agent" MCP server, enabling "fractal" agentic systems where complex tasks decompose into sub-tasks handled by specialized sub-agents — all coordinating via MCP. The roadmap also prioritizes Streamable HTTP improvements for remote deployment at scale, enterprise readiness extensions (without bloating the core spec), and Audio Content support. MCP has crossed 97 million monthly SDK downloads (Python + TypeScript combined) with 10,000+ published servers. The next MCP Dev Summit takes place April 2–3 in New York City.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> MCP servers becoming agents is the architectural shift that turns the protocol from a tool-calling standard into a full agent orchestration layer. This means every MCP server you build today could become an autonomous agent in the near future — design accordingly. The 97M monthly download figure and 10K+ servers confirm MCP has won the tool-connectivity standard war. If you're building agent infrastructure, the NYC Dev Summit on April 2–3 is a must-attend to shape the spec extensions that will define how multi-agent systems coordinate in production.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.nvidia.com/gtc/keynote/">NVIDIA GTC 2026 Kicks Off Tomorrow — Jensen Huang Keynote at 11am PT</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA / TechCrunch / Motley Fool</span> · Mar 15 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">NVIDIA GTC 2026 opens tomorrow in San Jose with 30,000+ attendees from 190 countries. Jensen Huang's two-hour keynote at the SAP Center (Monday, 11am PT, livestreamed free) will detail NVIDIA's push into AI inference with new chips and software for autonomous agents. Analysts expect Vera Rubin architecture details, NemoClaw agent platform announcements, and the N1/N1X laptop CPUs targeting Apple silicon. A post-keynote panel on open vs. closed models features LangChain's Harrison Chase alongside leaders from A16Z, AI2, and others — a debate with direct implications for how the agent ecosystem evolves.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COWORK & CLAUDE ECOSYSTEM -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128268;</span>
+    <h2>Cowork &amp; Claude Ecosystem</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://winbuzzer.com/2026/03/12/claude-links-excel-and-powerpoint-with-shared-context-reusab-xcxwbn/">Claude Links Excel and PowerPoint With Shared Context and Reusable Skills</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / WinBuzzer</span> · Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic shipped a significant Cowork upgrade: Claude can now carry a single conversation across both its Excel and PowerPoint add-ins, eliminating the need to copy data and re-explain context when switching between apps. Available in beta to all Mac and Windows users on paid Claude plans since March 11. Alongside shared context, Anthropic released prebuilt starter Skills targeting financial services — including DCF templates, LBO models, and investment banking deck reviews. The cross-app continuity is a direct counter to Microsoft's Copilot Cowork, matching its multi-app orchestration capabilities within the Claude ecosystem.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Shared context across Excel and PowerPoint is the feature that turns Claude from a per-app assistant into a workflow orchestrator. Financial services skills (DCF, LBO, deck reviews) signal that Anthropic is targeting the highest-value enterprise knowledge work first. If you're building custom skills or plugins for Cowork, the shared context architecture means your skill can now leverage data from multiple apps in a single session — dramatically expanding what's automatable.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.cnbc.com/2026/02/24/anthropic-claude-cowork-office-worker.html">Claude Cowork Ships 15+ New Connectors — Google Drive, Gmail, DocuSign, FactSet, and More</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / CNBC / VentureBeat</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic released a wave of new MCP connectors for Claude Cowork spanning productivity, sales, legal, and financial data: Google Drive, Google Calendar, Gmail, DocuSign, Apollo, Clay, Outreach, SimilarWeb, MSCI, LegalZoom, FactSet, WordPress, and Harvey. The company also introduced prebuilt plugin templates for HR, design, engineering, operations, financial analysis, investment banking, equity research, private equity, and wealth management. Enterprise plans are now available for self-serve purchase directly on the website, with a single seat type covering Claude, Claude Code, and Cowork.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Each new connector expands the surface area of what Claude can automate without custom development. The FactSet and MSCI connectors bring real-time financial data directly into agent workflows — a capability that previously required expensive custom integrations. The self-serve enterprise purchase option removes procurement friction, meaning teams can start deploying Cowork without a sales cycle. If you're building on the Claude ecosystem, these connectors are building blocks your skills and plugins can compose with.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.cnbc.com/2026/02/27/open-ai-funding-round-amazon.html">OpenAI Closes $110B Round — Amazon Invests $50B, Becomes Exclusive Enterprise Cloud Partner</a></h3>
+    <p class="story-meta"><span class="source">CNBC / TechCrunch / Bloomberg</span> · Feb 27 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI finalized the largest private financing in history: $110 billion at a $730B pre-money / $840B post-money valuation. Amazon led with $50 billion (starting with $15B, with $35B contingent on milestones), NVIDIA contributed $30 billion, and SoftBank invested $30 billion. The deal reshuffles cloud alliances: AWS becomes OpenAI's exclusive third-party enterprise cloud distribution partner, and the existing $38B AWS agreement expands by $100 billion over eight years. The round remains open with additional investors expected. Just three companies — OpenAI, Anthropic ($30B Series G), and xAI ($20B Series E) — absorbed 83% of all global venture capital in February 2026.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The AWS exclusivity deal is the real story. OpenAI moving its enterprise distribution to AWS — Amazon's cloud, not Microsoft Azure — is the most dramatic partnership realignment in tech since the Microsoft-OpenAI deal itself. For enterprise buyers, this means OpenAI's enterprise products will increasingly compete with Azure-native Copilot offerings, creating leverage for multi-model strategies. The concentration stat — three AI labs consuming 83% of global VC — signals that capital is flowing to platforms, not point solutions. Build on platforms, not against them.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/10/legora-reaches-5-55-billion-valuation-as-ai-legaltech-boom-endures/">Legora Raises $550M Series D at $5.55B — AI Legal Platform Built on Claude Expands to US</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / Bloomberg / Menlo Ventures</span> · Mar 10 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Swedish AI legal platform Legora closed a $550 million Series D led by Accel, tripling its valuation from its October round. The platform — built primarily on Claude — serves tens of thousands of legal professionals at 800+ law firms and in-house teams across 50+ markets. New investors Menlo Ventures, Salesforce Ventures, and Bain Capital joined alongside existing backers Benchmark, Bessemer, General Catalyst, and Y Combinator. Legora is opening offices in Houston and Chicago and plans to grow to 300+ US employees by year-end, signaling that vertical AI applications built on Claude are reaching escape velocity.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">MatX Secures $500M Series B for Custom LLM Chips — Jane Street Leads</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker / Crunchbase</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">MatX, a startup designing custom chips and hardware architectures optimized for large language models, closed a $500 million Series B led by Jane Street Capital and Situational Awareness. The round reflects growing investor conviction that the GPU monoculture is ripe for disruption — purpose-built LLM silicon could deliver better performance-per-dollar than general-purpose GPUs for inference workloads. MatX joins a wave of AI chip startups (Groq, Cerebras, Etched) challenging NVIDIA's dominance at the silicon layer, even as NVIDIA GTC kicks off tomorrow.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.corporatecomplianceinsights.com/2026-operational-guide-cybersecurity-ai-governance-emerging-risks/">Insurers Now Require AI Red-Teaming for Coverage — "AI Security Riders" Go Mainstream</a></h3>
+    <p class="story-meta"><span class="source">Corporate Compliance Insights / Credo AI</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The insurance industry has introduced "AI Security Riders" that require documented evidence of adversarial red-teaming, model-level risk assessments, and specialized safeguards as prerequisites for underwriting AI-related liability coverage. This shift reflects AI moving from the SEC's "emerging fintech area" classification two years ago to a clear area of operational risk linked to cybersecurity, disclosures, and internal use for critical functions. Companies deploying AI without documented governance frameworks now face higher premiums or outright coverage denial — creating a financial enforcement mechanism that operates independently of government regulation.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Insurance requirements are the sleeper enforcement mechanism for AI governance. Unlike regulation, which takes years to litigate, insurers can raise premiums or deny coverage immediately. If you're deploying AI agents in production, you now need documented red-teaming results, model risk assessments, and governance frameworks — not just for compliance, but for insurability. This is especially relevant for agent systems that take autonomous actions with financial or legal consequences. Budget for AI governance tooling (Credo AI, Robust Intelligence) as a cost of doing business.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.wsgr.com/en/insights/2026-year-in-preview-ai-regulatory-developments-for-companies-to-watch-out-for.html">State AI Laws Hit 90-Day Mark — California TFAIA and Texas RAIGA Enforcement Begins</a></h3>
+    <p class="story-meta"><span class="source">Wilson Sonsini / King &amp; Spalding / Baker Donelson</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">California's Transparency in Frontier AI Act (TFAIA) and Texas's Responsible AI Governance Act (RAIGA) — both effective January 1, 2026 — have now been in force for over two months, and enforcement actions are expected to begin as the initial grace period winds down. AI governance is moving from high-level principles to enforceable rules requiring documented AI inventories, risk classifications, third-party due diligence, and model lifecycle controls. Meanwhile, the Trump administration's federal preemption strategy — with the FTC's March 11 policy statement now delivered — sets up a historic legal battle that will determine whether AI governance centralizes federally or remains a state-by-state compliance maze through 2026 and beyond.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.techbuzz.ai/articles/google-drops-1b-on-form-energy-s-100-hour-battery-tech">Google Commits $1B to Form Energy's 100-Hour Battery — 30GWh Iron-Air System for Minnesota Data Center</a></h3>
+    <p class="story-meta"><span class="source">TechBuzz / Canary Media / Heatmap News</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Google committed approximately $1 billion to Form Energy for a 300-megawatt, 30-gigawatt-hour iron-air battery system — the largest battery deployment in the world by energy capacity. The system will deliver continuous power for 100 hours straight, supporting a new Google data center in Minnesota alongside 1,400MW of wind and 200MW of solar. Form Energy's iron-air chemistry uses abundant, cheap materials (iron and air) rather than lithium, enabling multi-day storage at a fraction of lithium-ion costs. Battery delivery begins in 2028, with Form planning a substantial funding round in late 2026 before a 2027 IPO. The deal signals that hyperscaler AI energy demand is creating entirely new infrastructure categories beyond traditional power procurement.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> AI's energy problem is now spawning billion-dollar infrastructure investments in technology that didn't exist at scale five years ago. Google committing $1B to a 100-hour battery signals that the hyperscalers are moving beyond "just buy more power" to fundamentally reshaping energy infrastructure. For AI-first businesses, the implication is that compute costs will increasingly be dominated by energy economics, not chip pricing. The iron-air chemistry's use of abundant materials (vs. scarce lithium) suggests this could scale more sustainably than current battery tech — a long-term tailwind for AI infrastructure affordability.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://bostoninstituteofanalytics.org/blog/agentic-ai-news-roundup-7-13-march-2026-market-growth-enterprise-adoption-new-ai-agents/">Agentic AI Market Projected to Hit $139B by 2034 — Only 8.6% of Companies Have Agents in Production</a></h3>
+    <p class="story-meta"><span class="source">Boston Institute of Analytics / Deloitte / TechRepublic</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The global agentic AI sector is projected to expand from $9.14 billion in early 2026 to $139 billion by 2034, representing a 40.5% compound annual growth rate. Yet a stark reality check: only 8.6% of companies have AI agents deployed in production, 14% are in pilot, and 63.7% report no formalized AI initiative at all. Telecom leads adoption at 48%, followed by retail/CPG at 47%. Nearly all respondents (86%) say AI budgets will increase in 2026. The gap between market projections and actual deployment represents the largest services and infrastructure opportunity in enterprise AI — the companies that bridge this gap will capture outsized value.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Sunday, March 15, 2026</p>
+  <p class="sources">Sources: Apple, Google, CNBC, Gadget Hacks, OpenAI, Releasebot, Model Context Protocol Blog, The New Stack, AAIF, NVIDIA, TechCrunch, Motley Fool, Anthropic, WinBuzzer, VentureBeat, Bloomberg, Menlo Ventures, Accel, AI Funding Tracker, Crunchbase, Corporate Compliance Insights, Credo AI, Wilson Sonsini, King &amp; Spalding, Baker Donelson, TechBuzz, Canary Media, Heatmap News, Boston Institute of Analytics, Deloitte, TechRepublic</p>
+</div>
+
+</div>
+</body>
+</html>
