@@ -2,160 +2,464 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UCWH Weekly Sales Report — March 01 – March 07, 2026</title>
+<title>UCWH Weekly Sales Report &mdash; March 01 &ndash; March 07, 2026</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f0f0; color: #333; }
+
+  /* Hero */
   .hero { background: linear-gradient(135deg, #6B0000 0%, #B80000 50%, #8B0000 100%); color: white; padding: 48px 30px; text-align: center; box-shadow: 0 4px 20px rgba(139,0,0,0.3); }
   .hero h1 { font-size: 32px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
   .hero .date-range { font-size: 20px; opacity: 0.95; font-weight: 500; }
-  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
-  .totals-bar { background: white; border-radius: 14px; padding: 28px 24px; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; border-top: 4px solid #8B0000; }
+  .hero .subtitle { font-size: 14px; opacity: 0.7; margin-top: 6px; }
+
+  .container { max-width: 1300px; margin: 0 auto; padding: 24px; }
+
+  /* Aggregate KPI Bar */
+  .totals-bar { background: white; border-radius: 14px; padding: 28px 24px; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; border-top: 4px solid #8B0000; }
   .total-item { text-align: center; padding: 8px 4px; }
-  .total-item .total-label { font-size: 11px; color: #777; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-  .total-item .total-value { font-size: 30px; font-weight: 800; color: #8B0000; margin-top: 6px; letter-spacing: -0.5px; }
-  .sites-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 28px; }
-  .site-card { background: white; border-radius: 14px; padding: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-left: 4px solid #8B0000; }
-  .site-header { font-size: 20px; font-weight: 800; color: #8B0000; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 2px solid #eee; }
+  .total-item .total-label { font-size: 10px; color: #777; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .total-item .total-value { font-size: 26px; font-weight: 800; color: #8B0000; margin-top: 6px; letter-spacing: -0.5px; }
+
+  /* Site Cards */
+  .site-card { background: white; border-radius: 14px; padding: 28px; margin-bottom: 28px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-left: 4px solid #8B0000; }
+  .site-header { margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid #eee; }
+  .site-title { font-size: 22px; font-weight: 800; color: #8B0000; }
   .site-abbr { font-weight: 500; color: #aaa; font-size: 14px; }
-  .section-title { font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 1px; margin: 18px 0 10px; padding-top: 14px; border-top: 1px solid #eee; }
-  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .metric { background: #f7f7f7; border-radius: 10px; padding: 14px 10px; text-align: center; border: 1px solid #eee; }
-  .metric-label { display: block; font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-  .metric-value { display: block; font-size: 19px; font-weight: 800; color: #222; margin-top: 6px; letter-spacing: -0.3px; }
-  .metric-value.revenue { color: #1a7a1a; }
-  .metric-value.expense { color: #c44; }
+
+  /* KPI Row */
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .kpi { background: #f7f7f7; border-radius: 10px; padding: 16px 12px; text-align: center; border: 1px solid #eee; }
+  .kpi-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .kpi-value { font-size: 22px; font-weight: 800; color: #222; margin-top: 6px; }
+  .kpi-value.revenue { color: #1a7a1a; }
+  .kpi-value.expense { color: #c44; }
+
+  /* Two Column Detail Layout */
+  .detail-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .detail-col { min-width: 0; }
+  .detail-section-title { font-size: 11px; font-weight: 700; color: #8B0000; text-transform: uppercase; letter-spacing: 0.8px; margin: 16px 0 6px; padding: 6px 8px; background: #fdf5f5; border-left: 3px solid #8B0000; }
+  .detail-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .detail-table td { padding: 4px 8px; border-bottom: 1px solid #f0f0f0; }
+  .detail-table td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .detail-table td.indent { padding-left: 24px; color: #666; font-size: 12px; }
+  .detail-table tr.subtotal td { font-weight: 700; }
+  .detail-table tr.total-row td { font-weight: 800; border-top: 2px solid #8B0000; border-bottom: 2px solid #8B0000; background: #fdf5f5; }
+  .detail-table .revenue { color: #1a7a1a; }
+  .detail-table .expense { color: #c44; }
+
+  /* Chart Section */
+  .chart-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid #eee; }
+  .chart-title { font-size: 13px; font-weight: 700; color: #555; text-align: center; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .chart-area { display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap; }
+  .chart-donut { flex-shrink: 0; }
+  .chart-legend { font-size: 13px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .legend-swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+
+  /* Data Note */
+  .data-note { background: #fffbe6; border: 1px solid #ffe58f; border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; font-size: 13px; color: #8a6d00; }
+  .data-note strong { color: #665200; }
+
+  /* Footer */
   .footer { text-align: center; padding: 24px; color: #999; font-size: 12px; }
   .footer a { display: inline-block; background: #8B0000; color: white !important; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(139,0,0,0.3); }
   .footer a:hover { background: #a00; }
-  @media (max-width: 768px) { .sites-grid { grid-template-columns: 1fr; } .metrics-grid { grid-template-columns: repeat(2, 1fr); } .total-item .total-value { font-size: 24px; } }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .detail-columns { grid-template-columns: 1fr; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .totals-bar { grid-template-columns: repeat(2, 1fr); }
+    .total-item .total-value { font-size: 20px; }
+  }
+  @media print {
+    body { background: white; }
+    .site-card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+    .hero { background: #8B0000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
 </style>
 </head>
 <body>
 <div class="hero">
   <h1>UCWH Weekly Sales Report</h1>
-  <div class="date-range">March 01 – March 07, 2026</div>
+  <div class="date-range">March 01 &ndash; March 07, 2026</div>
+  <div class="subtitle">Franchise Partner &mdash; Weekly Detailed Breakout</div>
 </div>
 <div class="container">
+
+  <!-- Aggregate KPI Bar -->
   <div class="totals-bar">
     <div class="total-item"><div class="total-label">Total Cars</div><div class="total-value">4,452</div></div>
     <div class="total-item"><div class="total-label">Gross Revenue</div><div class="total-value">$43,025.67</div></div>
-    <div class="total-item"><div class="total-label">App Revenue</div><div class="total-value">$26,040.07</div></div>
     <div class="total-item"><div class="total-label">$/Car</div><div class="total-value">$9.66</div></div>
-    <div class="total-item"><div class="total-label">Net Subs</div><div class="total-value">$24,695.93</div></div>
-    <div class="total-item"><div class="total-label">Total Fees</div><div class="total-value">$3,397.98</div></div>
+    <div class="total-item"><div class="total-label">Net Club &amp; PpW</div><div class="total-value">$25,749.93</div></div>
+    <div class="total-item"><div class="total-label">Total Expenses</div><div class="total-value">$3,208.02</div></div>
+    <div class="total-item"><div class="total-label">Distribution</div><div class="total-value">$22,856.71</div></div>
   </div>
-  <div class="sites-grid">
-    
+
+  <div class="data-note">
+    <strong>Note:</strong> This report shows the <em>Weekly Detailed Breakout</em> for each site, matching the fields from the Tommy&rsquo;s Express Franchise Partner Unlimited Club Distribution report.
+    YTD Totals, Location Rankings, Crossover Washing details, and Weekly Analysis trends are available in the full PDF from Tommy&rsquo;s and are not yet included in this automated version.
+  </div>
+
+  <!-- Per-Site Detailed Breakouts -->
+  
         <div class="site-card">
-          <div class="site-header">Houston FM 1960 <span class="site-abbr">(TX160)</span></div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Car Count</span><span class="metric-value">1,895</span></div>
-            <div class="metric"><span class="metric-label">Gross Revenue</span><span class="metric-value revenue">$17,901.25</span></div>
-            <div class="metric"><span class="metric-label">App Revenue</span><span class="metric-value revenue">$9,669.31</span></div>
-            <div class="metric"><span class="metric-label">$/Car</span><span class="metric-value">$9.45</span></div>
-            <div class="metric"><span class="metric-label">Distribution</span><span class="metric-value revenue">$8,389.99</span></div>
-            <div class="metric"><span class="metric-label">Expenses</span><span class="metric-value expense">$1,279.32</span></div>
+          <div class="site-header">
+            <div class="site-title">Houston FM 1960 <span class="site-abbr">(TX160)</span></div>
           </div>
-          <div class="section-title">Payment Breakdown</div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Credit Card</span><span class="metric-value">$7,046.97</span></div>
-            <div class="metric"><span class="metric-label">Cash</span><span class="metric-value">$1,184.97</span></div>
-            <div class="metric"><span class="metric-label">CC % of Revenue</span><span class="metric-value">39.4%</span></div>
+
+          <!-- KPI Summary Row -->
+          <div class="kpi-row">
+            <div class="kpi"><div class="kpi-label">Gross Revenue</div><div class="kpi-value">$17,901.25</div></div>
+            <div class="kpi"><div class="kpi-label">$/Car</div><div class="kpi-value">$9.45</div></div>
+            <div class="kpi"><div class="kpi-label">Expenses</div><div class="kpi-value expense">$1,279.32</div></div>
+            <div class="kpi"><div class="kpi-label">Distribution</div><div class="kpi-value revenue">$8,389.99</div></div>
           </div>
-          <div class="section-title">Subscriptions</div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Club Payments</span><span class="metric-value">282</span></div>
-            <div class="metric"><span class="metric-label">Gross Sub $</span><span class="metric-value revenue">$9,261.93</span></div>
-            <div class="metric"><span class="metric-label">Sub Refunds</span><span class="metric-value expense">$73.98</span></div>
-            <div class="metric"><span class="metric-label">PPW Count</span><span class="metric-value">33</span></div>
-            <div class="metric"><span class="metric-label">Gross PPW</span><span class="metric-value revenue">$310.00</span></div>
+
+          <!-- Two-Column Detail Layout -->
+          <div class="detail-columns">
+            <!-- LEFT COLUMN -->
+            <div class="detail-col">
+              <div class="detail-section-title">Gross Revenue (Less Sales Tax)</div>
+              <table class="detail-table">
+                <tr><td>Credit Card Sales</td><td class="num">$7,046.97</td></tr>
+                <tr><td>Cash Sales</td><td class="num">$1,184.97</td></tr>
+                <tr><td>Vending Machine Sales</td><td class="num">$0.00</td></tr>
+                <tr><td>Other Sales</td><td class="num">$0.00</td></tr>
+                <tr><td>Net Weekly Club &amp; PpW Subscriptions</td><td class="num">$9,477.95</td></tr>
+                <tr><td>Weekly Club &amp; PpW Sales Tax Collected</td><td class="num">$0.00</td></tr>
+                <tr><td>Sales Tax</td><td class="num">$0.00</td></tr>
+              </table>
+
+              <div class="detail-section-title">Gift Cards Activated</div>
+              <table class="detail-table">
+                <tr class="subtotal"><td>Total Activated</td><td class="num">$39.98</td></tr>
+                <tr><td class="indent">Quality 1 Month</td><td class="num">2</td></tr>
+                <tr><td class="indent">Quality 3 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 1 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 3 Month</td><td class="num">0</td></tr>
+              </table>
+
+              <div class="detail-section-title">Gift Cards Redeemed</div>
+              <table class="detail-table">
+                <tr class="subtotal"><td>Total Redeemed</td><td class="num">$39.98</td></tr>
+                <tr><td class="indent">Quality 1 Month</td><td class="num">2</td></tr>
+                <tr><td class="indent">Quality 3 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 1 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 3 Month</td><td class="num">0</td></tr>
+              </table>
+
+              <div class="detail-section-title">Gross Revenue Total</div>
+              <table class="detail-table">
+                <tr class="total-row"><td>Gross Revenue Total</td><td class="num">$17,901.25</td></tr>
+              </table>
+
+              <div class="detail-section-title">Dollar Per Car</div>
+              <table class="detail-table">
+                <tr><td>Gross Revenue</td><td class="num">$17,901.25</td></tr>
+                <tr><td>Car Count</td><td class="num">1,895</td></tr>
+                <tr class="total-row"><td>$/Car</td><td class="num">$9.45</td></tr>
+              </table>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="detail-col">
+              <div class="detail-section-title">Weekly Subscriptions Totals</div>
+              <table class="detail-table">
+                <tr><td>No. of Payments Collected</td><td class="num">282</td></tr>
+                <tr><td>Gross Weekly Subscription Payments</td><td class="num">$9,261.93</td></tr>
+                <tr><td>Gross Weekly Subscription Refunds</td><td class="num">$73.98</td></tr>
+                <tr><td>Gross Weekly Pay per Wash Payments</td><td class="num">$310.00</td></tr>
+                <tr><td>Gross Weekly Pay per Wash Refunds</td><td class="num">$20.00</td></tr>
+                <tr><td>Crossover Wash Totals</td><td class="num">$243.35</td></tr>
+                <tr><td>Disputed Charges Lost</td><td class="num">$51.99</td></tr>
+                <tr class="total-row"><td>Net Weekly Club Subscription &amp; PpW Total</td><td class="num">$9,477.95</td></tr>
+              </table>
+
+              <div class="detail-section-title">Expenses</div>
+              <table class="detail-table">
+                <tr><td>Weekly Subscription Credit Card Fees</td><td class="num">$232.33</td></tr>
+                <tr><td>Weekly Other Credit Card Fees</td><td class="num">$53.93</td></tr>
+                <tr><td>Technology Fee</td><td class="num">$98.00</td></tr>
+                <tr><td>Brand Development</td><td class="num">$179.01</td></tr>
+                <tr><td>Royalty</td><td class="num">$716.05</td></tr>
+                <tr class="total-row"><td>Expense Total</td><td class="num">$1,279.32</td></tr>
+              </table>
+
+              <div class="detail-section-title">Distribution Total</div>
+              <table class="detail-table">
+                <tr><td>Weekly Club</td><td class="num">$9,477.95</td></tr>
+                <tr><td>Expenses</td><td class="num expense">$1,279.32</td></tr>
+                <tr><td>Tommy Gift Card Sales</td><td class="num">$39.98</td></tr>
+                <tr><td>Tommy Gift Card Redemptions</td><td class="num">$39.98</td></tr>
+                <tr class="total-row"><td>Distribution Total</td><td class="num revenue">$8,389.99</td></tr>
+              </table>
+            </div>
           </div>
-          <div class="section-title">Fees & Deductions</div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Sub CC Fees</span><span class="metric-value expense">$232.33</span></div>
-            <div class="metric"><span class="metric-label">Technology</span><span class="metric-value expense">$98.00</span></div>
-            <div class="metric"><span class="metric-label">Brand Dev</span><span class="metric-value expense">$179.01</span></div>
-            <div class="metric"><span class="metric-label">Royalty</span><span class="metric-value expense">$716.05</span></div>
-            <div class="metric"><span class="metric-label">Stripe Fees</span><span class="metric-value expense">$53.93</span></div>
-            <div class="metric"><span class="metric-label">Disputes</span><span class="metric-value expense">$51.99</span></div>
+
+          <!-- Revenue Percentages Chart -->
+          <div class="chart-section">
+            <div class="chart-title">Weekly Revenue Percentages</div>
+            <div class="chart-area">
+              <div class="chart-donut">
+                <svg viewBox="0 0 120 120" width="140" height="140" style="display:block;margin:0 auto;">
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#4472C4" stroke-width="18"
+                stroke-dasharray="100.0 151.3" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#ED7D31" stroke-width="18"
+                stroke-dasharray="16.8 234.5" stroke-dashoffset="-100.0" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#A5A5A5" stroke-width="18"
+                stroke-dasharray="134.5 116.8" stroke-dashoffset="-116.8" transform="rotate(-90 60 60)"/>
+            </svg>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item"><span class="legend-swatch" style="background:#4472C4;"></span> Credit Card Sales <strong>40%</strong></div>
+                <div class="legend-item"><span class="legend-swatch" style="background:#ED7D31;"></span> Cash Sales <strong>7%</strong></div>
+                <div class="legend-item"><span class="legend-swatch" style="background:#A5A5A5;"></span> Net Club &amp; PpW Subscriptions <strong>54%</strong></div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="site-card">
-          <div class="site-header">Houston El Camino <span class="site-abbr">(TX190)</span></div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Car Count</span><span class="metric-value">1,565</span></div>
-            <div class="metric"><span class="metric-label">Gross Revenue</span><span class="metric-value revenue">$15,362.42</span></div>
-            <div class="metric"><span class="metric-label">App Revenue</span><span class="metric-value revenue">$8,858.77</span></div>
-            <div class="metric"><span class="metric-label">$/Car</span><span class="metric-value">$9.82</span></div>
-            <div class="metric"><span class="metric-label">Distribution</span><span class="metric-value revenue">$7,759.58</span></div>
-            <div class="metric"><span class="metric-label">Expenses</span><span class="metric-value expense">$1,123.85</span></div>
+          <div class="site-header">
+            <div class="site-title">Houston El Camino <span class="site-abbr">(TX190)</span></div>
           </div>
-          <div class="section-title">Payment Breakdown</div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Credit Card</span><span class="metric-value">$5,241.99</span></div>
-            <div class="metric"><span class="metric-label">Cash</span><span class="metric-value">$1,237.00</span></div>
-            <div class="metric"><span class="metric-label">CC % of Revenue</span><span class="metric-value">34.1%</span></div>
+
+          <!-- KPI Summary Row -->
+          <div class="kpi-row">
+            <div class="kpi"><div class="kpi-label">Gross Revenue</div><div class="kpi-value">$15,362.42</div></div>
+            <div class="kpi"><div class="kpi-label">$/Car</div><div class="kpi-value">$9.82</div></div>
+            <div class="kpi"><div class="kpi-label">Expenses</div><div class="kpi-value expense">$1,123.85</div></div>
+            <div class="kpi"><div class="kpi-label">Distribution</div><div class="kpi-value revenue">$7,759.58</div></div>
           </div>
-          <div class="section-title">Subscriptions</div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Club Payments</span><span class="metric-value">238</span></div>
-            <div class="metric"><span class="metric-label">Gross Sub $</span><span class="metric-value revenue">$8,065.43</span></div>
-            <div class="metric"><span class="metric-label">Sub Refunds</span><span class="metric-value expense">$49.98</span></div>
-            <div class="metric"><span class="metric-label">PPW Count</span><span class="metric-value">49</span></div>
-            <div class="metric"><span class="metric-label">Gross PPW</span><span class="metric-value revenue">$705.00</span></div>
+
+          <!-- Two-Column Detail Layout -->
+          <div class="detail-columns">
+            <!-- LEFT COLUMN -->
+            <div class="detail-col">
+              <div class="detail-section-title">Gross Revenue (Less Sales Tax)</div>
+              <table class="detail-table">
+                <tr><td>Credit Card Sales</td><td class="num">$5,241.99</td></tr>
+                <tr><td>Cash Sales</td><td class="num">$1,237.00</td></tr>
+                <tr><td>Vending Machine Sales</td><td class="num">$0.00</td></tr>
+                <tr><td>Other Sales</td><td class="num">$0.00</td></tr>
+                <tr><td>Net Weekly Club &amp; PpW Subscriptions</td><td class="num">$8,720.45</td></tr>
+                <tr><td>Weekly Club &amp; PpW Sales Tax Collected</td><td class="num">$0.00</td></tr>
+                <tr><td>Sales Tax</td><td class="num">$0.00</td></tr>
+              </table>
+
+              <div class="detail-section-title">Gift Cards Activated</div>
+              <table class="detail-table">
+                <tr class="subtotal"><td>Total Activated</td><td class="num">$0.00</td></tr>
+                <tr><td class="indent">Quality 1 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Quality 3 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 1 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 3 Month</td><td class="num">0</td></tr>
+              </table>
+
+              <div class="detail-section-title">Gift Cards Redeemed</div>
+              <table class="detail-table">
+                <tr class="subtotal"><td>Total Redeemed</td><td class="num">$24.66</td></tr>
+                <tr><td class="indent">Quality 1 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Quality 3 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 1 Month</td><td class="num">1</td></tr>
+                <tr><td class="indent">Works 3 Month</td><td class="num">0</td></tr>
+              </table>
+
+              <div class="detail-section-title">Gross Revenue Total</div>
+              <table class="detail-table">
+                <tr class="total-row"><td>Gross Revenue Total</td><td class="num">$15,362.42</td></tr>
+              </table>
+
+              <div class="detail-section-title">Dollar Per Car</div>
+              <table class="detail-table">
+                <tr><td>Gross Revenue</td><td class="num">$15,362.42</td></tr>
+                <tr><td>Car Count</td><td class="num">1,565</td></tr>
+                <tr class="total-row"><td>$/Car</td><td class="num">$9.82</td></tr>
+              </table>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="detail-col">
+              <div class="detail-section-title">Weekly Subscriptions Totals</div>
+              <table class="detail-table">
+                <tr><td>No. of Payments Collected</td><td class="num">238</td></tr>
+                <tr><td>Gross Weekly Subscription Payments</td><td class="num">$8,065.43</td></tr>
+                <tr><td>Gross Weekly Subscription Refunds</td><td class="num">$49.98</td></tr>
+                <tr><td>Gross Weekly Pay per Wash Payments</td><td class="num">$705.00</td></tr>
+                <tr><td>Gross Weekly Pay per Wash Refunds</td><td class="num">$0.00</td></tr>
+                <tr><td>Crossover Wash Totals</td><td class="num">$190.31</td></tr>
+                <tr><td>Disputed Charges Lost</td><td class="num">$51.99</td></tr>
+                <tr class="total-row"><td>Net Weekly Club Subscription &amp; PpW Total</td><td class="num">$8,720.45</td></tr>
+              </table>
+
+              <div class="detail-section-title">Expenses</div>
+              <table class="detail-table">
+                <tr><td>Weekly Subscription Credit Card Fees</td><td class="num">$213.07</td></tr>
+                <tr><td>Weekly Other Credit Card Fees</td><td class="num">$44.66</td></tr>
+                <tr><td>Technology Fee</td><td class="num">$98.00</td></tr>
+                <tr><td>Brand Development</td><td class="num">$153.62</td></tr>
+                <tr><td>Royalty</td><td class="num">$614.50</td></tr>
+                <tr class="total-row"><td>Expense Total</td><td class="num">$1,123.85</td></tr>
+              </table>
+
+              <div class="detail-section-title">Distribution Total</div>
+              <table class="detail-table">
+                <tr><td>Weekly Club</td><td class="num">$8,720.45</td></tr>
+                <tr><td>Expenses</td><td class="num expense">$1,123.85</td></tr>
+                <tr><td>Tommy Gift Card Sales</td><td class="num">$0.00</td></tr>
+                <tr><td>Tommy Gift Card Redemptions</td><td class="num">$24.66</td></tr>
+                <tr class="total-row"><td>Distribution Total</td><td class="num revenue">$7,759.58</td></tr>
+              </table>
+            </div>
           </div>
-          <div class="section-title">Fees & Deductions</div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Sub CC Fees</span><span class="metric-value expense">$213.07</span></div>
-            <div class="metric"><span class="metric-label">Technology</span><span class="metric-value expense">$98.00</span></div>
-            <div class="metric"><span class="metric-label">Brand Dev</span><span class="metric-value expense">$153.62</span></div>
-            <div class="metric"><span class="metric-label">Royalty</span><span class="metric-value expense">$614.50</span></div>
-            <div class="metric"><span class="metric-label">Stripe Fees</span><span class="metric-value expense">$44.66</span></div>
-            <div class="metric"><span class="metric-label">Disputes</span><span class="metric-value expense">$51.99</span></div>
+
+          <!-- Revenue Percentages Chart -->
+          <div class="chart-section">
+            <div class="chart-title">Weekly Revenue Percentages</div>
+            <div class="chart-area">
+              <div class="chart-donut">
+                <svg viewBox="0 0 120 120" width="140" height="140" style="display:block;margin:0 auto;">
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#4472C4" stroke-width="18"
+                stroke-dasharray="86.7 164.6" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#ED7D31" stroke-width="18"
+                stroke-dasharray="20.5 230.9" stroke-dashoffset="-86.7" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#A5A5A5" stroke-width="18"
+                stroke-dasharray="144.2 107.1" stroke-dashoffset="-107.1" transform="rotate(-90 60 60)"/>
+            </svg>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item"><span class="legend-swatch" style="background:#4472C4;"></span> Credit Card Sales <strong>34%</strong></div>
+                <div class="legend-item"><span class="legend-swatch" style="background:#ED7D31;"></span> Cash Sales <strong>8%</strong></div>
+                <div class="legend-item"><span class="legend-swatch" style="background:#A5A5A5;"></span> Net Club &amp; PpW Subscriptions <strong>57%</strong></div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="site-card">
-          <div class="site-header">Saratoga Springs <span class="site-abbr">(UT426)</span></div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Car Count</span><span class="metric-value">992</span></div>
-            <div class="metric"><span class="metric-label">Gross Revenue</span><span class="metric-value revenue">$9,762.00</span></div>
-            <div class="metric"><span class="metric-label">App Revenue</span><span class="metric-value revenue">$7,511.99</span></div>
-            <div class="metric"><span class="metric-label">$/Car</span><span class="metric-value">$9.84</span></div>
-            <div class="metric"><span class="metric-label">Distribution</span><span class="metric-value revenue">$6,707.14</span></div>
-            <div class="metric"><span class="metric-label">Expenses</span><span class="metric-value expense">$804.85</span></div>
+          <div class="site-header">
+            <div class="site-title">Saratoga Springs <span class="site-abbr">(UT426)</span></div>
           </div>
-          <div class="section-title">Payment Breakdown</div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Credit Card</span><span class="metric-value">$2,118.01</span></div>
-            <div class="metric"><span class="metric-label">Cash</span><span class="metric-value">$132.00</span></div>
-            <div class="metric"><span class="metric-label">CC % of Revenue</span><span class="metric-value">21.7%</span></div>
+
+          <!-- KPI Summary Row -->
+          <div class="kpi-row">
+            <div class="kpi"><div class="kpi-label">Gross Revenue</div><div class="kpi-value">$9,762.00</div></div>
+            <div class="kpi"><div class="kpi-label">$/Car</div><div class="kpi-value">$9.84</div></div>
+            <div class="kpi"><div class="kpi-label">Expenses</div><div class="kpi-value expense">$804.85</div></div>
+            <div class="kpi"><div class="kpi-label">Distribution</div><div class="kpi-value revenue">$6,707.14</div></div>
           </div>
-          <div class="section-title">Subscriptions</div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Club Payments</span><span class="metric-value">247</span></div>
-            <div class="metric"><span class="metric-label">Gross Sub $</span><span class="metric-value revenue">$7,780.45</span></div>
-            <div class="metric"><span class="metric-label">Sub Refunds</span><span class="metric-value expense">$287.92</span></div>
-            <div class="metric"><span class="metric-label">PPW Count</span><span class="metric-value">7</span></div>
-            <div class="metric"><span class="metric-label">Gross PPW</span><span class="metric-value revenue">$81.00</span></div>
+
+          <!-- Two-Column Detail Layout -->
+          <div class="detail-columns">
+            <!-- LEFT COLUMN -->
+            <div class="detail-col">
+              <div class="detail-section-title">Gross Revenue (Less Sales Tax)</div>
+              <table class="detail-table">
+                <tr><td>Credit Card Sales</td><td class="num">$2,118.01</td></tr>
+                <tr><td>Cash Sales</td><td class="num">$132.00</td></tr>
+                <tr><td>Vending Machine Sales</td><td class="num">$0.00</td></tr>
+                <tr><td>Other Sales</td><td class="num">$0.00</td></tr>
+                <tr><td>Net Weekly Club &amp; PpW Subscriptions</td><td class="num">$7,551.53</td></tr>
+                <tr><td>Weekly Club &amp; PpW Sales Tax Collected</td><td class="num">$0.00</td></tr>
+                <tr><td>Sales Tax</td><td class="num">$0.00</td></tr>
+              </table>
+
+              <div class="detail-section-title">Gift Cards Activated</div>
+              <table class="detail-table">
+                <tr class="subtotal"><td>Total Activated</td><td class="num">$0.00</td></tr>
+                <tr><td class="indent">Quality 1 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Quality 3 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 1 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 3 Month</td><td class="num">0</td></tr>
+              </table>
+
+              <div class="detail-section-title">Gift Cards Redeemed</div>
+              <table class="detail-table">
+                <tr class="subtotal"><td>Total Redeemed</td><td class="num">$0.00</td></tr>
+                <tr><td class="indent">Quality 1 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Quality 3 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 1 Month</td><td class="num">0</td></tr>
+                <tr><td class="indent">Works 3 Month</td><td class="num">0</td></tr>
+              </table>
+
+              <div class="detail-section-title">Gross Revenue Total</div>
+              <table class="detail-table">
+                <tr class="total-row"><td>Gross Revenue Total</td><td class="num">$9,762.00</td></tr>
+              </table>
+
+              <div class="detail-section-title">Dollar Per Car</div>
+              <table class="detail-table">
+                <tr><td>Gross Revenue</td><td class="num">$9,762.00</td></tr>
+                <tr><td>Car Count</td><td class="num">992</td></tr>
+                <tr class="total-row"><td>$/Car</td><td class="num">$9.84</td></tr>
+              </table>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="detail-col">
+              <div class="detail-section-title">Weekly Subscriptions Totals</div>
+              <table class="detail-table">
+                <tr><td>No. of Payments Collected</td><td class="num">247</td></tr>
+                <tr><td>Gross Weekly Subscription Payments</td><td class="num">$7,780.45</td></tr>
+                <tr><td>Gross Weekly Subscription Refunds</td><td class="num">$287.92</td></tr>
+                <tr><td>Gross Weekly Pay per Wash Payments</td><td class="num">$81.00</td></tr>
+                <tr><td>Gross Weekly Pay per Wash Refunds</td><td class="num">$22.00</td></tr>
+                <tr><td>Crossover Wash Totals</td><td class="num">$46.44</td></tr>
+                <tr><td>Disputed Charges Lost</td><td class="num">$85.98</td></tr>
+                <tr class="total-row"><td>Net Weekly Club Subscription &amp; PpW Total</td><td class="num">$7,551.53</td></tr>
+              </table>
+
+              <div class="detail-section-title">Expenses</div>
+              <table class="detail-table">
+                <tr><td>Weekly Subscription Credit Card Fees</td><td class="num">$191.65</td></tr>
+                <tr><td>Weekly Other Credit Card Fees</td><td class="num">$27.10</td></tr>
+                <tr><td>Technology Fee</td><td class="num">$98.00</td></tr>
+                <tr><td>Brand Development</td><td class="num">$97.62</td></tr>
+                <tr><td>Royalty</td><td class="num">$390.48</td></tr>
+                <tr class="total-row"><td>Expense Total</td><td class="num">$804.85</td></tr>
+              </table>
+
+              <div class="detail-section-title">Distribution Total</div>
+              <table class="detail-table">
+                <tr><td>Weekly Club</td><td class="num">$7,551.53</td></tr>
+                <tr><td>Expenses</td><td class="num expense">$804.85</td></tr>
+                <tr><td>Tommy Gift Card Sales</td><td class="num">$0.00</td></tr>
+                <tr><td>Tommy Gift Card Redemptions</td><td class="num">$0.00</td></tr>
+                <tr class="total-row"><td>Distribution Total</td><td class="num revenue">$6,707.14</td></tr>
+              </table>
+            </div>
           </div>
-          <div class="section-title">Fees & Deductions</div>
-          <div class="metrics-grid">
-            <div class="metric"><span class="metric-label">Sub CC Fees</span><span class="metric-value expense">$191.65</span></div>
-            <div class="metric"><span class="metric-label">Technology</span><span class="metric-value expense">$98.00</span></div>
-            <div class="metric"><span class="metric-label">Brand Dev</span><span class="metric-value expense">$97.62</span></div>
-            <div class="metric"><span class="metric-label">Royalty</span><span class="metric-value expense">$390.48</span></div>
-            <div class="metric"><span class="metric-label">Stripe Fees</span><span class="metric-value expense">$27.10</span></div>
-            <div class="metric"><span class="metric-label">Disputes</span><span class="metric-value expense">$85.98</span></div>
+
+          <!-- Revenue Percentages Chart -->
+          <div class="chart-section">
+            <div class="chart-title">Weekly Revenue Percentages</div>
+            <div class="chart-area">
+              <div class="chart-donut">
+                <svg viewBox="0 0 120 120" width="140" height="140" style="display:block;margin:0 auto;">
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#4472C4" stroke-width="18"
+                stroke-dasharray="54.3 197.0" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#ED7D31" stroke-width="18"
+                stroke-dasharray="3.4 247.9" stroke-dashoffset="-54.3" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#A5A5A5" stroke-width="18"
+                stroke-dasharray="193.6 57.7" stroke-dashoffset="-57.7" transform="rotate(-90 60 60)"/>
+            </svg>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item"><span class="legend-swatch" style="background:#4472C4;"></span> Credit Card Sales <strong>22%</strong></div>
+                <div class="legend-item"><span class="legend-swatch" style="background:#ED7D31;"></span> Cash Sales <strong>1%</strong></div>
+                <div class="legend-item"><span class="legend-swatch" style="background:#A5A5A5;"></span> Net Club &amp; PpW Subscriptions <strong>77%</strong></div>
+              </div>
+            </div>
           </div>
         </div>
-  </div>
+
 </div>
 <div class="footer">
   <a href="Weekly_Sales_Report_2026-03-01_to_2026-03-07.csv" download>&#x1f4e5; Download CSV for Accounting</a><br><br>
-  Generated 2026-03-13 02:49 PM &bull; Source: Tommy Manager Power BI &mdash; Multi-Sales Report (Site Breakout) &bull; UCWH Automated Reports
+  Generated 2026-03-16 07:43 AM &bull; Source: Tommy Manager Power BI &mdash; Multi-Sales Report (Site Breakout) &bull; UCWH Automated Reports
 </div>
 </body>
 </html>
