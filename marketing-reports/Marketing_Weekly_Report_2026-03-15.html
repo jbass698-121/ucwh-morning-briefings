@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCWH Weekly Marketing Report — Mar 15, 2026</title>
+<style>
+  :root {
+    --dark: #1a1a2e;
+    --accent: #e94560;
+    --accent2: #0f3460;
+    --light: #f8f9fa;
+    --mid: #e9ecef;
+    --text: #212529;
+    --success: #28a745;
+    --warn: #ffc107;
+    --danger: #dc3545;
+    --info: #17a2b8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--text); background: var(--light); line-height: 1.6; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--accent2) 100%);
+    color: white; padding: 50px 40px; text-align: center;
+  }
+  .hero h1 { font-size: 2.4em; margin-bottom: 8px; letter-spacing: -1px; }
+  .hero .subtitle { font-size: 1.1em; opacity: 0.85; }
+  .hero .period { margin-top: 15px; font-size: 1em; opacity: 0.7; padding: 6px 20px; border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; display: inline-block; }
+  .hero .meta { margin-top: 12px; font-size: 0.85em; opacity: 0.6; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 30px 25px; }
+
+  /* KPI Cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 25px 0; }
+  .kpi-card {
+    background: white; border-radius: 10px; padding: 20px; text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-top: 4px solid var(--accent2);
+  }
+  .kpi-card.danger { border-top-color: var(--danger); }
+  .kpi-card.warn { border-top-color: var(--warn); }
+  .kpi-card.success { border-top-color: var(--success); }
+  .kpi-card .value { font-size: 2em; font-weight: 700; color: var(--dark); }
+  .kpi-card .label { font-size: 0.85em; color: #666; margin-top: 4px; }
+  .kpi-card .delta { font-size: 0.8em; margin-top: 6px; font-weight: 600; }
+  .delta-up { color: var(--success); }
+  .delta-down { color: var(--danger); }
+  .delta-neutral { color: #888; }
+
+  /* Sections */
+  .section { margin-bottom: 35px; }
+  .section-header {
+    background: white; border-radius: 12px 12px 0 0; padding: 20px 25px;
+    border-left: 5px solid var(--accent); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  .section-header h2 { font-size: 1.5em; color: var(--dark); margin: 0; }
+  .section-header p { color: #666; margin-top: 4px; font-size: 0.9em; }
+  .section-body {
+    background: white; border-radius: 0 0 12px 12px; padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 1px;
+  }
+  .section-body p { margin-bottom: 12px; }
+  .section-body h3 { color: var(--accent2); margin: 20px 0 10px; font-size: 1.15em; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+  th { background: var(--accent2); color: white; padding: 10px 14px; text-align: left; font-size: 0.85em; font-weight: 600; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--mid); font-size: 0.9em; }
+  .row-alt { background: #f8f9fa; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Status badges */
+  .status-green { background: #d4edda; color: #155724; padding: 3px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; display: inline-block; }
+  .status-yellow { background: #fff3cd; color: #856404; padding: 3px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; display: inline-block; }
+  .status-red { background: #f8d7da; color: #721c24; padding: 3px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; display: inline-block; }
+
+  /* Tags */
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.78em; font-weight: 600; }
+  .tag-core { background: #e3f2fd; color: #1565c0; }
+  .tag-brand { background: #e8f5e9; color: #2e7d32; }
+  .tag-coloc { background: #fff3e0; color: #e65100; }
+  .tag-irrel { background: #fce4ec; color: #c62828; }
+
+  /* Priority badges */
+  .pri-badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 0.85em; }
+  .pri-red { background: #f8d7da; color: #721c24; }
+  .pri-yellow { background: #fff3cd; color: #856404; }
+  .pri-gray { background: #e2e3e5; color: #383d41; }
+
+  /* Trend arrows */
+  .trend-up { color: var(--success); font-weight: 700; }
+  .trend-down { color: var(--danger); font-weight: 700; }
+
+  /* Alert banner */
+  .alert-banner {
+    background: linear-gradient(135deg, var(--accent), #d63447);
+    color: white; padding: 18px 25px; border-radius: 10px; margin-bottom: 20px;
+  }
+  .alert-banner h3 { margin-bottom: 6px; font-size: 1.1em; }
+  .alert-banner p { opacity: 0.92; font-size: 0.92em; }
+
+  /* Benchmark scorecard */
+  .scorecard {
+    display: flex; align-items: center; gap: 15px;
+    background: white; padding: 20px; border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin: 15px 0;
+  }
+  .score-circle {
+    width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 1.8em; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .score-good { background: linear-gradient(135deg, var(--success), #218838); }
+  .score-mixed { background: linear-gradient(135deg, var(--warn), #e0a800); }
+  .score-poor { background: linear-gradient(135deg, var(--danger), #c82333); }
+
+  /* Site dot indicator */
+  .site-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+  /* Site Cards (per-site review + GBP breakdowns) */
+  .site-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; margin: 20px 0; }
+  .site-card {
+    background: white; border-radius: 12px; border-top: 4px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06); overflow: hidden;
+  }
+  .site-card-header { padding: 18px 20px 10px; display: flex; justify-content: space-between; align-items: baseline; }
+  .site-card-title { font-weight: 700; font-size: 1.05em; color: var(--dark); }
+  .site-card-rating { font-size: 1.2em; font-weight: 700; color: var(--dark); }
+  .site-card-delta { font-size: 0.75em; font-weight: 600; }
+  .site-card-body { padding: 0 20px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  .site-card-body h4 { font-size: 0.85em; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Star distribution bars */
+  .star-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .star-label { font-size: 0.8em; width: 28px; text-align: right; color: #666; }
+  .star-bar-bg { flex: 1; height: 14px; background: #eee; border-radius: 7px; overflow: hidden; }
+  .star-bar-fill { height: 100%; border-radius: 7px; transition: width 0.3s; }
+  .star-count { font-size: 0.8em; width: 20px; color: #888; }
+
+  /* Platform breakdown */
+  .plat-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; font-size: 0.88em; }
+  .plat-label { color: #444; }
+  .plat-count { font-weight: 600; color: var(--dark); }
+  .comp-badge { margin-top: 10px; padding: 8px 12px; background: var(--light); border-radius: 8px; font-size: 0.85em; }
+
+  /* Mini KPI grid (inside site cards) */
+  .mini-kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
+  .mini-kpi { text-align: center; padding: 8px; background: var(--light); border-radius: 8px; }
+  .mini-val { font-size: 1.3em; font-weight: 700; color: var(--dark); }
+  .mini-label { font-size: 0.7em; color: #888; text-transform: uppercase; }
+
+  /* Maps vs Search bar */
+  .maps-search-bar { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+  .bar-label { font-size: 0.72em; color: #666; white-space: nowrap; }
+  .bar-bg { flex: 1; height: 16px; background: #eee; border-radius: 8px; overflow: hidden; display: flex; }
+  .bar-fill-maps { height: 100%; background: var(--accent2); }
+  .bar-fill-search { height: 100%; background: var(--info); }
+
+  /* Search term rows in site cards */
+  .term-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 0.85em; }
+  .term-name { flex: 1; color: #444; }
+  .term-imp { font-weight: 600; color: var(--dark); }
+  .muted { color: #999; font-size: 0.85em; }
+
+  /* Footer */
+  .footer {
+    background: var(--dark); color: rgba(255,255,255,0.7); padding: 30px; text-align: center;
+    font-size: 0.85em; margin-top: 40px;
+  }
+  .footer strong { color: white; }
+
+  @media (max-width: 768px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero h1 { font-size: 1.8em; }
+    .site-cards { grid-template-columns: 1fr; }
+    .site-card-body { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <h1>UCWH Weekly Marketing Report</h1>
+  <div class="subtitle">Tommy's Express Car Wash — Yext Performance Analysis</div>
+  <div class="period">March 9, 2026 – March 15, 2026</div>
+  <div class="meta">Account: 3138077 &bull; Locations: TX190 (ECR), TX160 (FM 1960), UT426 (Saratoga Springs) &bull; Generated: March 16, 2026</div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════ KPI CARDS ═══════════════ -->
+<div class="kpi-grid">
+  <div class="kpi-card success">
+    <div class="value">4.51★</div>
+    <div class="label">Average Rating</div>
+    <div class="delta delta-up">0.00 vs prior</div>
+  </div>
+  <div class="kpi-card success">
+    <div class="value">14</div>
+    <div class="label">New Reviews</div>
+    <div class="delta delta-up">0% WoW</div>
+  </div>
+  <div class="kpi-card danger">
+    <div class="value">104h</div>
+    <div class="label">Avg Response Time</div>
+    <div class="delta delta-down">0 hrs vs prior</div>
+  </div>
+  <div class="kpi-card warn">
+    <div class="value">93%</div>
+    <div class="label">Response Rate</div>
+    <div class="delta delta-up">0% vs prior</div>
+  </div>
+</div>
+
+<!-- Critical Alert -->
+<div class="alert-banner">
+  <h3>⚠ Critical: Review Response Time at 104 Hours</h3>
+  <p>Industry best practice is under 24 hours. Current response time represents a 433% gap versus benchmark. This is the #1 priority requiring immediate action. Worst offender: Saratoga at 192hrs.</p>
+</div>
+
+<!-- ═══════════════ EXECUTIVE SUMMARY ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Executive Summary</h2>
+    <p>Weekly performance overview with key findings</p>
+  </div>
+  <div class="section-body">
+    <p>This report covers the period <strong>March 9, 2026 – March 15, 2026</strong> for Tommy's Express Car Wash across three locations (TX190, UT426, TX160). Data sourced from Yext Account 3138077 with benchmarking against car wash industry standards.</p>
+    <p>The average rating of <strong>4.51 stars</strong> continues to exceed the industry benchmark of 4.3.
+     Review response time remains at <strong>104 hours</strong>, well above the 24-hour industry best practice — this is the most critical metric requiring immediate improvement.
+     The response rate of <strong>93%</strong> is below the 95%+ target, continuing a declining trend.</p>
+    <p>GBP impressions totaled <strong>2,483</strong> for the week with <strong>500</strong> driving direction requests, indicating healthy local visibility.</p>
+    <p><strong>Site Highlights:</strong> <strong>FM 1960</strong> leads with 4.67★ and 6 reviews. <strong>Saratoga</strong> has a critical response time gap at 192hrs. <strong>Saratoga</strong> response rate at 80% needs attention.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ PERFORMANCE DASHBOARD ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Performance Dashboard</h2>
+    <p>Key metrics vs. industry benchmarks (aggregate across all 3 sites)</p>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead>
+        <tr><th>Metric</th><th>Current</th><th>Benchmark</th><th>Delta</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-alt"><td>Average Rating</td><td class="num">4.51</td><td>4.3 (industry)</td><td>0.00</td><td><span class="status-green">Above Benchmark</span></td></tr>
+        <tr><td>New Reviews (week)</td><td class="num">14</td><td>40-60 (3 loc.)</td><td>0%</td><td><span class="status-green">On Pace</span></td></tr>
+        <tr class="row-alt"><td>Response Rate</td><td class="num">93%</td><td>95%+</td><td>0%</td><td><span class="status-red">Below Benchmark</span></td></tr>
+        <tr><td>Avg Response Time</td><td class="num">104 hrs</td><td><24 hrs</td><td>0 hrs</td><td><span class="status-red">CRITICAL GAP</span></td></tr>
+        <tr class="row-alt"><td>GBP Impressions/wk</td><td class="num">~2,483</td><td>2,000-3,000</td><td>On target</td><td><span class="status-green">Meets Benchmark</span></td></tr>
+        <tr><td>Directions/wk</td><td class="num">~500</td><td>300-500</td><td>On target</td><td><span class="status-green">Meets Benchmark</span></td></tr>
+        <tr class="row-alt"><td>Local Pack/wk</td><td class="num">55</td><td>60-80</td><td>Below</td><td><span class="status-yellow">Below Benchmark</span></td></tr>
+        <tr><td>Website CTR</td><td class="num">2.6%</td><td>5%+</td><td>Below</td><td><span class="status-yellow">Below Target</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ SITE-LEVEL PERFORMANCE (NEW) ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Site-Level Performance Breakdown</h2>
+    <p>Per-location comparison — ratings, reviews, response, GBP visibility</p>
+  </div>
+  <div class="section-body">
+    <p>Side-by-side comparison of all three locations. Color-coded status badges highlight where each site stands against benchmarks.</p>
+    <table>
+      <thead>
+        <tr><th>Site</th><th>Rating</th><th>Reviews</th><th>Resp. Time</th><th>Resp. Rate</th><th>Impressions</th><th>Directions</th><th>CTR</th><th>Local Pack</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-alt">
+      <td><span class="site-dot" style="background:#e94560"></span> El Camino Real (TX190)</td>
+      <td class="num"><span class="status-yellow">4.31★</span></td>
+      <td class="num">3</td>
+      <td class="num"><span class="status-green">12h</span></td>
+      <td class="num"><span class="status-green">100%</span></td>
+      <td class="num">720</td>
+      <td class="num">165</td>
+      <td class="num">3.1%</td>
+      <td class="num">18</td>
+    </tr>
+<tr class="">
+      <td><span class="site-dot" style="background:#0f3460"></span> FM 1960 (TX160)</td>
+      <td class="num"><span class="status-green">4.67★</span></td>
+      <td class="num">6</td>
+      <td class="num"><span class="status-green">8h</span></td>
+      <td class="num"><span class="status-green">100%</span></td>
+      <td class="num">880</td>
+      <td class="num">195</td>
+      <td class="num">2.8%</td>
+      <td class="num">22</td>
+    </tr>
+<tr class="row-alt">
+      <td><span class="site-dot" style="background:#17a2b8"></span> Saratoga Springs (UT426)</td>
+      <td class="num"><span class="status-green">4.55★</span></td>
+      <td class="num">5</td>
+      <td class="num"><span class="status-red">192h</span></td>
+      <td class="num"><span class="status-red">80%</span></td>
+      <td class="num">883</td>
+      <td class="num">140</td>
+      <td class="num">2.0%</td>
+      <td class="num">15</td>
+    </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ REVIEW PERFORMANCE ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Review Performance Analysis</h2>
+    <p>Rating trends, volume, response metrics</p>
+  </div>
+  <div class="section-body">
+    <h3>Rating Trend</h3>
+    <p>The current average rating of <strong>4.51 stars</strong> represents a 0.00-star change versus the prior period. This exceeds the car wash industry benchmark of 4.3 stars.</p>
+
+    <h3>Volume Analysis</h3>
+    <p>This week generated <strong>14 new reviews</strong> across 3 locations (~4.7 per location). This pace is on track to meet the monthly benchmark of 40-60 total reviews. Week-over-week volume is 0%.</p>
+
+    <h3>Response Time (CRITICAL)</h3>
+    <p>The average response time of <strong>104 hours</strong> (4.3 days) remains the most significant performance gap. The industry best practice is under 24 hours, with leading brands targeting under 4 hours.</p>
+    <p>Business impact includes: reduced local search ranking signals, decreased customer trust, lost recovery opportunities (negative reviewers who receive prompt responses are 33% more likely to update their rating), and competitive disadvantage.</p>
+
+    <h3>Response Rate Trend</h3>
+    <p>The response rate continues below target at <strong>93%</strong> (0% vs prior). Best-in-class brands maintain 99%+. The declining trend suggests attention is needed in the review management workflow.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ SITE-LEVEL REVIEW DETAIL (NEW) ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Site-Level Review Detail</h2>
+    <p>Per-location star distribution, platform breakdown, and competitor comparison</p>
+  </div>
+  <div class="section-body">
+    <p>Each card shows a single location's review profile — star distribution, platform sources (Google, Yelp, Facebook, Apple), and how the site's rating compares to local competitors tracked in Yext.</p>
+    <div class="site-cards">
+      <div class="site-card" style="border-top-color:#e94560">
+      <div class="site-card-header">
+        <div class="site-card-title">El Camino Real (TX190)</div>
+        <div class="site-card-rating">4.31★ <span class="site-card-delta delta-up">(+0.00 vs prior)</span></div>
+      </div>
+      <div class="site-card-body">
+        <div class="site-card-col">
+          <h4>Star Distribution</h4>
+          <div class="star-row"><span class="star-label">5★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:100%;background:#e94560"></div></div><span class="star-count">2</span></div>
+<div class="star-row"><span class="star-label">4★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:0%;background:#e94560"></div></div><span class="star-count">0</span></div>
+<div class="star-row"><span class="star-label">3★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:50%;background:#e94560"></div></div><span class="star-count">1</span></div>
+<div class="star-row"><span class="star-label">2★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:0%;background:#e94560"></div></div><span class="star-count">0</span></div>
+<div class="star-row"><span class="star-label">1★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:0%;background:#e94560"></div></div><span class="star-count">0</span></div>
+        </div>
+        <div class="site-card-col">
+          <h4>Platform Breakdown</h4>
+          <div class="plat-row"><span class="plat-label">🔵 Google</span><span class="plat-count">2 (67%)</span></div>
+<div class="plat-row"><span class="plat-label">🔴 Yelp</span><span class="plat-count">0 (0%)</span></div>
+<div class="plat-row"><span class="plat-label">🟦 Facebook</span><span class="plat-count">1 (33%)</span></div>
+<div class="plat-row"><span class="plat-label">🍎 Apple</span><span class="plat-count">0 (0%)</span></div>
+          <div class="comp-badge">vs. Competitors: <strong>4.1★</strong> <span class="delta-up">(+0.21)</span></div>
+        </div>
+      </div>
+    </div>
+<div class="site-card" style="border-top-color:#0f3460">
+      <div class="site-card-header">
+        <div class="site-card-title">FM 1960 (TX160)</div>
+        <div class="site-card-rating">4.67★ <span class="site-card-delta delta-up">(+0.00 vs prior)</span></div>
+      </div>
+      <div class="site-card-body">
+        <div class="site-card-col">
+          <h4>Star Distribution</h4>
+          <div class="star-row"><span class="star-label">5★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:100%;background:#0f3460"></div></div><span class="star-count">4</span></div>
+<div class="star-row"><span class="star-label">4★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:25%;background:#0f3460"></div></div><span class="star-count">1</span></div>
+<div class="star-row"><span class="star-label">3★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:25%;background:#0f3460"></div></div><span class="star-count">1</span></div>
+<div class="star-row"><span class="star-label">2★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:0%;background:#0f3460"></div></div><span class="star-count">0</span></div>
+<div class="star-row"><span class="star-label">1★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:0%;background:#0f3460"></div></div><span class="star-count">0</span></div>
+        </div>
+        <div class="site-card-col">
+          <h4>Platform Breakdown</h4>
+          <div class="plat-row"><span class="plat-label">🔵 Google</span><span class="plat-count">4 (67%)</span></div>
+<div class="plat-row"><span class="plat-label">🔴 Yelp</span><span class="plat-count">1 (17%)</span></div>
+<div class="plat-row"><span class="plat-label">🟦 Facebook</span><span class="plat-count">1 (17%)</span></div>
+<div class="plat-row"><span class="plat-label">🍎 Apple</span><span class="plat-count">0 (0%)</span></div>
+          <div class="comp-badge">vs. Competitors: <strong>4.2★</strong> <span class="delta-up">(+0.47)</span></div>
+        </div>
+      </div>
+    </div>
+<div class="site-card" style="border-top-color:#17a2b8">
+      <div class="site-card-header">
+        <div class="site-card-title">Saratoga Springs (UT426)</div>
+        <div class="site-card-rating">4.55★ <span class="site-card-delta delta-up">(+0.00 vs prior)</span></div>
+      </div>
+      <div class="site-card-body">
+        <div class="site-card-col">
+          <h4>Star Distribution</h4>
+          <div class="star-row"><span class="star-label">5★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:100%;background:#17a2b8"></div></div><span class="star-count">3</span></div>
+<div class="star-row"><span class="star-label">4★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:33%;background:#17a2b8"></div></div><span class="star-count">1</span></div>
+<div class="star-row"><span class="star-label">3★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:0%;background:#17a2b8"></div></div><span class="star-count">0</span></div>
+<div class="star-row"><span class="star-label">2★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:33%;background:#17a2b8"></div></div><span class="star-count">1</span></div>
+<div class="star-row"><span class="star-label">1★</span><div class="star-bar-bg"><div class="star-bar-fill" style="width:0%;background:#17a2b8"></div></div><span class="star-count">0</span></div>
+        </div>
+        <div class="site-card-col">
+          <h4>Platform Breakdown</h4>
+          <div class="plat-row"><span class="plat-label">🔵 Google</span><span class="plat-count">3 (60%)</span></div>
+<div class="plat-row"><span class="plat-label">🔴 Yelp</span><span class="plat-count">1 (20%)</span></div>
+<div class="plat-row"><span class="plat-label">🟦 Facebook</span><span class="plat-count">0 (0%)</span></div>
+<div class="plat-row"><span class="plat-label">🍎 Apple</span><span class="plat-count">1 (20%)</span></div>
+          <div class="comp-badge">vs. Competitors: <strong>4★</strong> <span class="delta-up">(+0.55)</span></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ GBP ANALYSIS ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Google Business Profile Analysis</h2>
+    <p>Search terms, brand vs. non-brand, conversion funnel (aggregate)</p>
+  </div>
+  <div class="section-body">
+    <h3>Search Term Breakdown</h3>
+    <p>GBP analytics show <strong>2,483</strong> total impressions for the week. Top search terms by category:</p>
+    <table>
+      <thead>
+        <tr><th>Search Term</th><th>Impressions</th><th>Category</th><th>% of Sample</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-alt">
+    <td>car wash</td>
+    <td class="num">224</td>
+    <td><span class="tag tag-core">Core</span></td>
+    <td class="num">26.1%</td>
+  </tr>
+<tr class="">
+    <td>tommys express car wash</td>
+    <td class="num">171</td>
+    <td><span class="tag tag-brand">Brand</span></td>
+    <td class="num">19.9%</td>
+  </tr>
+<tr class="row-alt">
+    <td>restaurants</td>
+    <td class="num">113</td>
+    <td><span class="tag tag-irrel">Irrelevant</span></td>
+    <td class="num">13.2%</td>
+  </tr>
+<tr class="">
+    <td>car wash near me</td>
+    <td class="num">100</td>
+    <td><span class="tag tag-core">Core</span></td>
+    <td class="num">11.7%</td>
+  </tr>
+<tr class="row-alt">
+    <td>costco wholesale</td>
+    <td class="num">73</td>
+    <td><span class="tag tag-coloc">Co-located</span></td>
+    <td class="num">8.5%</td>
+  </tr>
+<tr class="">
+    <td>walmart</td>
+    <td class="num">41</td>
+    <td><span class="tag tag-irrel">Irrelevant</span></td>
+    <td class="num">4.8%</td>
+  </tr>
+<tr class="row-alt">
+    <td>tommy express car wash</td>
+    <td class="num">41</td>
+    <td><span class="tag tag-brand">Brand</span></td>
+    <td class="num">4.8%</td>
+  </tr>
+<tr class="">
+    <td>the ups store</td>
+    <td class="num">39</td>
+    <td><span class="tag tag-coloc">Co-located</span></td>
+    <td class="num">4.5%</td>
+  </tr>
+<tr class="row-alt">
+    <td>vasa fitness</td>
+    <td class="num">28</td>
+    <td><span class="tag tag-coloc">Co-located</span></td>
+    <td class="num">3.3%</td>
+  </tr>
+<tr class="">
+    <td>tommys car wash</td>
+    <td class="num">28</td>
+    <td><span class="tag tag-brand">Brand</span></td>
+    <td class="num">3.3%</td>
+  </tr>
+      </tbody>
+    </table>
+
+    <h3>Brand vs. Non-Brand</h3>
+    <p>Brand searches account for <strong>240</strong> impressions (28.0%). Core category searches represent <strong>324</strong> (37.8%). Combined relevant share is <strong>65.7%</strong>, while <strong>34.3%</strong> comes from co-located or irrelevant terms. Irrelevant impression share is trending positively.</p>
+
+    <h3>Conversion Funnel</h3>
+    <p><strong>500</strong> driving direction requests from 2,483 impressions (20.1% conversion). Website clicks: <strong>65</strong> (2.6% CTR). Tap-to-call: <strong>50</strong>/week. Website CTR remains below the 5% target — GBP listing enhancement needed.</p>
+
+    <h3>Maps vs. Search</h3>
+    <p>Google Maps impressions (~2,300) vs. Search (~183) show a <strong>13:1 ratio</strong>. This Maps dominance is typical for physical service businesses and reinforces the importance of GBP optimization, photo quality, and review management.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ SITE-LEVEL GBP ANALYTICS (NEW) ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Site-Level GBP Analytics</h2>
+    <p>Per-location impressions, conversion actions, and top search terms</p>
+  </div>
+  <div class="section-body">
+    <p>Per-site GBP performance showing impressions, conversion actions (directions, website, calls), CTR, and how Maps vs. Search traffic breaks down at each location.</p>
+    <div class="site-cards">
+      <div class="site-card" style="border-top-color:#e94560">
+      <div class="site-card-header">
+        <div class="site-card-title">El Camino Real (TX190)</div>
+        <div class="site-card-rating">720 impressions</div>
+      </div>
+      <div class="site-card-body">
+        <div class="site-card-col">
+          <div class="mini-kpi-grid">
+            <div class="mini-kpi"><div class="mini-val">165</div><div class="mini-label">Directions</div></div>
+            <div class="mini-kpi"><div class="mini-val">22</div><div class="mini-label">Website</div></div>
+            <div class="mini-kpi"><div class="mini-val">18</div><div class="mini-label">Calls</div></div>
+            <div class="mini-kpi"><div class="mini-val">3.1%</div><div class="mini-label">CTR</div></div>
+          </div>
+          <div class="maps-search-bar">
+            <div class="bar-label">Maps 92%</div>
+            <div class="bar-bg">
+              <div class="bar-fill-maps" style="width:92%"></div>
+              <div class="bar-fill-search" style="width:8%"></div>
+            </div>
+            <div class="bar-label">Search 8%</div>
+          </div>
+        </div>
+        <div class="site-card-col">
+          <h4>Top Search Terms</h4>
+          <div class="term-row"><span class="term-name">car wash</span><span class="tag tag-core">Core</span><span class="term-imp">85</span></div>
+<div class="term-row"><span class="term-name">tommys express car wash</span><span class="tag tag-brand">Brand</span><span class="term-imp">62</span></div>
+<div class="term-row"><span class="term-name">car wash near me</span><span class="tag tag-core">Core</span><span class="term-imp">38</span></div>
+        </div>
+      </div>
+    </div>
+<div class="site-card" style="border-top-color:#0f3460">
+      <div class="site-card-header">
+        <div class="site-card-title">FM 1960 (TX160)</div>
+        <div class="site-card-rating">880 impressions</div>
+      </div>
+      <div class="site-card-body">
+        <div class="site-card-col">
+          <div class="mini-kpi-grid">
+            <div class="mini-kpi"><div class="mini-val">195</div><div class="mini-label">Directions</div></div>
+            <div class="mini-kpi"><div class="mini-val">25</div><div class="mini-label">Website</div></div>
+            <div class="mini-kpi"><div class="mini-val">20</div><div class="mini-label">Calls</div></div>
+            <div class="mini-kpi"><div class="mini-val">2.8%</div><div class="mini-label">CTR</div></div>
+          </div>
+          <div class="maps-search-bar">
+            <div class="bar-label">Maps 92%</div>
+            <div class="bar-bg">
+              <div class="bar-fill-maps" style="width:92%"></div>
+              <div class="bar-fill-search" style="width:8%"></div>
+            </div>
+            <div class="bar-label">Search 8%</div>
+          </div>
+        </div>
+        <div class="site-card-col">
+          <h4>Top Search Terms</h4>
+          <div class="term-row"><span class="term-name">car wash</span><span class="tag tag-core">Core</span><span class="term-imp">95</span></div>
+<div class="term-row"><span class="term-name">tommys express car wash</span><span class="tag tag-brand">Brand</span><span class="term-imp">70</span></div>
+<div class="term-row"><span class="term-name">car wash near me</span><span class="tag tag-core">Core</span><span class="term-imp">42</span></div>
+        </div>
+      </div>
+    </div>
+<div class="site-card" style="border-top-color:#17a2b8">
+      <div class="site-card-header">
+        <div class="site-card-title">Saratoga Springs (UT426)</div>
+        <div class="site-card-rating">883 impressions</div>
+      </div>
+      <div class="site-card-body">
+        <div class="site-card-col">
+          <div class="mini-kpi-grid">
+            <div class="mini-kpi"><div class="mini-val">140</div><div class="mini-label">Directions</div></div>
+            <div class="mini-kpi"><div class="mini-val">18</div><div class="mini-label">Website</div></div>
+            <div class="mini-kpi"><div class="mini-val">12</div><div class="mini-label">Calls</div></div>
+            <div class="mini-kpi"><div class="mini-val">2.0%</div><div class="mini-label">CTR</div></div>
+          </div>
+          <div class="maps-search-bar">
+            <div class="bar-label">Maps 94%</div>
+            <div class="bar-bg">
+              <div class="bar-fill-maps" style="width:94%"></div>
+              <div class="bar-fill-search" style="width:6%"></div>
+            </div>
+            <div class="bar-label">Search 6%</div>
+          </div>
+        </div>
+        <div class="site-card-col">
+          <h4>Top Search Terms</h4>
+          <div class="term-row"><span class="term-name">car wash</span><span class="tag tag-core">Core</span><span class="term-imp">44</span></div>
+<div class="term-row"><span class="term-name">restaurants</span><span class="tag tag-irrel">Irrelevant</span><span class="term-imp">113</span></div>
+<div class="term-row"><span class="term-name">vasa fitness</span><span class="tag tag-coloc">Co-located</span><span class="term-imp">28</span></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ COUPON USAGE ANALYSIS (NEW) ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Coupon Usage Analysis</h2>
+    <p>Per-site coupon redemptions, discount values, and promotion breakdown</p>
+  </div>
+  <div class="section-body">
+    <div class="kpi-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+      <div class="kpi-card"><div class="value">289</div><div class="label">Total Coupons Redeemed</div></div>
+      <div class="kpi-card"><div class="value">$5,505.36</div><div class="label">Total Discount Value</div></div>
+      <div class="kpi-card"><div class="value">$19.05</div><div class="label">Avg Discount per Coupon</div></div>
+    </div>
+    <h3>Site Comparison</h3>
+    <table>
+      <thead>
+        <tr><th>Site</th><th>Coupons Redeemed</th><th>Total Discount</th><th>Avg Discount</th><th>Share of Total</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-alt"><td><span class="site-dot" style="background:#e94560"></span> El Camino Real (TX190)</td><td class="num">80</td><td class="num">$1,440.47</td><td class="num">$18.01</td><td class="num">27.7%</td></tr>\n<tr class=""><td><span class="site-dot" style="background:#0f3460"></span> FM 1960 (TX160)</td><td class="num">136</td><td class="num">$2,665.22</td><td class="num">$19.60</td><td class="num">47.1%</td></tr>\n<tr class="row-alt"><td><span class="site-dot" style="background:#17a2b8"></span> Saratoga Springs (UT426)</td><td class="num">73</td><td class="num">$1,399.67</td><td class="num">$19.17</td><td class="num">25.3%</td></tr>
+      </tbody>
+    </table>
+    <h3>Promotion Detail by Site</h3>
+    <div class="site-cards">
+      <div class="site-card" style="border-top-color:#e94560">
+      <div class="site-card-header">
+        <div class="site-card-title">El Camino Real (TX190)</div>
+        <div class="site-card-rating">80 coupons &bull; $1,440.47 total discount</div>
+      </div>
+      <div class="site-card-body">
+        <table style="width:100%">
+          <thead><tr><th>Promotion</th><th>Count</th><th>Discount</th><th>Share</th></tr></thead>
+          <tbody><tr class="row-alt">
+        <td>IC2WORKSTX190</td>
+        <td class="num">53</td>
+        <td class="num">$900.47</td>
+        <td class="num">66%</td>
+      </tr>
+<tr class="">
+        <td>HOUSTONMARCH26</td>
+        <td class="num">9</td>
+        <td class="num">$180.00</td>
+        <td class="num">11%</td>
+      </tr>
+<tr class="row-alt">
+        <td>STICKY190</td>
+        <td class="num">6</td>
+        <td class="num">$120.00</td>
+        <td class="num">8%</td>
+      </tr>
+<tr class="">
+        <td>Individual Codes</td>
+        <td class="num">12</td>
+        <td class="num">$240.00</td>
+        <td class="num">15%</td>
+      </tr></tbody>
+        </table>
+      </div>
+    </div>
+<div class="site-card" style="border-top-color:#0f3460">
+      <div class="site-card-header">
+        <div class="site-card-title">FM 1960 (TX160)</div>
+        <div class="site-card-rating">136 coupons &bull; $2,665.22 total discount</div>
+      </div>
+      <div class="site-card-body">
+        <table style="width:100%">
+          <thead><tr><th>Promotion</th><th>Count</th><th>Discount</th><th>Share</th></tr></thead>
+          <tbody><tr class="row-alt">
+        <td>IC2WORKSTX160</td>
+        <td class="num">69</td>
+        <td class="num">$1,172.31</td>
+        <td class="num">51%</td>
+      </tr>
+<tr class="">
+        <td>POLICEFIREMILITARY</td>
+        <td class="num">37</td>
+        <td class="num">$740.00</td>
+        <td class="num">27%</td>
+      </tr>
+<tr class="row-alt">
+        <td>EDWINGREER</td>
+        <td class="num">15</td>
+        <td class="num">$367.96</td>
+        <td class="num">11%</td>
+      </tr>
+<tr class="">
+        <td>HOUSTONMARCH26</td>
+        <td class="num">5</td>
+        <td class="num">$150.97</td>
+        <td class="num">4%</td>
+      </tr>
+<tr class="row-alt">
+        <td>POLLENUCWH</td>
+        <td class="num">3</td>
+        <td class="num">$60.00</td>
+        <td class="num">2%</td>
+      </tr>
+<tr class="">
+        <td>Other Codes</td>
+        <td class="num">7</td>
+        <td class="num">$173.98</td>
+        <td class="num">5%</td>
+      </tr></tbody>
+        </table>
+      </div>
+    </div>
+<div class="site-card" style="border-top-color:#17a2b8">
+      <div class="site-card-header">
+        <div class="site-card-title">Saratoga Springs (UT426)</div>
+        <div class="site-card-rating">73 coupons &bull; $1,399.67 total discount</div>
+      </div>
+      <div class="site-card-body">
+        <table style="width:100%">
+          <thead><tr><th>Promotion</th><th>Count</th><th>Discount</th><th>Share</th></tr></thead>
+          <tbody><tr class="row-alt">
+        <td>STREETCARDS426</td>
+        <td class="num">23</td>
+        <td class="num">$506.00</td>
+        <td class="num">32%</td>
+      </tr>
+<tr class="">
+        <td>IC2WORKSUT426</td>
+        <td class="num">19</td>
+        <td class="num">$265.81</td>
+        <td class="num">26%</td>
+      </tr>
+<tr class="row-alt">
+        <td>IC2SUPER426</td>
+        <td class="num">8</td>
+        <td class="num">$87.92</td>
+        <td class="num">11%</td>
+      </tr>
+<tr class="">
+        <td>IC2ULTIMATE426</td>
+        <td class="num">2</td>
+        <td class="num">$21.98</td>
+        <td class="num">3%</td>
+      </tr>
+<tr class="row-alt">
+        <td>Individual Codes</td>
+        <td class="num">21</td>
+        <td class="num">$517.96</td>
+        <td class="num">29%</td>
+      </tr></tbody>
+        </table>
+      </div>
+    </div>
+    </div>
+    <p class="muted" style="margin-top: 15px; font-size: 0.85em; color: #888;">Source: Tommy Manager API — <code>/integrations/daily-numbers/discounts</code> endpoint. Data period: March 9, 2026 – March 15, 2026.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ MEMBERSHIP & OPPORTUNITIES (NEW) ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Membership & Opportunities</h2>
+    <p>30-day rolling churn rates, member retention, and opportunity capture metrics per site</p>
+  </div>
+  <div class="section-body">
+    <div class="kpi-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px;">
+      <div class="kpi-card warn">
+        <div class="value">12.06%</div>
+        <div class="label">Network Churn Rate (30D)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="value">3,055</div>
+        <div class="label">Total Paying Members</div>
+      </div>
+      <div class="kpi-card danger">
+        <div class="value">419</div>
+        <div class="label">Members Lost (30D)</div>
+      </div>
+      <div class="kpi-card success">
+        <div class="value">20.3%</div>
+        <div class="label">Avg Capture Rate (30D)</div>
+      </div>
+    </div>
+
+    <h3>Site Comparison</h3>
+    <table>
+      <thead>
+        <tr><th>Site</th><th>Paying Subs</th><th>Churn Rate</th><th>Lost (30D)</th><th>Opps Created</th><th>Capture Rate</th><th>Claim Rate</th><th>Convert Rate</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-alt"><td><span class="site-dot" style="background:#e94560"></span> El Camino Real (TX190)</td><td class="num">1,006</td><td class="num"><span class="status-yellow">12.35%</span></td><td class="num">116</td><td class="num">356</td><td class="num"><span class="status-yellow">20.07%</span></td><td class="num">76.65%</td><td class="num">0%</td></tr>\n<tr class=""><td><span class="site-dot" style="background:#0f3460"></span> FM 1960 (TX160)</td><td class="num">1,087</td><td class="num"><span class="status-red">16.84%</span></td><td class="num">176</td><td class="num">504</td><td class="num"><span class="status-yellow">18.38%</span></td><td class="num">64.48%</td><td class="num">0%</td></tr>\n<tr class="row-alt"><td><span class="site-dot" style="background:#17a2b8"></span> Saratoga Springs (UT426)</td><td class="num">962</td><td class="num"><span class="status-yellow">13.53%</span></td><td class="num">127</td><td class="num">272</td><td class="num"><span class="status-yellow">22.39%</span></td><td class="num">51.08%</td><td class="num">0%</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Site Detail</h3>
+    <div class="site-cards">
+      <div class="site-card" style="border-top-color:#e94560">
+      <div class="site-card-header">
+        <div class="site-card-title">El Camino Real (TX190)</div>
+        <div class="site-card-rating">1,006 active members</div>
+      </div>
+      <div class="site-card-body">
+        <div class="site-card-col">
+          <h4>Member Retention (30D)</h4>
+          <div class="mini-kpi-grid">
+            <div class="mini-kpi"><div class="mini-val"><span class="status-yellow">12.35%</span></div><div class="mini-label">Churn Rate</div></div>
+            <div class="mini-kpi"><div class="mini-val">116</div><div class="mini-label">Members Lost</div></div>
+            <div class="mini-kpi"><div class="mini-val">1,006</div><div class="mini-label">Current Subs</div></div>
+            <div class="mini-kpi"><div class="mini-val">939</div><div class="mini-label">30D Ago</div></div>
+          </div>
+        </div>
+        <div class="site-card-col">
+          <h4>Opportunities (30D Avg)</h4>
+          <div class="mini-kpi-grid">
+            <div class="mini-kpi"><div class="mini-val">356</div><div class="mini-label">Opps Created</div></div>
+            <div class="mini-kpi"><div class="mini-val"><span class="status-yellow">20.07%</span></div><div class="mini-label">Capture Rate</div></div>
+            <div class="mini-kpi"><div class="mini-val">76.65%</div><div class="mini-label">Claim Rate</div></div>
+            <div class="mini-kpi"><div class="mini-val">0%</div><div class="mini-label">Convert Rate</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="site-card" style="border-top-color:#0f3460">
+      <div class="site-card-header">
+        <div class="site-card-title">FM 1960 (TX160)</div>
+        <div class="site-card-rating">1,087 active members</div>
+      </div>
+      <div class="site-card-body">
+        <div class="site-card-col">
+          <h4>Member Retention (30D)</h4>
+          <div class="mini-kpi-grid">
+            <div class="mini-kpi"><div class="mini-val"><span class="status-red">16.84%</span></div><div class="mini-label">Churn Rate</div></div>
+            <div class="mini-kpi"><div class="mini-val">176</div><div class="mini-label">Members Lost</div></div>
+            <div class="mini-kpi"><div class="mini-val">1,087</div><div class="mini-label">Current Subs</div></div>
+            <div class="mini-kpi"><div class="mini-val">1,045</div><div class="mini-label">30D Ago</div></div>
+          </div>
+        </div>
+        <div class="site-card-col">
+          <h4>Opportunities (30D Avg)</h4>
+          <div class="mini-kpi-grid">
+            <div class="mini-kpi"><div class="mini-val">504</div><div class="mini-label">Opps Created</div></div>
+            <div class="mini-kpi"><div class="mini-val"><span class="status-yellow">18.38%</span></div><div class="mini-label">Capture Rate</div></div>
+            <div class="mini-kpi"><div class="mini-val">64.48%</div><div class="mini-label">Claim Rate</div></div>
+            <div class="mini-kpi"><div class="mini-val">0%</div><div class="mini-label">Convert Rate</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+<div class="site-card" style="border-top-color:#17a2b8">
+      <div class="site-card-header">
+        <div class="site-card-title">Saratoga Springs (UT426)</div>
+        <div class="site-card-rating">962 active members</div>
+      </div>
+      <div class="site-card-body">
+        <div class="site-card-col">
+          <h4>Member Retention (30D)</h4>
+          <div class="mini-kpi-grid">
+            <div class="mini-kpi"><div class="mini-val"><span class="status-yellow">13.53%</span></div><div class="mini-label">Churn Rate</div></div>
+            <div class="mini-kpi"><div class="mini-val">127</div><div class="mini-label">Members Lost</div></div>
+            <div class="mini-kpi"><div class="mini-val">962</div><div class="mini-label">Current Subs</div></div>
+            <div class="mini-kpi"><div class="mini-val">939</div><div class="mini-label">30D Ago</div></div>
+          </div>
+        </div>
+        <div class="site-card-col">
+          <h4>Opportunities (30D Avg)</h4>
+          <div class="mini-kpi-grid">
+            <div class="mini-kpi"><div class="mini-val">272</div><div class="mini-label">Opps Created</div></div>
+            <div class="mini-kpi"><div class="mini-val"><span class="status-yellow">22.39%</span></div><div class="mini-label">Capture Rate</div></div>
+            <div class="mini-kpi"><div class="mini-val">51.08%</div><div class="mini-label">Claim Rate</div></div>
+            <div class="mini-kpi"><div class="mini-val">0%</div><div class="mini-label">Convert Rate</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <p class="muted" style="margin-top: 15px; font-size: 0.85em; color: #888;">Source: UCWH Dashboard API (<code>/api/multisite/comparison</code>) and weekly data store (<code>window_sales.kpis</code>). All rates are rolling 30-day averages.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ COMPETITIVE POSITIONING ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Competitive Positioning</h2>
+    <p>Benchmark scorecard and competitive analysis</p>
+  </div>
+  <div class="section-body">
+    <div class="scorecard">
+      <div class="score-circle score-mixed">3/6</div>
+      <div>
+        <strong>Benchmark Scorecard</strong><br>
+        Tommy's Express meets <strong>3 of 6</strong> core benchmarks this week.
+        Performance is mixed with critical gaps in response management.
+      </div>
+    </div>
+
+    <h3>Strengths</h3>
+    <p>4.51 average rating exceeding the 4.3 benchmark, strong local penetration with 500 weekly driving directions, meaningful brand equity with 240 brand-specific impressions, FM 1960 standout at 4.67★, Saratoga standout at 4.55★.</p>
+
+    <h3>Weaknesses</h3>
+    <p>response time of 104hrs (benchmark: <24hrs), declining response rate at 93% (benchmark: 95%+), low website CTR at 2.6% (benchmark: 5%+), Saratoga response time critical at 192hrs.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ CORRECTIVE ACTIONS ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Corrective Action Strategies</h2>
+    <p>Prioritized actions with site-specific targeting, timelines, and expected impact</p>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead>
+        <tr><th>Pri</th><th>Issue</th><th>Strategy</th><th>Execution Tactic</th><th>Timeline</th><th>Expected Impact</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+  <td><span class="pri-badge pri-red">P1</span></td>
+  <td>Saratoga: Response Time 192hrs</td>
+  <td>Implement 24hr SLA with escalation</td>
+  <td>Assign daily review owner at Saratoga; draft templates; enable Yext alerts</td>
+  <td>Ongoing</td>
+  <td>Reduce Saratoga from 192hrs to <24hrs</td>
+</tr>
+<tr>
+  <td><span class="pri-badge pri-red">P1</span></td>
+  <td>Saratoga: Response Rate 80%</td>
+  <td>Target 99%+ with no-miss process</td>
+  <td>Daily review monitoring at Saratoga; automation for drafts</td>
+  <td>Ongoing</td>
+  <td>Close 19% gap at Saratoga</td>
+</tr>
+<tr>
+  <td><span class="pri-badge pri-yellow">P2</span></td>
+  <td>Low Website CTR (2.6%)</td>
+  <td>Enhance GBP listing engagement</td>
+  <td>Upload quality photos; weekly Google Posts; add offers</td>
+  <td>4 weeks</td>
+  <td>Increase CTR to 5%+; drive online conversions</td>
+</tr>
+<tr>
+  <td><span class="pri-badge pri-gray">P3</span></td>
+  <td>Local Pack: 55/wk</td>
+  <td>Increase to 75+ through optimization</td>
+  <td>Improve NAP consistency; increase review velocity; structured data</td>
+  <td>8 weeks</td>
+  <td>25-50% increase in Local Pack appearances</td>
+</tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ WEEK-OVER-WEEK TREND ═══════════════ -->
+<div class="section">
+  <div class="section-header">
+    <h2>Week-over-Week Trends</h2>
+    <p>Key metrics vs. prior week</p>
+  </div>
+  <div class="section-body">
+    <table>
+      <thead>
+        <tr><th>Metric</th><th>This Week</th><th>Prior Week</th><th>Change</th><th>Trend</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-alt"><td>Average Rating</td><td class="num">4.51</td><td class="num">4.51</td><td>0.00</td><td><span class="trend-up">▲</span></td></tr>
+        <tr><td>New Reviews</td><td class="num">14</td><td class="num">14</td><td>0%</td><td><span class="trend-up">▲</span></td></tr>
+        <tr class="row-alt"><td>Response Rate</td><td class="num">93%</td><td class="num">93%</td><td>0%</td><td><span class="trend-up">▲</span></td></tr>
+        <tr><td>Avg Response Time</td><td class="num">104 hrs</td><td class="num">104 hrs</td><td>0 hrs</td><td><span class="trend-up">▲</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<div class="footer">
+  <strong>Data:</strong> Yext Account 3138077 (Entity IDs: 1018114631, 1031580753, 1029333377) | Tommy Manager API (Operation IDs: 1473, 1485, 1479) | UCWH Dashboard (churn, opportunities) &bull; <strong>Period:</strong> March 9, 2026 – March 15, 2026 &bull; <strong>Generated:</strong> Monday, March 16, 2026 at 1:15 AM
+  <br>Prepared by Cowork AI &bull; Tommy's Express Car Wash &bull; United Car Wash Holdings
+</div>
+
+</body>
+</html>
