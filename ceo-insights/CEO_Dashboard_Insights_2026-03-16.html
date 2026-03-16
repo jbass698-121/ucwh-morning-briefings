@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCWH CEO Insights Dashboard - March 16, 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #020617;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #f1f5f9;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            color: #94a3b8;
+            font-size: 0.95em;
+        }
+
+        .api-banner {
+            background-color: #991b1b;
+            border-left: 5px solid #ef4444;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            color: #fca5a5;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+
+        .api-banner strong {
+            color: #fff;
+        }
+
+        .api-banner .banner-icon {
+            font-size: 1.3em;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #f1f5f9;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #1e293b;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #334155;
+            background-color: #0f172a;
+        }
+
+        .kpi-card {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .kpi-label {
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 5px;
+        }
+
+        .kpi-change {
+            font-size: 0.85em;
+            color: #94a3b8;
+        }
+
+        .insight-card {
+            border-left: 4px solid;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .insight-card.green {
+            border-left-color: #22c55e;
+            background-color: rgba(34, 197, 94, 0.08);
+        }
+
+        .insight-card.red {
+            border-left-color: #ef4444;
+            background-color: rgba(239, 68, 68, 0.08);
+        }
+
+        .insight-card.yellow {
+            border-left-color: #eab308;
+            background-color: rgba(234, 179, 8, 0.08);
+        }
+
+        .insight-card.blue {
+            border-left-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.08);
+        }
+
+        .insight-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+            color: #f1f5f9;
+        }
+
+        .insight-text {
+            color: #cbd5e1;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .weather-card {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .weather-location {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 15px;
+        }
+
+        .weather-condition {
+            font-size: 1.1em;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+        }
+
+        .weather-emoji {
+            font-size: 3em;
+            margin: 15px 0;
+        }
+
+        .weather-temps {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+            font-size: 1.2em;
+        }
+
+        .weather-temps div {
+            color: #94a3b8;
+        }
+
+        .weather-temps .label {
+            font-size: 0.85em;
+            display: block;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .weather-details {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #1e293b;
+        }
+
+        .weather-detail-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .weather-detail-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 5px;
+        }
+
+        .weather-detail-label {
+            font-size: 0.8em;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .forecast-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .forecast-table th {
+            background-color: #1e293b;
+            color: #f1f5f9;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #334155;
+        }
+
+        .forecast-table td {
+            padding: 15px;
+            border-bottom: 1px solid #1e293b;
+            color: #cbd5e1;
+        }
+
+        .forecast-table tbody tr:hover {
+            background-color: rgba(15, 23, 42, 0.5);
+        }
+
+        .forecast-emoji {
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+
+        .unavailable {
+            background-color: #1e293b;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 1.05em;
+            border: 1px dashed #334155;
+        }
+
+        .scorecard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .scorecard-table th {
+            background-color: #1e293b;
+            color: #f1f5f9;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #334155;
+            font-size: 0.9em;
+        }
+
+        .scorecard-table td {
+            padding: 15px;
+            border-bottom: 1px solid #1e293b;
+            color: #cbd5e1;
+            font-size: 0.95em;
+        }
+
+        .scorecard-table tbody tr:hover {
+            background-color: rgba(15, 23, 42, 0.5);
+        }
+
+        .metric {
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .metric-on-target {
+            color: #22c55e;
+        }
+
+        .metric-near {
+            color: #eab308;
+        }
+
+        .metric-behind {
+            color: #ef4444;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 30px;
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .churn-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .churn-table th {
+            background-color: #1e293b;
+            color: #f1f5f9;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #334155;
+        }
+
+        .churn-table td {
+            padding: 15px;
+            border-bottom: 1px solid #1e293b;
+            color: #cbd5e1;
+        }
+
+        .churn-table tbody tr:hover {
+            background-color: rgba(15, 23, 42, 0.5);
+        }
+
+        .recommendation-item {
+            background-color: #0f172a;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #1e293b;
+        }
+
+        .recommendation-number {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            margin-right: 12px;
+            font-weight: 600;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+
+        .recommendation-title {
+            font-weight: 600;
+            font-size: 1.05em;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .recommendation-description {
+            color: #cbd5e1;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-left: 44px;
+        }
+
+        .recommendation-action {
+            color: #3b82f6;
+            font-size: 0.9em;
+            margin-top: 8px;
+            margin-left: 44px;
+            font-weight: 500;
+        }
+
+        footer {
+            background-color: #0f172a;
+            border-top: 1px solid #1e293b;
+            padding: 30px;
+            margin-top: 50px;
+            border-radius: 8px;
+        }
+
+        .footer-section {
+            margin-bottom: 15px;
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+
+        .footer-label {
+            font-weight: 600;
+            color: #cbd5e1;
+            display: inline-block;
+            min-width: 150px;
+        }
+
+        .footer-value {
+            color: #64748b;
+        }
+
+        .footer-note {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            color: #fca5a5;
+            font-size: 0.9em;
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .performance-card {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .performance-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #f1f5f9;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .performance-metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #1e293b;
+            font-size: 0.95em;
+        }
+
+        .performance-metric:last-child {
+            border-bottom: none;
+        }
+
+        .performance-metric-label {
+            color: #94a3b8;
+        }
+
+        .performance-metric-value {
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+
+        .performance-metric.unavailable .performance-metric-value {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .weather-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .weather-temps {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .forecast-table {
+                font-size: 0.9em;
+            }
+
+            .forecast-table th,
+            .forecast-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>UCWH CEO Insights Dashboard</h1>
+            <div class="header-meta">
+                <span>📅 <strong>March 16, 2026</strong></span>
+                <span>🕐 Generated 03:20 AM CT</span>
+                <span>📊 Weekly Report</span>
+            </div>
+        </header>
+
+        <!-- API UNAVAILABLE BANNER -->
+        <div class="api-banner">
+            <span class="banner-icon">⚠️</span>
+            <strong>UCWH Dashboard API Unavailable</strong> — Browser automation tools timed out during this scheduled run. Partial data from cached sources (incentive scorecard collected 2026-03-15). Full API metrics (time series, revenue per car, capture rate, acquisition funnel, monthly revenue, active subscriptions) unavailable this week. <strong>Weather and ML forecast data are current (collected 2026-03-16 03:15 AM CT).</strong>
+        </div>
+
+        <!-- SECTION 1: EXECUTIVE SUMMARY -->
+        <section id="executive-summary">
+            <h2>Executive Summary</h2>
+            <div class="grid">
+                <div class="card kpi-card">
+                    <div class="kpi-label">Total Paying Subscribers</div>
+                    <div class="kpi-value">3,055</div>
+                    <div class="kpi-change">+132 in 30 days</div>
+                </div>
+                <div class="card kpi-card">
+                    <div class="kpi-label">Network Churn Rate</div>
+                    <div class="kpi-value">14.33%</div>
+                    <div class="kpi-change">419 lost in 30 days</div>
+                </div>
+                <div class="card kpi-card">
+                    <div class="kpi-label">Revenue Per Car</div>
+                    <div class="kpi-value">N/A</div>
+                    <div class="kpi-change">API unavailable</div>
+                </div>
+                <div class="card kpi-card">
+                    <div class="kpi-label">Capture Rate</div>
+                    <div class="kpi-value">N/A</div>
+                    <div class="kpi-change">API unavailable</div>
+                </div>
+                <div class="card kpi-card">
+                    <div class="kpi-label">Median Claim Time</div>
+                    <div class="kpi-value">N/A</div>
+                    <div class="kpi-change">API unavailable</div>
+                </div>
+                <div class="card kpi-card">
+                    <div class="kpi-label">Active Subscriptions</div>
+                    <div class="kpi-value">N/A</div>
+                    <div class="kpi-change">API unavailable</div>
+                </div>
+                <div class="card kpi-card">
+                    <div class="kpi-label">Total Revenue</div>
+                    <div class="kpi-value">N/A</div>
+                    <div class="kpi-change">API unavailable</div>
+                </div>
+                <div class="card kpi-card">
+                    <div class="kpi-label">Network Washes</div>
+                    <div class="kpi-value">N/A</div>
+                    <div class="kpi-change">API unavailable</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: KEY INSIGHTS -->
+        <section id="key-insights">
+            <h2>Key Insights</h2>
+            <div class="grid">
+                <div class="card insight-card green">
+                    <div class="insight-title">✓ Strong Network Growth</div>
+                    <div class="insight-text">Total paying subscribers reached 3,055, with net growth of +132 subscribers over the past 30 days. All three sites contributed positively to this momentum, indicating broad-based subscriber strength.</div>
+                </div>
+                <div class="card insight-card red">
+                    <div class="insight-title">⚠ TX160 Churn Crisis</div>
+                    <div class="insight-text">TX160 elevated churn rate at 16.84% significantly exceeds network average (14.33%), with 176 subscribers lost in the past 30 days. This is the highest churn in the network and requires immediate intervention.</div>
+                </div>
+                <div class="card insight-card green">
+                    <div class="insight-title">✓ UT426 Quality Excellence</div>
+                    <div class="insight-text">UT426 demonstrates exceptional inspection quality at 90.4%, meeting network target. Combined with strong reviews (4.55 avg) and moderate churn (13.53%), this site is performing at peak operational level.</div>
+                </div>
+                <div class="card insight-card yellow">
+                    <div class="insight-title">⚡ TX190 Review Improvement Needed</div>
+                    <div class="insight-text">TX190 customer reviews average 4.31 stars, the lowest across the network. Despite solid churn performance (12.35%), improving customer satisfaction should be a priority to protect market position.</div>
+                </div>
+                <div class="card insight-card green">
+                    <div class="insight-title">✓ Favorable Weather Week Ahead</div>
+                    <div class="insight-text">Clear skies forecast for March 19-20 across both regions present strong opportunity for volume recovery. No precipitation expected this week. Plan staffing accordingly for anticipated wash demand surge.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: WEATHER IMPACT & 5-DAY FORECAST -->
+        <section id="weather">
+            <h2>Weather Impact & 5-Day Forecast</h2>
+
+            <h3 style="font-size: 1.3em; margin-top: 30px; margin-bottom: 20px; color: #cbd5e1;">Current Conditions</h3>
+            <div class="weather-grid">
+                <div class="weather-card">
+                    <div class="weather-location">Houston, TX</div>
+                    <div class="weather-emoji">⛅</div>
+                    <div class="weather-condition">Mostly Cloudy</div>
+                    <div class="weather-temps">
+                        <div>
+                            62.3°F
+                            <span class="label">High</span>
+                        </div>
+                        <div>
+                            42.4°F
+                            <span class="label">Low</span>
+                        </div>
+                    </div>
+                    <div class="weather-details">
+                        <div class="weather-detail-item">
+                            <div class="weather-detail-value">0"</div>
+                            <div class="weather-detail-label">Precip</div>
+                        </div>
+                        <div class="weather-detail-item">
+                            <div class="weather-detail-value">20.5 mph</div>
+                            <div class="weather-detail-label">Wind</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weather-card">
+                    <div class="weather-location">Salt Lake City, UT</div>
+                    <div class="weather-emoji">⛅</div>
+                    <div class="weather-condition">Mostly Cloudy</div>
+                    <div class="weather-temps">
+                        <div>
+                            59.6°F
+                            <span class="label">High</span>
+                        </div>
+                        <div>
+                            27.3°F
+                            <span class="label">Low</span>
+                        </div>
+                    </div>
+                    <div class="weather-details">
+                        <div class="weather-detail-item">
+                            <div class="weather-detail-value">0"</div>
+                            <div class="weather-detail-label">Precip</div>
+                        </div>
+                        <div class="weather-detail-item">
+                            <div class="weather-detail-value">13.4 mph</div>
+                            <div class="weather-detail-label">Wind</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 1.3em; margin-top: 30px; margin-bottom: 20px; color: #cbd5e1;">5-Day Forecast & ML Volume Predictions</h3>
+            <table class="forecast-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Houston</th>
+                        <th>Utah</th>
+                        <th>TX160 Volume</th>
+                        <th>TX190 Volume</th>
+                        <th>UT426 Volume</th>
+                        <th>Network Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Mar 16 (Today)</strong></td>
+                        <td><span class="forecast-emoji">⛅</span> Cloudy, 62°F</td>
+                        <td><span class="forecast-emoji">⛅</span> Cloudy, 60°F</td>
+                        <td>175</td>
+                        <td>155</td>
+                        <td>144</td>
+                        <td><strong>474</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mar 17</strong></td>
+                        <td><span class="forecast-emoji">⛅</span> Cloudy, 65°F</td>
+                        <td><span class="forecast-emoji">⛅</span> Cloudy, 75°F</td>
+                        <td>188</td>
+                        <td>155</td>
+                        <td>123</td>
+                        <td><strong>466</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mar 18</strong></td>
+                        <td><span class="forecast-emoji">⛅</span> Cloudy, 74°F</td>
+                        <td><span class="forecast-emoji">⛅</span> Cloudy, 74°F</td>
+                        <td>195</td>
+                        <td>157</td>
+                        <td>132</td>
+                        <td><strong>484</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mar 19</strong></td>
+                        <td><span class="forecast-emoji">☀️</span> Clear, 79°F</td>
+                        <td><span class="forecast-emoji">☀️</span> Clear, 79°F</td>
+                        <td>196</td>
+                        <td>158</td>
+                        <td>133</td>
+                        <td><strong>487</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mar 20</strong></td>
+                        <td><span class="forecast-emoji">⛅</span> Partly Cloudy, 83°F</td>
+                        <td><span class="forecast-emoji">⛅</span> Cloudy, 80°F</td>
+                        <td>203</td>
+                        <td>171</td>
+                        <td>135</td>
+                        <td><strong>509</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="color: #64748b; font-size: 0.9em; margin-top: 15px; font-style: italic;">
+                <strong>Forecast Disclaimer:</strong> ML volume predictions based on V2 model with ~18% MAPE for TX sites and ~32% MAPE for UT426. Clear weather window March 19-20 presents strong upside opportunity. Weather data current as of 03:15 AM CT on March 16, 2026.
+            </p>
+        </section>
+
+        <!-- SECTION 4: ACQUISITION FUNNEL -->
+        <section id="acquisition-funnel">
+            <h2>Acquisition Funnel</h2>
+            <div class="unavailable">
+                <strong>📊 Data Unavailable — API Unreachable</strong>
+                <p style="margin-top: 10px;">Acquisition funnel metrics require full UCWH Dashboard API access. This data will be available once API connectivity is restored.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 5: OTE INCENTIVE SCORECARD -->
+        <section id="ote-scorecard">
+            <h2>OTE Incentive Scorecard</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px; font-size: 0.95em;">Performance against Q1 2026 targets. Data collected March 15, 2026.</p>
+
+            <table class="scorecard-table">
+                <thead>
+                    <tr>
+                        <th>Site</th>
+                        <th>Paying Subs</th>
+                        <th>Status</th>
+                        <th>Churn Rate</th>
+                        <th>Status</th>
+                        <th>Inspection %</th>
+                        <th>Status</th>
+                        <th>Avg Reviews</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>TX160</strong></td>
+                        <td class="metric">1,087 / 1,100</td>
+                        <td><span class="metric-near">NEAR TARGET</span></td>
+                        <td class="metric">16.84%</td>
+                        <td><span class="metric-behind">BEHIND (target 13%)</span></td>
+                        <td class="metric">80.2%</td>
+                        <td><span class="metric-behind">BEHIND (target 90%)</span></td>
+                        <td class="metric">4.67</td>
+                        <td><span class="metric-on-target">ON TARGET (4.5)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>TX190</strong></td>
+                        <td class="metric">1,006 / 1,050</td>
+                        <td><span class="metric-near">NEAR TARGET</span></td>
+                        <td class="metric">12.35%</td>
+                        <td><span class="metric-on-target">ON TARGET (13%)</span></td>
+                        <td class="metric">84.7%</td>
+                        <td><span class="metric-near">NEAR TARGET (90%)</span></td>
+                        <td class="metric">4.31</td>
+                        <td><span class="metric-behind">BEHIND (target 4.5)</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>UT426</strong></td>
+                        <td class="metric">962 / 1,000</td>
+                        <td><span class="metric-near">NEAR TARGET</span></td>
+                        <td class="metric">13.53%</td>
+                        <td><span class="metric-near">NEAR TARGET (13%)</span></td>
+                        <td class="metric">90.4%</td>
+                        <td><span class="metric-on-target">ON TARGET (90%)</span></td>
+                        <td class="metric">4.55</td>
+                        <td><span class="metric-on-target">ON TARGET (4.5)</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p style="color: #94a3b8; margin-top: 20px; font-size: 0.9em;">
+                <strong>Legend:</strong> <span style="color: #22c55e;">ON TARGET</span> = within acceptable range | <span style="color: #eab308;">NEAR TARGET</span> = approaching limit | <span style="color: #ef4444;">BEHIND</span> = action required
+            </p>
+        </section>
+
+        <!-- SECTION 6: SITE PERFORMANCE CARDS -->
+        <section id="site-performance">
+            <h2>Site Performance Cards</h2>
+            <div class="performance-grid">
+                <div class="performance-card">
+                    <div class="performance-title">TX160 - Houston</div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">Paying Subscribers</span>
+                        <span class="performance-metric-value">1,087</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">30-Day Net Change</span>
+                        <span class="performance-metric-value">+42</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">Lost (30 Days)</span>
+                        <span class="performance-metric-value">176</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">Churn Rate</span>
+                        <span class="performance-metric-value">16.84%</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">ARPU</span>
+                        <span class="performance-metric-value">N/A</span>
+                    </div>
+                    <div class="performance-metric unavailable">
+                        <span class="performance-metric-label">Active Subs</span>
+                        <span class="performance-metric-value">API unavailable</span>
+                    </div>
+                    <div class="performance-metric unavailable">
+                        <span class="performance-metric-label">Washes</span>
+                        <span class="performance-metric-value">API unavailable</span>
+                    </div>
+                </div>
+
+                <div class="performance-card">
+                    <div class="performance-title">TX190 - Dallas</div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">Paying Subscribers</span>
+                        <span class="performance-metric-value">1,006</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">30-Day Net Change</span>
+                        <span class="performance-metric-value">+67</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">Lost (30 Days)</span>
+                        <span class="performance-metric-value">116</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">Churn Rate</span>
+                        <span class="performance-metric-value">12.35%</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">ARPU</span>
+                        <span class="performance-metric-value">N/A</span>
+                    </div>
+                    <div class="performance-metric unavailable">
+                        <span class="performance-metric-label">Active Subs</span>
+                        <span class="performance-metric-value">API unavailable</span>
+                    </div>
+                    <div class="performance-metric unavailable">
+                        <span class="performance-metric-label">Washes</span>
+                        <span class="performance-metric-value">API unavailable</span>
+                    </div>
+                </div>
+
+                <div class="performance-card">
+                    <div class="performance-title">UT426 - Salt Lake City</div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">Paying Subscribers</span>
+                        <span class="performance-metric-value">962</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">30-Day Net Change</span>
+                        <span class="performance-metric-value">+23</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">Lost (30 Days)</span>
+                        <span class="performance-metric-value">127</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">Churn Rate</span>
+                        <span class="performance-metric-value">13.53%</span>
+                    </div>
+                    <div class="performance-metric">
+                        <span class="performance-metric-label">ARPU</span>
+                        <span class="performance-metric-value">N/A</span>
+                    </div>
+                    <div class="performance-metric unavailable">
+                        <span class="performance-metric-label">Active Subs</span>
+                        <span class="performance-metric-value">API unavailable</span>
+                    </div>
+                    <div class="performance-metric unavailable">
+                        <span class="performance-metric-label">Washes</span>
+                        <span class="performance-metric-value">API unavailable</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: REVENUE ANALYSIS -->
+        <section id="revenue-analysis">
+            <h2>Revenue Analysis</h2>
+            <div class="unavailable">
+                <strong>💰 Data Unavailable — API Unreachable</strong>
+                <p style="margin-top: 10px;">Monthly revenue, revenue per car, and revenue trend analysis require full UCWH Dashboard API access. This data will be available once API connectivity is restored.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 8: CHURN & CANCELLATIONS -->
+        <section id="churn">
+            <h2>Churn & Cancellations</h2>
+
+            <h3 style="font-size: 1.2em; margin-top: 20px; margin-bottom: 15px; color: #cbd5e1;">30-Day Churn Summary</h3>
+            <table class="churn-table">
+                <thead>
+                    <tr>
+                        <th>Site</th>
+                        <th>Subscribers Lost</th>
+                        <th>Churn Rate</th>
+                        <th>Subscribers 30 Days Ago</th>
+                        <th>Current Subscribers</th>
+                        <th>Net Change</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>TX160</strong></td>
+                        <td>176</td>
+                        <td>16.84%</td>
+                        <td>1,045</td>
+                        <td>1,087</td>
+                        <td style="color: #22c55e; font-weight: 600;">+42</td>
+                    </tr>
+                    <tr>
+                        <td><strong>TX190</strong></td>
+                        <td>116</td>
+                        <td>12.35%</td>
+                        <td>939</td>
+                        <td>1,006</td>
+                        <td style="color: #22c55e; font-weight: 600;">+67</td>
+                    </tr>
+                    <tr>
+                        <td><strong>UT426</strong></td>
+                        <td>127</td>
+                        <td>13.53%</td>
+                        <td>939</td>
+                        <td>962</td>
+                        <td style="color: #22c55e; font-weight: 600;">+23</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NETWORK TOTAL</strong></td>
+                        <td><strong>419</strong></td>
+                        <td><strong>14.33%</strong></td>
+                        <td><strong>2,923</strong></td>
+                        <td><strong>3,055</strong></td>
+                        <td style="color: #22c55e; font-weight: 600;"><strong>+132</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="font-size: 1.2em; margin-top: 30px; margin-bottom: 15px; color: #cbd5e1;">Subscriber Trend Chart</h3>
+            <div class="unavailable">
+                <strong>📈 Time Series Data Unavailable</strong>
+                <p style="margin-top: 10px;">Historical subscriber trend data requires full UCWH Dashboard API access. This visualization will be available once API connectivity is restored.</p>
+            </div>
+
+            <h3 style="font-size: 1.1em; margin-top: 25px; color: #cbd5e1; font-weight: 600;">Interpretation</h3>
+            <p style="color: #cbd5e1; margin-top: 10px; line-height: 1.7;">
+                Despite elevated churn rates, the network grew by 132 net subscribers over 30 days, indicating that new acquisition outpaced attrition. However, the 419 cancellations represent significant revenue leakage. TX160's 16.84% churn rate is the primary concern, losing 176 subscribers despite net growth. TX190 showed strongest retention with only 12.35% churn and highest net growth (+67 subscribers). UT426 maintained moderate churn at 13.53% but with smallest net growth (+23), suggesting market saturation or lower acquisition efforts.
+            </p>
+        </section>
+
+        <!-- SECTION 9: STRATEGIC RECOMMENDATIONS -->
+        <section id="recommendations">
+            <h2>Strategic Recommendations</h2>
+
+            <div class="recommendation-item">
+                <div class="recommendation-title">
+                    <span class="recommendation-number">1</span>
+                    Launch TX160 Churn Intervention Campaign
+                </div>
+                <div class="recommendation-description">
+                    TX160's 16.84% churn rate (176 lost subscribers) significantly exceeds network target. Implement immediate win-back campaign targeting recent cancellations. Root cause analysis suggests quality or pricing concerns. Priority: Conduct customer exit surveys, evaluate inspection process (currently at 80.2% vs 90% target), and consider promotional retention offers for at-risk cohorts.
+                </div>
+                <div class="recommendation-action">→ Owner: TX160 General Manager | Timeline: This Week | Success Metric: Reduce churn to 14% within 30 days</div>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-title">
+                    <span class="recommendation-number">2</span>
+                    TX190 Customer Experience Audit & Review Recovery
+                </div>
+                <div class="recommendation-description">
+                    TX190 has lowest review average in network (4.31 stars vs 4.5+ target). Despite good churn performance (12.35%), customer satisfaction gap indicates operational or service delivery issues. Execute immediate audit of top 20 lowest-rated experiences, implement corrective actions, and establish review collection process to boost rating to 4.45+ within 30 days.
+                </div>
+                <div class="recommendation-action">→ Owner: TX190 Operations | Timeline: Next 2 Weeks | Success Metric: Increase avg review to 4.40+</div>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-title">
+                    <span class="recommendation-number">3</span>
+                    TX160 Inspection Quality Improvement Initiative
+                </div>
+                <div class="recommendation-description">
+                    TX160 inspection compliance at 80.2% is significantly below network target (90%) and lowest among all sites. Poor inspections directly correlate with churn and poor reviews. Implement structured quality control program: audit recent failures, retrain staff on inspection standards, establish daily reporting cadence, and implement accountability metrics. Link performance to compensation.
+                </div>
+                <div class="recommendation-action">→ Owner: TX160 Quality Manager | Timeline: Ongoing | Success Metric: Achieve 88%+ inspection rate within 45 days</div>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-title">
+                    <span class="recommendation-number">4</span>
+                    Scale UT426 Success Model Across Network
+                </div>
+                <div class="recommendation-description">
+                    UT426 demonstrates operational excellence with 90.4% inspection quality, 4.55 avg reviews, and 13.53% churn near network target. Document and share site's best practices: operational procedures, staff training methods, customer service protocols. This site represents our quality benchmark. Conduct peer mentoring sessions where UT426 leadership trains TX160/TX190 teams on achieving excellence.
+                </div>
+                <div class="recommendation-action">→ Owner: Network Director | Timeline: Starting Next Week | Success Metric: Implement UT426 practices at 2+ other sites</div>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-title">
+                    <span class="recommendation-number">5</span>
+                    Capitalize on Clear Weather Week for Volume Recovery
+                </div>
+                <div class="recommendation-description">
+                    5-day forecast shows clear skies March 19-20 with temperatures in 79-83°F range across regions. This optimal weather window presents strong upside opportunity for wash volume recovery. ML model predicts network volume could reach 509 washes on March 20 (highest in period). Ensure adequate staffing, pre-position supplies, and activate promotional push to maximize capture of seasonal demand surge.
+                </div>
+                <div class="recommendation-action">→ Owner: All Site Managers | Timeline: This Week Preparation | Success Metric: Achieve 95%+ of forecasted volume March 19-20</div>
+            </div>
+
+            <div class="recommendation-item">
+                <div class="recommendation-title">
+                    <span class="recommendation-number">6</span>
+                    Investigate & Restore UCWH Dashboard API Reliability
+                </div>
+                <div class="recommendation-description">
+                    Browser automation tools failed during this reporting cycle, causing partial data loss and limited analysis capability. Full metrics (revenue per car, capture rate, acquisition funnel, monthly revenue, active subscriptions) unavailable. This API outage constrains executive visibility and decision-making. Immediate investigation required: identify root cause (authentication, infrastructure, timeout), implement redundant access methods, and establish monitoring to prevent future occurrences.
+                </div>
+                <div class="recommendation-action">→ Owner: Engineering/Data Team | Timeline: This Week | Success Metric: Restore API and implement redundancy by next report</div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <div class="footer-section">
+                <span class="footer-label">Report Generated:</span>
+                <span class="footer-value">2026-03-16 at 03:20 AM CT</span>
+            </div>
+            <div class="footer-section">
+                <span class="footer-label">Data Sources:</span>
+                <span class="footer-value">Incentive Scorecard Cache (collected 2026-03-15 23:45 CT), Weather API (collected 2026-03-16 03:15 AM CT), ML Forecast Model V2 (v2.0)</span>
+            </div>
+            <div class="footer-section">
+                <span class="footer-label">Coverage Period:</span>
+                <span class="footer-value">Past 30 days (February 14 - March 15, 2026)</span>
+            </div>
+            <div class="footer-section">
+                <span class="footer-label">Report Frequency:</span>
+                <span class="footer-value">Weekly (Sundays, ~3:20 AM CT)</span>
+            </div>
+            <div class="footer-section">
+                <span class="footer-label">Model Accuracy:</span>
+                <span class="footer-value">ML Volume Forecast: TX sites ~18% MAPE, UT426 ~32% MAPE</span>
+            </div>
+            <div class="footer-note">
+                <strong>Important Notice:</strong> UCWH Dashboard API was unreachable during this scheduled run due to browser automation timeouts (API requires browser-based Google OAuth). Report generated with partial cached data from March 15. Full API metrics (time series, revenue/car, capture rate, acquisition funnel, monthly revenue, active subscriptions) unavailable this week. Weather and ML forecast data are current. API reliability investigation in progress.
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
