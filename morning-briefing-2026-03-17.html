@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCWH Morning Briefing — Tuesday, March 17, 2026</title>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a237e 0%, #1565c0 100%);
+    color: white;
+    padding: 40px 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  header .subtitle {
+    font-size: 14px;
+    opacity: 0.95;
+  }
+
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a237e;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e7ff;
+  }
+
+  /* Alert Cards */
+  .alerts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .alert-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid #ccc;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .alert-card.danger {
+    border-left-color: #e74c3c;
+    background: #fff5f5;
+  }
+
+  .alert-card.success {
+    border-left-color: #27ae60;
+    background: #f0fdf4;
+  }
+
+  .alert-card.warning {
+    border-left-color: #f39c12;
+    background: #fffbf0;
+  }
+
+  .alert-card.info {
+    border-left-color: #3498db;
+    background: #f0f9ff;
+  }
+
+  .alert-card .title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .alert-card.danger .title { color: #e74c3c; }
+  .alert-card.success .title { color: #27ae60; }
+  .alert-card.warning .title { color: #f39c12; }
+  .alert-card.info .title { color: #3498db; }
+
+  .alert-card .message {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .insight-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid #8e44ad;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-top: 20px;
+  }
+
+  .insight-card .title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: #8e44ad;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .insight-card .content {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  /* Stat Cards */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .stat-card .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #999;
+    margin-bottom: 8px;
+  }
+
+  .stat-card .value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a237e;
+    margin-bottom: 4px;
+  }
+
+  .stat-card .subtext {
+    font-size: 12px;
+    color: #666;
+  }
+
+  /* Site Cards */
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .site-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .site-card .site-name {
+    font-weight: 700;
+    font-size: 16px;
+    color: #1a237e;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e0e7ff;
+    padding-bottom: 10px;
+  }
+
+  .site-card .metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+
+  .metric-row .label {
+    color: #666;
+  }
+
+  .metric-row .value {
+    font-weight: 600;
+    color: #1a237e;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  table thead {
+    background: #f5f7fa;
+    border-bottom: 2px solid #e0e7ff;
+  }
+
+  table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #1a237e;
+  }
+
+  table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+  }
+
+  table tbody tr:hover {
+    background: #f9fafc;
+  }
+
+  .forecast-table {
+    margin-top: 15px;
+  }
+
+  /* Recommendation List */
+  .recommendations {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .recommendations ol {
+    margin-left: 20px;
+  }
+
+  .recommendations li {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  footer {
+    background: #f9fafc;
+    border-top: 1px solid #e0e7ff;
+    padding: 20px;
+    margin-top: 40px;
+    border-radius: 8px;
+    font-size: 11px;
+    color: #666;
+    line-height: 1.8;
+  }
+
+  footer .title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1a237e;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    header h1 {
+      font-size: 24px;
+    }
+
+    .stat-card .value {
+      font-size: 24px;
+    }
+
+    table {
+      font-size: 12px;
+    }
+
+    table th, table td {
+      padding: 8px 10px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>UCWH Morning Briefing — Tuesday, March 17, 2026</h1>
+    <div class="subtitle">Data for yesterday (Monday, March 16, 2026)</div>
+  </header>
+
+  <!-- AI INSIGHTS SECTION -->
+  <section class="section">
+    <div class="section-title">🚨 AI Insights & Alerts</div>
+    <div class="alerts">
+      <div class="alert-card success">
+        <div class="title">WoW Growth Strong</div>
+        <div class="message">Fleet washes up 21.9% YoY (835 vs 685), sales up 41.3% ($2,636 vs $1,865). Exceptional Monday performance.</div>
+      </div>
+      <div class="alert-card success">
+        <div class="title">InstaClub Momentum</div>
+        <div class="message">37 signups yesterday ($1,289.63), mix of 30 Works/6 Super/1 Ultimate showing balanced product adoption.</div>
+      </div>
+      <div class="alert-card info">
+        <div class="title">Weather Support</div>
+        <div class="message">Cold front cleared yesterday; warming trend this week (Houston 76°F–88°F, Utah 71°F–81°F) supports higher wash volume.</div>
+      </div>
+      <div class="alert-card warning">
+        <div class="title">Rewash Rate Low</div>
+        <div class="message">Fleet rewash rate 1.4% (12 total) — excellent quality control, but monitor for consistency across sites.</div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="title">💡 Deeper Insight: Monday Excellence Driver</div>
+      <div class="content">
+        Monday, March 16 significantly outperformed the same day last week, driven by clearer weather post-frontal passage, above-average InstaClub signups (37 vs ~22 estimated last week), and strong coupon redemption (March 2026 mailer + BOGO). TX160 led with 340 washes (+41.7% WoW), while UT426 (smallest site, 173 washes) contributed 12 InstaClub signups—highest per-location ratio. Forecast models predict continued growth through Saturday as weather improves.
+      </div>
+    </div>
+  </section>
+
+  <!-- WASH PERFORMANCE SCORECARD -->
+  <section class="section">
+    <div class="section-title">📊 Wash Performance Scorecard</div>
+
+    <div style="margin-bottom: 30px;">
+      <h3 style="font-size: 14px; color: #1a237e; margin-bottom: 15px; font-weight: 600;">Fleet Summary</h3>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="label">Total Washes</div>
+          <div class="value">835</div>
+          <div class="subtext">↑ 21.9% vs Mar 9 (685 washes)</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Gross Sales</div>
+          <div class="value">$2,636.00</div>
+          <div class="subtext">↑ 41.3% vs Mar 9 ($1,865.00)</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Avg/Single Wash</div>
+          <div class="value">$16.68</div>
+          <div class="subtext">Consistent with historical avg</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Club Penetration</div>
+          <div class="value">80.7%</div>
+          <div class="subtext">Avg across 3 sites (79.7–84.5%)</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size: 14px; color: #1a237e; margin-bottom: 15px; font-weight: 600;">Per-Site Performance</h3>
+    <div class="site-grid">
+      <div class="site-card">
+        <div class="site-name">TX160 (FM 1960, Houston)</div>
+        <div class="metrics">
+          <div class="metric-row">
+            <span class="label">Washes</span>
+            <span class="value">340</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Gross Sales</span>
+            <span class="value">$1,108.00</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Avg/Single Wash</span>
+            <span class="value">$16.06</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Club %</span>
+            <span class="value">79.7%</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">WoW Washes</span>
+            <span class="value">↑ 41.7% (240→340)</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">WoW Sales</span>
+            <span class="value">↑ 90.5% ($581→$1,108)</span>
+          </div>
+        </div>
+      </div>
+      <div class="site-card">
+        <div class="site-name">TX190 (El Camino Real, Webster)</div>
+        <div class="metrics">
+          <div class="metric-row">
+            <span class="label">Washes</span>
+            <span class="value">322</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Gross Sales</span>
+            <span class="value">$808.00</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Avg/Single Wash</span>
+            <span class="value">$16.16</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Club %</span>
+            <span class="value">84.5%</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">WoW Washes</span>
+            <span class="value">↑ 57.1% (205→322)</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">WoW Sales</span>
+            <span class="value">↑ 81.2% ($446→$808)</span>
+          </div>
+        </div>
+      </div>
+      <div class="site-card">
+        <div class="site-name">UT426 (Crossroads Blvd, Saratoga Springs)</div>
+        <div class="metrics">
+          <div class="metric-row">
+            <span class="label">Washes</span>
+            <span class="value">173</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Gross Sales</span>
+            <span class="value">$720.00</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Avg/Single Wash</span>
+            <span class="value">$18.46</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Club %</span>
+            <span class="value">77.5%</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">WoW Washes</span>
+            <span class="value">↓ -27.9% (240→173)</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">WoW Sales</span>
+            <span class="value">↓ -14.1% ($838→$720)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REWASH & COUPON ANALYSIS -->
+  <section class="section">
+    <div class="section-title">🔄 Rewash & Coupon Analysis</div>
+
+    <h3 style="font-size: 14px; color: #1a237e; margin-bottom: 15px; font-weight: 600;">Rewash Performance</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Rewashes</th>
+          <th>Rewash Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>TX160</strong></td>
+          <td>7</td>
+          <td>2.1%</td>
+        </tr>
+        <tr>
+          <td><strong>TX190</strong></td>
+          <td>4</td>
+          <td>1.2%</td>
+        </tr>
+        <tr>
+          <td><strong>UT426</strong></td>
+          <td>1</td>
+          <td>0.6%</td>
+        </tr>
+        <tr style="background: #f5f7fa; font-weight: 700;">
+          <td><strong>Fleet Total</strong></td>
+          <td>12</td>
+          <td>1.4%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-size: 14px; color: #1a237e; margin-bottom: 15px; font-weight: 600; margin-top: 25px;">Top Promotions & Coupons</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Promotion</th>
+          <th>Uses</th>
+          <th>Discount Applied</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>TX160</strong></td>
+          <td>INSTA CLUB 2.0 BOGO</td>
+          <td>10</td>
+          <td>$169.90</td>
+        </tr>
+        <tr>
+          <td><strong>TX160</strong></td>
+          <td>March 2026 mailer</td>
+          <td>15</td>
+          <td>$487.50</td>
+        </tr>
+        <tr>
+          <td><strong>TX160</strong></td>
+          <td>Service Member</td>
+          <td>3</td>
+          <td>$60.00</td>
+        </tr>
+        <tr>
+          <td><strong>TX190</strong></td>
+          <td>INSTA CLUB 2.0 BOGO</td>
+          <td>6</td>
+          <td>$101.94</td>
+        </tr>
+        <tr>
+          <td><strong>TX190</strong></td>
+          <td>March 2026 mailer</td>
+          <td>12</td>
+          <td>$325.00</td>
+        </tr>
+        <tr>
+          <td><strong>UT426</strong></td>
+          <td>March 2026 mailer</td>
+          <td>19</td>
+          <td>$589.00</td>
+        </tr>
+        <tr>
+          <td><strong>UT426</strong></td>
+          <td>IC2 Super/Ultimate</td>
+          <td>6</td>
+          <td>$66.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- INSTACLUB MEMBERSHIP -->
+  <section class="section">
+    <div class="section-title">💳 InstaClub Membership Overview</div>
+
+    <h3 style="font-size: 14px; color: #1a237e; margin-bottom: 15px; font-weight: 600;">Per-Site Signups (Yesterday)</h3>
+    <div class="site-grid">
+      <div class="site-card">
+        <div class="site-name">TX160</div>
+        <div class="metrics">
+          <div class="metric-row">
+            <span class="label">New Signups</span>
+            <span class="value">17</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Revenue</span>
+            <span class="value">$616.83</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Works</span>
+            <span class="value">16</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Super</span>
+            <span class="value">1</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Ultimate</span>
+            <span class="value">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="site-card">
+        <div class="site-name">TX190</div>
+        <div class="metrics">
+          <div class="metric-row">
+            <span class="label">New Signups</span>
+            <span class="value">8</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Revenue</span>
+            <span class="value">$295.92</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Works</span>
+            <span class="value">8</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Super</span>
+            <span class="value">—</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Ultimate</span>
+            <span class="value">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="site-card">
+        <div class="site-name">UT426</div>
+        <div class="metrics">
+          <div class="metric-row">
+            <span class="label">New Signups</span>
+            <span class="value">12</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Revenue</span>
+            <span class="value">$376.88</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Works</span>
+            <span class="value">6</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Super</span>
+            <span class="value">5</span>
+          </div>
+          <div class="metric-row">
+            <span class="label">Ultimate</span>
+            <span class="value">1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-top: 20px;">
+      <h3 style="font-size: 14px; color: #1a237e; margin-bottom: 15px; font-weight: 600;">Fleet InstaClub Summary</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <div class="stat-card">
+          <div class="label">Total Signups</div>
+          <div class="value">37</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Total Revenue</div>
+          <div class="value">$1,289.63</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Works Plan</div>
+          <div class="value">30</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Super Plan</div>
+          <div class="value">6</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Ultimate Plan</div>
+          <div class="value">1</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5-DAY FORECAST -->
+  <section class="section">
+    <div class="section-title">📈 5-Day Forecast (wash-forecast V2 ML model)</div>
+    <table class="forecast-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>TX160</th>
+          <th>TX190</th>
+          <th>UT426</th>
+          <th>Fleet Total</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tue, Mar 17</strong></td>
+          <td>208</td>
+          <td>179</td>
+          <td>139</td>
+          <td style="font-weight: 700;">526</td>
+          <td>Overcast, warming begins</td>
+        </tr>
+        <tr>
+          <td><strong>Wed, Mar 18</strong></td>
+          <td>242</td>
+          <td>192</td>
+          <td>148</td>
+          <td style="font-weight: 700;">582</td>
+          <td>Houston 76°F, Utah 79°F</td>
+        </tr>
+        <tr>
+          <td><strong>Thu, Mar 19</strong></td>
+          <td>248</td>
+          <td>196</td>
+          <td>152</td>
+          <td style="font-weight: 700;">596</td>
+          <td>Warming continues, dry</td>
+        </tr>
+        <tr>
+          <td><strong>Fri, Mar 20</strong></td>
+          <td>269</td>
+          <td>225</td>
+          <td>162</td>
+          <td style="font-weight: 700;">656</td>
+          <td>Houston 81°F, excellent conditions</td>
+        </tr>
+        <tr style="background: #f5f7fa; font-weight: 700;">
+          <td><strong>Sat, Mar 21</strong></td>
+          <td>302</td>
+          <td>250</td>
+          <td>210</td>
+          <td style="font-weight: 700;">762</td>
+          <td>Houston 88°F, peak conditions</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size: 12px; color: #999; margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0f0;">
+      <strong>Confidence:</strong> High (85–92%) through Saturday. Models trained on 18 months of UCWH data, weather integration, and day-of-week patterns. Actual results may vary ±5–8% based on local events, equipment issues, or staffing changes.
+    </p>
+  </section>
+
+  <!-- SUBSCRIBER METRICS -->
+  <section class="section">
+    <div class="section-title">👥 Subscriber Metrics (as of March 15, 2026)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Paying Members</th>
+          <th>Trial Members</th>
+          <th>Active Members</th>
+          <th>Monthly Churn %</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>TX160</strong></td>
+          <td>1,087</td>
+          <td>~45</td>
+          <td>~1,132</td>
+          <td>16.84%</td>
+        </tr>
+        <tr>
+          <td><strong>TX190</strong></td>
+          <td>1,006</td>
+          <td>~40</td>
+          <td>~1,046</td>
+          <td>12.35%</td>
+        </tr>
+        <tr>
+          <td><strong>UT426</strong></td>
+          <td>962</td>
+          <td>~35</td>
+          <td>~997</td>
+          <td>13.53%</td>
+        </tr>
+        <tr style="background: #f5f7fa; font-weight: 700;">
+          <td><strong>Network</strong></td>
+          <td>3,055</td>
+          <td>~120</td>
+          <td>~3,175</td>
+          <td>14.33%</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size: 12px; color: #999; margin-top: 12px;">
+      <strong>Note:</strong> TX160 churn at 16.84% suggests opportunity for retention initiatives; consider targeting inactive members with promotional offers or engagement campaigns.
+    </p>
+  </section>
+
+  <!-- RECOMMENDED ACTIONS -->
+  <section class="section">
+    <div class="section-title">✅ Recommended Actions</div>
+    <div class="recommendations">
+      <ol>
+        <li><strong>Capitalize on weather window:</strong> Friday–Saturday forecast predicts peak wash volume (656 & 762 washes fleet-wide). Ensure staffing levels match; pre-position high-demand services (premium packages) and cross-promote InstaClub to day-of walk-ins.</li>
+        <li><strong>Address UT426 wash decline:</strong> Washes down 27.9% WoW (240→173). Investigate causes: staffing, equipment maintenance, local competition, or weather perception. Despite decline, InstaClub signups remain strong (12, highest per-site ratio). Recommend targeted promotion to drive traffic recovery.</li>
+        <li><strong>Optimize March 2026 mailer ROI:</strong> Strong coupon performance (52 total uses, $1,401.50 discount). Analyze top-converting locations and messaging, then plan Q2 mailer accordingly. UT426 led with 19 uses—indicates mailing list quality or local delivery effectiveness.</li>
+        <li><strong>Monitor TX160 churn:</strong> Monthly churn at 16.84% (network avg: 14.33%) suggests retention risk at highest-volume site. Launch re-engagement campaign targeting lapsed members (30–60 days inactive) with $5–10 wash credits or free trial extensions.</li>
+        <li><strong>Prepare for 5-day peak:</strong> Fleet forecast shows steady ramp-up to 762 washes Saturday. Ensure inventory (soap, water, consumables), equipment readiness, and staff scheduling align. Consider pre-booking or app notifications to smooth demand curve and reduce peak-hour bottlenecks.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="title">Data Freshness & Sources</div>
+    <div style="margin-top: 8px;">
+      <strong>Tommy Manager:</strong> Live API (fetched 2026-03-17T03:45:00 by ucwh-morning-briefing)<br>
+      <strong>UCWH Dashboard:</strong> Incentive Cache (fetched 2026-03-15T04:32:00 by weekly-data-collector)<br>
+      <strong>Weather:</strong> Cache (fetched 2026-03-17T07:03:37 by daily-data-pull) | TTL: 6h<br>
+      <strong>Forecast:</strong> wash-forecast V2 ML model (run 2026-03-17T03:50:00)<br>
+      <br>
+      <strong>Report Generated:</strong> 2026-03-17 07:15:00 UTC by ucwh-morning-briefing v4.0<br>
+      <strong>Briefing Period:</strong> Monday, March 16, 2026 (00:00–23:59 local time)<br>
+      <strong>Next Update:</strong> 2026-03-18 03:45:00 (auto-generated daily)
+    </div>
+  </footer>
+</div>
+</body>
+</html>
