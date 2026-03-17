@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 17, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Tuesday, March 17, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>Jensen Huang delivered a landmark GTC keynote confirming Vera Rubin GPUs are in full production with HBM4 memory delivering 22 TB/s bandwidth, while revealing the Groq 3 LPU — NVIDIA's first chip from its $20B Groq acquisition — which boosts trillion-parameter model throughput by 35x when paired with Vera Rubin. NVIDIA's $1 trillion purchase order pipeline through 2027 cements the AI infrastructure boom as structural, not cyclical. In the agent ecosystem, NVIDIA launched OpenShell as an open-source runtime with policy-based security guardrails, while OpenAI debuted Frontier — its enterprise agent platform — with HP, Oracle, and Uber as early adopters. Claude Code's March updates bring voice mode, 1M-token context windows, and a wave of new MCP connectors spanning Google Drive, Gmail, DocuSign, and more. On the funding front, Nscale closed a $2B Series C for AI infrastructure, Yann LeCun's Advanced Machine Intelligence raised $1.03B in the largest European seed round ever, and Replit tripled its valuation to $9B. The #QuitGPT movement — triggered by OpenAI's Pentagon classified-network deal — has driven 2.5M users to leave ChatGPT, with Claude emerging as the primary beneficiary.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.tomshardware.com/news/live/nvidia-gtc-2026-keynote-live-blog-jensen-huang">GTC Keynote Delivers: Vera Rubin in Full Production, Groq 3 LPU Boosts Throughput 35x, $1T Order Pipeline</a></h3>
+    <p class="story-meta"><span class="source">Tom's Hardware / CNBC / ServeTheHome / TechRadar</span> · Mar 17 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Jensen Huang's keynote moved from preview to hard numbers. Vera Rubin GPUs — 1.3 million components per system — are in full production with HBM4 memory from SK Hynix and Samsung delivering a record 22 TB/s bandwidth and 10x performance-per-watt over Grace Blackwell. The surprise was Groq 3, NVIDIA's first chip from its $20B Groq acquisition: paired with Vera Rubin NVL72, it delivers 35x throughput improvement for trillion-parameter models versus Blackwell NVL72. Huang also unveiled the Kyber rack design for Rubin Ultra (shipping 2027) — 144 GPUs mounted vertically with compute in front and NVLink in back — and Space-1 Vera Rubin for orbital data centers delivering 25x more inference compute than H100. NVIDIA's fiscal 2026 revenue hit $215.9B, and Huang projected $1 trillion in cumulative purchase orders between Blackwell and Vera Rubin through 2027. The 2028 roadmap previews the Feynman architecture with a new GPU, LPU, and Rosa CPU.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The Groq 3 integration is the sleeper story here. Groq's deterministic, compiler-first approach to inference — now backed by NVIDIA's distribution machine — could deliver the predictable, low-latency token generation that production agent systems need. A 35x throughput gain on trillion-parameter models means the agents you build today will run dramatically faster and cheaper on next-gen hardware. The $1T order pipeline confirms that every major cloud and enterprise buyer has committed to this infrastructure wave — your customers' compute environments are being upgraded whether they planned for it or not.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://apple.gadgethacks.com/news/apples-new-siri-gets-google-gemini-ai-power-in-2026/">Apple's Gemini-Powered Siri Launches This Month — On-Screen Awareness, Multi-Step Task Chains</a></h3>
+    <p class="story-meta"><span class="source">CNBC / Gadget Hacks / CNN</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Apple confirmed iOS 26.4 ships this month with a fundamentally rebuilt Siri powered by Google's 1.2-trillion-parameter Gemini model running on Apple's Private Cloud Compute. The new Siri gains on-screen context awareness — reading and acting on what's currently displayed — and multi-step task chains executing up to 10 sequential actions from a single natural language request (book a flight, add to calendar, text arrival time). Gemini integration extends beyond Siri to Safari and Spotlight, creating a unified AI layer across Apple's ecosystem. Apple is paying roughly $1 billion annually for the partnership. The launch coincides with Apple's smart home display and updated HomePod mini.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.globenewswire.com/news-release/2026/03/16/3256734/0/en/NVIDIA-Ignites-the-Next-Industrial-Revolution-in-Knowledge-Work-With-Open-Agent-Development-Platform.html">NVIDIA Launches OpenShell — Open-Source Agent Runtime with Policy-Based Security Guardrails</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA / GlobeNewsWire</span> · Mar 16 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Alongside the GTC keynote, NVIDIA announced OpenShell — an open-source runtime that enforces policy-based security, network, and privacy guardrails for autonomous AI agents. OpenShell is part of the expanded NVIDIA Agent Toolkit and positions NVIDIA to define the security layer for enterprise agent deployment. The toolkit also includes updated NemoClaw integration for agent orchestration. The move addresses a critical gap: as agents gain autonomy to execute multi-step tasks, enterprises need enforceable policy boundaries — not just prompt-based suggestions — to prevent unauthorized actions, data exfiltration, or lateral movement across systems.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Agent security is the number one blocker for enterprise deployment. OpenShell being open-source and NVIDIA-backed means it's likely to become a de facto standard. If you're building agent systems, adopt OpenShell early — it gives you a credible security story for enterprise buyers. The policy-based approach (declarative rules enforced at runtime) is architecturally cleaner than trying to bake safety into prompts, and it's the pattern enterprises are used to from network security and IAM.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://openai.com/index/introducing-openai-frontier/">OpenAI Launches Frontier — Enterprise Agent Platform with HP, Oracle, Uber as Early Adopters</a></h3>
+    <p class="story-meta"><span class="source">OpenAI / eWeek</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI introduced Frontier, a new platform for enterprises to build, deploy, and manage AI agents that execute real work across business systems. HP, Intuit, Oracle, State Farm, Thermo Fisher, and Uber are among the first adopters. Frontier provides an end-to-end environment for agent development — from building and testing to monitoring production deployments. The launch positions OpenAI to compete directly with Anthropic's Claude Cowork and Microsoft's Copilot Cowork for enterprise agent workflows, marking OpenAI's clearest attempt yet to move beyond the API-and-chat-interface business model into a managed enterprise platform.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The enterprise agent platform race now has three clear competitors: Claude Cowork, Microsoft Copilot Cowork (powered by Claude), and OpenAI Frontier. This three-way competition will accelerate feature development and enterprise adoption. For agent builders, it also means your integration strategy matters — MCP support vs. Frontier's agent APIs will determine which ecosystems your tools reach. Watch whether Frontier adopts MCP or builds a proprietary integration layer.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://bostoninstituteofanalytics.org/blog/agentic-ai-news-roundup-7-13-march-2026-market-growth-enterprise-adoption-new-ai-agents/">Galileo Ships Agent Control — Open-Source Governance Layer for AI Agent Behavior</a></h3>
+    <p class="story-meta"><span class="source">Galileo / Boston Institute of Analytics</span> · Mar 13 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Galileo launched Agent Control, an open-source governance layer designed to establish universal standards for AI agent behavior. The tool provides monitoring, evaluation, and guardrails for production agent systems — addressing the "AgentOps" gap that has emerged as enterprises deploy agents without consistent observability or governance tooling. The release comes as the Agentic AI Foundation (under the Linux Foundation) works to harmonize competing standards from Anthropic's MCP, OpenAI's AGENTS.md, and Block's goose framework. The global agentic AI market is projected to grow from $9.14B in early 2026 to $139B by 2034 at a 40.5% CAGR.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COWORK & CLAUDE ECOSYSTEM -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128268;</span>
+    <h2>Cowork &amp; Claude Ecosystem</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://pasqualepillitteri.it/en/news/381/claude-code-march-2026-updates">Claude Code's Biggest Month Yet — Voice Mode, /loop Command, 1M Token Context Window</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / Releasebot / Pasquale Pillitteri</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">March 2026 has been transformative for Claude Code. The headline feature is voice mode — activated via <code>/voice</code> with a push-to-talk mechanism (hold spacebar to speak, release to send) — enabling developers to talk through complex coding tasks hands-free. The <code>/loop</code> command introduces persistent agent loops that continue executing multi-step tasks autonomously. The 1-million-token context window is now in beta, allowing Claude Code to hold entire codebases in context. The complete transition to Opus 4.6 as the default model is also complete, and a new <code>/claude-api</code> skill provides documentation, patterns, and examples for building applications with the Claude API and Anthropic SDK.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Voice mode turns Claude Code into a conversational coding partner — you can describe architecture decisions, debug by talking through problems, and dictate complex refactoring instructions. The /loop command is the bigger infrastructure play: persistent agent loops that don't require human confirmation for each step are the foundation of true agentic coding. Combined with the 1M token context window, Claude Code can now reason about projects at a scale that was impossible six months ago.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://releasebot.io/updates/anthropic">New MCP Connectors Ship — Google Drive, Gmail, Calendar, DocuSign, Apollo, Clay, FactSet, and More</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / Releasebot</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic shipped a major wave of MCP connectors for Claude Cowork and Claude Desktop: Google Drive, Google Calendar, Gmail, DocuSign, Apollo, Clay, Outreach, SimilarWeb, MSCI, LegalZoom, FactSet, WordPress, and Harvey. The release also includes MCP elicitation support in Claude Code — MCP servers can now request structured input mid-task via interactive dialogs, enabling richer tool interactions. VS Code received a native MCP server management dialog for enabling/disabling servers and managing OAuth directly from the chat panel. Enterprise administrators can now build private plugin marketplaces, and Anthropic released prebuilt plugin templates spanning HR, design, engineering, operations, and financial analysis.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The connector wave — especially Google Drive, Gmail, and Calendar — fills the most-requested integration gaps for Cowork users. DocuSign and FactSet are strategic additions that make Claude actionable in legal and financial workflows. Private plugin marketplaces for enterprise admins mean organizations can curate exactly which tools their teams access, which is the governance model enterprises need to roll out Cowork broadly. If you're building skills or plugins, the marketplace infrastructure is now ready for distribution.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">Nscale Raises $2B Series C — AI Infrastructure Hyperscaler Bets on Sovereign Compute</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker / SiliconANGLE</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Nscale, an AI infrastructure hyperscaler, closed a $2 billion Series C round — one of the largest infrastructure rounds of Q1 2026. The company builds GPU cloud capacity with a focus on sovereign compute, positioning itself for the growing demand from governments and enterprises that need AI infrastructure within specific geographic jurisdictions. The round underscores a broader pattern: the picks-and-shovels layer of AI — compute, storage, and networking infrastructure — continues to attract massive capital as the industry builds out the physical foundation for the agent era.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/">Yann LeCun's Advanced Machine Intelligence Raises $1.03B — Largest European Seed Round Ever</a></h3>
+    <p class="story-meta"><span class="source">Mean CEO Blog / Crunchbase / TechStartups</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Advanced Machine Intelligence, co-founded by Meta's Chief AI Scientist Yann LeCun, raised $1.03 billion to develop "world models" — AI systems that build internal representations of how the physical world works. The funding represents the largest seed round ever for a European startup and signals a significant bet on LeCun's long-held thesis that the path to AGI runs through world models rather than pure language processing. The round follows World Labs' $1B raise (covered yesterday) for spatial AI, confirming that world models are emerging as a distinct, heavily funded AI category alongside language models and agent systems.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Two billion-dollar world model companies in a single week — World Labs and AMI — is a signal that the frontier is shifting beyond text. LeCun has argued for years that language-only models are inherently limited; if world models deliver on their promise of physical reasoning, they become the foundation for robotics agents, simulation environments, and any AI system that needs to understand cause and effect in the real world. Watch for API access and integration points — world models could become the next foundation layer your agents call.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">Replit Triples Valuation to $9B with $400M Series D — AI-Native Development Reaches Escape Velocity</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker / SiliconANGLE</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Replit closed a $400 million Series D at a $9 billion valuation, tripling from $3 billion just six months prior. The AI-native development platform — which lets users build, test, and deploy applications entirely through natural language — has become one of the fastest-growing developer tools in history. Replit's trajectory validates the thesis that AI-assisted coding is not a feature layered on top of existing IDEs, but a new category of development environment built from the ground up around AI agents. The round comes alongside Rhoda AI's $450M Series A for robot training and Mind Robotics' $500M for industrial automation, highlighting the breadth of AI investment beyond language models.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/02/chatgpt-uninstalls-surged-by-295-after-dod-deal/">#QuitGPT Reshapes AI Market — 2.5M Users Flee OpenAI, Claude Downloads Surge 51% as Anthropic Refuses Pentagon Deal</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / Euronews / EFF / American Bazaar</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The #QuitGPT movement triggered by OpenAI's agreement to deploy its AI on classified U.S. Department of Defense networks has reached 2.5 million participants. ChatGPT uninstalls surged 295% overnight when the deal was announced, and the revolt intensified when Anthropic's Dario Amodei disclosed that his company had refused the same deal, stating he "cannot in good conscience accede to the Pentagon's request" for unrestricted access. Claude downloads jumped 51% day-over-day, sending Claude to #1 on the U.S. App Store. OpenAI's hardware lead Caitlin Kalinowski resigned over the deal. The EFF published a detailed analysis arguing that OpenAI's amended contract language still permits AI-powered surveillance. The controversy marks the first time AI ethics positioning has measurably shifted consumer market share at scale.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is a watershed moment for the AI industry: ethics-based brand differentiation is now a proven growth lever. Anthropic's refusal-turned-competitive-advantage demonstrates that values positioning can drive measurable user acquisition. For anyone building on Claude, the brand halo effect is real — your customers increasingly associate Claude with the responsible AI choice. Conversely, the controversy shows that enterprise AI deployment decisions (especially government and defense) now carry consumer brand risk that didn't exist a year ago.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.onetrust.com/blog/where-ai-regulation-is-heading-in-2026-a-global-outlook/">Vietnam AI Law Takes Effect — Asia's Regulatory Patchwork Grows as EU High-Risk Rules Loom in August</a></h3>
+    <p class="story-meta"><span class="source">OneTrust / Slaughter &amp; May / Holistic AI</span> · Mar 1 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Vietnam's national AI law took effect on March 1, 2026, making it the second Asian country (after South Korea) to implement comprehensive AI legislation. The law establishes requirements for AI system registration, transparency, and data governance. Meanwhile, the EU AI Act's high-risk system provisions are scheduled for August 2026 enforcement — the most impactful compliance deadline of the year. In the U.S., the FCC Chairman and Special Advisor for AI have been exploring a federal AI model reporting standard (deadline: March 16), as the federal preemption battle with state laws intensifies. Colorado's AI Act and Texas's RAIGA are both in active enforcement, creating a fragmented compliance landscape that grows more complex with each new jurisdiction.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html">Deloitte: 64% of Enterprises Use AI — But Only 6% Have Fully Deployed Agentic Systems</a></h3>
+    <p class="story-meta"><span class="source">Deloitte / Lucidworks / TechRepublic</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Deloitte's 2026 State of AI in the Enterprise report reveals a stark adoption gap: while 64% of organizations actively use AI and 70%+ have introduced generative AI, only 6% have fully implemented agentic AI systems. Telecom leads agentic adoption at 48%, followed by retail/CPG at 47%. The top barrier isn't technology — it's governance, data quality, and workforce readiness. Budget growth remains aggressive: 86% of respondents report AI budgets increasing in 2026, with 40% projecting increases of 10% or more. The report confirms that enterprises have moved past the "should we use AI?" phase into the "how do we scale it?" phase — and the agent layer is where most organizations are still stuck at pilot stage.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The 6% agentic deployment figure is both a warning and an opportunity. The market for agent-ready infrastructure, governance tools, and implementation services is almost entirely greenfield. If you're building agent systems, your competition isn't other agent builders — it's organizational inertia. The companies that crack the governance and data quality problems (not just the technology problems) will capture disproportionate value. Telecom and retail leading adoption makes sense — they have the highest volume of repetitive, rule-bound workflows that agents can automate immediately.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.eweek.com/news/nvidia-gtc-2026-keynote-jensen-huang/">NVIDIA's Full AI Stack Ambition — From Chips to Agents, Huang Maps the $1T Infrastructure Build-Out</a></h3>
+    <p class="story-meta"><span class="source">eWeek / StockTwits / Yahoo Finance</span> · Mar 17 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The GTC keynote crystallized NVIDIA's strategy: own every layer of the "AI stack" from energy and chips through infrastructure, models, and applications. With $215.9B in fiscal 2026 revenue (quarterly data center revenue alone at $62.3B), NVIDIA is now the world's most valuable company built entirely on AI infrastructure demand. The Vera Rubin + Groq + NemoClaw + OpenShell combination means NVIDIA offers silicon, networking, agent orchestration, and agent security in a single vendor stack. Partnerships with Nissan, BYD, Hyundai, and Uber for Level 4 autonomous vehicles — plus 110 robots on the GTC show floor — demonstrate that the physical AI market is moving from research to deployment. Wall Street's verdict: cautiously positive, with analysts noting that the $1T order pipeline provides multi-year revenue visibility that no other tech company can match.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Tuesday, March 17, 2026</p>
+  <p class="sources">Sources: Tom's Hardware, CNBC, ServeTheHome, TechRadar, Gadget Hacks, CNN, NVIDIA, GlobeNewsWire, OpenAI, eWeek, Galileo, Boston Institute of Analytics, Anthropic, Releasebot, Pasquale Pillitteri, AI Funding Tracker, SiliconANGLE, Mean CEO Blog, Crunchbase, TechStartups, TechCrunch, Euronews, EFF, American Bazaar, OneTrust, Slaughter &amp; May, Holistic AI, Deloitte, Lucidworks, TechRepublic, StockTwits, Yahoo Finance</p>
+</div>
+
+</div>
+</body>
+</html>
