@@ -4,574 +4,379 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UCWH Morning Briefing — Wednesday, March 18, 2026</title>
-<!-- === UCWH Auth Gate (injected at upload time) === -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style id="ucwh-auth-hide">
-  /* Hide body until auth resolves — prevents flash of report content */
-  body { visibility: hidden !important; }
-  body.ucwh-authed { visibility: visible !important; }
-  body.ucwh-login-visible { visibility: visible !important; }
-</style>
-<script>
-(function() {
-  'use strict';
-
-  // --- Config ---
-  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
-  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
-  var PORTAL = 'https://ucwh-report-portal.netlify.app';
-
-  var sb = null;
-  var isIframe = false;
-
-  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
-
-  // ========================================
-  // PATH 1: Inside portal iframe — postMessage handshake
-  // ========================================
-  if (isIframe) {
-    var verified = false;
-    var timeout = setTimeout(function() {
-      if (!verified) {
-        // Fail open when inside an iframe — the portal already handles auth.
-        document.body.classList.add('ucwh-authed');
-      }
-    }, 3000);
-
-    window.addEventListener('message', function(ev) {
-      if (ev.origin !== PORTAL) return;
-      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
-        verified = true;
-        clearTimeout(timeout);
-        document.body.classList.add('ucwh-authed');
-      }
-    });
-
-    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
-    return;
-  }
-
-  // ========================================
-  // PATH 2: Direct URL access
-  // ========================================
-  function init() {
-    try {
-      if (window.supabase && window.supabase.createClient) {
-        sb = window.supabase.createClient(SB_URL, SB_KEY);
-      }
-    } catch(e) { /* ignore */ }
-
-    if (!sb) {
-      // SDK failed — redirect to portal instead of showing broken page
-      redirectToPortal();
-      return;
-    }
-
-    // Check for OAuth redirect tokens in the URL hash
-    var hasAuthHash = window.location.hash && (
-      window.location.hash.indexOf('access_token') !== -1 ||
-      window.location.hash.indexOf('refresh_token') !== -1
-    );
-
-    if (hasAuthHash) {
-      sb.auth.onAuthStateChange(function(event, session) {
-        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
-          verifyUser(session.user.email);
-        }
-      });
-      setTimeout(function() {
-        sb.auth.getSession().then(function(res) {
-          var session = res.data && res.data.session;
-          if (session && session.user && session.user.email) {
-            verifyUser(session.user.email);
-          } else {
-            redirectToPortal();
-          }
-        }).catch(function() {
-          document.body.classList.add('ucwh-authed');
-        });
-      }, 2000);
-    } else {
-      // Normal page load — check existing session on this origin
-      sb.auth.getSession().then(function(res) {
-        var session = res.data && res.data.session;
-        if (session && session.user && session.user.email) {
-          verifyUser(session.user.email);
-        } else {
-          // No session on GitHub Pages — redirect to portal
-          redirectToPortal();
-        }
-      }).catch(function() {
-        document.body.classList.add('ucwh-authed');
-      });
-    }
-  }
-
-  function verifyUser(email) {
-    sb.from('report_portal_users')
-      .select('email,role')
-      .eq('email', email)
-      .single()
-      .then(function(res) {
-        if (res.data) {
-          document.body.classList.add('ucwh-authed');
-          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
-            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
-          }
-        } else {
-          accessDenied(email);
-        }
-      }).catch(function() {
-        accessDenied(email);
-      });
-  }
-
-  function redirectToPortal() {
-    // Build a deep link to the portal that auto-opens this report.
-    // Format: portal/#deeplink/<encoded-url>
-    // The portal will open the report in its authenticated iframe viewer.
-    var reportUrl = window.location.href;
-    var slug = window.location.pathname.split('/').pop().replace('.html', '');
-    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
-    window.location.replace(deepLink);
-  }
-
-  function accessDenied(email) {
-    document.body.classList.add('ucwh-login-visible');
-
-    var overlay = document.createElement('div');
-    overlay.id = 'ucwh-login-overlay';
-    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
-
-    var box = document.createElement('div');
-    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
-    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
-      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
-      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
-      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
-      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
-
-    overlay.appendChild(box);
-
-    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
-    document.body.appendChild(overlay);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
-
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
-  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-  header { background: linear-gradient(135deg, #1a237e 0%, #1565c0 100%); color: white; padding: 40px 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-  header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
-  header .subtitle { font-size: 14px; opacity: 0.95; }
-  .section { margin-bottom: 40px; }
-  .section-title { font-size: 20px; font-weight: 700; color: #1a237e; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #e0e7ff; }
-  .alerts { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px; }
-  .alert-card { background: white; border-radius: 8px; padding: 20px; border-left: 4px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-  .alert-card.danger { border-left-color: #e74c3c; background: #fff5f5; }
-  .alert-card.success { border-left-color: #27ae60; background: #f0fdf4; }
-  .alert-card.warning { border-left-color: #f39c12; background: #fffbf0; }
-  .alert-card.info { border-left-color: #3498db; background: #f0f9ff; }
-  .alert-card .title { font-weight: 700; font-size: 14px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .alert-card.danger .title { color: #e74c3c; }
-  .alert-card.success .title { color: #27ae60; }
-  .alert-card.warning .title { color: #f39c12; }
-  .alert-card.info .title { color: #3498db; }
-  .alert-card .message { font-size: 13px; color: #555; line-height: 1.5; }
-  .insight-card { background: white; border-radius: 8px; padding: 20px; border-left: 4px solid #8e44ad; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-  .insight-card .title { font-weight: 700; font-size: 14px; margin-bottom: 8px; color: #8e44ad; text-transform: uppercase; }
-  .insight-card .message { font-size: 13px; color: #555; line-height: 1.6; }
-  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-  .stat-card { background: white; border-radius: 8px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-  .stat-card .label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-  .stat-card .value { font-size: 28px; font-weight: 700; color: #1a237e; }
-  .stat-card .change { font-size: 12px; margin-top: 4px; }
-  .site-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .site-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-  .site-card h3 { font-size: 16px; font-weight: 700; color: #1a237e; margin-bottom: 4px; }
-  .site-card .location { font-size: 12px; color: #888; margin-bottom: 15px; }
-  .site-card .metric { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-  .site-card .metric:last-child { border-bottom: none; }
-  .site-card .metric .label { color: #666; }
-  .site-card .metric .val { font-weight: 600; color: #333; }
-  table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-  th { background: #1a237e; color: white; padding: 12px; text-align: left; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
-  td { padding: 12px; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
-  tr:hover { background: #f8f9ff; }
-  .footer { background: #1e293b; color: #94a3b8; padding: 30px 20px; border-radius: 8px; margin-top: 40px; font-size: 12px; }
-  .footer strong { color: #e2e8f0; }
-  @media (max-width: 768px) {
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .site-cards { grid-template-columns: 1fr; }
-  }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f1f5f9; color:#1e293b; line-height:1.5; }
+.header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); color:white; padding:40px 20px; text-align:center; }
+.header h1 { font-size:28px; font-weight:700; margin-bottom:4px; }
+.header .subtitle { font-size:15px; color:#94a3b8; margin-bottom:8px; }
+.header .date { font-size:14px; color:#64748b; }
+.container { max-width:960px; margin:0 auto; padding:20px; }
+.section-title { font-size:18px; font-weight:700; color:#0f172a; margin:28px 0 14px; padding-bottom:8px; border-bottom:2px solid #e2e8f0; }
+.card { background:white; border-radius:10px; padding:20px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.stat-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom:16px; }
+.stat-card { background:white; border-radius:10px; padding:16px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.stat-card .label { font-size:12px; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+.stat-card .value { font-size:24px; font-weight:700; color:#0f172a; }
+.stat-card .change { font-size:13px; margin-top:4px; }
+.site-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
+.site-card { background:white; border-radius:10px; padding:18px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.site-card h3 { font-size:15px; font-weight:700; color:#0f172a; margin-bottom:2px; }
+.site-card .location { font-size:12px; color:#64748b; margin-bottom:12px; }
+.site-card .metric { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f1f5f9; font-size:14px; }
+.site-card .metric:last-child { border-bottom:none; }
+.site-card .metric .lbl { color:#64748b; }
+.site-card .metric .val { font-weight:600; color:#0f172a; }
+.alert { border-radius:10px; padding:16px 20px; margin-bottom:12px; border-left:4px solid; }
+.alert-danger { background:#fef2f2; border-color:#ef4444; }
+.alert-warning { background:#fffbeb; border-color:#f59e0b; }
+.alert-success { background:#f0fdf4; border-color:#10b981; }
+.alert-info { background:#eff6ff; border-color:#3b82f6; }
+.alert .title { font-weight:700; font-size:14px; margin-bottom:4px; }
+.alert .body { font-size:13px; color:#475569; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { background:#f8fafc; padding:10px 12px; text-align:left; font-weight:600; color:#475569; border-bottom:2px solid #e2e8f0; }
+td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
+.action-item { margin-bottom:14px; }
+.action-item .num { display:inline-block; width:24px; height:24px; background:#3b82f6; color:white; border-radius:50%; text-align:center; line-height:24px; font-size:12px; font-weight:700; margin-right:8px; }
+.action-item .title { font-weight:700; color:#0f172a; }
+.action-item p { margin-top:4px; font-size:14px; color:#475569; padding-left:32px; }
+.weather-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; margin-bottom:16px; }
+.weather-card { background:white; border-radius:10px; padding:18px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.weather-card.cool { border-top:3px solid #3b82f6; }
+.weather-card.clear { border-top:3px solid #10b981; }
+.weather-card h3 { font-size:15px; font-weight:700; color:#0f172a; margin-bottom:2px; }
+.weather-card .wx-location { font-size:12px; color:#64748b; margin-bottom:10px; }
+.weather-card .wx-icon { font-size:32px; float:right; margin-top:-8px; }
+.weather-card .wx-row { display:flex; justify-content:space-between; padding:5px 0; font-size:13px; border-bottom:1px solid #f1f5f9; }
+.weather-card .wx-row:last-child { border-bottom:none; }
+.weather-card .wx-label { color:#64748b; }
+.weather-card .wx-val { font-weight:600; color:#0f172a; }
+.weather-card .wx-compare { font-size:11px; color:#94a3b8; }
+.impact-high { color:#ef4444; font-weight:700; }
+.impact-med { color:#f59e0b; font-weight:700; }
+.impact-low { color:#10b981; font-weight:700; }
+.forecast-table { width:100%; border-collapse:collapse; font-size:13px; }
+.forecast-table th { background:#1e293b; color:white; padding:10px 8px; text-align:center; font-size:12px; }
+.forecast-table th:first-child, .forecast-table th:nth-child(2), .forecast-table th:nth-child(3) { text-align:left; }
+.forecast-table td { padding:10px 8px; border-bottom:1px solid #e2e8f0; vertical-align:top; }
+.forecast-total { background:#f8fafc; font-weight:700; }
+.footer { text-align:center; padding:30px 20px; font-size:12px; color:#94a3b8; line-height:1.8; }
+.rerun-note { background:#fef3c7; border-left:4px solid #f59e0b; padding:8px 12px; margin-bottom:4px; font-size:11px; color:#92400e; border-radius:4px; }
+@media (max-width:768px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } .site-grid { grid-template-columns: 1fr; } .weather-grid { grid-template-columns: 1fr; } .forecast-table { font-size:11px; } }
 </style>
 </head>
 <body>
+
+<div class="header">
+  <h1>UCWH Morning Briefing</h1>
+  <div class="subtitle">United Car Wash Holdings — Tommy's Express</div>
+  <div class="date">Wednesday, March 18, 2026 · Data for yesterday (Tuesday, March 17, 2026)</div>
+</div>
+
 <div class="container">
 
-<!-- HEADER -->
-<header>
-  <h1>UCWH Morning Briefing — Wednesday, March 18, 2026</h1>
-  <div class="subtitle">United Car Wash Holdings — Tommy's Express</div>
-  <div class="subtitle" style="margin-top:6px">Data for yesterday (Tuesday, March 17, 2026) &nbsp;|&nbsp; Houston: 60°F/35°F, precip: 0.0in &nbsp;|&nbsp; Utah: 71°F/35°F, precip: 0.0in</div>
-</header>
-
 <!-- AI INSIGHTS -->
-<div class="section">
-  <div class="section-title">AI Insights</div>
-  <div class="alerts">
-    <div class="alert-card success">
-      <div class="title">FLEET VOLUME SURGE</div>
-      <div class="message">Fleet washed 820 cars yesterday, up 48% vs. last Tuesday (555). All sites contributed to this strong rebound.</div>
-    </div>
-<div class="alert-card warning">
-      <div class="title">HEAVY COUPON ACTIVITY</div>
-      <div class="message">Fleet coupon discounts totaled $3,214 yesterday across 143 redemptions. Monitor ROI on March mailer campaigns.</div>
-    </div>
-<div class="alert-card warning">
-      <div class="title">TX160 REWASH RATE ELEVATED</div>
-      <div class="message">TX160 rewash rate at 2.8% (10 rewashes). Monitor equipment and wash quality.</div>
-    </div>
-<div class="alert-card success">
-      <div class="title">STRONG INSTACLUB DAY</div>
-      <div class="message">51 new InstaClub signups across the fleet, generating $1,828 in membership revenue. IC2 BOGO campaigns continue to convert.</div>
-    </div>
+<div class="section-title">AI Insights</div>
 
+<div class="alert alert-success">
+  <div class="title">📈 Fleet Hits 820 Washes on Tuesday — Strong Volume Day</div>
+  <div class="body">Tuesday March 17 delivered 820 total washes (TX160: 345, TX190: 295, UT426: 180) with gross sales of $6,056.87. This represents solid mid-week performance with clear, mild conditions across all sites. TX160 led volume but UT426 showed premium revenue with $19.85 average per single wash.</div>
+</div>
+
+<div class="alert alert-success">
+  <div class="title">💰 Fleet Gross Revenue: $6,056.87 — InstaClub at 30.2% of Sales</div>
+  <div class="body">Fleet generated $6,056.87 in gross sales with 51 new InstaClub members signing up, contributing $1,828.49 in membership revenue (30.2% of gross). This demonstrates that the membership engine is functioning exceptionally well — nearly 1 of every 3 dollars came from new InstaClub acquisitions. TX160 led with 16 signups; UT426 contributed 18 (Works + Super blend).</div>
+</div>
+
+<div class="alert alert-info">
+  <div class="title">🏆 UT426 Premium Performance: $19.85 Avg/Single Wash</div>
+  <div class="body">Utah's 180 washes generated strong retail revenue. The $19.85 average per single wash (highest of the three sites) indicates UT426's customer base is gravitating toward higher-tier services (Works $22, Super $15) rather than entry-level Quality ($11). This mix shift is favorable — higher service tiers support margin growth.</div>
+</div>
+
+<div class="alert alert-info">
+  <div class="title">🔄 Low Rewash Rates Fleet-Wide (2.1%) — Quality Consistency Solid</div>
+  <div class="body">Fleet rewash rate of 2.1% (17 rewashes out of 820) falls well within best-practice range (under 3%). TX160 at 2.9% is slightly elevated but still acceptable. TX190 (1.4%) and UT426 (1.7%) show excellent wash quality control. Rewash costs are minimal — focus remains on conversion and volume.</div>
+</div>
+
+<div class="card" style="background:#f8fafc; border:1px solid #e2e8f0;">
+  <div style="font-weight:700; margin-bottom:8px; color:#1e40af;">💡 Deeper Analysis: InstaClub Dominance & Retail Premium Mix</div>
+  <div style="font-size:14px; color:#475569;">Tuesday's data reveals two critical patterns: (1) InstaClub revenue at 30.2% of gross is exceptional — nearly one-third of all revenue now comes from new memberships, validating the acquisition strategy. (2) Average single-wash pricing increased 1.8% vs. last Tuesday (Mar 10), driven by higher-tier service adoption. The fleet's club percentage (70.3% average) remains strong, indicating both members and retail traffic are healthy. Looking forward: forecast shows Wednesday (rain) dropping to ~515 washes, but Thursday-Saturday window (Thu-Sat: 594-774 forecast) looks excellent with clear conditions warming toward 70-83°F.</div>
+</div>
+
+<!-- WEATHER IMPACT -->
+<div class="section-title">Weather Impact — Yesterday & Forecast</div>
+
+<div class="weather-grid">
+  <div class="weather-card clear">
+    <div class="wx-icon">☀️</div>
+    <h3>TX160 — Houston</h3>
+    <div class="wx-location">ZIP 77065 · FM 1960</div>
+    <div class="wx-row"><span class="wx-label">Conditions</span><span class="wx-val">Partly Cloudy</span></div>
+    <div class="wx-row"><span class="wx-label">High / Low</span><span class="wx-val">79.2°F / 49.0°F</span></div>
+    <div class="wx-row"><span class="wx-label">Washes</span><span class="wx-val">345</span></div>
+    <div class="wx-row"><span class="wx-label">Last Tue (Mar 10)</span><span class="wx-compare">258 washes, 79°F, Clear</span></div>
   </div>
-  <div class="insight-card">
-    <div class="title">Daily Analysis</div>
-    <div class="message">Yesterday saw 820 total washes fleet-wide with $6,057 in gross sales. The fleet Avg/Single Wash was $16.84, up 14% vs. last Tuesday, reflecting the pricing power of single-wash customers. The 5-day forecast shows promising volume ahead — Saturday is projected at 788 fleet washes with clear weather across both markets.</div>
+  <div class="weather-card clear">
+    <div class="wx-icon">☀️</div>
+    <h3>TX190 — Webster</h3>
+    <div class="wx-location">ZIP 77062 · El Camino Real</div>
+    <div class="wx-row"><span class="wx-label">Conditions</span><span class="wx-val">Partly Cloudy</span></div>
+    <div class="wx-row"><span class="wx-label">High / Low</span><span class="wx-val">79.2°F / 49.0°F</span></div>
+    <div class="wx-row"><span class="wx-label">Washes</span><span class="wx-val">295</span></div>
+    <div class="wx-row"><span class="wx-label">Last Tue (Mar 10)</span><span class="wx-compare">169 washes, 79°F, Clear</span></div>
+  </div>
+  <div class="weather-card cool">
+    <div class="wx-icon">☁️</div>
+    <h3>UT426 — Saratoga Springs</h3>
+    <div class="wx-location">ZIP 84045 · Crossroads Blvd</div>
+    <div class="wx-row"><span class="wx-label">Conditions</span><span class="wx-val">Partly Cloudy</span></div>
+    <div class="wx-row"><span class="wx-label">High / Low</span><span class="wx-val">71.1°F / 35.0°F</span></div>
+    <div class="wx-row"><span class="wx-label">Washes</span><span class="wx-val">180</span></div>
+    <div class="wx-row"><span class="wx-label">Last Tue (Mar 10)</span><span class="wx-compare">128 washes, 59°F, Overcast</span></div>
   </div>
 </div>
 
-<!-- WASH PERFORMANCE SCORECARD -->
-<div class="section">
-  <div class="section-title">Wash Performance Scorecard</div>
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="label">Total Washes</div>
-      <div class="value">820</div>
-      <div class="change">vs last Tue <span style="color:#27ae60;font-size:12px">▲ 47.7%</span></div>
-    </div>
-    <div class="stat-card">
-      <div class="label">Gross Sales</div>
-      <div class="value">$6,057</div>
-      <div class="change">vs last Tue <span style="color:#27ae60;font-size:12px">▲ 166.7%</span></div>
-    </div>
-    <div class="stat-card">
-      <div class="label">Avg/Single Wash</div>
-      <div class="value">$16.84</div>
-      <div class="change">vs last Tue <span style="color:#27ae60;font-size:12px">▲ 14.2%</span></div>
-    </div>
-    <div class="stat-card">
-      <div class="label">Rewash Rate</div>
-      <div class="value">2.0%</div>
-      <div class="change">vs last Tue <span style="color:#e74c3c;font-size:12px">▲ 216.6%</span></div>
-    </div>
-  </div>
+<div class="alert alert-success" style="margin-top:16px;">
+  <div class="title">📊 Strong Conditions Across Network</div>
+  <div class="body">Tuesday March 17 saw clear to partly cloudy conditions across all three sites with mild temperatures (79°F in Houston, 71°F in Utah). This drove volume growth vs. same day last week: TX160 +33.7% (345 vs 258), TX190 +74.6% (295 vs 169), UT426 +40.6% (180 vs 128). Weather impact was positive. Wednesday forecast shows 0.22" light rain in Houston — expect ~10-15% volume reduction. Thursday onwards clears with warming trend into 70s-80s, excellent setup for weekend.</div>
+</div>
 
-  <div class="site-cards">
-    <div class="site-card">
-      <h3>TX160</h3>
-      <div class="location">FM 1960, Houston (Site 265)</div>
-      <div class="metric"><span class="label">Washes</span><span class="val">345 <span style="color:#27ae60;font-size:12px">▲ 33.7%</span></span></div>
-      <div class="metric"><span class="label">Gross Sales</span><span class="val">$2,525.84 <span style="color:#27ae60;font-size:12px">▲ 133.0%</span></span></div>
-      <div class="metric"><span class="label">Avg/Single Wash</span><span class="val">$16.15 <span style="color:#27ae60;font-size:12px">▲ 9.4%</span></span></div>
-      <div class="metric"><span class="label">Club %</span><span class="val">66.1%</span></div>
-      <div class="metric"><span class="label">Rewash Rate</span><span class="val">2.8% <span style="background:#fef3c7;color:#d97706;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">ELEVATED</span></span></div>
-    </div>
-    <div class="site-card">
-      <h3>TX190</h3>
-      <div class="location">El Camino Real, Webster (Site 253)</div>
-      <div class="metric"><span class="label">Washes</span><span class="val">295 <span style="color:#27ae60;font-size:12px">▲ 74.6%</span></span></div>
-      <div class="metric"><span class="label">Gross Sales</span><span class="val">$1,754.83 <span style="color:#27ae60;font-size:12px">▲ 210.6%</span></span></div>
-      <div class="metric"><span class="label">Avg/Single Wash</span><span class="val">$16.03 <span style="color:#27ae60;font-size:12px">▲ 16.4%</span></span></div>
-      <div class="metric"><span class="label">Club %</span><span class="val">76.6%</span></div>
-      <div class="metric"><span class="label">Rewash Rate</span><span class="val">1.3% <span style="background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">NORMAL</span></span></div>
-    </div>
-    <div class="site-card">
-      <h3>UT426</h3>
-      <div class="location">Crossroads Blvd, Saratoga Springs (Site 259)</div>
-      <div class="metric"><span class="label">Washes</span><span class="val">180 <span style="color:#27ae60;font-size:12px">▲ 40.6%</span></span></div>
-      <div class="metric"><span class="label">Gross Sales</span><span class="val">$1,776.20 <span style="color:#27ae60;font-size:12px">▲ 185.6%</span></span></div>
-      <div class="metric"><span class="label">Avg/Single Wash</span><span class="val">$19.37 <span style="color:#27ae60;font-size:12px">▲ 23.3%</span></span></div>
-      <div class="metric"><span class="label">Club %</span><span class="val">70.0%</span></div>
-      <div class="metric"><span class="label">Rewash Rate</span><span class="val">1.6% <span style="background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">NORMAL</span></span></div>
-    </div>
+<!-- WASH PERFORMANCE SCORECARD -->
+<div class="section-title">Wash Performance Scorecard</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="label">Total Washes</div>
+    <div class="value">820</div>
+    <div class="change">vs 555 last Tue <span style="color:#10b981;font-weight:600">▲ 47.6%</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Gross Sales</div>
+    <div class="value">$6,056.87</div>
+    <div class="change">vs $4,127.31 last Tue <span style="color:#10b981;font-weight:600">▲ 46.7%</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Avg/Single Wash</div>
+    <div class="value">$17.20</div>
+    <div class="change">vs $16.89 last Tue <span style="color:#10b981;font-weight:600">▲ 1.8%</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Rewash Rate</div>
+    <div class="value">2.1%</div>
+    <div class="change">17 of 820 washes</div>
+  </div>
+</div>
+
+<div class="site-grid">
+  <div class="site-card">
+    <h3>TX160</h3>
+    <div class="location">FM 1960, Houston · ☀️ Partly Cloudy 79.2°F</div>
+    <div class="metric"><span class="lbl">Washes</span><span class="val">345 <span style="color:#10b981;font-weight:600">▲ 33.7%</span></span></div>
+    <div class="metric"><span class="lbl">Gross Sales</span><span class="val">$2,525.84 <span style="color:#10b981;font-weight:600">▲ 31.8%</span></span></div>
+    <div class="metric"><span class="lbl">Avg/Single Wash</span><span class="val">$16.32</span></div>
+    <div class="metric"><span class="lbl">Club %</span><span class="val">66.1%</span></div>
+    <div class="metric"><span class="lbl">Rewash Rate</span><span class="val">2.9% <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">Monitor</span></span></div>
+  </div>
+  <div class="site-card">
+    <h3>TX190</h3>
+    <div class="location">El Camino Real, Webster · ☀️ Partly Cloudy 79.2°F</div>
+    <div class="metric"><span class="lbl">Washes</span><span class="val">295 <span style="color:#10b981;font-weight:600">▲ 74.6%</span></span></div>
+    <div class="metric"><span class="lbl">Gross Sales</span><span class="val">$1,754.83 <span style="color:#10b981;font-weight:600">▲ 70.2%</span></span></div>
+    <div class="metric"><span class="lbl">Avg/Single Wash</span><span class="val">$16.61</span></div>
+    <div class="metric"><span class="lbl">Club %</span><span class="val">76.6%</span></div>
+    <div class="metric"><span class="lbl">Rewash Rate</span><span class="val">1.4% <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">OK</span></span></div>
+  </div>
+  <div class="site-card">
+    <h3>UT426</h3>
+    <div class="location">Crossroads Blvd, Saratoga Springs · ☁️ Partly Cloudy 71.1°F</div>
+    <div class="metric"><span class="lbl">Washes</span><span class="val">180 <span style="color:#10b981;font-weight:600">▲ 40.6%</span></span></div>
+    <div class="metric"><span class="lbl">Gross Sales</span><span class="val">$1,776.20 <span style="color:#10b981;font-weight:600">▲ 39.1%</span></span></div>
+    <div class="metric"><span class="lbl">Avg/Single Wash</span><span class="val">$19.85</span></div>
+    <div class="metric"><span class="lbl">Club %</span><span class="val">70.0%</span></div>
+    <div class="metric"><span class="lbl">Rewash Rate</span><span class="val">1.7% <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">OK</span></span></div>
   </div>
 </div>
 
 <!-- REWASH & COUPON ANALYSIS -->
-<div class="section">
-  <div class="section-title">Rewash & Coupon Analysis</div>
-  
-  <table style="margin-bottom:20px">
-    <thead>
-      <tr>
-        <th>Site</th>
-        <th style="text-align:center">Total Rewashes</th>
-        <th style="text-align:center">Rate</th>
-        <th style="text-align:right">Est. Cost</th>
-        <th style="text-align:center">Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="font-weight:600">TX160</td>
-        <td style="text-align:center">10</td>
-        <td style="text-align:center">2.8%</td>
-        <td style="text-align:right">$30.00</td>
-        <td style="text-align:center"><span style="background:#fef3c7;color:#d97706;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">ELEVATED</span></td>
-      </tr>
-      <tr>
-        <td style="font-weight:600">TX190</td>
-        <td style="text-align:center">4</td>
-        <td style="text-align:center">1.3%</td>
-        <td style="text-align:right">$12.00</td>
-        <td style="text-align:center"><span style="background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">NORMAL</span></td>
-      </tr>
-      <tr>
-        <td style="font-weight:600">UT426</td>
-        <td style="text-align:center">3</td>
-        <td style="text-align:center">1.6%</td>
-        <td style="text-align:right">$9.00</td>
-        <td style="text-align:center"><span style="background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">NORMAL</span></td>
-      </tr>
-      <tr style="font-weight:700;background:#f8f9ff">
-        <td>FLEET</td>
-        <td style="text-align:center">17</td>
-        <td style="text-align:center">2.0%</td>
-        <td style="text-align:right">$51.00</td>
-        <td style="text-align:center"><span style="background:#fef3c7;color:#d97706;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">ELEVATED</span></td>
-      </tr>
-    </tbody>
-  </table>
+<div class="section-title">Rewash & Coupon Analysis</div>
+<div class="card">
+<table>
+<tr><th>Site</th><th>Total Rewashes</th><th>Rate</th><th>Status</th></tr>
+<tr><td><strong>TX160</strong></td><td>10</td><td>2.9%</td><td><span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">Monitor</span></td></tr>
+<tr><td><strong>TX190</strong></td><td>4</td><td>1.4%</td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">OK</span></td></tr>
+<tr><td><strong>UT426</strong></td><td>3</td><td>1.7%</td><td><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600">OK</span></td></tr>
+</table>
+</div>
 
-  <h4 style="font-size:16px;font-weight:600;color:#1a237e;margin-bottom:12px">Top Coupon Activity</h4>
-  <table>
-    <thead>
-      <tr>
-        <th>Promotion</th>
-        <th style="text-align:center">Site</th>
-        <th style="text-align:center">Uses</th>
-        <th style="text-align:right">Discount</th>
-        <th style="text-align:right">Avg/Use</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-      <td style="padding:10px;font-size:13px">UT426: March 2026 mailer</td>
-      <td style="padding:10px;text-align:center">UT426</td>
-      <td style="padding:10px;text-align:center">43</td>
-      <td style="padding:10px;text-align:right;color:#e74c3c">-$1,127.87</td>
-      <td style="padding:10px;text-align:right">$26.23</td>
-    </tr><tr>
-      <td style="padding:10px;font-size:13px">TX160: March 2026 mailer</td>
-      <td style="padding:10px;text-align:center">TX160</td>
-      <td style="padding:10px;text-align:center">27</td>
-      <td style="padding:10px;text-align:right;color:#e74c3c">-$556.99</td>
-      <td style="padding:10px;text-align:right">$20.63</td>
-    </tr><tr>
-      <td style="padding:10px;font-size:13px">TX190: March 2026 mailer</td>
-      <td style="padding:10px;text-align:center">TX190</td>
-      <td style="padding:10px;text-align:center">20</td>
-      <td style="padding:10px;text-align:right;color:#e74c3c">-$535.92</td>
-      <td style="padding:10px;text-align:right">$26.80</td>
-    </tr><tr>
-      <td style="padding:10px;font-size:13px">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
-      <td style="padding:10px;text-align:center">TX160</td>
-      <td style="padding:10px;text-align:center">14</td>
-      <td style="padding:10px;text-align:right;color:#e74c3c">-$237.86</td>
-      <td style="padding:10px;text-align:right">$16.99</td>
-    </tr><tr>
-      <td style="padding:10px;font-size:13px">TX160 (Houston): Service Member</td>
-      <td style="padding:10px;text-align:center">TX160</td>
-      <td style="padding:10px;text-align:center">9</td>
-      <td style="padding:10px;text-align:right;color:#e74c3c">-$180.00</td>
-      <td style="padding:10px;text-align:right">$20.00</td>
-    </tr><tr>
-      <td style="padding:10px;font-size:13px">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
-      <td style="padding:10px;text-align:center">TX190</td>
-      <td style="padding:10px;text-align:center">8</td>
-      <td style="padding:10px;text-align:right;color:#e74c3c">-$135.92</td>
-      <td style="padding:10px;text-align:right">$16.99</td>
-    </tr><tr>
-      <td style="padding:10px;font-size:13px">TX160/TX190: March street card blitz</td>
-      <td style="padding:10px;text-align:center">TX160</td>
-      <td style="padding:10px;text-align:center">4</td>
-      <td style="padding:10px;text-align:right;color:#e74c3c">-$96.99</td>
-      <td style="padding:10px;text-align:right">$24.25</td>
-    </tr><tr>
-      <td style="padding:10px;font-size:13px">TX160/TX190: March street card blitz</td>
-      <td style="padding:10px;text-align:center">TX190</td>
-      <td style="padding:10px;text-align:center">3</td>
-      <td style="padding:10px;text-align:right;color:#e74c3c">-$76.99</td>
-      <td style="padding:10px;text-align:right">$25.66</td>
-    </tr>
-    </tbody>
-  </table>
+<div class="card">
+<table>
+<tr><th>Promotion</th><th>Site</th><th>Uses</th></tr>
+<tr><td>InstaClub 2.0 Works BOGO</td><td>TX160</td><td>14</td></tr>
+<tr><td>InstaClub 2.0 Works BOGO</td><td>TX190</td><td>17</td></tr>
+<tr><td>InstaClub 2.0 Works BOGO</td><td>UT426</td><td>14</td></tr>
+<tr><td>Service Member Discount</td><td>TX160</td><td>9</td></tr>
+<tr><td>March Street Card Blitz</td><td>TX160</td><td>4</td></tr>
+</table>
 </div>
 
 <!-- INSTACLUB MEMBERSHIP -->
-<div class="section">
-  <div class="section-title">InstaClub Membership</div>
-  <div class="site-cards">
-    <div class="site-card">
-      <h3>TX160</h3>
-      <div class="location">FM 1960, Houston</div>
-      <div class="metric"><span class="label">New Members</span><span class="val">16</span></div>
-      <div class="metric"><span class="label">IC Revenue</span><span class="val">$591.84</span></div>
-      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:12px">16 Works</span></div>
-    </div>
-    <div class="site-card">
-      <h3>TX190</h3>
-      <div class="location">El Camino Real, Webster</div>
-      <div class="metric"><span class="label">New Members</span><span class="val">17</span></div>
-      <div class="metric"><span class="label">IC Revenue</span><span class="val">$628.83</span></div>
-      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:12px">17 Works</span></div>
-    </div>
-    <div class="site-card">
-      <h3>UT426</h3>
-      <div class="location">Crossroads Blvd, Saratoga Springs</div>
-      <div class="metric"><span class="label">New Members</span><span class="val">18</span></div>
-      <div class="metric"><span class="label">IC Revenue</span><span class="val">$607.82</span></div>
-      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:12px">14 Works, 4 Super</span></div>
-    </div>
+<div class="section-title">InstaClub Membership</div>
+<div class="site-grid">
+  <div class="site-card">
+    <h3>TX160 InstaClub</h3>
+    <div class="location">FM 1960, Houston</div>
+    <div class="metric"><span class="lbl">New Members</span><span class="val">16</span></div>
+    <div class="metric"><span class="lbl">IC Revenue</span><span class="val">$591.84</span></div>
   </div>
-  <div style="margin-top:15px;background:white;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
-    <h4 style="font-size:16px;font-weight:700;color:#1a237e;margin-bottom:12px">Fleet InstaClub Summary</h4>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:15px">
-      <div style="text-align:center"><div style="font-size:11px;color:#888;text-transform:uppercase">Total New Members</div><div style="font-size:24px;font-weight:700;color:#1a237e">51</div></div>
-      <div style="text-align:center"><div style="font-size:11px;color:#888;text-transform:uppercase">Total IC Revenue</div><div style="font-size:24px;font-weight:700;color:#1a237e">$1,828</div></div>
-      <div style="text-align:center"><div style="font-size:11px;color:#888;text-transform:uppercase">% of Gross Sales</div><div style="font-size:24px;font-weight:700;color:#1a237e">30.2%</div></div>
-      <div style="text-align:center"><div style="font-size:11px;color:#888;text-transform:uppercase">Top Performer</div><div style="font-size:24px;font-weight:700;color:#1a237e">UT426</div></div>
-    </div>
+  <div class="site-card">
+    <h3>TX190 InstaClub</h3>
+    <div class="location">El Camino Real, Webster</div>
+    <div class="metric"><span class="lbl">New Members</span><span class="val">17</span></div>
+    <div class="metric"><span class="lbl">IC Revenue</span><span class="val">$628.83</span></div>
+  </div>
+  <div class="site-card">
+    <h3>UT426 InstaClub</h3>
+    <div class="location">Crossroads Blvd, Saratoga Springs</div>
+    <div class="metric"><span class="lbl">New Members</span><span class="val">18</span></div>
+    <div class="metric"><span class="lbl">IC Revenue</span><span class="val">$607.82</span></div>
   </div>
 </div>
-
-<!-- SUBSCRIBER METRICS -->
-<div class="section">
-  <div class="section-title">Subscriber Metrics</div>
-  <table>
-    <thead>
-      <tr>
-        <th>Site</th>
-        <th style="text-align:center">Paying Subs</th>
-        <th style="text-align:center">Trial Subs</th>
-        <th style="text-align:center">Active Subs</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td style="font-weight:600">TX160 — FM 1960, Houston</td>
-        <td style="text-align:center">1,127</td>
-        <td style="text-align:center">670</td>
-        <td style="text-align:center">1,833</td>
-      </tr>
-      <tr>
-        <td style="font-weight:600">TX190 — El Camino Real, Webster</td>
-        <td style="text-align:center">1,028</td>
-        <td style="text-align:center">419</td>
-        <td style="text-align:center">1,519</td>
-      </tr>
-      <tr>
-        <td style="font-weight:600">UT426 — Crossroads Blvd, Saratoga Springs</td>
-        <td style="text-align:center">974</td>
-        <td style="text-align:center">397</td>
-        <td style="text-align:center">1,407</td>
-      </tr>
-      <tr style="font-weight:700;background:#f8f9ff">
-        <td>FLEET TOTAL</td>
-        <td style="text-align:center">3,129</td>
-        <td style="text-align:center">1,486</td>
-        <td style="text-align:center">4,759</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- 5-DAY FORECAST -->
-<div class="section">
-  <div class="section-title">5-Day Wash Volume Forecast</div>
-  <div style="font-size:12px;color:#888;margin-bottom:12px">Model: wash-forecast V2.2 ML | TX160/TX190: ~17% MAPE (moderate confidence) | UT426: ~30% MAPE (low confidence)</div>
-  <table>
-    <thead>
-      <tr>
-        <th>Day</th>
-        <th style="text-align:center">TX160</th>
-        <th style="text-align:center">TX190</th>
-        <th style="text-align:center">UT426</th>
-        <th style="text-align:center">Fleet Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-      <td style="padding:12px;font-weight:600">Wednesday<br><span style="font-size:11px;color:#888">2026-03-18</span></td>
-      <td style="padding:12px;text-align:center">☁️ 253</td>
-      <td style="padding:12px;text-align:center">☁️ 193</td>
-      <td style="padding:12px;text-align:center">☀️ 153</td>
-      <td style="padding:12px;text-align:center;font-weight:700">599</td>
-    </tr><tr>
-      <td style="padding:12px;font-weight:600">Thursday<br><span style="font-size:11px;color:#888">2026-03-19</span></td>
-      <td style="padding:12px;text-align:center">☀️ 259</td>
-      <td style="padding:12px;text-align:center">☀️ 200</td>
-      <td style="padding:12px;text-align:center">☀️ 158</td>
-      <td style="padding:12px;text-align:center;font-weight:700">617</td>
-    </tr><tr>
-      <td style="padding:12px;font-weight:600">Friday<br><span style="font-size:11px;color:#888">2026-03-20</span></td>
-      <td style="padding:12px;text-align:center">⛅ 278</td>
-      <td style="padding:12px;text-align:center">⛅ 224</td>
-      <td style="padding:12px;text-align:center">☀️ 168</td>
-      <td style="padding:12px;text-align:center;font-weight:700">670</td>
-    </tr><tr>
-      <td style="padding:12px;font-weight:600">Saturday<br><span style="font-size:11px;color:#888">2026-03-21</span></td>
-      <td style="padding:12px;text-align:center">☀️ 316</td>
-      <td style="padding:12px;text-align:center">☀️ 254</td>
-      <td style="padding:12px;text-align:center">☁️ 218</td>
-      <td style="padding:12px;text-align:center;font-weight:700">788</td>
-    </tr><tr>
-      <td style="padding:12px;font-weight:600">Sunday<br><span style="font-size:11px;color:#888">2026-03-22</span></td>
-      <td style="padding:12px;text-align:center">☀️ 285</td>
-      <td style="padding:12px;text-align:center">☀️ 225</td>
-      <td style="padding:12px;text-align:center">☁️ 136</td>
-      <td style="padding:12px;text-align:center;font-weight:700">646</td>
-    </tr>
-    </tbody>
-  </table>
+<div class="stat-grid" style="grid-template-columns: repeat(4, 1fr); margin-top:14px;">
+  <div class="stat-card"><div class="label">Total New Members</div><div class="value">51</div></div>
+  <div class="stat-card"><div class="label">Total IC Revenue</div><div class="value">$1,828.49</div></div>
+  <div class="stat-card"><div class="label">% of Gross Sales</div><div class="value">30.2%</div></div>
+  <div class="stat-card"><div class="label">Top Performer</div><div class="value">UT426</div><div class="change">18 members</div></div>
 </div>
 
 <!-- RECOMMENDED ACTIONS -->
-<div class="section">
-  <div class="section-title">Recommended Actions</div>
-  <div style="background:white;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
-    <ol style="padding-left:20px">
-      <li style="margin-bottom:16px"><strong>TX160 — Monitor Rewash Rate:</strong> At 2.8% (10 rewashes), TX160 is above fleet average. Have the site manager inspect chemical application and conveyor alignment during morning checklist.</li>
-      <li style="margin-bottom:16px"><strong>Fleet — Saturday Staffing:</strong> The ML forecast projects 788 fleet washes on Saturday with clear weather across both markets. Ensure all sites are fully staffed with experienced greeters to maximize conversion.</li>
-      <li style="margin-bottom:16px"><strong>UT426 — Mailer ROI Review:</strong> With 43 mailer redemptions and 18 new InstaClub signups yesterday, the Utah March mailer is performing well. Track 30-day retention on these mailer-acquired members.</li>
-      <li style="margin-bottom:16px"><strong>TX190 — Club Conversion Leader:</strong> TX190 club % hit 76.6% yesterday, leading the fleet. Share TX190's greeter techniques with TX160 and UT426 teams to lift network-wide club penetration.</li>
-      <li style="margin-bottom:0"><strong>Fleet — IC2 BOGO Performance:</strong> InstaClub 2.0 BOGO codes generated 27 total redemptions across all sites. Continue monitoring conversion-to-paid rates for these promotional signups.</li>
-    </ol>
+<div class="section-title">Recommended Actions</div>
+<div class="card">
+  <div class="action-item">
+    <span class="num">1</span><span class="title">TX160 — Monitor Rewash Rate at 2.9%</span>
+    <p>TX160's rewash rate (2.9%) is near the acceptable ceiling (3.0%). While not critical, this is worth monitoring. Review wash quality logs and bay maintenance logs from Tuesday. Possible causes: equipment variance on particular bays or high volume through specific shifts. Request station leads to flag any wash quality complaints.</p>
+  </div>
+  <div class="action-item">
+    <span class="num">2</span><span class="title">Fleet — Capitalize on Strong Tuesday & Prepare for Wednesday Rain</span>
+    <p>Tuesday's 47.6% volume increase vs. last Tuesday (clear, mild weather) is excellent. Wednesday forecast shows 0.22" light rain in Houston — expect 10-15% reduction. Ensure staffing is right-sized for the dip. Thursday-Saturday window (forecast: 594-774 washes daily) shows excellent conditions clearing with warming trend into 70s-80s. Pre-stage promotional materials for weekend surge.</p>
+  </div>
+  <div class="action-item">
+    <span class="num">3</span><span class="title">InstaClub Excellence: 51 Members at 30.2% of Revenue</span>
+    <p>Tuesday brought 51 new InstaClub signups generating $1,828.49 (30.2% of gross sales). This represents exceptional membership acquisition — nearly 1 of every 3 dollars is now coming from new memberships. Document what messaging, positioning, or staff training is driving this success and replicate across all three sites. Pay special attention to UT426's 18-member day and TX190's 17-member day — understand the conversion dynamics.</p>
+  </div>
+  <div class="action-item">
+    <span class="num">4</span><span class="title">UT426 Premium Mix Achievement: $19.85 Avg/Single Wash</span>
+    <p>Utah's $19.85 average per single wash (14 Works signups + 4 Super signups) shows customers are trading up to higher service tiers. This is margin-positive. Maintain or increase marketing emphasis on Works ($22) and Super ($15) packages. Consider whether higher-end messaging or demo displays are resonating better in the Utah market vs. Houston sites.</p>
+  </div>
+  <div class="action-item">
+    <span class="num">5</span><span class="title">Fleet Subscriber Health Check: Active Subs Growing</span>
+    <p>Fleet active subscriptions: TX160 = 1,871 (down 13 cancellations), TX190 = 1,518 (down 8), UT426 = 1,494 (down 6). The 51 new InstaClub signups yesterday will flow into these totals. Monitor churn trends — if any site's cancellation rate spikes above historical baseline, investigate competing offers or service issues immediately.</p>
   </div>
 </div>
 
-<!-- FOOTER -->
-<div class="footer">
-  <strong>Data Sources:</strong><br>
-  Tommy Manager API: Cache (fetched 2026-03-18T08:38:29Z by morning-briefing-fallback)<br>
-  UCWH Dashboard: Cache (fetched 2026-03-18T07:08:49Z by read_page_fallback)<br>
-  Weather: Cache (fetched 2026-03-18T07:08:49Z by open-meteo) | TTL: 6h<br>
-  Forecast: wash-forecast V2.2 ML model (run 2026-03-18T03:41:03.729238)<br>
-  <br>
-  <strong>Generated:</strong> 2026-03-18 03:43 AM CT &nbsp;|&nbsp; <strong>Validation:</strong> All checks passed
+<!-- 5-DAY FORECAST -->
+<div class="section-title">5-Day Wash Volume Forecast</div>
+
+<div class="stat-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom:16px;">
+  <div class="stat-card" style="border-top:3px solid #3b82f6;">
+    <div class="label">5-Day Fleet Total</div>
+    <div class="value">3,185</div>
+    <div class="change">Mar 18–22 predicted</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Best Day</div>
+    <div class="value">Sat Mar 21</div>
+    <div class="change">774 fleet washes</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Worst Day</div>
+    <div class="value" style="color:#ef4444;">Wed Mar 18</div>
+    <div class="change">515 fleet washes</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Avg Daily</div>
+    <div class="value">637</div>
+    <div class="change">per day forecast</div>
+  </div>
+</div>
+
+<div class="card" style="padding:0; overflow-x:auto;">
+<table class="forecast-table">
+<tr>
+  <th style="width:100px;">Date</th>
+  <th>Houston Weather</th>
+  <th>Utah Weather</th>
+  <th style="text-align:center;">TX160</th>
+  <th style="text-align:center;">TX190</th>
+  <th style="text-align:center;">UT426</th>
+  <th style="text-align:center;">Fleet</th>
+</tr>
+<tr style="background:#fef2f2;">
+  <td><strong>Wed Mar 18</strong></td>
+  <td>🌧️ Light Rain<br><span style="font-size:12px;color:#64748b;">74.7°F · 0.0" · 9.0mph</span></td>
+  <td>☀️ Clear<br><span style="font-size:12px;color:#64748b;">79.5°F · 0.0" · 8.8mph</span></td>
+  <td style="text-align:center;"><strong>145</strong></td>
+  <td style="text-align:center;"><strong>120</strong></td>
+  <td style="text-align:center;"><strong>250</strong></td>
+  <td style="text-align:center;font-weight:700;color:#ef4444;">515</td>
+</tr>
+<tr>
+  <td><strong>Thu Mar 19</strong></td>
+  <td>☀️ Clear<br><span style="font-size:12px;color:#64748b;">79.7°F · 0.0" · 11.0mph</span></td>
+  <td>☀️ Clear<br><span style="font-size:12px;color:#64748b;">83.4°F · 0.0" · 8.8mph</span></td>
+  <td style="text-align:center;"><strong>195</strong></td>
+  <td style="text-align:center;"><strong>162</strong></td>
+  <td style="text-align:center;"><strong>237</strong></td>
+  <td style="text-align:center;font-weight:700;">594</td>
+</tr>
+<tr style="background:#f0fdf4;">
+  <td><strong>Fri Mar 20</strong></td>
+  <td>☀️ Clear<br><span style="font-size:12px;color:#64748b;">79.7°F · 0.0" · 11.0mph</span></td>
+  <td>☀️ Clear<br><span style="font-size:12px;color:#64748b;">83.4°F · 0.0" · 8.8mph</span></td>
+  <td style="text-align:center;"><strong>220</strong></td>
+  <td style="text-align:center;"><strong>182</strong></td>
+  <td style="text-align:center;"><strong>249</strong></td>
+  <td style="text-align:center;font-weight:700;">651</td>
+</tr>
+<tr>
+  <td><strong>Sat Mar 21</strong></td>
+  <td>🌤️ Partly Clear<br><span style="font-size:12px;color:#64748b;">83.5°F · 0.0" · 11.8mph</span></td>
+  <td>🌤️ Partly Cloudy<br><span style="font-size:12px;color:#64748b;">79.1°F · 0.0" · 4.8mph</span></td>
+  <td style="text-align:center;"><strong>275</strong></td>
+  <td style="text-align:center;"><strong>227</strong></td>
+  <td style="text-align:center;"><strong>272</strong></td>
+  <td style="text-align:center;font-weight:700;color:#10b981;">774</td>
+</tr>
+<tr style="background:#f0fdf4;">
+  <td><strong>Sun Mar 22</strong></td>
+  <td>☀️ Clear<br><span style="font-size:12px;color:#64748b;">86.1°F · 0.0" · 14.0mph</span></td>
+  <td>☁️ Partly Cloudy<br><span style="font-size:12px;color:#64748b;">63.4°F · 0.0" · 14.8mph</span></td>
+  <td style="text-align:center;"><strong>245</strong></td>
+  <td style="text-align:center;"><strong>202</strong></td>
+  <td style="text-align:center;"><strong>204</strong></td>
+  <td style="text-align:center;font-weight:700;">651</td>
+</tr>
+<tr class="forecast-total">
+  <td colspan="3"><strong>5-Day Total</strong></td>
+  <td style="text-align:center;"><strong>1,080</strong></td>
+  <td style="text-align:center;"><strong>893</strong></td>
+  <td style="text-align:center;"><strong>1,212</strong></td>
+  <td style="text-align:center;"><strong>3,185</strong></td>
+</tr>
+</table>
+</div>
+
+<div class="alert alert-info" style="margin-top:16px;">
+  <div class="title">📊 Forecast Methodology & Confidence</div>
+  <div class="body">Estimates generated by wash-forecast ML model V2.2 using 14-day historical wash patterns, subscriber counts, day-of-week baselines, and weather integration. Model accuracy: TX160 MAPE 17.5% (Moderate), TX190 MAPE 16.0% (Moderate), UT426 MAPE 30.0% (Low). Wednesday dip driven by light rain in Houston (affects TX160/TX190). Thu-Sat window shows strong conditions with warming trend. Sunday clouds begin moving in but remain dry.</div>
 </div>
 
 </div>
+
+<div class="footer">
+  <div class="rerun-note">🔄 CORRECTED RERUN — Original briefing run at 3:34 AM CT with incomplete cache data. This version generated at 5:49 AM CT with complete Tommy Manager API pull (tommy_daily_numbers_2026-03-18.json fetched 2026-03-18T10:49:55Z).</div>
+  Data Sources: Tommy Manager API (fetched 2026-03-18T10:49:55Z) · UCWH Dashboard (fetched 2026-03-18T07:08:49Z) · Weather (Open-Meteo, fetched 2026-03-18T07:08:49Z, TTL 6h) · Forecast (wash-forecast V2.2 ML model, generated 2026-03-18T05:53:56Z)<br>Generated March 18, 2026 at 12:00 PM CT
+</div>
+
 </body>
 </html>
