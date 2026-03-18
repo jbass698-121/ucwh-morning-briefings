@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 18, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Wednesday, March 18, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>GTC 2026 enters its final day with a landmark open-models panel featuring LangChain's Harrison Chase and leaders from A16Z, Cursor, and Thinking Machines Lab, while Mistral used the conference to launch Forge — an enterprise platform for building custom models on proprietary data — alongside its unified Small 4 model. NVIDIA's KVTC research delivers a potential game-changer for production LLM deployment: 20x KV cache compression without modifying model weights, cutting GPU memory costs and slashing time-to-first-token by up to 8x. On the platform front, Claude Cowork is now live on Windows with full feature parity, expanding access to the full agent workflow experience across both major desktop platforms. In a major legal escalation, Anthropic sued the Pentagon over its "supply chain risk" designation — with Microsoft, 22 retired military leaders, and major tech industry groups filing briefs in Anthropic's support, with a hearing set for March 24. On the funding side, Legora's $550M Series D at a $5.55B valuation signals that vertical AI for legal is entering its growth phase, while the robotics sector pulled in over $1.2B in a single week across four companies. Anthropic's MCP has been formally donated to the Linux Foundation's new Agentic AI Foundation, crossing 97 million monthly SDK downloads.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/17/mistral-forge-nvidia-gtc-build-your-own-ai-enterprise/">Mistral Launches Forge at GTC — Enterprise Custom Model Platform with Unified Small 4</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / NVIDIA NIM</span> · Mar 17 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Mistral used GTC 2026 to announce Forge, a platform that lets enterprises build custom AI models trained on their own data using Mistral's open-weight model library. Alongside Forge, Mistral introduced Small 4 — a 119B-parameter hybrid model that unifies three previously separate model families (Instruct, Reasoning/Magistral, and Devstral) into a single architecture. Small 4 can switch between general instruction-following, chain-of-thought reasoning, and code generation without swapping models. The combination positions Mistral as the open-weight alternative for enterprises that want to fine-tune models on proprietary data without sending it to a frontier lab. Forge is available immediately through NVIDIA NIM.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Forge is Mistral's enterprise play — and it's a compelling one. For agent builders, a unified model that handles instructions, reasoning, and code in a single inference call simplifies architecture considerably. You no longer need to route between specialized models. The open-weight angle means you can fine-tune on domain-specific data (legal, financial, operational) and deploy on your own infrastructure. If you're building agents for clients who can't send data to third-party APIs, Forge + Small 4 is now a credible option.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://winbuzzer.com/2026/03/17/nvidia-dlss-5-gpt-moment-graphics-gtc-2026-xcxwbn/">NVIDIA DLSS 5 Announced — "GPT Moment for Graphics" Brings Neural Rendering This Fall</a></h3>
+    <p class="story-meta"><span class="source">WinBuzzer / Tom's Guide / The Register</span> · Mar 17 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">NVIDIA announced DLSS 5 at GTC 2026, calling it the "GPT moment for graphics." The technology introduces real-time neural rendering that infuses pixels with photoreal lighting and materials, moving beyond upscaling into AI-generated visual content. DLSS 5 launches this fall exclusively for RTX 50-series GPUs. Jensen Huang positioned it as the convergence of AI inference and real-time graphics — the same transformer architectures powering LLMs now generating photorealistic visual output at interactive frame rates. GPT-5.4 Mini also landed on OpenRouter today, extending OpenAI's March 5 release of GPT-5.4 (with 1M token context and native computer use) to a smaller, cheaper variant.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://venturebeat.com/orchestration/nvidia-shrinks-llm-memory-20x-without-changing-model-weights">NVIDIA KVTC Shrinks LLM Memory 20x Without Changing Model Weights — Up to 8x Faster Time-to-First-Token</a></h3>
+    <p class="story-meta"><span class="source">VentureBeat / MarkTechPost</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">NVIDIA researchers introduced KVTC (KV Cache Transform Coding), a technique that compresses the key-value caches used by LLMs during inference by up to 20x — without modifying the model itself. Borrowing ideas from media compression formats like JPEG, KVTC applies transform coding to the KV cache, dramatically reducing GPU memory demands for multi-turn conversations and long-context workloads. The technique also delivers up to 8x reduction in time-to-first-token by avoiding recomputation of dropped cache values. For enterprise deployments running agents with extended conversations, this means the same GPU hardware can serve significantly more concurrent users or handle much longer context windows.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is a pure infrastructure win for anyone running production agents. KV cache is the hidden cost of multi-turn agent conversations — it grows linearly with context length and is the primary reason long conversations get expensive. A 20x compression that doesn't require model changes means you can deploy it on existing models immediately. If you're running Claude or any other model through your own infrastructure, KVTC could cut your GPU memory costs dramatically while enabling the longer context windows that complex agent workflows demand.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">MCP Donated to Linux Foundation's Agentic AI Foundation — 97M Monthly SDK Downloads, Every Major Provider Onboard</a></h3>
+    <p class="story-meta"><span class="source">Linux Foundation / Solo.io / The New Stack</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic formally donated the Model Context Protocol (MCP) to the Linux Foundation's newly formed Agentic AI Foundation (AAIF), alongside Block's goose agent framework and OpenAI's AGENTS.md spec. MCP has crossed 97 million monthly SDK downloads (Python + TypeScript combined) and is now adopted by every major AI provider — Anthropic, OpenAI, Google, Microsoft, and Amazon. Over 10,000 active public MCP servers are in production. Anthropic CPO Mike Krieger stated the donation ensures MCP stays "open, neutral, and community-driven as it becomes critical infrastructure for AI." The AAIF's next MCP Dev Summit takes place in New York City on April 2–3, and 75% of gateway vendors are expected to integrate MCP features by year-end. MCP 2.0 adds OAuth support, structured schemas for prompt injection mitigation, and elicitation flows for high-risk action pause points.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> MCP moving to a neutral foundation is the clearest signal yet that it's becoming permanent infrastructure — not a single-vendor play. With 97M monthly downloads and every major provider onboard, MCP is the TCP/IP of agent-to-tool communication. The MCP 2.0 security additions (OAuth, structured schemas, elicitation flows) address the exact enterprise concerns that have slowed adoption. If you're building skills, plugins, or connectors, the AAIF governance model means your investment in MCP is now protected by open-source governance, not dependent on any single company's roadmap.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COWORK & CLAUDE ECOSYSTEM -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128268;</span>
+    <h2>Cowork &amp; Claude Ecosystem</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://releasebot.io/updates/anthropic/claude">Claude Cowork Launches on Windows with Full Feature Parity — Skills, Plugins, MCP Connectors All Available</a></h3>
+    <p class="story-meta"><span class="source">Anthropic / Releasebot / FindSkill.ai</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic shipped Cowork for Windows with full feature parity to macOS — file access, multi-step tasks, plugins, scheduled tasks, and all 38+ MCP connectors work identically across both platforms. The release also introduced a new Customize section in Claude Desktop that groups skills, plugins, and connectors in a single management interface, plus global and folder-level instructions that let users specify preferred tone, format, and role context that persists across sessions. Cowork is now available on Pro and Max plans across desktop and mobile, with Max users getting priority access to new features. The Windows launch effectively doubles Cowork's addressable user base overnight.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Windows parity removes the biggest platform barrier for Cowork adoption. If you're building skills or plugins for the Cowork ecosystem, your addressable market just doubled. The global instructions feature is particularly valuable for teams — you can set consistent context about your business, role, and preferences once and have it apply to every Cowork session. For anyone building scheduled reports or automated workflows (like this digest), Windows support means your team members on Windows can now set up and manage their own automations.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.nvidia.com/gtc/">GTC Day 3: Open Models Panel — LangChain, A16Z, Cursor, and Thinking Machines Lab Debate the Frontier</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA / NVIDIA Developer Forums</span> · Mar 18 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Today's headline GTC session features Jensen Huang moderating a panel on open models with Harrison Chase (LangChain CEO), along with leaders from A16Z, AI2, Cursor, and Thinking Machines Lab. The panel is tackling the central question of 2026: where do open models stand against frontier closed models, and what does the gap mean for developers building production systems? The timing is deliberate — Mistral's Forge launch yesterday and the MCP Foundation donation this week have shifted the narrative toward open ecosystems. With Nemotron fine-tuning now available on Amazon Bedrock via reinforcement fine-tuning (RFT), NVIDIA is positioning itself as the neutral infrastructure layer that benefits regardless of whether open or closed models win.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://legora.com/blog/series-d">Legora Raises $550M Series D at $5.55B — Legal AI Enters Growth Phase, Built on Claude</a></h3>
+    <p class="story-meta"><span class="source">Bloomberg / Legora / The AI Insider</span> · Mar 10 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Swedish legal AI startup Legora closed a $550 million Series D led by Accel, tripling its valuation to $5.55 billion. The round drew participation from Benchmark, Bessemer, General Catalyst, Salesforce Ventures, and Y Combinator among others. Legora's collaborative AI platform — built primarily on Anthropic's Claude — supports lawyers in research, review, and drafting across complex legal matters. The company is expanding aggressively into the U.S. with new offices in Houston and Chicago alongside existing New York and Denver locations, targeting 300+ U.S. employees by year-end. The raise is the largest ever for a legal AI company and signals that vertical AI applications built on frontier models are reaching escape velocity.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Legora is a case study in the vertical AI playbook: pick a high-value profession, build deep domain workflows on top of a frontier model (Claude in this case), and scale. The $5.55B valuation for a legal AI tool validates that the real value accrues to the application layer, not just the model layer. If you're building vertical AI applications, Legora's architecture — Claude as the foundation, proprietary workflow and domain expertise as the moat — is the blueprint. The DocuSign and LegalZoom MCP connectors Anthropic shipped last week weren't coincidental — the legal vertical is clearly a priority ecosystem.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">NVIDIA Invests $2B in Nebius — Neocloud Provider Scaling Multi-Gigawatt AI Data Centers</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker / Crunchbase</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">NVIDIA made a $2 billion strategic investment in Nebius, a Yandex spin-out that operates as a "neocloud" GPU cloud provider. Nebius is rapidly scaling with plans for multi-gigawatt data centers to meet surging AI compute demand. The deal underscores NVIDIA's aggressive strategy of investing in cloud providers that expand the installed base for its chips — effectively financing its own demand. Nebius joins a growing tier of neocloud providers (alongside CoreWeave, Lambda, and Crusoe) that are building GPU-first infrastructure optimized for AI training and inference, rather than retrofitting traditional cloud architectures.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.axios.com/2026/03/09/anthropic-sues-pentagon-supply-chain-risk-label">Anthropic Sues Pentagon Over "Supply Chain Risk" Designation — Microsoft, Retired Military Leaders, Tech Industry Rally Support</a></h3>
+    <p class="story-meta"><span class="source">Axios / CNBC / Gizmodo / Federal News Network</span> · Mar 9–18 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Anthropic-Pentagon conflict escalated into a major legal and industry battle this month. After Anthropic refused to remove two contract provisions — prohibiting autonomous weapons and mass surveillance — Defense Secretary Hegseth designated Anthropic a "supply chain risk," a label historically reserved for foreign adversaries like Huawei and Kaspersky. Anthropic filed lawsuits in both San Francisco and Washington federal courts, arguing the designation is retaliation for First Amendment-protected advocacy on AI safety. Microsoft filed an amicus brief urging a temporary restraining order, arguing the ban disrupts "the American military's ongoing use of advanced AI." Twenty-two retired military leaders — including former secretaries of the Air Force, Army, and Navy — filed supporting briefs, alongside major tech industry groups representing Pentagon contractors. A hearing on temporary relief is set for March 24.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the most significant AI policy battle of 2026 and it directly affects anyone building on Claude. If the designation stands, federal contractors and agencies can't use Claude — which would fragment the enterprise market. But the breadth of support for Anthropic (Microsoft, retired military brass, industry groups) suggests the designation is unlikely to survive judicial review. The deeper signal: Anthropic's willingness to lose a massive government contract rather than remove safety guardrails is exactly the kind of principled stance that drives the #QuitGPT migration. The March 24 hearing will be the most-watched AI policy event of the quarter.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.corporatecomplianceinsights.com/2026-operational-guide-cybersecurity-ai-governance-emerging-risks/">SEC Shifts 2026 Exam Priorities: AI Displaces Crypto as Top Operational Risk Focus</a></h3>
+    <p class="story-meta"><span class="source">Corporate Compliance Insights / Governance Intelligence</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The SEC's 2026 examination priorities reveal a significant regulatory shift: AI has displaced cryptocurrency as the top operational risk concern for financial institutions. The commission is now examining how firms govern AI systems, manage model risk, and document AI-driven decision-making. Cyber insurers are introducing "AI Security Riders" that require documented adversarial red-teaming, model-level risk assessments, and specialized safeguards as prerequisites for underwriting coverage. The convergence of SEC scrutiny and insurance requirements means that AI governance is rapidly becoming a hard compliance requirement — not a best practice — for any organization deploying AI in financial services, healthcare, or regulated industries.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-ai-robotics-ecommerce-quince/">Robotics Mega-Round Era Arrives — $1.2B+ Raised in a Single Week Across Four Companies</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase / AI Funding Tracker</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The week of March 10–16 produced over $1.2 billion in robotics funding across four companies: Mind Robotics ($500M for industrial automation), Rhoda AI ($450M Series A for video-trained robots, led by Premji Invest), Sunday ($165M Series B reaching unicorn status for household robotics, founded by Tony Zhao and Cheng Chi), and Oxa ($103M for autonomous logistics). With NVIDIA showcasing 110 robots on the GTC show floor and the humanoid robotics sector projected to draw $20B+ in funding this year, physical AI has crossed from research curiosity to funded deployment. The robotics wave is the natural extension of the agent paradigm — once AI can reason and plan, the next frontier is giving it a physical presence.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The robotics funding surge signals that the agent layer you're building today will eventually need to interface with physical systems. Mind Robotics, Rhoda, and Sunday are all using the same foundation model + reinforcement learning stack that powers digital agents — the software patterns are converging. If you're building agent infrastructure, watch for MCP-style protocols emerging for robot-to-agent communication. The companies that bridge digital agents and physical robots will capture enormous value as both ecosystems mature.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blogs.nvidia.com/blog/gtc-2026-news/">NVIDIA Cloud Partners Surpass 1 Million GPUs Deployed — 1.7 GW of AI Factory Capacity Worldwide</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA Blog / Google Cloud</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">NVIDIA Cloud Partners (NCPs) have doubled their AI factory footprint year-over-year, cumulatively deploying more than 1 million NVIDIA GPUs in AI factories across the globe — representing over 1.7 gigawatts of AI compute capacity. The milestone, announced during GTC 2026, signals that the infrastructure buildout for the AI era has reached industrial scale. NTT DATA is accelerating enterprise access with secure, NVIDIA-powered AI factories for edge video processing and data insights. Google Cloud, AWS, and Azure are all expanding their NVIDIA GPU fleets, with Nemotron fine-tuning now available directly on Amazon Bedrock via reinforcement fine-tuning (RFT) for domain-specific model customization.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Wednesday, March 18, 2026</p>
+  <p class="sources">Sources: TechCrunch, NVIDIA NIM, WinBuzzer, Tom's Guide, The Register, VentureBeat, MarkTechPost, Linux Foundation, Solo.io, The New Stack, Anthropic, Releasebot, FindSkill.ai, NVIDIA, Bloomberg, Legora, The AI Insider, AI Funding Tracker, Crunchbase, Axios, CNBC, Gizmodo, Federal News Network, Corporate Compliance Insights, Governance Intelligence, Google Cloud</p>
+</div>
+
+</div>
+</body>
+</html>
