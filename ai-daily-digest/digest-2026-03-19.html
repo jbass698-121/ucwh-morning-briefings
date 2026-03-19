@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 19, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Thursday, March 19, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>GTC 2026 wraps today with NVIDIA shipping IGX Thor for industrial-grade physical AI at the edge and releasing Nemotron 3 open models optimized for local agent deployment. In a strategic move that redefines enterprise AI, Microsoft launched Copilot Cowork — its newest flagship M365 feature — built on Anthropic's Claude rather than OpenAI, signaling that multi-model architectures are now the enterprise standard. On the developer front, Claude Code shipped major updates including push-to-talk voice mode, a /loop command for recurring prompts, and MCP elicitation support that lets servers request structured input mid-task. Google's Gemini 3.1 Flash-Lite delivered a 62% intelligence improvement over 2.5 Flash at one-eighth the cost of Pro, while SurePath AI launched the first enterprise security layer for MCP with real-time policy controls over server and tool access. In funding, Yann LeCun's AMI Labs closed the largest European seed round ever at $1.03B to build world models, and Fei-Fei Li's World Labs raised $1B for spatial AI with a $200M anchor from Autodesk. On governance, the FTC issued its first formal AI policy statement, and Microsoft's March Patch Tuesday addressed the first security vulnerabilities in AI agent orchestration frameworks.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-1-flash-lite/">Google Gemini 3.1 Flash-Lite Delivers 62% Intelligence Boost at 1/8th the Cost of Pro</a></h3>
+    <p class="story-meta"><span class="source">Google Blog / VentureBeat / Artificial Analysis</span> · Mar 3 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Google released Gemini 3.1 Flash-Lite in preview, delivering 2.5x faster response times and a 62% intelligence improvement over Gemini 2.5 Flash on the Artificial Analysis Intelligence Index (score of 34 vs. 21). The model generates output at 382 tokens per second — a 64% speed advantage — and is priced at just $0.25 per million input tokens, making it one-eighth the cost of Gemini 3.1 Pro. On benchmarks, Flash-Lite scores 86.9% on GPQA Diamond and 76.8% on MMMU Pro, placing it well above average for reasoning models in its price tier. Meanwhile, Gemini 3.1 Pro dominates 13 of 16 major benchmarks, establishing Google's strongest competitive position against Claude and GPT in months.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Flash-Lite is the model to watch for high-volume agent workloads where you need good reasoning at rock-bottom cost. At $0.25/1M input tokens with 382 tok/s output speed, it's viable for routing layers, classification tasks, and lightweight agent sub-tasks that don't need frontier-level reasoning. If you're building multi-model agent architectures, Flash-Lite slots in as the fast/cheap tier alongside Claude for complex reasoning — exactly the kind of cost optimization that makes production agent systems economically viable at scale.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blogs.nvidia.com/blog/rtx-ai-garage-gtc-2026-nemoclaw/">NVIDIA Releases Nemotron 3 Open Models for Local Agents — Nano 4B and Super 120B</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA Blog / GTC 2026</span> · Mar 19 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">On the final day of GTC, NVIDIA released Nemotron 3 Nano 4B and Nemotron 3 Super 120B — open models specifically optimized for local agent deployment on RTX hardware. Nano 4B is designed for on-device agent tasks that run entirely on consumer GPUs, while Super 120B targets workstation-class inference for more complex agentic workflows. Both models ship with optimizations for Qwen 3.5 and Mistral Small 4, and are available through NIM. NVIDIA also launched NemoClaw, an open-source stack that optimizes local agent experiences on NVIDIA devices with enhanced security and local model support.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.prnewswire.com/news-releases/surepath-ai-advances-real-time-model-context-protocol-mcp-policy-controls-to-govern-ai-actions-302709875.html">SurePath AI Launches MCP Policy Controls — First Enterprise Security Layer for Agent Tool Access</a></h3>
+    <p class="story-meta"><span class="source">PR Newswire / The New Stack / TechEdge AI</span> · Mar 12 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">SurePath AI launched MCP Policy Controls, giving security teams real-time governance over which MCP servers and tools AI agents can access. The platform intercepts MCP payloads before execution, enforcing organization-wide policies on server connections and individual tool access. It maintains a catalog of known MCP servers, routes all protected traffic through its platform for access control, and detects supply chain threats by flagging never-before-seen tools that could impersonate legitimate ones or attempt data exfiltration. Tools violating policy are stripped from the MCP payload before reaching the backend. This is the first purpose-built enterprise security product for the MCP ecosystem.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the missing piece for enterprise MCP adoption. Every CIO's first question about MCP is "how do I control what tools agents can access?" SurePath answers that with policy-based controls that sit between the agent and the MCP server. If you're building skills or plugins for Cowork, expect enterprise buyers to require SurePath-style governance before deploying your tools. The supply chain threat detection — flagging unknown tools that impersonate legitimate ones — addresses the exact attack vector that security teams worry about as MCP server counts explode past 10,000.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.helpnetsecurity.com/2026/03/10/datadog-mcp-server/">Datadog MCP Server Hits General Availability — Live Observability for AI Agents and IDEs</a></h3>
+    <p class="story-meta"><span class="source">Help Net Security / Datadog</span> · Mar 10 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Datadog announced general availability of its MCP Server, providing AI agents and developer IDEs with direct access to live observability data — metrics, traces, logs, and alerts — through the Model Context Protocol. The integration means agents can now query production monitoring data as part of their reasoning loops, enabling use cases like automated incident triage, performance debugging, and infrastructure health checks without leaving the agent workflow. The release follows the broader trend of enterprise SaaS vendors shipping MCP servers to make their data accessible to the agentic ecosystem.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COWORK & CLAUDE ECOSYSTEM -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128268;</span>
+    <h2>Cowork &amp; Claude Ecosystem</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.microsoft.com/en-us/microsoft-365/blog/2026/03/09/copilot-cowork-a-new-way-of-getting-work-done/">Microsoft Launches Copilot Cowork on Claude — Bets on Anthropic Over OpenAI for Flagship M365 Feature</a></h3>
+    <p class="story-meta"><span class="source">Microsoft 365 Blog / WinBuzzer / FindSkill.ai</span> · Mar 9 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Microsoft launched Copilot Cowork, its newest flagship M365 feature, built on Anthropic's Claude rather than OpenAI's models — a striking choice given Microsoft's $13 billion OpenAI investment. Copilot Cowork brings agentic capabilities directly into the M365 suite, and Claude Sonnet is now selectable in Copilot Chat alongside GPT models, giving enterprise users model choice for the first time. The feature is in Research Preview with select customers, with broader availability through the Frontier program in late March. Microsoft also rolled out support for Claude 3.5 Sonnet and Claude 4 Opus across Copilot, cementing a multi-model enterprise strategy that treats model providers as interchangeable infrastructure.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Microsoft choosing Claude for its flagship enterprise feature is the strongest validation signal the Claude ecosystem has received. It means every M365 enterprise customer — hundreds of millions of seats — will have Claude as an option in their daily workflow. For anyone building on Claude's APIs or Cowork platform, this dramatically expands the addressable market. The multi-model strategy also means enterprise buyers are no longer locked to one provider, which benefits the best-performing model at any given moment. Anthropic's Cowork and Microsoft's Copilot Cowork are now parallel tracks bringing agentic AI to knowledge workers.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://code.claude.com/docs/en/changelog">Claude Code Ships Voice Mode, /loop Command, and MCP Elicitation Support</a></h3>
+    <p class="story-meta"><span class="source">Claude Code Docs / Releasebot / Pasquale Pillitteri</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Claude Code received a feature-rich March update: push-to-talk voice mode (activated via /voice, hold spacebar to speak), a /loop command for recurring prompts and cron scheduling, MCP elicitation support that lets MCP servers request structured input from users mid-task via interactive dialogs, a new /effort command for controlling reasoning depth, and a /copy command for copying assistant responses. The voice mode is particularly significant for hands-free coding workflows, while /loop enables automated recurring tasks directly from the CLI. MCP elicitation — with new Elicitation and ElicitationResult hooks — means MCP servers can now pause agent execution to request confirmation or additional input for high-risk actions, addressing a key enterprise safety concern.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> MCP elicitation is the standout feature here. It means your MCP servers and skills can now implement human-in-the-loop checkpoints — pause the agent, ask the user a structured question, and resume based on their response. This is exactly what enterprise buyers need for high-stakes workflows (approving financial transactions, confirming data deletions, verifying sensitive operations). If you're building skills or scheduled tasks, /loop opens up native cron-style automation without external scheduling infrastructure.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/">AMI Labs Raises $1.03B — Yann LeCun's World Models Startup Closes Largest European Seed Round Ever</a></h3>
+    <p class="story-meta"><span class="source">Mean CEO / AI Funding Tracker</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Yann LeCun's AMI Labs closed a $1.03 billion seed round — the largest in European venture history — to build world models based on his Joint Embedding Predictive Architecture (JEPA). The round drew backing from Jeff Bezos, NVIDIA, Samsung, and Temasek, reflecting massive investor conviction that world models — systems that learn predictive representations of how the world works rather than generating text — represent the next paradigm shift beyond LLMs. AMI Labs is positioning JEPA as the foundation for physical AI, robotics, and autonomous systems that need to understand and predict real-world dynamics rather than just process language.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> A $1B seed for a non-LLM AI architecture is a signal that the smart money sees beyond text generation. JEPA world models could become the reasoning backbone for physical AI agents — the robots, autonomous vehicles, and industrial systems that need to predict outcomes in the real world. If the agent infrastructure you're building today eventually needs to interface with physical systems (as yesterday's robotics funding wave suggests), world models may become a critical layer. LeCun's bet is that the next generation of AI won't just understand language — it'll understand physics.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/02/18/world-labs-lands-200m-from-autodesk-to-bring-world-models-into-3d-workflows/">World Labs Raises $1B for Spatial AI — Autodesk Anchors with $200M for 3D Workflow Integration</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / Bloomberg / PYMNTS</span> · Feb 18 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Fei-Fei Li's World Labs raised $1 billion in new funding, with a $200 million anchor investment from Autodesk to integrate spatial AI into professional 3D workflows. Other backers include Andreessen Horowitz, NVIDIA, AMD, Emerson Collective, and Fidelity. World Labs' Marble product generates interactive 3D worlds from image or text prompts, and the Autodesk partnership signals that spatial AI is moving from research demos to production toolchains for architects, engineers, and designers. The round values the company at approximately $5 billion.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://windowsnews.ai/article/march-2026-patch-tuesday-office-azure-arc-mcp-and-ai-agents-expand-attack-surface.405112">March Patch Tuesday Addresses First AI Agent Framework Vulnerabilities — 6 Flaws in MCP and Orchestration Layer</a></h3>
+    <p class="story-meta"><span class="source">Windows News / Microsoft</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Microsoft's March 2026 Patch Tuesday marked a milestone: the first security patches targeting AI agent orchestration frameworks. Six vulnerabilities were addressed in Azure Arc MCP integration and the broader AI agent orchestration layer, including flaws that could allow unauthorized tool execution and data leakage through improperly scoped MCP server connections. The patches cover Office, Azure Arc, and the agentic AI framework stack, reflecting the reality that as enterprises deploy AI agents with real-world tool access, the agent layer itself becomes an attack surface requiring the same patch management discipline as traditional software.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is a watershed moment for AI security. Agent frameworks are now getting CVEs and formal patches — which means they're being treated as production infrastructure, not experimental tools. If you're deploying agents with MCP server access, you now need to include agent framework patches in your security update cycle. The vulnerabilities around unauthorized tool execution and data leakage through MCP connections are exactly the risks that SurePath AI's policy controls (covered above) are designed to mitigate. Expect "agent security posture" to become a standard enterprise audit category by year-end.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.gunder.com/en/news-insights/insights/2026-ai-laws-update-key-regulations-and-practical-guidance">FTC Issues AI Policy Statement as State Laws Take Effect — California, Colorado, and Texas Lead Enforcement</a></h3>
+    <p class="story-meta"><span class="source">Gunderson Dettmer / King &amp; Spalding / Credo AI</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The FTC issued its first formal AI policy statement in March, describing how the FTC Act applies to artificial intelligence — covering deceptive AI-generated content, unfair algorithmic decision-making, and AI-enabled surveillance. Simultaneously, state-level AI laws are now in enforcement: California's AI Transparency Act, Colorado's AI Act, and Texas's Responsible AI Governance Act all took effect January 1, 2026, and enforcement actions are beginning to materialize. Organizations deploying AI now face a patchwork of federal guidance and state mandates requiring documented AI inventories, risk classifications, and third-party due diligence.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.nvidia.com/gtc/">NVIDIA IGX Thor Now Generally Available — Industrial-Grade Physical AI at the Edge</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA / GTC 2026</span> · Mar 19 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">NVIDIA announced general availability of IGX Thor, its industrial-grade platform for deploying real-time physical AI at the edge with high-speed sensor processing, enterprise-grade reliability, and functional safety certification. IGX Thor enables AI inference directly on factory floors, warehouses, and field operations without cloud connectivity. Alongside IGX Thor, the RTX PRO 4500 Blackwell Server Edition delivers 100x performance for vision AI and 50x for vector databases. GTC also showcased new robo-taxi partnerships with BYD, Hyundai, and Nissan, and featured 110 robots on the show floor — underscoring NVIDIA's pivot from "AI training company" to "physical AI deployment platform."</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> IGX Thor is NVIDIA's bet that AI agents need to run at the edge — in factories, car washes, retail locations, and warehouses — not just in the cloud. For businesses with physical operations, this means on-premises AI inference that works without internet connectivity, with safety certifications required for industrial environments. The robo-taxi partnerships with BYD and Hyundai signal that autonomous physical AI is moving from demos to commercial deployment. As you build agent infrastructure, the edge deployment pattern enabled by IGX Thor will become increasingly important for real-world business operations.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html">Deloitte: 86% of Organizations Increasing AI Budgets in 2026 — But Only 6% Have Deployed Agentic AI</a></h3>
+    <p class="story-meta"><span class="source">Deloitte / TechRepublic / Lucidworks</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Deloitte's State of AI in the Enterprise 2026 report reveals that 86% of organizations plan to increase AI budgets this year, with nearly 40% projecting increases of 10% or more. Worker access to AI tools rose 50% in 2025, and the number of companies with 40%+ of AI projects in production is set to double within six months. However, only 6% of organizations have fully implemented agentic AI — despite it being the most-discussed AI trend of the year. Telecom leads agentic adoption at 48%, followed by retail/CPG at 47%. The gap between budget commitment and agentic deployment represents the largest near-term opportunity in enterprise AI.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Thursday, March 19, 2026</p>
+  <p class="sources">Sources: Google Blog, VentureBeat, Artificial Analysis, NVIDIA Blog, GTC 2026, PR Newswire, The New Stack, TechEdge AI, Help Net Security, Datadog, Microsoft 365 Blog, WinBuzzer, FindSkill.ai, Claude Code Docs, Releasebot, Mean CEO, AI Funding Tracker, TechCrunch, Bloomberg, PYMNTS, Windows News, Gunderson Dettmer, King &amp; Spalding, Credo AI, Deloitte, TechRepublic, Lucidworks</p>
+</div>
+
+</div>
+</body>
+</html>
