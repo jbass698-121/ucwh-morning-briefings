@@ -1,2273 +1,1128 @@
 {
-  "run_timestamp": "2026-03-13T06:10:33.523235",
-  "version": "v4.4",
-  "version_note": "Geopolitical awareness + diamond hunting strategy",
-  "regime": {
-    "regime": "TRANSITION",
-    "confidence": 0.87,
-    "summary": "Market transitioning from growth conditions toward defensive positioning amid geopolitical risk escalation. Inverted yield curve normalizing (10Y 4.273% vs 2Y 3.605%) suggests moderating near-term recession fears, but elevated VIX (26.41) and defensive outflows signal uncertainty. S&P 500 at 6,672.62 reflects mixed sentiment: wealth protection (gold at record $5,102.50) competing with risk-on energy positioning.",
-    "key_drivers": [
-      "Geopolitical escalation (Iran tensions) creating bifurcated market",
-      "Yield curve steepening from inverted position (positive long-term signal)",
-      "Commodity inflation in crude ($94.07) and precious metals",
-      "Consumer discretionary weakness (-4.01% XLY) vs energy strength (+5.81% XLE)",
-      "Travel sector implosion (-17.51% JETS) unrelated to macro but coinciding with conflict risk"
-    ]
-  },
-  "geopolitical_assessment": {
-    "active_scenarios": [
-      {
-        "scenario": "Military Conflict - ACTIVE/HIGH CONFIDENCE",
-        "indicators": {
-          "oil_spike": {
-            "value": "$94.07",
-            "threshold": ">$80",
-            "status": "TRIGGERED"
-          },
-          "vix_elevation": {
-            "value": 26.41,
-            "threshold": ">25",
-            "status": "TRIGGERED"
-          },
-          "defense_outperformance": {
-            "value": "-1.44% (ITA)",
-            "expectation": "EXPECTED (defensive hedge in portfolio)",
-            "status": "MIXED - Defense underperforming on 30d but context suggests hedging demand"
-          },
-          "gold_rally": {
-            "value": "$5,102.50 (record)",
-            "indicator": "VERY STRONG"
-          }
-        },
-        "confidence": 0.92,
-        "interpretation": "Iran tensions triggering simultaneous flight-to-safety (gold) and energy scarcity premium. Defense sector underperformance on 30d window likely reflects late revaluation before conflict escalation; current dynamics suggest renewed defense buying pressure.",
-        "market_impact": "Oil-dependent stocks benefit; discretionary spending suppressed; aerospace/defense supply chains valued for security"
-      },
-      {
-        "scenario": "Energy Crisis - PARTIAL/MODERATE CONFIDENCE",
-        "indicators": {
-          "oil_threshold": {
-            "value": "$94.07",
-            "threshold": ">$90",
-            "status": "TRIGGERED"
-          },
-          "natural_gas": {
-            "value": "$3.26",
-            "note": "Moderate, not spiking (would expect >$4.50 for true crisis)"
-          },
-          "energy_sector_30d": {
-            "value": "+5.81% (XLE)",
-            "threshold": ">10%",
-            "status": "APPROACHING (not yet crisis-level spike)"
-          }
-        },
-        "confidence": 0.62,
-        "interpretation": "Energy rally present but driven primarily by geopolitical oil premium rather than fundamental supply crisis. Natural gas remains contained. Energy sector outperformance is real but not yet at crisis magnitude.",
-        "market_impact": "Moderate energy sector boost; oil plays valued; refining spreads positive"
-      }
-    ],
-    "primary_driver": "MILITARY CONFLICT SCENARIO - Iran tensions creating dual dynamics: (1) commodities inflation hedge demand (oil, gold), (2) risk-off equity rotation (defense/energy), (3) travel/leisure sector implosion from demand destruction and safety concerns",
-    "sector_adjustments": {
-      "defense_aerospace": {
-        "adjustment": "+0.15 macro_score",
-        "rationale": "LMT, RTX, GD, NOC positioned to benefit from potential defense spending surge and supply chain security premiums"
-      },
-      "energy_integrated": {
-        "adjustment": "+0.12 macro_score",
-        "rationale": "XOM, CVX, COP benefit from both oil price elevation and demand for energy security independence"
-      },
-      "precious_metals": {
-        "adjustment": "+0.10 macro_score",
-        "rationale": "NEM, WPM, GDX (miners) provide inflation hedge; despite -4.46% GDX performance, structural gold demand remains elevated"
-      },
-      "travel_airlines": {
-        "adjustment": "-0.18 macro_score",
-        "rationale": "JETS -17.51% reflects both conflict risk premium and potential demand destruction; geopolitical uncertainty suppresses travel demand"
-      },
-      "consumer_discretionary": {
-        "adjustment": "-0.08 macro_score",
-        "rationale": "XLY -4.01% reflects consumer confidence erosion; conflict risk and inflation concerns suppress discretionary spending"
-      },
-      "utilities": {
-        "adjustment": "+0.03 macro_score",
-        "rationale": "XLU flat (0.00%) suggests defensive quality positioning; energy security concerns may boost utility valuations"
-      }
-    }
-  },
-  "macro_weight_scaling": {
-    "multiplier": 1.35,
-    "rationale": "Elevated regime (VIX 26.41, yield curve normalization, geopolitical catalyst) justifies above-normal macro weighting. TRANSITION regime typically uses 1.2-1.5x multiplier; conflict scenario pushes toward upper end due to sector bifurcation and policy uncertainty.",
-    "effective_macro_max": 0.55,
-    "ta_max_reduction": 0.15,
-    "notes": "In TRANSITION regime with active geopolitical risk, macro factors can account for up to 55% of total scoring (vs normal 35-40%). Technical analysis ceiling reduced by 0.15 points to prioritize macro regime coherence over short-term technicals."
-  },
-  "discovered_tickers": [
-    {
-      "ticker": "ORCL",
-      "company_name": "Oracle Corporation",
-      "market_cap_billions": 3200,
-      "catalysts": "Q3 FY2026 earnings beat (+15% EPS vs consensus), cloud revenue +44% YoY, raised FY2027 revenue guidance to $90B, RPO $553B indicating strong AI datacenter demand",
-      "discovery_source": "earnings_beat_guidance"
-    },
-    {
-      "ticker": "GWRE",
-      "company_name": "Guidewire Software",
-      "market_cap_billions": 18.5,
-      "catalysts": "Q4 earnings beat ($1.17 EPS vs $0.77 consensus), 24% YoY revenue growth, ARR growth +22%, $500M share buyback authorized, analyst upgrades (BTIG $175->$200)",
-      "discovery_source": "earnings_beat_guidance"
-    },
-    {
-      "ticker": "OXY",
-      "company_name": "Occidental Petroleum",
-      "market_cap_billions": 75,
-      "catalysts": "Wells Fargo upgrade underweight->overweight with $47->$69 PT, Piper Sandler neutral->overweight, UBS PT $49->$55, Iran conflict tailwind, 52-week high achieved",
-      "discovery_source": "analyst_upgrade"
-    },
-    {
-      "ticker": "IMNM",
-      "company_name": "Immunome Inc",
-      "market_cap_billions": 2.3,
-      "catalysts": "Insider director Jean Bienaime accumulated 2,000 shares Mar 10-11 at $21-22, total accumulated 21,800 shares past year with zero sells, $400M equity financing extends runway to 2028, varegacestat commercial launch potential",
-      "discovery_source": "insider_buying_diamond"
-    },
-    {
-      "ticker": "MNKD",
-      "company_name": "MannKind Corporation",
-      "market_cap_billions": 2.6,
-      "catalysts": "CEO Michael Castagna insider buy 100,000 shares Mar 10 for $259K (institutional confidence signal), biotech small-cap with insider activity",
-      "discovery_source": "insider_buying_diamond"
-    },
-    {
-      "ticker": "FOUR",
-      "company_name": "Shift4 Payments",
-      "market_cap_billions": 32,
-      "catalysts": "CEO Jared Isaacman accumulated 385,757 shares over 6 months for $17.6M (total 4 purchases), latest 43,827 shares on Mar 10 for $2M, consistent insider conviction signal",
-      "discovery_source": "insider_buying_diamond"
-    },
-    {
-      "ticker": "LDO",
-      "company_name": "Leonardo (Italian Defense)",
-      "market_cap_billions": 22,
-      "catalysts": "European defense firm benefiting from Iran conflict, expects strong growth path, European defense companies seeing avg 57% revenue growth 2021-2025, positioned for increased NATO/EU defense spending",
-      "discovery_source": "geopolitical_defense"
-    },
-    {
-      "ticker": "UURAF",
-      "company_name": "Ucore Rare Metals",
-      "market_cap_billions": 1.2,
-      "catalysts": "#1 on OTCQX Best 50 2026 list, focused on rare earths separation for defense/clean energy/manufacturing, US supply chain focus benefits from onshoring policy, small-cap potential",
-      "discovery_source": "sector_rotation_materials"
-    },
-    {
-      "ticker": "RHM",
-      "company_name": "Rheinmetall (German Defense)",
-      "market_cap_billions": 45,
-      "catalysts": "Germany's leading defense contractor expects 40-45% sales growth 2026, major beneficiary of Iran conflict and NATO expansion, European defense spending surge",
-      "discovery_source": "geopolitical_defense"
-    },
-    {
-      "ticker": "CELH",
-      "company_name": "Celsius Holdings",
-      "market_cap_billions": 9.8,
-      "catalysts": "Analyst consensus Buy, 65% Strong Buy, avg PT $60.9, growth momentum in energy drink category, mid-cap with analyst upgrade sentiment",
-      "discovery_source": "analyst_upgrade"
-    }
-  ],
-  "macro_recommended_tickers": [
-    {
-      "ticker": "AXON",
-      "classification": "DYNAMIC",
-      "macro_alignment": 0.48,
-      "catalyst": "Military conflict scenario drives law enforcement/government security spending surge",
-      "rationale": "Law enforcement and defense technology provider directly benefits from elevated threat environment. Geopolitical tensions increase government technology budgets for surveillance/security systems. Mid-cap diamond with concentrated upside exposure to conflict spending cycle.",
-      "risk": "Conflict resolution could quickly reverse tailwind; dependent on government budget cycles",
-      "target_boost": "+0.12 to +0.18 from macro multiplier"
-    },
+  "icms_version": "5.0",
+  "run_timestamp": "2026-03-16T13:15:34.310153Z",
+  "timestamp": "2026-03-16-0804",
+  "regime": "TRANSITION",
+  "macro_weight_scaling": 1.5,
+  "ta_max_reduction": 0.25,
+  "universe_size": 75,
+  "picks": [
     {
       "ticker": "MRVL",
-      "classification": "DYNAMIC",
-      "macro_alignment": 0.52,
-      "catalyst": "Defense/aerospace chip demand surge from military modernization",
-      "rationale": "Semiconductor supplier to defense contractors and aerospace manufacturers. Geopolitical tensions drive secure processor demand and data center infrastructure buildout for military applications. Leveraged play on defense spending cycle.",
-      "risk": "Chip cycle downturn could offset geopolitical boost; cyclical sector vulnerability",
-      "target_boost": "+0.15 to +0.20 from macro multiplier"
-    },
-    {
-      "ticker": "ZS",
-      "classification": "DYNAMIC",
-      "macro_alignment": 0.5,
-      "catalyst": "Cyber warfare threat escalation drives enterprise security spending",
-      "rationale": "Cloud-native cybersecurity platform benefits directly from geopolitical threat environment. Enterprise IT security budgets increase during conflict scenarios due to cyber warfare concerns. SaaS growth business with strong macro tailwind.",
-      "risk": "Cybersecurity market maturation and competition; rate sensitivity for SaaS valuations",
-      "target_boost": "+0.14 to +0.18 from macro multiplier"
+      "sector": "Technology",
+      "market_cap_b": 76.7,
+      "icms_score": 5.96,
+      "components": {
+        "fq": 2.5,
+        "em": 0.75,
+        "aos": 1.5,
+        "ta": 0.65,
+        "ma": 0.27,
+        "cb": 0.29
+      },
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM",
+        "FQ+AOS"
+      ],
+      "entry_gate": "GREEN",
+      "consensus_pct": 57.5,
+      "disagreement": "Divergence detected: {'macro': 'SELL', 'fundamental': 'HOLD', 'technical': 'BUY', 'sentiment': 'HOLD'}",
+      "entry_price": 87.86,
+      "stop_loss": 81.43,
+      "exit_targets": [
+        92.25,
+        96.65,
+        105.0
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
+        "fundamental": "HOLD",
+        "technical": "BUY",
+        "sentiment": "HOLD"
+      },
+      "rank": 1,
+      "current_price": 87.86,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 92.25,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 96.65,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 105.0,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Semiconductors"
     },
     {
       "ticker": "GWRE",
-      "classification": "DYNAMIC",
-      "macro_alignment": 0.56,
-      "catalyst": "Insurance claims surge from conflict-related losses drives software demand",
-      "rationale": "Insurance technology provider benefits from elevated claim volumes during geopolitical tensions and potential conflict events. Insurance companies increase software/automation investment to handle claim processing surge.",
-      "risk": "If conflict doesn't escalate, claim volume normalizes; technology spending may be deferred",
-      "target_boost": "+0.16 to +0.22 from macro multiplier"
-    },
-    {
-      "ticker": "APD",
-      "classification": "DYNAMIC",
-      "macro_alignment": 0.51,
-      "catalyst": "Defense/aerospace industrial gas demand from manufacturing surge",
-      "rationale": "Air Products supplies industrial gases to defense contractors and aerospace manufacturers. Military modernization and weapons system production increase industrial gas consumption (welding, processing, cooling systems).",
-      "risk": "Industrial cyclical exposure; defense spending dependent on budget appropriations",
-      "target_boost": "+0.15 to +0.19 from macro multiplier"
-    },
-    {
-      "ticker": "LPLA",
-      "classification": "DYNAMIC",
-      "macro_alignment": 0.47,
-      "catalyst": "VIX elevation and trading volume surge from geopolitical volatility",
-      "rationale": "Independent broker-dealer benefits directly from elevated VIX (26.41) driving trading activity and asset-based revenues. Geopolitical tensions and yield curve steepening (10Y 4.273% vs 2Y 3.605%) increase advisor client engagement.",
-      "risk": "VIX normalization could reverse gains; regulatory pressures on advisory fees",
-      "target_boost": "+0.13 to +0.17 from macro multiplier"
-    },
-    {
-      "ticker": "SERV",
-      "classification": "DYNAMIC",
-      "macro_alignment": 0.53,
-      "catalyst": "Government infrastructure spending and essential services demand from geopolitical focus",
-      "rationale": "Home services/HVAC software platform benefits from infrastructure modernization spending driven by geopolitical concerns. Essential services maintain demand through recession cycles. Software platform enables margin expansion.",
-      "risk": "Residential/commercial construction cycles sensitive to interest rates; demand destruction from recession",
-      "target_boost": "+0.15 to +0.20 from macro multiplier"
-    },
-    {
-      "ticker": "MCO",
-      "classification": "DYNAMIC",
-      "macro_alignment": 0.48,
-      "catalyst": "Elevated volatility and M&A financing activity from defense consolidation",
-      "rationale": "Ratings agency benefits from increased corporate activity and credit rating reassessments during geopolitical tensions. Defense sector consolidation and merger activity drive rating adjustment demand.",
-      "risk": "M&A activity may be deferred if conflict escalates; volatile earnings dependent on transaction volumes",
-      "target_boost": "+0.14 to +0.18 from macro multiplier"
-    },
-    {
-      "ticker": "ARCC",
-      "classification": "DYNAMIC",
-      "macro_alignment": 0.46,
-      "catalyst": "Elevated credit spreads and yield curve steepening support BDC economics",
-      "rationale": "Business development company benefits from VIX elevation (26.41) driving credit spreads wider and yield curve steepening (10Y 4.273% vs 2Y 3.605%). Loan portfolio returns improve with higher yields.",
-      "risk": "Economic slowdown could increase credit defaults; yield curve could invert again",
-      "target_boost": "+0.13 to +0.17 from macro multiplier"
-    },
-    {
-      "ticker": "MSCI",
-      "classification": "DYNAMIC",
-      "macro_alignment": 0.45,
-      "catalyst": "Elevated volatility drives index rebalancing and factor rotation analytics demand",
-      "rationale": "Index provider and analytics platform benefits from sector rotation (energy/defense outperformance vs discretionary) driving rebalancing fees. Geopolitical tensions create complex factor dynamics requiring sophisticated analytics.",
-      "risk": "Passive indexing commoditizes pricing; ESG/sustainability focus may decline during conflict",
-      "target_boost": "+0.12 to +0.16 from macro multiplier"
-    }
-  ],
-  "total_scored": 56,
-  "top_15_picks": [
-    {
-      "ticker": "WPM",
-      "icms_score": 5.74,
+      "sector": "Technology",
+      "market_cap_b": 13.7,
+      "icms_score": 5.81,
       "components": {
-        "fundamental_quality": 1.9,
-        "technical_alignment": 0.82,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.72,
-        "behavioral_sentiment": 0.8
+        "fq": 2.5,
+        "em": 0.75,
+        "aos": 1.5,
+        "ta": 0.5,
+        "ma": 0.27,
+        "cb": 0.29
       },
-      "css": 70,
-      "entry_price": 145.73,
-      "stop_loss": 131.92,
-      "target_price": 166.44,
-      "agent_stances": {
-        "fundamental": "BUY",
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM",
+        "FQ+AOS"
+      ],
+      "entry_gate": "GREEN",
+      "consensus_pct": 50.0,
+      "disagreement": "Outlier: macro SELL vs 3x fundamental",
+      "entry_price": 160.57,
+      "stop_loss": 148.38,
+      "exit_targets": [
+        168.6,
+        176.63,
+        192.68
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
+        "fundamental": "HOLD",
         "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
+        "sentiment": "HOLD"
       },
-      "final_stance": "STRONG_BUY",
-      "confidence": 90.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 1
+      "rank": 2,
+      "current_price": 160.57,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 168.6,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 176.63,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 192.68,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Software - Application"
     },
     {
-      "ticker": "MRVL",
-      "icms_score": 5.27,
+      "ticker": "CTRA",
+      "sector": "Energy",
+      "market_cap_b": 24.4,
+      "icms_score": 5.76,
       "components": {
-        "fundamental_quality": 1.4,
-        "technical_alignment": 1.35,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.7,
-        "behavioral_sentiment": 0.32
+        "fq": 2.47,
+        "em": 0.75,
+        "aos": 0.7,
+        "ta": 0.7,
+        "ma": 0.85,
+        "cb": 0.29
       },
-      "css": 58,
-      "entry_price": 87.67,
-      "stop_loss": 78.99,
-      "target_price": 100.69,
-      "agent_stances": {
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM"
+      ],
+      "entry_gate": "GREEN",
+      "consensus_pct": 65.0,
+      "disagreement": "Split Consensus (2 vs 2)",
+      "entry_price": 32.15,
+      "stop_loss": 30.64,
+      "exit_targets": [
+        33.66,
+        34.67,
+        34.65
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "BUY",
         "fundamental": "HOLD",
         "technical": "BUY",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
+        "sentiment": "HOLD"
       },
-      "final_stance": "STRONG_BUY",
-      "confidence": 87.8,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 2
-    },
-    {
-      "ticker": "GWRE",
-      "icms_score": 5.14,
-      "components": {
-        "fundamental_quality": 1.05,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.25,
-        "macro_alignment": 0.76,
-        "behavioral_sentiment": 0.88
-      },
-      "css": 72,
-      "entry_price": 157.63,
-      "stop_loss": 140.98,
-      "target_price": 182.6,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "BUY",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "STRONG_BUY",
-      "confidence": 89.8,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 3
-    },
-    {
-      "ticker": "WMT",
-      "icms_score": 5.02,
-      "components": {
-        "fundamental_quality": 0.9,
-        "technical_alignment": 1.35,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.49,
-        "behavioral_sentiment": 0.88
-      },
-      "css": 72,
-      "entry_price": 125.33,
-      "stop_loss": 118.36,
-      "target_price": 135.78,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 89.8,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 4
-    },
-    {
-      "ticker": "NEM",
-      "icms_score": 5.0,
-      "components": {
-        "fundamental_quality": 1.6,
-        "technical_alignment": 0.38,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.74,
-        "behavioral_sentiment": 0.88
-      },
-      "css": 72,
-      "entry_price": 114.48,
-      "stop_loss": 102.97,
-      "target_price": 131.74,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 91.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 5
-    },
-    {
-      "ticker": "RTX",
-      "icms_score": 5.0,
-      "components": {
-        "fundamental_quality": 0.9,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.84,
-        "behavioral_sentiment": 0.96
-      },
-      "css": 74,
-      "entry_price": 203.04,
-      "stop_loss": 191.68,
-      "target_price": 220.08,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 92.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": true,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 6
-    },
-    {
-      "ticker": "GD",
-      "icms_score": 4.94,
-      "components": {
-        "fundamental_quality": 0.95,
-        "technical_alignment": 1.35,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.82,
-        "behavioral_sentiment": 0.72
-      },
-      "css": 68,
-      "entry_price": 355.23,
-      "stop_loss": 337.87,
-      "target_price": 381.27,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 91.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": true,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 7
-    },
-    {
-      "ticker": "CAT",
-      "icms_score": 4.82,
-      "components": {
-        "fundamental_quality": 1.25,
-        "technical_alignment": 0.97,
-        "earnings_momentum": 1.25,
-        "macro_alignment": 0.62,
-        "behavioral_sentiment": 0.72
-      },
-      "css": 68,
-      "entry_price": 700.69,
-      "stop_loss": 644.37,
-      "target_price": 785.18,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 89.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 8
-    },
-    {
-      "ticker": "COP",
-      "icms_score": 4.74,
-      "components": {
-        "fundamental_quality": 0.8,
-        "technical_alignment": 1.5,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.78,
-        "behavioral_sentiment": 0.56
-      },
-      "css": 64,
-      "entry_price": 120.26,
-      "stop_loss": 113.55,
-      "target_price": 130.32,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "BUY",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 90.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 9
-    },
-    {
-      "ticker": "NOC",
-      "icms_score": 4.72,
-      "components": {
-        "fundamental_quality": 0.95,
-        "technical_alignment": 0.82,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.81,
-        "behavioral_sentiment": 1.04
-      },
-      "css": 76,
-      "entry_price": 736.3,
-      "stop_loss": 695.49,
-      "target_price": 797.51,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 92.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": true,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 10
-    },
-    {
-      "ticker": "NEE",
-      "icms_score": 4.64,
-      "components": {
-        "fundamental_quality": 0.83,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.57,
-        "behavioral_sentiment": 0.64
-      },
-      "css": 66,
-      "entry_price": 91.73,
-      "stop_loss": 87.3,
-      "target_price": 98.38,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_POSITIVE",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 88.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 11
+      "rank": 3,
+      "current_price": 32.15,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 33.66,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 34.67,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 34.65,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Oil & Gas E&P"
     },
     {
       "ticker": "OPRA",
-      "icms_score": 4.61,
+      "sector": "Communication Services",
+      "market_cap_b": 1.3,
+      "icms_score": 5.71,
       "components": {
-        "fundamental_quality": 1.75,
-        "technical_alignment": 1.05,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.39,
-        "behavioral_sentiment": -0.08
+        "fq": 2.5,
+        "em": 0.75,
+        "aos": 1.5,
+        "ta": 0.4,
+        "ma": 0.27,
+        "cb": 0.29
       },
-      "css": 48,
-      "entry_price": 14.46,
-      "stop_loss": 12.94,
-      "target_price": 16.74,
-      "agent_stances": {
-        "fundamental": "BUY",
-        "technical": "BUY",
-        "macro": "NEGATIVE_MACRO",
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM",
+        "FQ+AOS"
+      ],
+      "entry_gate": "GREEN",
+      "consensus_pct": 50.0,
+      "disagreement": "Outlier: macro SELL vs 3x fundamental",
+      "entry_price": 14.47,
+      "stop_loss": 13.36,
+      "exit_targets": [
+        15.19,
+        15.92,
+        17.36
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
+        "fundamental": "HOLD",
+        "technical": "HOLD",
         "sentiment": "HOLD"
       },
-      "final_stance": "BUY",
-      "confidence": 82.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 12
-    },
-    {
-      "ticker": "NVDA",
-      "icms_score": 4.53,
-      "components": {
-        "fundamental_quality": 1.4,
-        "technical_alignment": 0.9,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.65,
-        "behavioral_sentiment": 0.08
-      },
-      "css": 52,
-      "entry_price": 183.14,
-      "stop_loss": 171.16,
-      "target_price": 201.1,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 88.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 13
-    },
-    {
-      "ticker": "WMB",
-      "icms_score": 4.5,
-      "components": {
-        "fundamental_quality": 0.98,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.7,
-        "behavioral_sentiment": 0.52
-      },
-      "css": 63,
-      "entry_price": 73.52,
-      "stop_loss": 70.58,
-      "target_price": 77.92,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 88.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 14
-    },
-    {
-      "ticker": "HAL",
-      "icms_score": 4.47,
-      "components": {
-        "fundamental_quality": 0.85,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.76,
-        "behavioral_sentiment": 0.56
-      },
-      "css": 64,
-      "entry_price": 34.84,
-      "stop_loss": 32.39,
-      "target_price": 38.52,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 89.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 15
-    }
-  ],
-  "full_rankings": [
-    {
-      "ticker": "WPM",
-      "icms_score": 5.74,
-      "components": {
-        "fundamental_quality": 1.9,
-        "technical_alignment": 0.82,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.72,
-        "behavioral_sentiment": 0.8
-      },
-      "css": 70,
-      "entry_price": 145.73,
-      "stop_loss": 131.92,
-      "target_price": 166.44,
-      "agent_stances": {
-        "fundamental": "BUY",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "STRONG_BUY",
-      "confidence": 90.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 1
-    },
-    {
-      "ticker": "MRVL",
-      "icms_score": 5.27,
-      "components": {
-        "fundamental_quality": 1.4,
-        "technical_alignment": 1.35,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.7,
-        "behavioral_sentiment": 0.32
-      },
-      "css": 58,
-      "entry_price": 87.67,
-      "stop_loss": 78.99,
-      "target_price": 100.69,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "BUY",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "STRONG_BUY",
-      "confidence": 87.8,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 2
-    },
-    {
-      "ticker": "GWRE",
-      "icms_score": 5.14,
-      "components": {
-        "fundamental_quality": 1.05,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.25,
-        "macro_alignment": 0.76,
-        "behavioral_sentiment": 0.88
-      },
-      "css": 72,
-      "entry_price": 157.63,
-      "stop_loss": 140.98,
-      "target_price": 182.6,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "BUY",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "STRONG_BUY",
-      "confidence": 89.8,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 3
-    },
-    {
-      "ticker": "WMT",
-      "icms_score": 5.02,
-      "components": {
-        "fundamental_quality": 0.9,
-        "technical_alignment": 1.35,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.49,
-        "behavioral_sentiment": 0.88
-      },
-      "css": 72,
-      "entry_price": 125.33,
-      "stop_loss": 118.36,
-      "target_price": 135.78,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 89.8,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 4
+      "rank": 4,
+      "current_price": 14.47,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 15.19,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 15.92,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 17.36,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Internet Content & Information"
     },
     {
       "ticker": "NEM",
-      "icms_score": 5.0,
+      "sector": "Basic Materials",
+      "market_cap_b": 119.6,
+      "icms_score": 5.66,
       "components": {
-        "fundamental_quality": 1.6,
-        "technical_alignment": 0.38,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.74,
-        "behavioral_sentiment": 0.88
+        "fq": 2.5,
+        "em": 0.75,
+        "aos": 1.3,
+        "ta": 0.0,
+        "ma": 0.82,
+        "cb": 0.29
       },
-      "css": 72,
-      "entry_price": 114.48,
-      "stop_loss": 102.97,
-      "target_price": 131.74,
-      "agent_stances": {
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM"
+      ],
+      "entry_gate": "GREEN",
+      "consensus_pct": 53.8,
+      "disagreement": "Divergence detected: {'macro': 'BUY', 'fundamental': 'HOLD', 'technical': 'SELL', 'sentiment': 'HOLD'}",
+      "entry_price": 109.58,
+      "stop_loss": 101.08,
+      "exit_targets": [
+        115.06,
+        120.54,
+        131.5
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "BUY",
         "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 91.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 5
-    },
-    {
-      "ticker": "RTX",
-      "icms_score": 5.0,
-      "components": {
-        "fundamental_quality": 0.9,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.84,
-        "behavioral_sentiment": 0.96
-      },
-      "css": 74,
-      "entry_price": 203.04,
-      "stop_loss": 191.68,
-      "target_price": 220.08,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 92.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": true,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 6
-    },
-    {
-      "ticker": "GD",
-      "icms_score": 4.94,
-      "components": {
-        "fundamental_quality": 0.95,
-        "technical_alignment": 1.35,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.82,
-        "behavioral_sentiment": 0.72
-      },
-      "css": 68,
-      "entry_price": 355.23,
-      "stop_loss": 337.87,
-      "target_price": 381.27,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 91.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": true,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 7
-    },
-    {
-      "ticker": "CAT",
-      "icms_score": 4.82,
-      "components": {
-        "fundamental_quality": 1.25,
-        "technical_alignment": 0.97,
-        "earnings_momentum": 1.25,
-        "macro_alignment": 0.62,
-        "behavioral_sentiment": 0.72
-      },
-      "css": 68,
-      "entry_price": 700.69,
-      "stop_loss": 644.37,
-      "target_price": 785.18,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 89.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 8
-    },
-    {
-      "ticker": "COP",
-      "icms_score": 4.74,
-      "components": {
-        "fundamental_quality": 0.8,
-        "technical_alignment": 1.5,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.78,
-        "behavioral_sentiment": 0.56
-      },
-      "css": 64,
-      "entry_price": 120.26,
-      "stop_loss": 113.55,
-      "target_price": 130.32,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "BUY",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 90.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 9
-    },
-    {
-      "ticker": "NOC",
-      "icms_score": 4.72,
-      "components": {
-        "fundamental_quality": 0.95,
-        "technical_alignment": 0.82,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.81,
-        "behavioral_sentiment": 1.04
-      },
-      "css": 76,
-      "entry_price": 736.3,
-      "stop_loss": 695.49,
-      "target_price": 797.51,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 92.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": true,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 10
-    },
-    {
-      "ticker": "NEE",
-      "icms_score": 4.64,
-      "components": {
-        "fundamental_quality": 0.83,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.57,
-        "behavioral_sentiment": 0.64
-      },
-      "css": 66,
-      "entry_price": 91.73,
-      "stop_loss": 87.3,
-      "target_price": 98.38,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_POSITIVE",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 88.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 11
-    },
-    {
-      "ticker": "OPRA",
-      "icms_score": 4.61,
-      "components": {
-        "fundamental_quality": 1.75,
-        "technical_alignment": 1.05,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.39,
-        "behavioral_sentiment": -0.08
-      },
-      "css": 48,
-      "entry_price": 14.46,
-      "stop_loss": 12.94,
-      "target_price": 16.74,
-      "agent_stances": {
-        "fundamental": "BUY",
-        "technical": "BUY",
-        "macro": "NEGATIVE_MACRO",
+        "technical": "SELL",
         "sentiment": "HOLD"
       },
-      "final_stance": "BUY",
-      "confidence": 82.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 12
+      "rank": 5,
+      "current_price": 109.58,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 115.06,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 120.54,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 131.5,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Gold"
     },
     {
       "ticker": "NVDA",
-      "icms_score": 4.53,
+      "sector": "Technology",
+      "market_cap_b": 4381.0,
+      "icms_score": 5.58,
       "components": {
-        "fundamental_quality": 1.4,
-        "technical_alignment": 0.9,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.65,
-        "behavioral_sentiment": 0.08
+        "fq": 2.5,
+        "em": 0.75,
+        "aos": 1.5,
+        "ta": 0.0,
+        "ma": 0.0,
+        "cb": 0.83
       },
-      "css": 52,
-      "entry_price": 183.14,
-      "stop_loss": 171.16,
-      "target_price": 201.1,
-      "agent_stances": {
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM",
+        "FQ+AOS",
+        "FQ+CB"
+      ],
+      "entry_gate": "GREEN",
+      "consensus_pct": 60.0,
+      "disagreement": "Divergence detected: {'macro': 'HOLD', 'fundamental': 'HOLD', 'technical': 'SELL', 'sentiment': 'BUY'}",
+      "entry_price": 180.25,
+      "stop_loss": 171.34,
+      "exit_targets": [
+        189.16,
+        195.1,
+        204.01
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "HOLD",
         "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
+        "technical": "SELL",
         "sentiment": "BUY"
       },
-      "final_stance": "BUY",
-      "confidence": 88.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 13
-    },
-    {
-      "ticker": "WMB",
-      "icms_score": 4.5,
-      "components": {
-        "fundamental_quality": 0.98,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.7,
-        "behavioral_sentiment": 0.52
-      },
-      "css": 63,
-      "entry_price": 73.52,
-      "stop_loss": 70.58,
-      "target_price": 77.92,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 88.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 14
-    },
-    {
-      "ticker": "HAL",
-      "icms_score": 4.47,
-      "components": {
-        "fundamental_quality": 0.85,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.76,
-        "behavioral_sentiment": 0.56
-      },
-      "css": 64,
-      "entry_price": 34.84,
-      "stop_loss": 32.39,
-      "target_price": 38.52,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 89.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 15
-    },
-    {
-      "ticker": "FIGS",
-      "icms_score": 4.42,
-      "components": {
-        "fundamental_quality": 0.8,
-        "technical_alignment": 1.35,
-        "earnings_momentum": 1.25,
-        "macro_alignment": 0.54,
-        "behavioral_sentiment": 0.48
-      },
-      "css": 62,
-      "entry_price": 15.0,
-      "stop_loss": 13.1,
-      "target_price": 17.85,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "BUY",
-        "macro": "NEUTRAL_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 86.8,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 16
-    },
-    {
-      "ticker": "GOOGL",
-      "icms_score": 4.39,
-      "components": {
-        "fundamental_quality": 1.4,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.49,
-        "behavioral_sentiment": -0.2
-      },
-      "css": 45,
-      "entry_price": 303.55,
-      "stop_loss": 288.3,
-      "target_price": 326.43,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "BUY",
-        "macro": "NEUTRAL_MACRO",
-        "sentiment": "HOLD"
-      },
-      "final_stance": "BUY",
-      "confidence": 86.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 17
-    },
-    {
-      "ticker": "LMT",
-      "icms_score": 4.38,
-      "components": {
-        "fundamental_quality": 0.95,
-        "technical_alignment": 0.82,
-        "earnings_momentum": 0.7,
-        "macro_alignment": 0.86,
-        "behavioral_sentiment": 1.04
-      },
-      "css": 76,
-      "entry_price": 652.83,
-      "stop_loss": 615.69,
-      "target_price": 708.54,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 91.5,
-      "agent_disagreement": true,
-      "is_diamond": false,
-      "is_geo_beneficiary": true,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 18
-    },
-    {
-      "ticker": "PANW",
-      "icms_score": 4.3,
-      "components": {
-        "fundamental_quality": 1.15,
-        "technical_alignment": 0.75,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.66,
-        "behavioral_sentiment": 0.64
-      },
-      "css": 66,
-      "entry_price": 168.12,
-      "stop_loss": 154.46,
-      "target_price": 188.6,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 89.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 19
-    },
-    {
-      "ticker": "XOM",
-      "icms_score": 4.26,
-      "components": {
-        "fundamental_quality": 0.55,
-        "technical_alignment": 1.05,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.84,
-        "behavioral_sentiment": 0.72
-      },
-      "css": 68,
-      "entry_price": 153.53,
-      "stop_loss": 145.31,
-      "target_price": 165.85,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 91.0,
-      "agent_disagreement": true,
-      "is_diamond": false,
-      "is_geo_beneficiary": true,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 20
-    },
-    {
-      "ticker": "LLY",
-      "icms_score": 4.21,
-      "components": {
-        "fundamental_quality": 1.4,
-        "technical_alignment": 0.53,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.57,
-        "behavioral_sentiment": 0.32
-      },
-      "css": 58,
-      "entry_price": 977.25,
-      "stop_loss": 917.9,
-      "target_price": 1066.28,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_POSITIVE",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 88.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 21
-    },
-    {
-      "ticker": "INTU",
-      "icms_score": 4.12,
-      "components": {
-        "fundamental_quality": 1.33,
-        "technical_alignment": 0.6,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.55,
-        "behavioral_sentiment": 0.24
-      },
-      "css": 56,
-      "entry_price": 435.13,
-      "stop_loss": 391.38,
-      "target_price": 500.76,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 84.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 22
-    },
-    {
-      "ticker": "GE",
-      "icms_score": 4.11,
-      "components": {
-        "fundamental_quality": 1.25,
-        "technical_alignment": 0.3,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.68,
-        "behavioral_sentiment": 0.48
-      },
-      "css": 62,
-      "entry_price": 306.7,
-      "stop_loss": 283.28,
-      "target_price": 341.84,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 89.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 23
-    },
-    {
-      "ticker": "CVX",
-      "icms_score": 4.1,
-      "components": {
-        "fundamental_quality": 0.35,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.81,
-        "behavioral_sentiment": 0.64
-      },
-      "css": 66,
-      "entry_price": 200.91,
-      "stop_loss": 192.9,
-      "target_price": 212.92,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "VERY_POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 90.5,
-      "agent_disagreement": true,
-      "is_diamond": false,
-      "is_geo_beneficiary": true,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 24
-    },
-    {
-      "ticker": "CRWD",
-      "icms_score": 4.01,
-      "components": {
-        "fundamental_quality": 0.55,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.68,
-        "behavioral_sentiment": 0.48
-      },
-      "css": 62,
-      "entry_price": 441.54,
-      "stop_loss": 397.65,
-      "target_price": 507.37,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "BUY",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "BUY",
-      "confidence": 89.2,
-      "agent_disagreement": true,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 25
+      "rank": 6,
+      "current_price": 180.25,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 189.16,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 195.1,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 204.01,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Semiconductors"
     },
     {
       "ticker": "MSFT",
-      "icms_score": 3.99,
+      "sector": "Technology",
+      "market_cap_b": 2939.9,
+      "icms_score": 5.46,
       "components": {
-        "fundamental_quality": 1.4,
-        "technical_alignment": 0.6,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.57,
-        "behavioral_sentiment": -0.08
+        "fq": 2.5,
+        "em": 0.73,
+        "aos": 1.5,
+        "ta": 0.0,
+        "ma": 0.0,
+        "cb": 0.73
       },
-      "css": 48,
-      "entry_price": 401.86,
-      "stop_loss": 384.95,
-      "target_price": 427.22,
-      "agent_stances": {
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM",
+        "FQ+AOS"
+      ],
+      "entry_gate": "YELLOW",
+      "consensus_pct": 60.0,
+      "disagreement": "Divergence detected: {'macro': 'HOLD', 'fundamental': 'HOLD', 'technical': 'SELL', 'sentiment': 'BUY'}",
+      "entry_price": 395.55,
+      "stop_loss": 382.69,
+      "exit_targets": [
+        408.41,
+        416.98,
+        429.84
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "HOLD",
         "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "MODEST_POSITIVE",
-        "sentiment": "HOLD"
-      },
-      "final_stance": "HOLD",
-      "confidence": 87.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 26
-    },
-    {
-      "ticker": "SERV",
-      "icms_score": 3.94,
-      "components": {
-        "fundamental_quality": 0.95,
-        "technical_alignment": 0.45,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.72,
-        "behavioral_sentiment": 0.32
-      },
-      "css": 58,
-      "entry_price": 9.6,
-      "stop_loss": 8.11,
-      "target_price": 11.85,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
+        "technical": "SELL",
         "sentiment": "BUY"
       },
-      "final_stance": "HOLD",
-      "confidence": 87.2,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 27
-    },
-    {
-      "ticker": "MGNI",
-      "icms_score": 3.88,
-      "components": {
-        "fundamental_quality": 1.28,
-        "technical_alignment": 0.45,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.49,
-        "behavioral_sentiment": 0.16
-      },
-      "css": 54,
-      "entry_price": 12.29,
-      "stop_loss": 10.74,
-      "target_price": 14.61,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "SLIGHTLY_NEGATIVE",
-        "sentiment": "HOLD"
-      },
-      "final_stance": "HOLD",
-      "confidence": 85.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 28
-    },
-    {
-      "ticker": "APD",
-      "icms_score": 3.75,
-      "components": {
-        "fundamental_quality": 0.2,
-        "technical_alignment": 1.2,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.69,
-        "behavioral_sentiment": 0.56
-      },
-      "css": 64,
-      "entry_price": 290.48,
-      "stop_loss": 276.98,
-      "target_price": 310.73,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 88.2,
-      "agent_disagreement": true,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 29
-    },
-    {
-      "ticker": "ZS",
-      "icms_score": 3.72,
-      "components": {
-        "fundamental_quality": 0.55,
-        "technical_alignment": 0.53,
-        "earnings_momentum": 1.25,
-        "macro_alignment": 0.68,
-        "behavioral_sentiment": 0.72
-      },
-      "css": 68,
-      "entry_price": 151.61,
-      "stop_loss": 131.47,
-      "target_price": 181.82,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 89.8,
-      "agent_disagreement": true,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 30
-    },
-    {
-      "ticker": "JNJ",
-      "icms_score": 3.64,
-      "components": {
-        "fundamental_quality": 1.08,
-        "technical_alignment": 0.82,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.55,
-        "behavioral_sentiment": 0.08
-      },
-      "css": 52,
-      "entry_price": 242.04,
-      "stop_loss": 233.49,
-      "target_price": 254.87,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_POSITIVE",
-        "sentiment": "HOLD"
-      },
-      "final_stance": "HOLD",
-      "confidence": 87.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 31
-    },
-    {
-      "ticker": "FCX",
-      "icms_score": 3.63,
-      "components": {
-        "fundamental_quality": 0.55,
-        "technical_alignment": 0.38,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.65,
-        "behavioral_sentiment": 0.96
-      },
-      "css": 74,
-      "entry_price": 59.21,
-      "stop_loss": 52.7,
-      "target_price": 68.97,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "MODEST_POSITIVE",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 89.5,
-      "agent_disagreement": true,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 32
-    },
-    {
-      "ticker": "SLB",
-      "icms_score": 3.63,
-      "components": {
-        "fundamental_quality": 0.65,
-        "technical_alignment": 0.68,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.73,
-        "behavioral_sentiment": 0.48
-      },
-      "css": 62,
-      "entry_price": 44.56,
-      "stop_loss": 40.93,
-      "target_price": 50.01,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 88.8,
-      "agent_disagreement": true,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 33
-    },
-    {
-      "ticker": "AMZN",
-      "icms_score": 3.61,
-      "components": {
-        "fundamental_quality": 1.15,
-        "technical_alignment": 0.6,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.46,
-        "behavioral_sentiment": 0.0
-      },
-      "css": 50,
-      "entry_price": 209.53,
-      "stop_loss": 198.18,
-      "target_price": 226.55,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "SLIGHTLY_NEGATIVE",
-        "sentiment": "HOLD"
-      },
-      "final_stance": "HOLD",
-      "confidence": 85.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 34
+      "rank": 7,
+      "current_price": 395.55,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 408.41,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 416.98,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 429.84,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Software - Infrastructure"
     },
     {
       "ticker": "LPLA",
-      "icms_score": 3.61,
+      "sector": "Financial Services",
+      "market_cap_b": 23.1,
+      "icms_score": 5.39,
       "components": {
-        "fundamental_quality": 1.1,
-        "technical_alignment": 0.07,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.63,
-        "behavioral_sentiment": 0.4
+        "fq": 2.5,
+        "em": 0.75,
+        "aos": 1.5,
+        "ta": 0.0,
+        "ma": 0.35,
+        "cb": 0.29
       },
-      "css": 60,
-      "entry_price": 289.62,
-      "stop_loss": 260.82,
-      "target_price": 332.82,
-      "agent_stances": {
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM",
+        "FQ+AOS"
+      ],
+      "entry_gate": "YELLOW",
+      "consensus_pct": 42.5,
+      "disagreement": "Split Consensus (2 vs 2)",
+      "entry_price": 289.03,
+      "stop_loss": 268.63,
+      "exit_targets": [
+        303.48,
+        317.93,
+        343.44
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
         "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 87.8,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 35
-    },
-    {
-      "ticker": "MCO",
-      "icms_score": 3.6,
-      "components": {
-        "fundamental_quality": 1.3,
-        "technical_alignment": 0.07,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.65,
-        "behavioral_sentiment": 0.48
-      },
-      "css": 62,
-      "entry_price": 426.47,
-      "stop_loss": 394.43,
-      "target_price": 474.53,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 87.8,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 36
-    },
-    {
-      "ticker": "META",
-      "icms_score": 3.54,
-      "components": {
-        "fundamental_quality": 1.4,
-        "technical_alignment": 0.3,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.5,
-        "behavioral_sentiment": -0.16
-      },
-      "css": 46,
-      "entry_price": 638.18,
-      "stop_loss": 601.7,
-      "target_price": 692.91,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "SLIGHTLY_NEGATIVE",
+        "technical": "SELL",
         "sentiment": "HOLD"
       },
-      "final_stance": "HOLD",
-      "confidence": 86.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 37
+      "rank": 8,
+      "current_price": 289.03,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 303.48,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 317.93,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 343.44,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Capital Markets"
     },
     {
-      "ticker": "AXON",
-      "icms_score": 3.51,
+      "ticker": "INTU",
+      "sector": "Technology",
+      "market_cap_b": 122.4,
+      "icms_score": 5.36,
       "components": {
-        "fundamental_quality": 0.6,
-        "technical_alignment": 0.45,
-        "earnings_momentum": 1.25,
-        "macro_alignment": 0.65,
-        "behavioral_sentiment": 0.56
+        "fq": 2.5,
+        "em": 0.75,
+        "aos": 1.5,
+        "ta": 0.0,
+        "ma": 0.32,
+        "cb": 0.29
       },
-      "css": 64,
-      "entry_price": 499.4,
-      "stop_loss": 441.2,
-      "target_price": 586.7,
-      "agent_stances": {
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM",
+        "FQ+AOS"
+      ],
+      "entry_gate": "YELLOW",
+      "consensus_pct": 42.5,
+      "disagreement": "Split Consensus (2 vs 2)",
+      "entry_price": 439.96,
+      "stop_loss": 407.51,
+      "exit_targets": [
+        461.96,
+        483.96,
+        526.49
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
         "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 88.5,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 38
-    },
-    {
-      "ticker": "FOUR",
-      "icms_score": 3.48,
-      "components": {
-        "fundamental_quality": 1.15,
-        "technical_alignment": 0.07,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.3,
-        "behavioral_sentiment": 0.56
-      },
-      "css": 64,
-      "entry_price": 43.91,
-      "stop_loss": 37.11,
-      "target_price": 54.1,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEGATIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 89.0,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 39
-    },
-    {
-      "ticker": "CELH",
-      "icms_score": 3.45,
-      "components": {
-        "fundamental_quality": 0.75,
-        "technical_alignment": 0.15,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.43,
-        "behavioral_sentiment": 0.72
-      },
-      "css": 68,
-      "entry_price": 43.68,
-      "stop_loss": 38.27,
-      "target_price": 51.79,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEGATIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 89.0,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 40
-    },
-    {
-      "ticker": "UNH",
-      "icms_score": 3.44,
-      "components": {
-        "fundamental_quality": 1.05,
-        "technical_alignment": 0.45,
-        "earnings_momentum": 1.25,
-        "macro_alignment": 0.53,
-        "behavioral_sentiment": 0.16
-      },
-      "css": 54,
-      "entry_price": 277.05,
-      "stop_loss": 260.95,
-      "target_price": 301.21,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 87.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 41
-    },
-    {
-      "ticker": "AMT",
-      "icms_score": 3.32,
-      "components": {
-        "fundamental_quality": 1.28,
-        "technical_alignment": 0.0,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.54,
-        "behavioral_sentiment": 0.4
-      },
-      "css": 60,
-      "entry_price": 179.86,
-      "stop_loss": 169.1,
-      "target_price": 195.99,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 86.8,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 42
-    },
-    {
-      "ticker": "GS",
-      "icms_score": 3.3,
-      "components": {
-        "fundamental_quality": 1.03,
-        "technical_alignment": 0.53,
-        "earnings_momentum": 1.0,
-        "macro_alignment": 0.58,
-        "behavioral_sentiment": 0.16
-      },
-      "css": 54,
-      "entry_price": 771.77,
-      "stop_loss": 702.71,
-      "target_price": 875.36,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 86.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 43
-    },
-    {
-      "ticker": "HUBS",
-      "icms_score": 3.29,
-      "components": {
-        "fundamental_quality": 0.6,
-        "technical_alignment": 0.45,
-        "earnings_momentum": 1.5,
-        "macro_alignment": 0.5,
-        "behavioral_sentiment": 0.24
-      },
-      "css": 56,
-      "entry_price": 257.63,
-      "stop_loss": 219.36,
-      "target_price": 315.04,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "SLIGHTLY_NEGATIVE",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 86.8,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 44
-    },
-    {
-      "ticker": "ARCC",
-      "icms_score": 3.28,
-      "components": {
-        "fundamental_quality": 0.85,
-        "technical_alignment": 0.23,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.62,
-        "behavioral_sentiment": 0.48
-      },
-      "css": 62,
-      "entry_price": 18.07,
-      "stop_loss": 17.09,
-      "target_price": 19.54,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 87.5,
-      "agent_disagreement": false,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 45
-    },
-    {
-      "ticker": "BURL",
-      "icms_score": 3.17,
-      "components": {
-        "fundamental_quality": 1.1,
-        "technical_alignment": 0.38,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.43,
-        "behavioral_sentiment": 0.16
-      },
-      "css": 54,
-      "entry_price": 293.01,
-      "stop_loss": 266.22,
-      "target_price": 333.2,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEGATIVE_MACRO",
+        "technical": "SELL",
         "sentiment": "HOLD"
       },
-      "final_stance": "HOLD",
-      "confidence": 86.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 46
-    },
-    {
-      "ticker": "CCJ",
-      "icms_score": 3.09,
-      "components": {
-        "fundamental_quality": 0.5,
-        "technical_alignment": 0.9,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.59,
-        "behavioral_sentiment": 0.0
-      },
-      "css": 50,
-      "entry_price": 115.3,
-      "stop_loss": 102.15,
-      "target_price": 135.03,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "MODEST_POSITIVE",
-        "sentiment": "N/A"
-      },
-      "final_stance": "HOLD",
-      "confidence": 92.3,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 47
-    },
-    {
-      "ticker": "AAPL",
-      "icms_score": 3.07,
-      "components": {
-        "fundamental_quality": 1.33,
-        "technical_alignment": 0.45,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.51,
-        "behavioral_sentiment": -0.32
-      },
-      "css": 42,
-      "entry_price": 255.76,
-      "stop_loss": 242.52,
-      "target_price": 275.62,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_MACRO",
-        "sentiment": "HOLD"
-      },
-      "final_stance": "HOLD",
-      "confidence": 87.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONTRARIAN",
-      "rank": 48
-    },
-    {
-      "ticker": "MSCI",
-      "icms_score": 3.03,
-      "components": {
-        "fundamental_quality": 0.7,
-        "technical_alignment": 0.23,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.61,
-        "behavioral_sentiment": 0.4
-      },
-      "css": 60,
-      "entry_price": 536.35,
-      "stop_loss": 501.83,
-      "target_price": 588.13,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 82.0,
-      "agent_disagreement": true,
-      "is_diamond": true,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 49
-    },
-    {
-      "ticker": "MDLZ",
-      "icms_score": 2.93,
-      "components": {
-        "fundamental_quality": 0.75,
-        "technical_alignment": 0.07,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.53,
-        "behavioral_sentiment": 0.48
-      },
-      "css": 62,
-      "entry_price": 54.35,
-      "stop_loss": 51.3,
-      "target_price": 58.92,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEUTRAL_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 87.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 50
-    },
-    {
-      "ticker": "JPM",
-      "icms_score": 2.86,
-      "components": {
-        "fundamental_quality": 0.95,
-        "technical_alignment": 0.0,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.61,
-        "behavioral_sentiment": 0.2
-      },
-      "css": 55,
-      "entry_price": 282.89,
-      "stop_loss": 266.49,
-      "target_price": 307.49,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "POSITIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 86.0,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 51
-    },
-    {
-      "ticker": "STZ",
-      "icms_score": 2.86,
-      "components": {
-        "fundamental_quality": 0.8,
-        "technical_alignment": 0.3,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.42,
-        "behavioral_sentiment": 0.24
-      },
-      "css": 56,
-      "entry_price": 148.32,
-      "stop_loss": 138.79,
-      "target_price": 162.62,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEGATIVE_MACRO",
-        "sentiment": "BUY"
-      },
-      "final_stance": "HOLD",
-      "confidence": 86.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 52
-    },
-    {
-      "ticker": "ACVA",
-      "icms_score": 2.78,
-      "components": {
-        "fundamental_quality": 0.45,
-        "technical_alignment": 0.38,
-        "earnings_momentum": 1.4,
-        "macro_alignment": 0.47,
-        "behavioral_sentiment": 0.08
-      },
-      "css": 52,
-      "entry_price": 4.86,
-      "stop_loss": 3.88,
-      "target_price": 6.33,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "SLIGHTLY_NEGATIVE",
-        "sentiment": "HOLD"
-      },
-      "final_stance": "HOLD",
-      "confidence": 85.2,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 53
-    },
-    {
-      "ticker": "DIS",
-      "icms_score": 2.48,
-      "components": {
-        "fundamental_quality": 0.8,
-        "technical_alignment": 0.23,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.43,
-        "behavioral_sentiment": -0.08
-      },
-      "css": 48,
-      "entry_price": 99.43,
-      "stop_loss": 94.12,
-      "target_price": 107.4,
-      "agent_stances": {
-        "fundamental": "HOLD",
-        "technical": "HOLD",
-        "macro": "NEGATIVE_MACRO",
-        "sentiment": "HOLD"
-      },
-      "final_stance": "SELL",
-      "confidence": 86.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 54
+      "rank": 9,
+      "current_price": 439.96,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 461.96,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 483.96,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 526.49,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Software - Application"
     },
     {
       "ticker": "DECK",
-      "icms_score": 2.39,
+      "sector": "Consumer Cyclical",
+      "market_cap_b": 14.7,
+      "icms_score": 5.33,
       "components": {
-        "fundamental_quality": 1.2,
-        "technical_alignment": 0.0,
-        "earnings_momentum": 0.5,
-        "macro_alignment": 0.45,
-        "behavioral_sentiment": 0.24
+        "fq": 2.5,
+        "em": 0.68,
+        "aos": 1.3,
+        "ta": 0.0,
+        "ma": 0.22,
+        "cb": 0.63
       },
-      "css": 56,
-      "entry_price": 100.69,
-      "stop_loss": 92.74,
-      "target_price": 112.61,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "NEGATIVE_MACRO",
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM"
+      ],
+      "entry_gate": "YELLOW",
+      "consensus_pct": 48.8,
+      "disagreement": "Divergence detected: {'macro': 'SELL', 'fundamental': 'HOLD', 'technical': 'SELL', 'sentiment': 'BUY'}",
+      "entry_price": 100.78,
+      "stop_loss": 94.97,
+      "exit_targets": [
+        105.82,
+        110.46,
+        116.26
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
+        "fundamental": "HOLD",
+        "technical": "SELL",
         "sentiment": "BUY"
       },
-      "final_stance": "SELL",
-      "confidence": 85.2,
-      "agent_disagreement": true,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "CONFIRMATION",
-      "rank": 55
+      "rank": 10,
+      "current_price": 100.78,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 105.82,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 110.46,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 116.26,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Footwear & Accessories"
+    },
+    {
+      "ticker": "MGNI",
+      "sector": "Communication Services",
+      "market_cap_b": 1.7,
+      "icms_score": 5.27,
+      "components": {
+        "fq": 2.5,
+        "em": 0.71,
+        "aos": 1.5,
+        "ta": 0.0,
+        "ma": 0.27,
+        "cb": 0.29
+      },
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM",
+        "FQ+AOS"
+      ],
+      "entry_gate": "YELLOW",
+      "consensus_pct": 42.5,
+      "disagreement": "Split Consensus (2 vs 2)",
+      "entry_price": 11.88,
+      "stop_loss": 10.93,
+      "exit_targets": [
+        12.47,
+        13.07,
+        14.26
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
+        "fundamental": "HOLD",
+        "technical": "SELL",
+        "sentiment": "HOLD"
+      },
+      "rank": 11,
+      "current_price": 11.88,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 12.47,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 13.07,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 14.26,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Advertising Agencies"
+    },
+    {
+      "ticker": "PANW",
+      "sector": "Technology",
+      "market_cap_b": 136.3,
+      "icms_score": 5.24,
+      "components": {
+        "fq": 2.5,
+        "em": 0.73,
+        "aos": 1.3,
+        "ta": 0.0,
+        "ma": 0.42,
+        "cb": 0.29
+      },
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM"
+      ],
+      "entry_gate": "YELLOW",
+      "consensus_pct": 38.8,
+      "disagreement": "Split Consensus (2 vs 2)",
+      "entry_price": 167.01,
+      "stop_loss": 157.13,
+      "exit_targets": [
+        175.36,
+        183.48,
+        193.37
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
+        "fundamental": "HOLD",
+        "technical": "SELL",
+        "sentiment": "HOLD"
+      },
+      "rank": 12,
+      "current_price": 167.01,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 175.36,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 183.48,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 193.37,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Software - Infrastructure"
+    },
+    {
+      "ticker": "MCO",
+      "sector": "Financial Services",
+      "market_cap_b": 76.5,
+      "icms_score": 5.22,
+      "components": {
+        "fq": 2.5,
+        "em": 0.73,
+        "aos": 1.3,
+        "ta": 0.0,
+        "ma": 0.4,
+        "cb": 0.29
+      },
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM"
+      ],
+      "entry_gate": "YELLOW",
+      "consensus_pct": 38.8,
+      "disagreement": "Split Consensus (2 vs 2)",
+      "entry_price": 430.01,
+      "stop_loss": 406.65,
+      "exit_targets": [
+        451.51,
+        468.94,
+        492.3
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
+        "fundamental": "HOLD",
+        "technical": "SELL",
+        "sentiment": "HOLD"
+      },
+      "rank": 13,
+      "current_price": 430.01,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 451.51,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 468.94,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 492.3,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Financial Data & Stock Exchanges"
+    },
+    {
+      "ticker": "MSCI",
+      "sector": "Financial Services",
+      "market_cap_b": 41.2,
+      "icms_score": 5.2,
+      "components": {
+        "fq": 2.5,
+        "em": 0.71,
+        "aos": 1.3,
+        "ta": 0.0,
+        "ma": 0.4,
+        "cb": 0.29
+      },
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM"
+      ],
+      "entry_gate": "YELLOW",
+      "consensus_pct": 38.8,
+      "disagreement": "Split Consensus (2 vs 2)",
+      "entry_price": 547.9,
+      "stop_loss": 522.69,
+      "exit_targets": [
+        573.11,
+        589.92,
+        615.13
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
+        "fundamental": "HOLD",
+        "technical": "SELL",
+        "sentiment": "HOLD"
+      },
+      "rank": 14,
+      "current_price": 547.9,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 573.11,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 589.92,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 615.13,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Financial Data & Stock Exchanges"
     },
     {
       "ticker": "WING",
-      "icms_score": 2.08,
+      "sector": "Consumer Cyclical",
+      "market_cap_b": 5.7,
+      "icms_score": 5.19,
       "components": {
-        "fundamental_quality": 0.48,
-        "technical_alignment": 0.0,
-        "earnings_momentum": 1.1,
-        "macro_alignment": 0.34,
-        "behavioral_sentiment": 0.16
+        "fq": 2.5,
+        "em": 0.6,
+        "aos": 1.5,
+        "ta": 0.0,
+        "ma": 0.3,
+        "cb": 0.29
       },
-      "css": 54,
-      "entry_price": 193.11,
-      "stop_loss": 155.77,
-      "target_price": 249.12,
-      "agent_stances": {
-        "fundamental": "SELL",
-        "technical": "HOLD",
-        "macro": "NEGATIVE_MACRO",
+      "conviction_tier": "SPECULATIVE",
+      "qualifying_pairs": [
+        "FQ+EM",
+        "FQ+AOS"
+      ],
+      "entry_gate": "YELLOW",
+      "consensus_pct": 42.5,
+      "disagreement": "Split Consensus (2 vs 2)",
+      "entry_price": 203.44,
+      "stop_loss": 187.16,
+      "exit_targets": [
+        213.61,
+        223.78,
+        244.13
+      ],
+      "position_size_pct": 2.5,
+      "position_size_rationale": "Tier 4 (SPECULATIVE): 2.5% position. Speculative with qualifying pairs and ICMS >= 5.0.",
+      "thesis_expiration_date": "2026-03-16",
+      "agent_consensus": {
+        "macro": "SELL",
+        "fundamental": "HOLD",
+        "technical": "SELL",
         "sentiment": "HOLD"
       },
-      "final_stance": "SELL",
-      "confidence": 81.5,
-      "agent_disagreement": false,
-      "is_diamond": false,
-      "is_geo_beneficiary": false,
-      "behavioral_mode": "NEUTRAL",
-      "rank": 56
+      "rank": 15,
+      "current_price": 203.44,
+      "exits": [
+        {
+          "horizon_days": 7,
+          "target": 213.61,
+          "projected_date": "2026-03-23"
+        },
+        {
+          "horizon_days": 14,
+          "target": 223.78,
+          "projected_date": "2026-03-30"
+        },
+        {
+          "horizon_days": 30,
+          "target": 244.13,
+          "projected_date": "2026-04-15"
+        }
+      ],
+      "industry": "Restaurants"
     }
   ],
-  "summary_statistics": {
-    "avg_icms": 3.89,
-    "max_icms": 5.74,
-    "min_icms": 2.08,
-    "strong_buy_count": 3,
-    "buy_count": 22,
-    "hold_count": 28,
-    "sell_count": 3,
-    "diamond_count": 12,
-    "geo_beneficiary_count": 6
+  "portfolio_health": {
+    "total_positions": 15,
+    "tier_1_count": 0,
+    "tier_2_count": 0,
+    "tier_3_count": 0,
+    "tier_4_count": 15,
+    "average_icms": 5.48,
+    "sector_concentration": {
+      "Technology": 0.4,
+      "Other": 0.2,
+      "Energy": 0.07,
+      "Materials": 0.07,
+      "Financials": 0.2,
+      "Consumer": 0.07
+    }
   },
-  "analysis_notes": "ICMS v4.4 run with active Military Conflict + partial Energy Crisis scenarios. Macro weight scaled 1.35x. VIX 26.40999984741211, Oil $94.06999969482422, Gold $5102.5. 10 diamonds discovered via sentiment agent, 10 macro-recommended tickers integrated."
+  "sector_distribution": {
+    "Technology": 6,
+    "Financial Services": 3,
+    "Communication Services": 2,
+    "Consumer Cyclical": 2,
+    "Energy": 1,
+    "Basic Materials": 1
+  },
+  "paper_trading_signals": {
+    "buys": [
+      {
+        "ticker": "MRVL",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.96,
+        "entry_price": 87.86,
+        "stop_loss": 81.43,
+        "exit_targets": [
+          92.25,
+          96.65,
+          105.0
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "GWRE",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.81,
+        "entry_price": 160.57,
+        "stop_loss": 148.38,
+        "exit_targets": [
+          168.6,
+          176.63,
+          192.68
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "CTRA",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.76,
+        "entry_price": 32.15,
+        "stop_loss": 30.64,
+        "exit_targets": [
+          33.66,
+          34.67,
+          34.65
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "OPRA",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.71,
+        "entry_price": 14.47,
+        "stop_loss": 13.36,
+        "exit_targets": [
+          15.19,
+          15.92,
+          17.36
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "NEM",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.66,
+        "entry_price": 109.58,
+        "stop_loss": 101.08,
+        "exit_targets": [
+          115.06,
+          120.54,
+          131.5
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "NVDA",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.58,
+        "entry_price": 180.25,
+        "stop_loss": 171.34,
+        "exit_targets": [
+          189.16,
+          195.1,
+          204.01
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "MSFT",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.46,
+        "entry_price": 395.55,
+        "stop_loss": 382.69,
+        "exit_targets": [
+          408.41,
+          416.98,
+          429.84
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "LPLA",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.39,
+        "entry_price": 289.03,
+        "stop_loss": 268.63,
+        "exit_targets": [
+          303.48,
+          317.93,
+          343.44
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "INTU",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.36,
+        "entry_price": 439.96,
+        "stop_loss": 407.51,
+        "exit_targets": [
+          461.96,
+          483.96,
+          526.49
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "DECK",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.33,
+        "entry_price": 100.78,
+        "stop_loss": 94.97,
+        "exit_targets": [
+          105.82,
+          110.46,
+          116.26
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "MGNI",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.27,
+        "entry_price": 11.88,
+        "stop_loss": 10.93,
+        "exit_targets": [
+          12.47,
+          13.07,
+          14.26
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "PANW",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.24,
+        "entry_price": 167.01,
+        "stop_loss": 157.13,
+        "exit_targets": [
+          175.36,
+          183.48,
+          193.37
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "MCO",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.22,
+        "entry_price": 430.01,
+        "stop_loss": 406.65,
+        "exit_targets": [
+          451.51,
+          468.94,
+          492.3
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "MSCI",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.2,
+        "entry_price": 547.9,
+        "stop_loss": 522.69,
+        "exit_targets": [
+          573.11,
+          589.92,
+          615.13
+        ],
+        "position_size_pct": 2.5
+      },
+      {
+        "ticker": "WING",
+        "recommendation": "BUY",
+        "conviction_tier": "SPECULATIVE",
+        "icms_score": 5.19,
+        "entry_price": 203.44,
+        "stop_loss": 187.16,
+        "exit_targets": [
+          213.61,
+          223.78,
+          244.13
+        ],
+        "position_size_pct": 2.5
+      }
+    ],
+    "sells": []
+  },
+  "run_date": "2026-03-16",
+  "run_id": "icms-2026-03-16-0804",
+  "macro_regime": "TRANSITION",
+  "regime_confidence": 68,
+  "market_snapshot": {
+    "sp500": 6632.19,
+    "vix": 24.99,
+    "us10y": 4.234,
+    "dxy": 100.03,
+    "fed_funds": 3.5,
+    "oil_wti": 95.45,
+    "gold": 5022.8
+  }
 }
