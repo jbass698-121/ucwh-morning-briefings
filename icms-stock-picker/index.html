@@ -987,6 +987,28 @@
                     <p>Latest ICMS run data not available</p>
                 </div>
             </div>
+
+            <!-- ICMS Scoring Methodology Legend -->
+            <div style="margin-top: 24px; padding: 20px; background: var(--bg-secondary, #1a1a2e); border: 1px solid var(--border, #333); border-radius: 8px;">
+                <h3 style="margin: 0 0 12px 0; font-size: 15px; color: var(--primary, #60a5fa);">ICMS v5.0 Scoring Methodology</h3>
+                <p style="font-size: 12px; color: var(--text-secondary, #aaa); margin-bottom: 10px;">
+                    The ICMS score is composed of six expert signals with a practical range of 3.0–6.5. Under the current <strong>TRANSITION</strong> macro regime with elevated geopolitical stress, maximum achievable scores are compressed — a score of 6.0+ is exceptional.
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 6px; font-size: 11px; color: var(--text-secondary, #aaa); margin-bottom: 12px;">
+                    <span><strong style="color: var(--primary, #60a5fa);">FQ</strong> (max 2.5) — Fundamental Quality</span>
+                    <span><strong style="color: var(--primary, #60a5fa);">EM</strong> (max 0.75) — Earnings Momentum</span>
+                    <span><strong style="color: var(--primary, #60a5fa);">AOS</strong> (max 2.0) — Asymmetric Opportunity</span>
+                    <span><strong style="color: var(--primary, #60a5fa);">TA</strong> (max 0.75) — Technical Alignment</span>
+                    <span><strong style="color: var(--primary, #60a5fa);">MA</strong> (max 1.5) — Macro Alignment</span>
+                    <span><strong style="color: var(--primary, #60a5fa);">CB</strong> (max 1.0) — Composite Behavioral</span>
+                </div>
+                <div style="font-size: 11px; color: var(--text-secondary, #aaa);">
+                    <span style="color: #6ee7b7;">&#9632;</span> <strong>6.0+</strong> = Strong (GREEN gate) &nbsp;|&nbsp;
+                    <span style="color: #fcd34d;">&#9632;</span> <strong>5.5–5.9</strong> = Moderate (YELLOW gate) &nbsp;|&nbsp;
+                    <span style="color: #fca5a5;">&#9632;</span> <strong>&lt;5.5</strong> = Watch list &nbsp;|&nbsp;
+                    <strong>Exit targets:</strong> 7d / 14d / 30d (ATR-based, capped 5%/10%/20%)
+                </div>
+            </div>
         </div>
 
         <!-- Historical Reports Archive -->
@@ -1348,10 +1370,25 @@
                 const stopLoss = position.stop_loss || 0;
                 const exitTargets = position.exit_targets || [];
 
+                const shares = position.shares || 0;
+                const costBasis = entryPrice * shares;
+                const currentValue = currentPrice * shares;
+
                 return `
                     <div class="position-card">
                         <div class="position-ticker">${position.ticker}</div>
                         <div class="position-company">${position.company || 'Unknown Company'}</div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; font-size: 0.85rem;">
+                            <div style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 6px;">
+                                <div style="color: var(--text-tertiary); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Shares</div>
+                                <div style="font-weight: 600; font-size: 1.1rem;">${shares}</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 6px;">
+                                <div style="color: var(--text-tertiary); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Cost Basis</div>
+                                <div style="font-weight: 600; font-size: 1.1rem;">$${costBasis.toFixed(2)}</div>
+                            </div>
+                        </div>
 
                         <div class="position-price-row">
                             <span class="position-price-value">Entry: $${entryPrice.toFixed(2)}</span>
@@ -1359,8 +1396,13 @@
                             <span class="position-price-value">Current: $${currentPrice.toFixed(2)}</span>
                         </div>
 
-                        <div class="position-pnl ${isGain ? 'gain' : 'loss'}">
-                            ${formatCurrency(pnl)} (${formatPercent(pnlPct)})
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
+                            <div class="position-pnl ${isGain ? 'gain' : 'loss'}" style="margin: 0;">
+                                ${formatCurrency(pnl)} (${formatPercent(pnlPct)})
+                            </div>
+                            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-primary);">
+                                Value: $${currentValue.toFixed(2)}
+                            </div>
                         </div>
 
                         <div class="sparkline-container">
@@ -1631,11 +1673,14 @@
             // Render regime badge
             const regime = latestRunData.macro_regime || 'Unknown';
             const regimeConfidence = latestRunData.regime_confidence || 0;
-            const isBullish = regime.toLowerCase().includes('bull') || regime.toLowerCase().includes('growth');
+            const regimeLower = regime.toLowerCase();
+            const isBullish = regimeLower.includes('bull') || regimeLower.includes('growth');
+            const isBearish = regimeLower.includes('bear') || regimeLower.includes('crisis');
+            const regimeClass = isBullish ? 'bullish' : isBearish ? 'bearish' : 'neutral';
 
             regimeBadgeContainer.innerHTML = `
-                <div class="regime-badge ${isBullish ? 'bullish' : 'bearish'}">
-                    <div class="regime-dot"></div>
+                <div class="regime-badge ${regimeClass}" style="${!isBullish && !isBearish ? 'background: rgba(251,191,36,0.15); border-color: rgba(251,191,36,0.3);' : ''}">
+                    <div class="regime-dot" style="${!isBullish && !isBearish ? 'background: #fbbf24;' : ''}"></div>
                     <span>Macro Regime: <strong>${regime}</strong> (${regimeConfidence}% confidence)</span>
                 </div>
             `;
@@ -1661,39 +1706,50 @@
                 return;
             }
 
+            // Determine effective max score based on macro regime
+            // v5.0 effective maxima: FQ(2.5) + EM(0.75) + AOS(2.0) + TA(0.75) + MA(1.5) + CB(1.0) = 8.5
+            // Practical range: 3.0-6.5. Use 6.5 as bar display max for all regimes.
+            const pickRegime = latestRunData.macro_regime || latestRunData.regime || 'TRANSITION';
+            const effectiveMax = 6.5;
+
             picksContainer.innerHTML = picks.map((pick, index) => {
                 const score = pick.icms_score || 0;
                 const consensus = pick.consensus_pct || 0;
                 const entryPrice = pick.entry_price || 0;
                 const exits = pick.exits || [];
-                const targetPrice = exits[exits.length - 1]?.target || entryPrice * 1.2;
-                const upside = targetPrice ? ((targetPrice - entryPrice) / entryPrice) * 100 : 0;
+                const targetPrice = exits[exits.length - 1]?.target || 0;
+                const upside = (targetPrice && entryPrice) ? ((targetPrice - entryPrice) / entryPrice) * 100 : 0;
+                const entryGate = pick.entry_gate || '';
+                const gateColor = entryGate === 'GREEN' ? '#6ee7b7' : entryGate === 'YELLOW' ? '#fcd34d' : '#fca5a5';
+                const scoreColor = score >= 6.0 ? '#6ee7b7' : score >= 5.5 ? '#fcd34d' : '#fca5a5';
+                const barPct = Math.min((score / effectiveMax) * 100, 100);
 
                 return `
                     <div class="pick-item">
                         <div class="pick-rank">#${index + 1}</div>
                         <div class="pick-info">
                             <div class="pick-ticker">${pick.ticker}</div>
-                            <div class="pick-company">${pick.company || 'Unknown'}</div>
+                            <div class="pick-company">${pick.industry || pick.company || pick.sector || 'N/A'}</div>
                             <div class="pick-details">
                                 <span><strong>Sector:</strong> ${pick.sector || 'N/A'}</span>
+                                <span><strong>Gate:</strong> <span style="color: ${gateColor}; font-weight: 600;">${entryGate || 'N/A'}</span></span>
                             </div>
                         </div>
                         <div class="pick-metrics">
                             <div class="score-bar">
                                 <span style="font-size: 0.8rem; color: var(--text-tertiary);">ICMS Score</span>
                                 <div class="score-visual">
-                                    <div class="score-fill" style="width: ${(score / 10) * 100}%;">${score.toFixed(1)}</div>
+                                    <div class="score-fill" style="width: ${barPct}%; background: linear-gradient(to right, ${scoreColor}88, ${scoreColor});">${score.toFixed(1)}</div>
                                 </div>
                             </div>
                             <div style="font-size: 0.9rem; color: var(--text-secondary);">
                                 <strong>${consensus}%</strong> consensus
                             </div>
-                            <div class="badge bullish">
-                                ${formatPercent(upside)} upside
+                            <div class="badge ${upside > 0 ? 'bullish' : 'bearish'}">
+                                ${formatPercent(upside)} upside (30d)
                             </div>
                             <div style="font-size: 0.85rem; color: var(--text-tertiary);">
-                                Entry: $${entryPrice.toFixed(2)}
+                                Entry: $${entryPrice.toFixed(2)} | Stop: $${(pick.stop_loss || 0).toFixed(2)}
                             </div>
                         </div>
                     </div>
