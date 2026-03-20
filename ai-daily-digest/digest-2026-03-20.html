@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- === UCWH Auth Gate (injected at upload time) === -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style id="ucwh-auth-hide">
+  /* Hide body until auth resolves — prevents flash of report content */
+  body { visibility: hidden !important; }
+  body.ucwh-authed { visibility: visible !important; }
+  body.ucwh-login-visible { visibility: visible !important; }
+</style>
+<script>
+(function() {
+  'use strict';
+
+  // --- Config ---
+  var SB_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+  var PORTAL = 'https://ucwh-report-portal.netlify.app';
+
+  var sb = null;
+  var isIframe = false;
+
+  try { isIframe = window.self !== window.top; } catch(e) { isIframe = true; }
+
+  // ========================================
+  // PATH 1: Inside portal iframe — postMessage handshake
+  // ========================================
+  if (isIframe) {
+    var verified = false;
+    var timeout = setTimeout(function() {
+      if (!verified) {
+        // Fail open when inside an iframe — the portal already handles auth.
+        document.body.classList.add('ucwh-authed');
+      }
+    }, 3000);
+
+    window.addEventListener('message', function(ev) {
+      if (ev.origin !== PORTAL) return;
+      if (ev.data && ev.data.type === 'ucwh-auth-verified') {
+        verified = true;
+        clearTimeout(timeout);
+        document.body.classList.add('ucwh-authed');
+      }
+    });
+
+    try { window.parent.postMessage({ type: 'ucwh-auth-check' }, PORTAL); } catch(e) {}
+    return;
+  }
+
+  // ========================================
+  // PATH 2: Direct URL access
+  // ========================================
+  function init() {
+    try {
+      if (window.supabase && window.supabase.createClient) {
+        sb = window.supabase.createClient(SB_URL, SB_KEY);
+      }
+    } catch(e) { /* ignore */ }
+
+    if (!sb) {
+      // SDK failed — redirect to portal instead of showing broken page
+      redirectToPortal();
+      return;
+    }
+
+    // Check for OAuth redirect tokens in the URL hash
+    var hasAuthHash = window.location.hash && (
+      window.location.hash.indexOf('access_token') !== -1 ||
+      window.location.hash.indexOf('refresh_token') !== -1
+    );
+
+    if (hasAuthHash) {
+      sb.auth.onAuthStateChange(function(event, session) {
+        if (event === 'SIGNED_IN' && session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        }
+      });
+      setTimeout(function() {
+        sb.auth.getSession().then(function(res) {
+          var session = res.data && res.data.session;
+          if (session && session.user && session.user.email) {
+            verifyUser(session.user.email);
+          } else {
+            redirectToPortal();
+          }
+        }).catch(function() {
+          document.body.classList.add('ucwh-authed');
+        });
+      }, 2000);
+    } else {
+      // Normal page load — check existing session on this origin
+      sb.auth.getSession().then(function(res) {
+        var session = res.data && res.data.session;
+        if (session && session.user && session.user.email) {
+          verifyUser(session.user.email);
+        } else {
+          // No session on GitHub Pages — redirect to portal
+          redirectToPortal();
+        }
+      }).catch(function() {
+        document.body.classList.add('ucwh-authed');
+      });
+    }
+  }
+
+  function verifyUser(email) {
+    sb.from('report_portal_users')
+      .select('email,role')
+      .eq('email', email)
+      .single()
+      .then(function(res) {
+        if (res.data) {
+          document.body.classList.add('ucwh-authed');
+          if (window.location.hash && window.location.hash.indexOf('access_token') !== -1) {
+            try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e) {}
+          }
+        } else {
+          accessDenied(email);
+        }
+      }).catch(function() {
+        accessDenied(email);
+      });
+  }
+
+  function redirectToPortal() {
+    // Build a deep link to the portal that auto-opens this report.
+    // Format: portal/#deeplink/<encoded-url>
+    // The portal will open the report in its authenticated iframe viewer.
+    var reportUrl = window.location.href;
+    var slug = window.location.pathname.split('/').pop().replace('.html', '');
+    var deepLink = PORTAL + '/#deeplink/' + encodeURIComponent(reportUrl);
+    window.location.replace(deepLink);
+  }
+
+  function accessDenied(email) {
+    document.body.classList.add('ucwh-login-visible');
+
+    var overlay = document.createElement('div');
+    overlay.id = 'ucwh-login-overlay';
+    overlay.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1e293b 100%);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;position:fixed;top:0;left:0;right:0;bottom:0;z-index:999999';
+
+    var box = document.createElement('div');
+    box.style.cssText = 'background:#1e293b;border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 80px rgba(0,0,0,0.4);text-align:center;border:1px solid #334155';
+    box.innerHTML = '<div style="font-size:48px;margin-bottom:16px">&#128274;</div>'
+      + '<h1 style="font-size:24px;font-weight:800;color:#f1f5f9;margin:0 0 6px">Access Denied</h1>'
+      + '<p style="font-size:14px;color:#94a3b8;margin:0 0 8px">Your account (<strong style="color:#f1f5f9">' + email + '</strong>) does not have access to this report.</p>'
+      + '<p style="font-size:13px;color:#64748b;margin:0 0 20px">Contact your administrator to request access.</p>'
+      + '<a href="' + PORTAL + '" style="display:inline-block;padding:10px 20px;border:1px solid #334155;border-radius:8px;background:#273548;color:#f1f5f9;text-decoration:none;font-size:14px;font-weight:600">Go to Portal</a>';
+
+    overlay.appendChild(box);
+
+    while (document.body.firstChild) document.body.removeChild(document.body.firstChild);
+    document.body.appendChild(overlay);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+<!-- === End UCWH Auth Gate === -->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 20, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Friday, March 20, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>Stripe and Tempo launched the Machine Payments Protocol (MPP) with Visa backing, creating the first open standard for AI agents to make autonomous payments — a foundational infrastructure moment for agentic commerce. Anthropic rolled out Dispatch, a new feature that turns your phone into a remote control for Claude Desktop, enabling background task execution without supervision. OpenAI shipped GPT-5.4 Mini and Nano to free-tier users, delivering near-flagship performance at $0.75/1M input tokens with 2x speed improvements over GPT-5 Mini. On the security front, Entro Security launched Agentic Governance &amp; Administration (AGA) at RSA Conference, providing the first enterprise identity and access governance layer for AI agents. Replit tripled its valuation to $9B in just six months on a $400M Series D, riding the vibe coding wave to 40M+ users. Meanwhile, Anthropic doubled Claude usage limits across all tiers through March 27, and Perplexity's CTO publicly criticized MCP for consuming 40–50% of available context windows — a signal that the protocol's scalability challenges are becoming a real friction point.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://openai.com/index/introducing-gpt-5-4-mini-and-nano/">OpenAI Ships GPT-5.4 Mini &amp; Nano — Near-Flagship Performance Hits Free Tier</a></h3>
+    <p class="story-meta"><span class="source">OpenAI / 9to5Google / Dataconomy</span> · Mar 17 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI released GPT-5.4 Mini and Nano, its most capable small models yet, making GPT-5.4 Mini available to Free and Go users via the "Thinking" feature. In the API, Mini costs $0.75 per 1M input tokens and $4.50 per 1M output tokens — a fraction of flagship pricing. GPT-5.4 Mini significantly improves over GPT-5 Mini across coding, reasoning, multimodal understanding, and tool use while running more than 2x faster, and approaches GPT-5.4's performance on SWE-Bench Pro and OSWorld-Verified. GPT-5 Thinking Mini will be retired in 30 days as Mini takes over as the default small model across OpenAI's product line.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is OpenAI's direct answer to Google's Gemini 3.1 Flash-Lite (covered yesterday). At $0.75/1M input tokens with near-flagship reasoning, GPT-5.4 Mini slots into the same cost tier you'd use for high-volume agent sub-tasks, classification, and routing. If you're building multi-model agent architectures, the competitive pressure between Mini and Flash-Lite is driving small-model capability up and pricing down — which directly benefits your unit economics on production agent workloads. Test both against your specific use cases; the price-performance gap between providers is narrowing fast.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.businesstoday.in/amp/technology/news/story/anthropic-doubled-claudes-limits-until-march-27-what-you-need-to-know-520700-2026-03-16">Anthropic Doubles Claude Usage Limits Through March 27 Across All Tiers</a></h3>
+    <p class="story-meta"><span class="source">BusinessToday / Anthropic</span> · Mar 16 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Anthropic is running a limited-time promotion doubling Claude usage limits across all subscription tiers — Free, Pro, Max, and Team — from March 13 through March 27. The doubled limits apply during off-peak hours (outside 8 AM to 2 PM ET on weekdays) and all day on weekends, covering Claude.ai, Cowork, Claude Code, Claude for Excel, and Claude for PowerPoint. The promotion is framed as a thank-you to loyal users and coincides with the launch of several new features including Dispatch, task scheduling, and the Customize section in Claude Desktop.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://stripe.com/blog/machine-payments-protocol">Stripe &amp; Tempo Launch Machine Payments Protocol — AI Agents Can Now Make Autonomous Payments</a></h3>
+    <p class="story-meta"><span class="source">Stripe Blog / Fortune / PYMNTS / The Block</span> · Mar 18 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Stripe and crypto startup Tempo launched the Machine Payments Protocol (MPP), an open standard that enables AI agents to make programmatic payments — in both fiat (cards, BNPL) and stablecoins via Shared Payment Tokens (SPTs). Visa contributed to the specification, developing the standards for letting agents pay with credit and debit cards. Businesses can accept MPP payments with a few lines of code using Stripe's PaymentIntents API. Early adopters include Browserbase (agents pay per headless browser session), PostalForm (agents pay to send physical mail), and Prospect Butcher Co. (agents order sandwiches for human pickup). Tempo's mainnet also went live, providing the blockchain settlement layer for agent-to-agent stablecoin transactions.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the missing economic layer for agentic AI. Until now, agents could use tools and call APIs, but they couldn't pay for things. MPP changes that — your agents can now autonomously purchase services, pay for API calls, settle invoices, and transact with other agents. With Stripe and Visa backing the standard, this isn't a startup experiment — it's production-grade payment infrastructure. If you're building agent workflows that interact with paid services (SaaS APIs, cloud compute, vendor payments), MPP provides the rails. The stablecoin support through Tempo adds a crypto settlement option for agent-to-agent microtransactions that would be uneconomical with traditional card rails.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://dev.to/pockit_tools/mcp-vs-a2a-the-complete-guide-to-ai-agent-protocols-in-2026-30li">Perplexity CTO Says MCP Consumes 40–50% of Context Windows — Company Moving Away from Protocol</a></h3>
+    <p class="story-meta"><span class="source">Ask 2026 Conference / The New Stack</span> · Mar 11 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">At the Ask 2026 conference on March 11, Perplexity CTO Denis Yarats revealed that his company is moving away from MCP internally, citing two fundamental problems: MCP tool descriptions consume 40–50% of available context windows before agents do any actual work, and authentication flows create friction when connecting to multiple services. The criticism comes as MCP has crossed 97 million monthly SDK downloads and been adopted by every major AI provider. Meanwhile, the MCP project published its 2026 roadmap on March 9, with lead maintainer David Soria Parra identifying four focus areas: scaling Streamable HTTP transport, closing lifecycle gaps in the Tasks primitive, building enterprise readiness features, and publishing a standard metadata format for registries.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COWORK & CLAUDE ECOSYSTEM -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128268;</span>
+    <h2>Cowork &amp; Claude Ecosystem</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://coey.com/resources/blog/2026/03/17/anthropic-dispatch-turns-claude-into-your-always-on-creative-coworker/">Anthropic Launches Dispatch — Control Claude Desktop Remotely from Your Phone</a></h3>
+    <p class="story-meta"><span class="source">COEY / Geeky Gadgets / Latent Space / MLQ.ai</span> · Mar 17 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Anthropic launched Dispatch as a research preview within Cowork, enabling users to send instructions to Claude from the mobile app while the AI executes tasks on the desktop application in the background. Dispatch creates a single, persistent conversation thread between your phone and Claude Desktop, allowing you to assign tasks like preparing reports, organizing files, and running multi-step workflows without being at your computer. The feature maintains continuity within a single conversation — you can resume tasks, refine drafts, and provide follow-up instructions without restarting workflows. The bridge between mobile and desktop is end-to-end encrypted. Dispatch is rolling out to Max plan users first, then Pro users.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Dispatch fundamentally changes how you interact with Claude for business operations. Instead of sitting at your desk waiting for multi-step workflows to complete, you can fire off instructions from your phone — "generate this week's wash report," "update the P&amp;L dashboard," "research competitor pricing" — and Claude handles it on your desktop while you're on-site or in meetings. Combined with the scheduled tasks feature already in Cowork, this creates a pattern where Claude is always working in the background: scheduled tasks handle recurring work, and Dispatch handles ad-hoc requests from wherever you are.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://releasebot.io/updates/anthropic">Cowork Adds Task Scheduling &amp; New Customize Section in Claude Desktop</a></h3>
+    <p class="story-meta"><span class="source">Releasebot / Anthropic</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Anthropic introduced the ability to create and schedule both recurring and on-demand tasks directly within Cowork, building native automation capabilities into Claude Desktop. A new Customize section in the desktop app groups skills, plugins, and connectors in one place, making it easier to configure Claude's capabilities for specific workflows. These additions extend the Cowork platform beyond interactive conversation into a persistent automation layer — users can set up workflows that run on schedules, trigger on demand, and leverage their full library of installed skills and connected services without manual intervention each time.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/11/replit-snags-9b-valuation-6-months-after-hitting-3b/">Replit Raises $400M at $9B — Valuation Triples in Six Months on Vibe Coding Wave</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / SiliconANGLE / Replit Blog</span> · Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Replit closed a $400M Series D at a $9 billion valuation — tripling from $3B just six months ago — led by Georgian Partners with participation from Coatue, Andreessen Horowitz, Craft Ventures, Y Combinator, and Databricks Ventures. The company has surged past 40 million users with its AI-assisted coding tools that let both developers and non-programmers build apps from conversational prompts. Replit also launched Agent 4, described as 10x faster than Agent 3, enabling users to go from idea to deployed production app entirely through natural language. The company told Forbes it aims to hit $1 billion ARR by year-end, positioning it as the leading "vibe coding" platform in the race against OpenAI's Codex and Cursor.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Replit's 3x valuation jump in six months is the market putting a price on the "vibe coding" trend — building software through conversation rather than writing code. If Replit hits its $1B ARR target, it validates that non-developers can build production applications using AI. This has direct implications for your business: the barrier to building custom internal tools, dashboards, and automations continues to drop. Agent 4's "idea to production" pipeline is essentially what Cowork skills and scheduled tasks are doing for business workflows — and the convergence of these approaches means more of your team can build software solutions without dedicated developers.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/">Robotics Funding Explodes — $1.2B+ Raised in a Single Week Across Four Companies</a></h3>
+    <p class="story-meta"><span class="source">Mean CEO / AI Funding Tracker / Crunchbase</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The robotics sector produced a concentrated funding wave in March: Mind Robotics ($500M), Rhoda AI ($450M), Sunday ($165M, reaching unicorn status), and Oxa ($103M) collectively raised over $1.2 billion in a single week. All four target AI-powered robots for industrial, household, and logistics applications. The surge follows Figure's commercial validation and cements humanoid robotics as 2026's breakout investment category, with the sector projected to draw $20B+ in total funding this year. Two and a half weeks into March, the month has already produced more $100M+ AI funding rounds than any comparable period in venture history.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.helpnetsecurity.com/2026/03/19/entro-agentic-governance-administration/">Entro Security Launches AGA — First Enterprise Identity Governance Layer for AI Agents</a></h3>
+    <p class="story-meta"><span class="source">Help Net Security / GlobeNewsWire / Entro Security</span> · Mar 18 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Entro Security launched Agentic Governance &amp; Administration (AGA) at RSA Conference 2026, the first purpose-built identity and access governance platform for AI agents. AGA uses EDR integrations to discover AI clients and local agent runtimes on workstations, integrates natively with agent foundries (AWS Bedrock, Copilot Studio), and provides MCP activity visibility with policy enforcement. Core capabilities include discovery of all agents and their non-human identities, permissions mapping, policy controls for sanctioned MCP targets, audit trails of allowed and blocked activity, and AI-focused controls to reduce sensitive data exposure. The platform applies traditional IAM fundamentals — inventory, ownership, least privilege, auditability — to the new challenge of governing autonomous AI agents across the enterprise.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Entro's AGA is the identity layer that enterprises need before they'll deploy agents at scale. While SurePath (covered yesterday) governs what MCP tools agents can access, Entro governs the agents themselves — who created them, what identities they use, what permissions they have, and what they're actually doing. Together, these products signal that enterprise AI agent deployment is moving from "can we build it?" to "can we govern it?" If you're deploying agents or skills that interact with enterprise systems, expect customers to require agent identity governance as a prerequisite, just as they require SSO and RBAC for human users today.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.weforum.org/stories/2026/03/ai-agent-autonomy-governance/">World Economic Forum: AI Agent Governance Is Being Written Now — And Most Companies Aren't at the Table</a></h3>
+    <p class="story-meta"><span class="source">World Economic Forum / IAPP</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The World Economic Forum published a major analysis warning that AI agent governance rules are being written now — through procurement decisions, security exceptions, and diplomatic pressure — more decisively than any regulation currently on the books. The piece argues that as agents move from chatbots to autonomous assistants with real tool access, governance must shift from principles to enforceable frameworks. The IAPP echoed the warning, noting that the governance rules being established today will shape the agent ecosystem for years and that most companies building on agent infrastructure are not participating in the standard-setting process. Insurance carriers are now increasingly requiring alignment with recognized AI risk management frameworks as a baseline for coverage.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.pymnts.com/visa/2026/visa-scales-agentic-commerce-through-stripe-protocol-collaboration/">Visa Scales Agentic Commerce Through Stripe MPP Collaboration — Card Networks Enter the Agent Economy</a></h3>
+    <p class="story-meta"><span class="source">PYMNTS / CoinDesk / Fortune</span> · Mar 18 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Visa contributed directly to the Machine Payments Protocol specification, developing the standards for AI agents to pay using credit and debit cards through the existing card network infrastructure. This marks the first time a major card network has formally entered the AI agent economy, providing the trust and fraud-protection layer that enterprise buyers will require before letting agents make autonomous purchases. The collaboration means MPP transactions can flow through Visa's existing merchant network — agents don't need merchants to adopt new payment rails to transact. Combined with Stripe's fiat and Tempo's stablecoin support, MPP now covers the full spectrum of payment methods an agent might need: cards, BNPL, and crypto.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Visa's involvement transforms MPP from a developer tool into enterprise-grade payment infrastructure. When your agents need to purchase supplies, pay vendors, or settle invoices autonomously, they can now do so through the same Visa network your business already uses — with the same fraud protections, dispute resolution, and compliance frameworks. This is particularly significant for operations-heavy businesses: imagine agents that autonomously reorder cleaning chemicals when inventory is low, pay utility bills on schedule, or purchase equipment parts when maintenance is flagged. The payment bottleneck for autonomous agent operations just disappeared.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blogs.nvidia.com/blog/state-of-ai-report-2026/">NVIDIA State of AI 2026: AI Driving Revenue Across Every Industry — But Agentic Deployment Lags</a></h3>
+    <p class="story-meta"><span class="source">NVIDIA Blog / Netguru / Codewave</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">NVIDIA's State of AI 2026 report shows that AI is now driving measurable revenue and cost reduction across every major industry, with 64% of organizations actively using AI in operations and two-thirds reporting productivity gains. However, only 8.6% of companies have AI agents in production, while 63.7% report no formalized agentic AI initiative at all. Financial services, retail/CPG, and healthcare lead in adoption and ROI. Revenue growth remains aspirational for most — 74% hope to grow revenue through AI, but only 20% currently are. The report confirms that while AI adoption is mainstream, the gap between "using AI" and "deploying autonomous agents" remains the largest near-term opportunity in enterprise tech.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Friday, March 20, 2026</p>
+  <p class="sources">Sources: OpenAI, 9to5Google, Dataconomy, BusinessToday, Anthropic, Stripe Blog, Fortune, PYMNTS, The Block, Ask 2026 Conference, The New Stack, COEY, Geeky Gadgets, Latent Space, MLQ.ai, Releasebot, TechCrunch, SiliconANGLE, Mean CEO, AI Funding Tracker, Crunchbase, Help Net Security, GlobeNewsWire, Entro Security, World Economic Forum, IAPP, NVIDIA Blog, Netguru, Codewave, CoinDesk</p>
+</div>
+
+</div>
+</body>
+</html>
