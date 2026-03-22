@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCWH Competitive Briefing — Week of March 15–22, 2026</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f1f5f9; color:#1e293b; line-height:1.6; }
+
+/* Header */
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color:white; padding:44px 20px 36px; text-align:center; position:relative; overflow:hidden; }
+.header::after { content:''; position:absolute; bottom:0; left:0; right:0; height:4px; background:linear-gradient(90deg, #e94560, #f59e0b, #10b981, #3b82f6); }
+.header h1 { font-size:30px; font-weight:800; letter-spacing:-0.5px; margin-bottom:4px; }
+.header .subtitle { font-size:15px; color:#94a3b8; margin-bottom:6px; }
+.header .date { font-size:13px; color:#64748b; }
+.header .badge { display:inline-block; background:rgba(233,69,96,0.15); color:#e94560; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600; margin-top:10px; letter-spacing:0.3px; }
+
+/* Layout */
+.container { max-width:1000px; margin:0 auto; padding:24px 20px; }
+.section-title { font-size:20px; font-weight:700; color:#0f172a; margin:32px 0 16px; padding-bottom:8px; border-bottom:3px solid #e2e8f0; display:flex; align-items:center; gap:10px; }
+.section-title .icon { font-size:22px; }
+
+/* Cards */
+.card { background:white; border-radius:12px; padding:22px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); border-left:4px solid transparent; transition:box-shadow 0.2s; }
+.card:hover { box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+.card.mister { border-left-color:#3b82f6; }
+.card.quickquack { border-left-color:#f59e0b; }
+.card.tommys { border-left-color:#e94560; }
+.card.bluewave { border-left-color:#06b6d4; }
+.card.tidalwave { border-left-color:#10b981; }
+.card.whistle { border-left-color:#8b5cf6; }
+.card.zips { border-left-color:#f97316; }
+.card.industry { border-left-color:#8b5cf6; }
+.card.links { border-left-color:#ec4899; }
+.card.raceway { border-left-color:#14b8a6; }
+
+.card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+.card-header h3 { font-size:17px; font-weight:700; color:#0f172a; }
+.card-header .tag { font-size:11px; font-weight:600; padding:3px 10px; border-radius:12px; text-transform:uppercase; letter-spacing:0.4px; white-space:nowrap; }
+.tag-acquisition { background:#dbeafe; color:#1e40af; }
+.tag-expansion { background:#d1fae5; color:#065f46; }
+.tag-partnership { background:#fef3c7; color:#92400e; }
+.tag-financial { background:#ede9fe; color:#5b21b6; }
+.tag-leadership { background:#fce7f3; color:#9d174d; }
+.tag-legal { background:#fee2e2; color:#991b1b; }
+.tag-community { background:#e0f2fe; color:#0c4a6e; }
+.tag-membership { background:#f0fdf4; color:#166534; }
+.tag-trend { background:#f5f3ff; color:#6d28d9; }
+.tag-bankruptcy { background:#fee2e2; color:#991b1b; }
+
+.card p { font-size:14px; color:#475569; margin-bottom:8px; }
+.card .source { font-size:12px; color:#94a3b8; font-style:italic; }
+
+/* Competitor summary grid */
+.comp-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px; margin-bottom:20px; }
+.comp-card { background:white; border-radius:12px; padding:18px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,0.06); position:relative; overflow:hidden; }
+.comp-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; }
+.comp-card.mister::before { background:#3b82f6; }
+.comp-card.quickquack::before { background:#f59e0b; }
+.comp-card.tommys::before { background:#e94560; }
+.comp-card.bluewave::before { background:#06b6d4; }
+.comp-card.tidalwave::before { background:#10b981; }
+.comp-card.whistle::before { background:#8b5cf6; }
+.comp-card.zips::before { background:#f97316; }
+.comp-card .comp-name { font-size:14px; font-weight:700; color:#0f172a; margin-bottom:2px; }
+.comp-card .comp-detail { font-size:12px; color:#64748b; }
+.comp-card .comp-count { font-size:28px; font-weight:800; color:#0f172a; margin:8px 0 2px; }
+.comp-card .comp-label { font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; }
+
+/* Priority alerts */
+.priority-box { border-radius:12px; padding:18px 22px; margin-bottom:14px; display:flex; gap:14px; align-items:flex-start; }
+.priority-box.critical { background:linear-gradient(135deg, #fef2f2, #fff1f2); border:1px solid #fecaca; }
+.priority-box.watch { background:linear-gradient(135deg, #fffbeb, #fefce8); border:1px solid #fde68a; }
+.priority-box.info { background:linear-gradient(135deg, #eff6ff, #f0f9ff); border:1px solid #bfdbfe; }
+.priority-icon { font-size:24px; flex-shrink:0; }
+.priority-content h4 { font-size:14px; font-weight:700; color:#0f172a; margin-bottom:4px; }
+.priority-content p { font-size:13px; color:#475569; }
+
+/* Table */
+table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:16px; }
+th { background:#f8fafc; padding:10px 12px; text-align:left; font-weight:600; color:#475569; border-bottom:2px solid #e2e8f0; }
+td { padding:10px 12px; border-bottom:1px solid #f1f5f9; }
+tr:hover td { background:#f8fafc; }
+
+/* Footer */
+.footer { text-align:center; padding:32px 20px; font-size:12px; color:#94a3b8; }
+.footer a { color:#64748b; text-decoration:none; }
+
+/* Responsive */
+@media (max-width:768px) {
+  .comp-grid { grid-template-columns: repeat(2, 1fr); }
+  .card-header { flex-direction:column; gap:8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>UCWH Competitive Briefing</h1>
+  <div class="subtitle">United Car Wash Holdings — Competitive Intelligence Digest</div>
+  <div class="date">Week of March 15 – 22, 2026</div>
+  <div class="badge">8 Competitors Tracked &nbsp;·&nbsp; 19 Developments &nbsp;·&nbsp; 6 AI Insights</div>
+</div>
+
+<div class="container">
+
+<!-- ===== PRIORITY ALERTS ===== -->
+<div class="section-title"><span class="icon">&#9889;</span> Priority Alerts</div>
+
+<div class="priority-box critical">
+  <div class="priority-icon">&#128680;</div>
+  <div class="priority-content">
+    <h4>Tommy's Express El Paso Grand Opening — 6th Location, Free Washes Through March 29</h4>
+    <p>Tommy's Express opened its 6th El Paso location at 640 N. Resler Road on March 19-20 with free washes running through March 29 (National Car Wash Day). Combined with the Orlando groundbreaking announced the same day, Tommy's franchise network continues aggressive expansion. UCWH benefits from the growing network — every new Tommy's location adds value to the portable Unlimited Club membership that UCWH sells.</p>
+  </div>
+</div>
+
+<div class="priority-box critical">
+  <div class="priority-icon">&#128680;</div>
+  <div class="priority-content">
+    <h4>Quick Quack Acquires 13 Utah Take 5 Locations — Now 70+ Sites in UCWH's Utah Market</h4>
+    <p>Quick Quack's acquisition of 13 former Take 5/Whistle Express locations in Utah gives them 70+ sites statewide, dramatically intensifying competition around UCWH's UT426 (Saratoga Springs). Four locations closed for renovation while nine continue operating under Take 5 branding temporarily. This is a direct competitive escalation in UCWH's only non-Texas market.</p>
+  </div>
+</div>
+
+<div class="priority-box watch">
+  <div class="priority-icon">&#128065;</div>
+  <div class="priority-content">
+    <h4>Links Car Wash Begins Texas Rebrand — First Slappy's/Rich's Conversions Underway</h4>
+    <p>Links Car Wash has begun rebranding its 12 acquired Texas locations (7 Houston Rich's + 5 DFW Slappy's). The Fort Worth location at 5500 Altamesa Blvd is the first to complete conversion, with remaining sites transitioning through 2026. As these sites upgrade technology and amenities under the Links brand, they become stronger competitors to TX190 and TX160.</p>
+  </div>
+</div>
+
+<div class="priority-box info">
+  <div class="priority-icon">&#128202;</div>
+  <div class="priority-content">
+    <h4>Global Car Wash Market Report: $54.5B by 2033 — Subscription Models Driving 5.1% CAGR</h4>
+    <p>A new market research report published March 20 projects the global car wash market will grow from $36.3B (2025) to $54.5B by 2033 at 5.1% CAGR. Subscription/membership models and eco-friendly solutions are identified as the two primary growth drivers. This validates UCWH's membership-first strategy and the industry's long-term growth trajectory despite near-term saturation concerns.</p>
+  </div>
+</div>
+
+<!-- ===== COMPETITOR SNAPSHOT ===== -->
+<div class="section-title"><span class="icon">&#127919;</span> Competitor Snapshot</div>
+
+<div class="comp-grid">
+  <div class="comp-card whistle">
+    <div class="comp-name">Whistle Express</div>
+    <div class="comp-detail">Take 5 Integration · 23 States</div>
+    <div class="comp-count">530</div>
+    <div class="comp-label">Locations</div>
+  </div>
+  <div class="comp-card mister">
+    <div class="comp-name">Mister Car Wash</div>
+    <div class="comp-detail">Going Private · $1.05B Rev</div>
+    <div class="comp-count">548</div>
+    <div class="comp-label">Locations</div>
+  </div>
+  <div class="comp-card tidalwave">
+    <div class="comp-name">Tidal Wave Auto Spa</div>
+    <div class="comp-detail">5th Largest · 30 States</div>
+    <div class="comp-count">312</div>
+    <div class="comp-label">Locations</div>
+  </div>
+  <div class="comp-card quickquack">
+    <div class="comp-name">Quick Quack</div>
+    <div class="comp-detail">KKR-backed · 70+ Utah</div>
+    <div class="comp-count">300+</div>
+    <div class="comp-label">Locations</div>
+  </div>
+  <div class="comp-card tommys">
+    <div class="comp-name">Tommy's Express</div>
+    <div class="comp-detail">El Paso #6 · Orlando GBK</div>
+    <div class="comp-count">272+</div>
+    <div class="comp-label">Locations</div>
+  </div>
+  <div class="comp-card bluewave">
+    <div class="comp-name">BlueWave / ClearWater</div>
+    <div class="comp-detail">$370M Facility · TX Focus</div>
+    <div class="comp-count">90+</div>
+    <div class="comp-label">Combined Locations</div>
+  </div>
+  <div class="comp-card zips">
+    <div class="comp-name">Zips Car Wash</div>
+    <div class="comp-detail">Post-Bankruptcy · Lender-Owned</div>
+    <div class="comp-count">~220</div>
+    <div class="comp-label">Locations</div>
+  </div>
+</div>
+
+<!-- ===== MISTER CAR WASH ===== -->
+<div class="section-title"><span class="icon">&#128309;</span> Mister Car Wash</div>
+
+<div class="card mister">
+  <div class="card-header">
+    <h3>Q4 2025 Results: $1.05B Annual Revenue, 2.3M Members — No 2026 Guidance</h3>
+    <span class="tag tag-financial">Financial</span>
+  </div>
+  <p>Mister Car Wash reported Q4 2025 net revenues of $261.2M (+4% YoY) and full-year 2025 revenue of $1.052B — crossing the $1B milestone for the first time. The Unlimited Wash Club grew to approximately 2.3 million members (+7% YoY, +147K members), with UWC sales now representing 79% of total wash sales (up from 75% in Q4 2024). Adjusted EBITDA for 2025 increased 8% to $345.4M. Comp-store sales grew 1.6% in Q4. Notably, MCW will not provide 2026 guidance and canceled its earnings call due to the pending take-private transaction.</p>
+  <div class="source">Sources: ir.mistercarwash.com (2/18), StockTitan, carwash.org</div>
+</div>
+
+<div class="card mister">
+  <div class="card-header">
+    <h3>Take-Private Legal Pressure Continues — Investigation Notices Still Active</h3>
+    <span class="tag tag-legal">Legal</span>
+  </div>
+  <p>The shareholder law firm investigations into the $7.00/share Leonard Green take-private deal remain active through March 2026. Kessler Topaz, Halper Sadeh, Robbins Geller, and others continue examining whether the buyout price adequately compensates minority shareholders, noting the offer is ~20% below MCW's 52-week high. No court injunctions have been filed, and the $3.1B deal remains on track for H1 2026 close. MCW expanded its portfolio to 548 locations (16 greenfield + 5 acquired in 2025) but post-close visibility into operations will disappear as MCW goes private.</p>
+  <div class="source">Sources: GlobeNewsWire (3/16), PRNewswire, Latham & Watkins, Yahoo Finance</div>
+</div>
+
+<!-- ===== QUICK QUACK ===== -->
+<div class="section-title"><span class="icon">&#128993;</span> Quick Quack Car Wash</div>
+
+<div class="card quickquack">
+  <div class="card-header">
+    <h3>13 Utah Take 5 Locations Acquired — 70+ Sites in UCWH's Utah Market</h3>
+    <span class="tag tag-acquisition">Acquisition</span>
+  </div>
+  <p>Quick Quack completed the acquisition of 13 Utah locations from Whistle Express (formerly Take 5 Car Wash), expanding its Utah footprint to over 70 locations. Four sites closed immediately for renovation while nine continue operating temporarily under the Take 5 brand before rebranding. All locations will receive Quick Quack's advanced wash technology, in-wash entertainment, water-reclamation systems, and complimentary vacuums. This represents a significant competitive escalation around UCWH's UT426 (Saratoga Springs) — Quick Quack now has the densest Utah network of any express car wash operator.</p>
+  <div class="source">Sources: carwash.org, carwash.com, Car Wash Advisory</div>
+</div>
+
+<div class="card quickquack">
+  <div class="card-header">
+    <h3>Houston Astros Partnership in Full Swing — 2026 MLB Season Underway</h3>
+    <span class="tag tag-partnership">Partnership</span>
+  </div>
+  <p>Quick Quack's deal as the Official Car Wash of the Houston Astros continues to drive outsized brand awareness across the Houston market as the 2026 MLB season gets underway. In-stadium activations, co-branded promotions, community programming, and exclusive game-day specials are live across Houston-area Quick Quack locations. With multiple well-reviewed Houston locations (West Rd, Louetta Rd, NASA, Spring, Cullen Blvd), QQ continues to build top-of-funnel visibility that grassroots budgets alone cannot match.</p>
+  <div class="source">Sources: carwash.org, quickquack.com, Community Impact</div>
+</div>
+
+<div class="card quickquack">
+  <div class="card-header">
+    <h3>Lightning Express Acquisition + Fountain Blu — Multi-State Growth Continues</h3>
+    <span class="tag tag-acquisition">Acquisition</span>
+  </div>
+  <p>Quick Quack acquired Lightning Express Car Wash in Lawndale, CA (17111 Hawthorne Blvd) with a spring 2026 reopening planned. Additionally, a January 2026 buyout of Fountain Blu Car Wash was recorded on PitchBook. Combined with the Utah Take 5 deal, Nevada entry (4 Henderson/North Las Vegas locations), and continued Texas growth, Quick Quack is now operating in 8 states with 300+ locations. The KKR-backed operator's acquisition cadence suggests more deals are in the pipeline for 2026.</p>
+  <div class="source">Sources: carwash.org, carwash.com, PitchBook</div>
+</div>
+
+<!-- ===== TOMMY'S EXPRESS ===== -->
+<div class="section-title"><span class="icon">&#128308;</span> Tommy's Express (Corporate)</div>
+
+<div class="card tommys">
+  <div class="card-header">
+    <h3>6th El Paso Location Opens — Free Washes March 19–29</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>Tommy's Express opened its sixth El Paso location at 640 N. Resler Road with a soft opening on March 19 and free washes running through March 29 (National Car Wash Day). Customers who signed up for a membership during the soft opening received their first two months free — an aggressive conversion offer. El Paso is becoming a Tommy's stronghold with 6 locations, demonstrating franchise density in a single market. This expansion benefits UCWH through network effects: every new Tommy's adds portability value to the Unlimited Club membership.</p>
+  <div class="source">Sources: franchising.com (3/20), tommys-express.com, Yahoo News</div>
+</div>
+
+<div class="card tommys">
+  <div class="card-header">
+    <h3>Orlando Groundbreaking — Florida Expansion Accelerates</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>Tommy's Express broke ground on a new Orlando, FL location at 11215 S Apopka Vineland Road on March 20, scheduled to open in late 2026. The facility will feature Tommy's latest proprietary wash technology, a dual-belt conveyor system for various vehicle types, sub-3-minute wash times, and free self-serve vacuum stations. This marks continued franchise expansion into the high-traffic Florida market. Combined with the El Paso opening and the earlier Phoenixville, PA and San Antonio openings, Tommy's is averaging 3-4 new locations per month in 2026.</p>
+  <div class="source">Sources: franchising.com (3/20), carwash.org</div>
+</div>
+
+<div class="card tommys">
+  <div class="card-header">
+    <h3>National Car Wash Day — March 29, Free Washes at All 272+ Locations</h3>
+    <span class="tag tag-community">Community</span>
+  </div>
+  <p>Tommy's Express will offer free washes at all locations nationwide on Sunday, March 29, for National Car Wash Day. This is the single biggest brand awareness and membership conversion opportunity of Q1. UCWH's TX190, TX160, and UT426 should expect significantly higher-than-normal traffic. Every free wash visitor is a conversion opportunity — sites with staffed membership pitches, conversion scripts, and special day-of offers will capture the most value from this event.</p>
+  <div class="source">Sources: tommys-express.com, franchising.com</div>
+</div>
+
+<!-- ===== BLUEWAVE / CLEARWATER ===== -->
+<div class="section-title"><span class="icon">&#128311;</span> BlueWave Express / ClearWater</div>
+
+<div class="card bluewave">
+  <div class="card-header">
+    <h3>$370M Financing Fuels Continued Texas Growth — 90+ Sites, San Antonio Focus</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>The combined ClearWater/BlueWave platform continues to expand with the backing of a $370M committed financing facility from WhiteHorse Capital. The North San Antonio location at 14530 Blanco Road (their 11th San Antonio-area site) opened in late February/March, and additional San Antonio sites are in development. Cross-platform membership now works at all 90+ locations across Texas. While BlueWave/ClearWater's portability is Texas-only (vs. Tommy's 272+ nationwide), the density of 90+ Texas sites is a meaningful advantage for customers who stay within the state.</p>
+  <div class="source">Sources: Community Impact, bluewaveexpress.com, carwash.org, carwash.com</div>
+</div>
+
+<!-- ===== WHISTLE EXPRESS ===== -->
+<div class="section-title"><span class="icon">&#128995;</span> Whistle Express</div>
+
+<div class="card whistle">
+  <div class="card-header">
+    <h3>Take 5 Integration Continues — 530 Sites, 23 States, Utah Sites Sold to Quick Quack</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>Whistle Express continues the massive integration of its $385M Take 5 Car Wash acquisition from Driven Brands. The combined 530-location network spans 23 states, making it the largest express car wash company in the US. Notably, Whistle Express divested 13 Utah Take 5 locations to Quick Quack — suggesting strategic portfolio rationalization where local competitors have stronger market position. The 18-month national rebrand timeline means many former Take 5 sites are still in transition, creating potential customer confusion that nearby competitors can exploit. Tommy's Express Unlimited Club already offers comparable nationwide portability across 272+ locations.</p>
+  <div class="source">Sources: whistleexpresscarwash.com, businesswire.com, carwash.org</div>
+</div>
+
+<!-- ===== TIDAL WAVE ===== -->
+<div class="section-title"><span class="icon">&#128994;</span> Tidal Wave Auto Spa</div>
+
+<div class="card tidalwave">
+  <div class="card-header">
+    <h3>4 March Openings Continue — Mechanicsville VA Wrapping Up Free Wash Period</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>Tidal Wave Auto Spa's March expansion wave continues: Birmingham, AL (March 4), Mechanicsville, VA (March 11), Jackson, TN and Lebanon, MO (March 18). Each location offers 12 days of free premium washes and Clean Club memberships starting at $9.97/month. At 312 locations across 30 states, Tidal Wave is the 5th-largest conveyor chain in the US. Additional 2026 openings are planned across GA, FL, SC, and NC. While primarily Southeast-focused with no direct TX/UT overlap, their pace of 4+ openings per month signals strong capital deployment and operational execution.</p>
+  <div class="source">Sources: Newswire, AccessNewsWire, tidalwaveautospa.com, carwash.org</div>
+</div>
+
+<!-- ===== ZIPS CAR WASH ===== -->
+<div class="section-title"><span class="icon">&#128992;</span> Zips Car Wash</div>
+
+<div class="card zips">
+  <div class="card-header">
+    <h3>Post-Bankruptcy Litigation Continues — District Court Appeal Dismissed March 6</h3>
+    <span class="tag tag-bankruptcy">Restructuring</span>
+  </div>
+  <p>Zips Car Wash continues operating under lender ownership (HPS Investment Partners, PennantPark, Brightwood Capital) with CEO Pete Nani at the helm following April 2025 emergence from Chapter 11. A district-court appeal was dismissed on March 6, 2026, while claims objections and lease dispute proceedings remain active. The restructured balance sheet carries $375M in take-back debt ($150M HoldCo + $225M OpCo) with a $15M revolver. The 41 rejected lease locations from bankruptcy remain a potential acquisition pipeline for operators like UCWH. Zips previously acquired Jet Brite (Chicagoland) under the new ownership, signaling selective growth in attractive markets.</p>
+  <div class="source">Sources: Bloomberg Law, Bondoro, elevenflo.com, Mobility Plaza</div>
+</div>
+
+<!-- ===== EMERGING TEXAS COMPETITORS ===== -->
+<div class="section-title"><span class="icon">&#128996;</span> Emerging Texas Competitors</div>
+
+<div class="card links">
+  <div class="card-header">
+    <h3>Links Car Wash Begins Texas Rebrand — Fort Worth First, Houston Sites Next</h3>
+    <span class="tag tag-acquisition">Rebranding</span>
+  </div>
+  <p>Links Car Wash has completed the rebrand of its first Texas location at 5500 Altamesa Blvd in Fort Worth (formerly Pristine Express Car Wash). The remaining 12 acquired locations — 5 former Slappy's in DFW and 7 former Rich's in Houston — are transitioning to Links branding through 2026. Each site receives technology upgrades, complimentary vacuums, mat cleaners, towels, and window cleaners. The Houston Rich's conversions are particularly relevant to UCWH: as these 7 sites rebrand with upgraded amenities, they become stronger competitors to TX190 (Webster) and TX160 (FM 1960). Links also launched a fleet program, signaling commercial account ambitions.</p>
+  <div class="source">Sources: linkscarwash.com, carwash.org, carwash.com, Mobility Plaza</div>
+</div>
+
+<div class="card raceway">
+  <div class="card-header">
+    <h3>Raceway Car Wash — 46+ Locations, 7 in DFW, Acquisition Pace Steady</h3>
+    <span class="tag tag-expansion">Expansion</span>
+  </div>
+  <p>Raceway Car Wash continues its acquisition-led growth across the Southwest with 46+ locations across Arizona, Nevada, Texas, and California. Recent Texas acquisitions include Sunset Car Wash (Irving), two Landshark Car Wash sites (Carrollton/Plano), Marvel Car Wash (Flower Mound), and a Rowlett location — now 7 DFW sites. While currently DFW-focused in Texas, the company's multi-state footprint and sustained acquisition pace make Houston expansion a possibility to monitor.</p>
+  <div class="source">Sources: carwash.com, Car Wash Advisory, PitchBook, Mobility Plaza</div>
+</div>
+
+<!-- ===== INDUSTRY TRENDS ===== -->
+<div class="section-title"><span class="icon">&#128202;</span> Industry Trends & Market Data</div>
+
+<div class="card industry">
+  <div class="card-header">
+    <h3>Global Car Wash Market: $36.3B → $54.5B by 2033, Subscription + Eco-Friendly Lead Growth</h3>
+    <span class="tag tag-trend">Market Data</span>
+  </div>
+  <p>A major market research report published March 20 projects the global car wash market will grow from $36.29B (2025) to $54.48B by 2033 at a 5.1% CAGR. Two forces drive the growth: subscription/membership models (projected to advance at 10.42% CAGR through 2031, with top platforms converting 35% of visitors into unlimited members) and eco-friendly solutions (water recycling, biodegradable products driven by tightening regulations). The US express exterior format now commands over 55% of the domestic $15.8B market. This long-term trajectory validates UCWH's membership-first approach even as near-term saturation creates competitive headwinds.</p>
+  <div class="source">Sources: GlobeNewsWire (3/20), Persistence Market Research, Grand View Research</div>
+</div>
+
+<div class="card industry">
+  <div class="card-header">
+    <h3>ICA Q1 2026 Pulse Update: Stable Demand, Price Sensitivity Rising Alongside Saturation</h3>
+    <span class="tag tag-trend">Market Data</span>
+  </div>
+  <p>The ICA Q1 2026 CAR WASH Pulse report continues to show stable underlying demand: ~90% membership renewal intent, modest single-digit revenue growth as the realistic 2026 baseline, and 79% customer acceptance of price increases (tied to perceived value). However, the report emphasizes two rising concerns: market saturation remains the #1 operator worry, and price sensitivity is increasing. Subscription growth rates have moderated compared to earlier years, signaling a more mature phase of membership adoption. The industry is pivoting from acquisition-led growth to operational excellence — conversion rates, per-site EBITDA, and churn management are the new battlegrounds.</p>
+  <div class="source">Sources: carwash.org — CAR WASH Pulse Q1 2026, carwash.com, carwashpro.com</div>
+</div>
+
+<div class="card industry">
+  <div class="card-header">
+    <h3>MCW's $1B Revenue Milestone Sets Industry Benchmark for Scale Economics</h3>
+    <span class="tag tag-trend">Market Data</span>
+  </div>
+  <p>Mister Car Wash crossing $1B in annual revenue (FY2025) with 79% of wash sales from memberships sets the clearest benchmark for what scale economics look like in express car wash. Key metrics: 548 locations generating $1.92M avg revenue/site, 2.3M members growing 7% YoY, and adjusted EBITDA margins of ~33%. These numbers define the upper bound of what a membership-focused operator can achieve — and provide UCWH with concrete per-site benchmarks to measure against as it scales from 3 to 20+ locations.</p>
+  <div class="source">Sources: ir.mistercarwash.com, StockTitan, Quiver Quantitative</div>
+</div>
+
+<!-- ===== AI INSIGHTS ===== -->
+<div class="section-title"><span class="icon">&#129504;</span> AI Insights — What This Means for UCWH</div>
+
+<div class="card" style="border-left-color:#e94560; background:linear-gradient(135deg, #fff5f7, #ffffff);">
+  <div class="card-header">
+    <h3>&#128680; Quick Quack's Utah Takeover Is a Direct Threat to UT426 — 70+ Sites vs. Your 1</h3>
+    <span class="tag tag-acquisition">Critical</span>
+  </div>
+  <p>Quick Quack acquiring 13 Take 5 locations in Utah and reaching 70+ sites in the state is the most consequential development this week for UCWH's Utah operations. Your UT426 (Saratoga Springs) now competes against an operator with 70x the local footprint, backed by KKR capital. Quick Quack's Utah playbook — aggressive acquisition, renovation, free wash grand reopenings, community fundraisers — will drive significant local brand awareness. The silver lining: Tommy's Unlimited Club portability across 272+ locations nationwide means your members get value far beyond Utah, which Quick Quack's Utah-heavy footprint cannot replicate.</p>
+  <p><strong>Recommended Action:</strong> Map Quick Quack's 13 newly acquired Take 5 locations against UT426's trade area. Identify any within the 2-mile competitive radius. During the 4-location renovation closure period, run targeted local campaigns to capture displaced Take 5 members before they convert to Quick Quack. Emphasize Tommy's nationwide portability in all UT426 membership marketing — "Wash at 272+ locations in any state" directly counters QQ's Utah-concentrated network. Monitor Yelp/Google reviews for the renovated QQ locations to benchmark their post-upgrade customer experience against yours.</p>
+</div>
+
+<div class="card" style="border-left-color:#ec4899; background:linear-gradient(135deg, #fdf2f8, #ffffff);">
+  <div class="card-header">
+    <h3>&#128680; Links Car Wash Houston Rebrand Accelerating — Track the 7 Rich's Conversions</h3>
+    <span class="tag tag-acquisition">Critical</span>
+  </div>
+  <p>Links Car Wash completing its first Texas rebrand (Fort Worth) signals the Houston Rich's locations will be next. Each conversion brings technology upgrades, complimentary amenities (vacuums, mat cleaners, towels, window cleaners), and PE-backed marketing spend. The 7 former Rich's Houston sites represent the most immediate new competitive pressure on TX190 and TX160. Unlike a greenfield build that takes 12+ months, these are existing car wash sites with established customer bases that are being upgraded — a faster path to competitive threat. Links also launched a fleet program, suggesting they're pursuing commercial accounts UCWH may not be targeting.</p>
+  <p><strong>Recommended Action:</strong> Identify the exact addresses of all 7 former Rich's Car Wash Houston locations and calculate distance from TX190 (Webster) and TX160 (FM 1960). Any within 2-mile radius require immediate attention. During the rebrand transition (brand confusion period), run targeted direct mail and digital campaigns in surrounding zip codes offering a Tommy's Express trial. Investigate whether a fleet/commercial wash program could be a new revenue stream for UCWH — Links sees enough opportunity to launch one. Rich's customers who haven't yet committed to Links are your highest-value prospects right now.</p>
+</div>
+
+<div class="card" style="border-left-color:#3b82f6; background:linear-gradient(135deg, #eff6ff, #ffffff);">
+  <div class="card-header">
+    <h3>&#127942; National Car Wash Day March 29 — One Week Away, Maximize Conversion</h3>
+    <span class="tag tag-membership">Membership Growth</span>
+  </div>
+  <p>National Car Wash Day on March 29 is now one week away. Tommy's El Paso is already offering free washes through March 29 with a "first two months free" membership conversion offer for soft-opening signups. This is the playbook UCWH should replicate: combine the free wash traffic with an aggressive, time-limited membership offer. The math is clear: if each UCWH site sees 200+ extra visitors and converts 10-15% at $30/month, that's 20-30 new members per site = $600-900/month recurring revenue per site. Over 12 months, that's $21,600-$32,400 across 3 sites from a single day.</p>
+  <p><strong>Recommended Action:</strong> Finalize National Car Wash Day execution plans at all three sites immediately. Staff extra team members for membership engagement. Create a "March 29 Only" conversion offer — consider matching El Paso's "first 2 months free" or a first-month-at-$1 deal. Brief all team members on conversion scripts. Set a minimum conversion target (15+ new members per site). Have site leaders track conversions in real-time and share results via group chat. Post-event, analyze conversion rate by site and use it to build a playbook for future free-wash events.</p>
+</div>
+
+<div class="card" style="border-left-color:#f59e0b; background:linear-gradient(135deg, #fffbeb, #ffffff);">
+  <div class="card-header">
+    <h3>&#128176; MCW's Per-Site Benchmarks: $1.92M Revenue, 33% EBITDA Margin — How Does UCWH Compare?</h3>
+    <span class="tag tag-financial">Benchmarking</span>
+  </div>
+  <p>Mister Car Wash's FY2025 results provide the clearest industry benchmarks for a membership-focused express operator: $1.92M average revenue per site, 79% of sales from memberships, ~4,200 members per site (2.3M ÷ 548), 7% annual membership growth, and 33% adjusted EBITDA margins. These are the numbers an investor, lender, or franchise partner would use to evaluate UCWH's performance. While MCW benefits from scale advantages UCWH doesn't yet have, the per-site metrics are directionally comparable and provide a target to measure against.</p>
+  <p><strong>Recommended Action:</strong> Run a per-site comparison of TX190, TX160, and UT426 against MCW's averages: revenue per site ($1.92M), membership penetration (79% of sales), members per site (~4,200), and EBITDA margin (33%). Identify the biggest gaps and prioritize closing them. If your sites are meaningfully below MCW's per-site averages, the priority is operational improvement before expansion. If you're at or near parity on per-site metrics despite 3 vs. 548 sites, that's a compelling proof point for growth capital conversations.</p>
+</div>
+
+<div class="card" style="border-left-color:#8b5cf6; background:linear-gradient(135deg, #f5f3ff, #ffffff);">
+  <div class="card-header">
+    <h3>&#9989; Tommy's Network Growing 3-4 Sites/Month — Portability Value Compounds for UCWH</h3>
+    <span class="tag tag-membership">Competitive Advantage</span>
+  </div>
+  <p>This week alone: El Paso #6 opened, Orlando broke ground, and El Paso's free wash promotion ties into National Car Wash Day on March 29. Combined with the earlier Phoenixville, San Antonio, and Taylor openings, Tommy's is averaging 3-4 new franchise locations per month in 2026. Every new location increases the value of UCWH's portable Unlimited Club membership. UCWH members don't just get 3 sites — they get access to a growing 272+ location national network that's on pace to reach 280+ by mid-2026. This compounding network effect is UCWH's most powerful membership differentiator against regional players like BlueWave/ClearWater (90 Texas-only sites) and an equalizer against Quick Quack (300+ but no franchise portability model).</p>
+  <p><strong>Recommended Action:</strong> Update membership marketing collateral at all three sites to reflect the latest Tommy's network count (272+ and growing). Create a visual "Tommy's Locations Map" showing the national footprint — make it a centerpiece of membership pitch materials. For snowbirds, travelers, and military families near TX190/TX160/UT426, lead with "Wash anywhere in the country" as the headline benefit. Track how many UCWH members use their memberships at other Tommy's locations — this data validates the portability value proposition and supports retention when competitors try to poach members with local-only deals.</p>
+</div>
+
+<div class="card" style="border-left-color:#10b981; background:linear-gradient(135deg, #f0fdf4, #ffffff);">
+  <div class="card-header">
+    <h3>&#128073; Whistle Express Divesting Utah = Strategic Lesson for UCWH's Expansion Planning</h3>
+    <span class="tag tag-trend">Strategic Insight</span>
+  </div>
+  <p>Whistle Express selling 13 Utah locations to Quick Quack is a telling strategic move. Despite being the largest express car wash operator (530 sites), Whistle chose to exit a market where a competitor (Quick Quack) had superior local density and brand awareness. This validates a core principle in UCWH's expansion planning: market density matters more than total footprint. Quick Quack's 70+ Utah sites make it the dominant local player — even the #1 national chain by count couldn't compete effectively. For UCWH, this reinforces the Houston-first expansion strategy: build density in your home market before spreading thin across geographies.</p>
+  <p><strong>Recommended Action:</strong> Use the Whistle/Quick Quack Utah example in internal strategy discussions as evidence that density wins over breadth. Apply the 2-mile radius rule rigorously for Houston expansion — prioritize clustering new sites to create local market density (similar to how Tommy's has 6 El Paso locations and BlueWave has 11 San Antonio locations). A UCWH Houston cluster of 5-6 sites would create meaningful local density comparable to competitors, enabling shared marketing spend and membership portability convenience that a scattered 5-site footprint across multiple cities cannot match.</p>
+</div>
+
+<!-- ===== COMPETITIVE MATRIX ===== -->
+<div class="section-title"><span class="icon">&#9881;</span> Competitive Activity Matrix</div>
+
+<div class="card" style="border-left-color:#0f172a;">
+  <div class="card-header">
+    <h3>This Week's Developments at a Glance</h3>
+  </div>
+  <table>
+    <thead>
+      <tr><th style="width:28%">Development</th><th style="width:22%">Competitor</th><th style="width:15%">Threat Level</th><th>UCWH Action</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>13 Utah Take 5 Sites Acquired</strong></td>
+        <td>Quick Quack</td>
+        <td><span style="color:#ef4444;font-weight:700;">HIGH</span></td>
+        <td>Map against UT426; target displaced Take 5 members during renovation closures</td>
+      </tr>
+      <tr>
+        <td><strong>Houston Rich's Rebrand Starting</strong></td>
+        <td>Links Car Wash</td>
+        <td><span style="color:#ef4444;font-weight:700;">HIGH</span></td>
+        <td>Map 7 Rich's sites vs. TX190/TX160; target transitioning customers</td>
+      </tr>
+      <tr>
+        <td><strong>Houston Astros Partnership Active</strong></td>
+        <td>Quick Quack</td>
+        <td><span style="color:#ef4444;font-weight:700;">HIGH</span></td>
+        <td>Counter with grassroots + National Car Wash Day conversion blitz</td>
+      </tr>
+      <tr>
+        <td><strong>$1.05B Revenue, 2.3M Members</strong></td>
+        <td>Mister Car Wash</td>
+        <td><span style="color:#f59e0b;font-weight:700;">MEDIUM</span></td>
+        <td>Benchmark per-site metrics ($1.92M rev, 79% membership, 33% EBITDA)</td>
+      </tr>
+      <tr>
+        <td><strong>$370M Financing, 90+ TX Sites</strong></td>
+        <td>BlueWave/ClearWater</td>
+        <td><span style="color:#f59e0b;font-weight:700;">MEDIUM</span></td>
+        <td>Counter TX-only portability with Tommy's 272+ nationwide network</td>
+      </tr>
+      <tr>
+        <td><strong>Utah Take 5 Divestiture</strong></td>
+        <td>Whistle Express</td>
+        <td><span style="color:#f59e0b;font-weight:700;">MEDIUM</span></td>
+        <td>Apply density-wins lesson to Houston expansion; cluster new sites</td>
+      </tr>
+      <tr>
+        <td><strong>El Paso #6 + Orlando Groundbreaking</strong></td>
+        <td>Tommy's Express</td>
+        <td><span style="color:#10b981;font-weight:700;">POSITIVE</span></td>
+        <td>Update portability marketing; prep all sites for National Car Wash Day March 29</td>
+      </tr>
+      <tr>
+        <td><strong>National Car Wash Day March 29</strong></td>
+        <td>Tommy's Express</td>
+        <td><span style="color:#10b981;font-weight:700;">POSITIVE</span></td>
+        <td>Execute membership conversion blitz at TX190, TX160, UT426</td>
+      </tr>
+      <tr>
+        <td><strong>4 March Openings, SE Expansion</strong></td>
+        <td>Tidal Wave Auto Spa</td>
+        <td><span style="color:#10b981;font-weight:700;">LOW</span></td>
+        <td>Monitor — Southeast focus, no immediate TX/UT overlap</td>
+      </tr>
+      <tr>
+        <td><strong>Appeal Dismissed, Claims Active</strong></td>
+        <td>Zips Car Wash</td>
+        <td><span style="color:#10b981;font-weight:700;">OPPORTUNITY</span></td>
+        <td>Track TX lease rejections; maintain acquisition readiness</td>
+      </tr>
+      <tr>
+        <td><strong>46+ Sites, 7 DFW, Steady Acquisitions</strong></td>
+        <td>Raceway Car Wash</td>
+        <td><span style="color:#10b981;font-weight:700;">LOW</span></td>
+        <td>Watch for Houston expansion; currently DFW-focused</td>
+      </tr>
+      <tr>
+        <td><strong>$54.5B Global Market by 2033</strong></td>
+        <td>Industry-Wide</td>
+        <td><span style="color:#10b981;font-weight:700;">POSITIVE</span></td>
+        <td>Validates membership-first strategy; use in growth capital conversations</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  UCWH Competitive Briefing &nbsp;·&nbsp; Generated March 22, 2026 &nbsp;·&nbsp; Covering March 15–22, 2026<br>
+  United Car Wash Holdings — Confidential Internal Report<br>
+  <a href="https://jbass698-121.github.io/ucwh-morning-briefings/competitive-briefings/">View All Competitive Briefings</a>
+</div>
+
+</body>
+</html>
