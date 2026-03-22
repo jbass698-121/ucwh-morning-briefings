@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 22, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Sunday, March 22, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>OpenAI shipped GPT-5.4 with a 1.05 million-token context window and 33% fewer factual errors than GPT-5.2, while NVIDIA unveiled Nemotron 3 Super at GTC — a 120B-parameter MoE model purpose-built for multi-agent workflows. In a contrarian move, Perplexity's CTO revealed the company is moving away from MCP internally, citing that tool descriptions consume 40-50% of available context windows before agents do any work. Replit tripled its valuation to $9B on a $400M Series D, and the robotics sector deployed over $1.2B in a single week across four mega-rounds. The Pentagon reportedly designated Anthropic a "supply chain risk" over contract restrictions on Claude's military use, while cyber insurers are now requiring AI-specific red-teaming as a prerequisite for coverage. Meanwhile, enterprise AI's ROI problem is sharpening: only 25% of AI initiatives have delivered expected returns, even as hyperscalers pour $600B+ into infrastructure.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://releasebot.io/updates/openai">OpenAI Ships GPT-5.4 — 1.05M Context Window, 33% Fewer Factual Errors</a></h3>
+    <p class="story-meta"><span class="source">Releasebot / LLM Stats / Build Fast with AI</span> · Mar 5-22 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI released GPT-5.4 on March 5 with a 1.05 million-token context window and three variants: Standard, Thinking, and Pro. The model delivers 33% fewer individual factual errors than GPT-5.2, with API pricing starting at $2.50 per million input tokens. GPT-5.4 mini is now rolling out to Free and Go users via the Thinking feature, while GPT-5 Thinking mini will be retired in 30 days. The 1M+ context window puts GPT-5.4 in direct competition with Claude Opus 4.6's 1M context, making million-token workflows a standard expectation rather than a premium feature.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Million-token context is now table stakes across the two leading model providers. For your daily data pull and report generation pipeline, this means you can feed entire week-long datasets — wash counts, coupon summaries, weather data, financial records — into a single context window without chunking. The $2.50/M input token pricing makes this economically viable for production automation. The 33% factual error reduction is equally important: fewer hallucinations in financial reporting and operational analysis means less manual validation overhead.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.buildfastwithai.com/blogs/ai-models-march-2026-releases">NVIDIA Nemotron 3 Super — 120B MoE Model Built for Multi-Agent Workflows</a></h3>
+    <p class="story-meta"><span class="source">Build Fast with AI / NVIDIA GTC</span> · Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">NVIDIA announced Nemotron 3 Super at GTC on March 11 — a 120-billion-total-parameter hybrid Mixture-of-Experts model with only 12 billion active parameters per forward pass. The architecture is specifically designed for complex multi-agent applications including software development, cybersecurity triaging, and agentic workflows. By activating just 10% of its parameters per inference call, Nemotron 3 Super offers the reasoning depth of a 120B model at the compute cost of a 12B model, making it viable for high-throughput agent systems that need to run many parallel tool calls without GPU bottlenecks.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> A 120B-quality model that runs at 12B cost is a breakthrough for agent infrastructure economics. If you're running multi-step automation — daily data pulls, report generation, validation checks — each step currently consumes full-model inference. A MoE architecture like Nemotron 3 Super could let you run 10x more concurrent agent tasks at the same compute budget. Watch for API availability; if NVIDIA makes this accessible via NIM or a cloud endpoint, it could become a cost-effective backbone for high-frequency automation tasks.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://renovateqr.com/blog/ai-model-releases-2026">LTX 2.3 — 22B Parameter Model Generates Synchronized Video and Audio in One Pass</a></h3>
+    <p class="story-meta"><span class="source">Renovate QR / Lightricks</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Lightricks released LTX 2.3, a 22-billion-parameter Diffusion Transformer model that generates synchronized video and audio in a single forward pass. The model supports resolutions up to 4K at 50 FPS and can produce up to 20 seconds of video. Unlike previous approaches that required separate video and audio generation pipelines, LTX 2.3 handles both modalities simultaneously — a significant architectural advance that reduces the complexity and cost of AI-generated video content production.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://dev.to/alexmercedcoder/ai-weekly-agents-take-over-mcp-evolves-and-models-battle-for-code-5cm0">Perplexity CTO: We're Moving Away from MCP — Context Window Bloat Is the Problem</a></h3>
+    <p class="story-meta"><span class="source">DEV Community / Ask 2026 Conference</span> · Mar 11 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">At the Ask 2026 conference on March 11, Perplexity CTO Denis Yarats revealed his company is moving away from MCP internally, citing two fundamental problems: MCP tool descriptions consume 40-50% of available context windows before agents do any actual work, and authentication flows create friction when connecting to multiple services. This is a notable contrarian signal against MCP's explosive adoption — the protocol crossed 97 million monthly SDK downloads in February — and raises legitimate architectural questions about whether a tool-description-heavy protocol is sustainable as agent systems scale to dozens of connected services.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Perplexity's critique is worth internalizing even if you're committed to MCP. If you're connecting 10+ MCP servers for your automation pipeline — Slack, Supabase, GitHub, browser tools — those tool descriptions could be eating 40-50% of your context window before Claude even starts reasoning about your data. The practical takeaway: audit how many MCP tools are loaded in each session, disable tools you're not actively using, and watch for the MCP roadmap's metadata format improvements that could compress tool descriptions. This is an optimization problem, not a reason to abandon the protocol.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.marktechpost.com/2026/03/19/google-colab-now-has-an-open-source-mcp-model-context-protocol-server-use-colab-runtimes-with-gpus-from-any-local-ai-agent/">Google Colab Launches Open-Source MCP Server — GPU Runtimes Accessible from Any AI Agent</a></h3>
+    <p class="story-meta"><span class="source">MarkTechPost / Google</span> · Mar 19 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Google released an open-source MCP server for Google Colab on March 19, enabling any MCP-compatible AI agent — including Claude Code, Gemini CLI, or custom frameworks — to use Colab notebooks as remote GPU runtimes. By adopting the MCP standard, Google allows AI clients to execute code, run experiments, and train models on Colab's GPU infrastructure through a standard protocol interface. This effectively turns Colab into an on-demand compute backend for any agent system, without requiring Google-specific SDKs or APIs.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://dev.to/pockit_tools/mcp-vs-a2a-the-complete-guide-to-ai-agent-protocols-in-2026-30li">SurePath AI Ships MCP Policy Controls — Enterprise Security Gates for Agent Tool Access</a></h3>
+    <p class="story-meta"><span class="source">DEV Community / SurePath AI</span> · Mar 12 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">SurePath AI launched MCP Policy Controls on March 12, giving security teams real-time control over which MCP servers and tools AI clients can access. The product allows enterprises to define granular policies — specifying which agents can use which tools, under what conditions, and with what data — addressing the "shadow IT" risk that Qualys highlighted earlier this week. This is one of the first commercial products specifically designed to govern MCP at the enterprise level, filling a gap that has widened as MCP adoption outpaced security tooling.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-ai-robotics-ecommerce-quince/">Replit Raises $400M Series D at $9B Valuation — Agentic Code Generation Goes Mainstream</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase News / AI Funding Tracker</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Replit closed a $400 million Series D at a $9 billion valuation, tripling from $3 billion just six months ago. The platform has evolved from an online IDE into an agentic AI software creation tool where users describe what they want and AI agents generate, test, and deploy the code. The 3x valuation jump in six months reflects a market that increasingly values AI-powered development tools — not just as productivity boosters, but as platforms that fundamentally change who can build software. Replit now competes directly with Cursor, Windsurf, and GitHub Copilot for the AI-assisted development market.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Replit's $9B valuation validates the thesis that AI-powered code generation is becoming the default way software gets built. For AI-first businesses like yours, this means the barrier to building custom tools, dashboards, and automation scripts continues to drop. The agentic pattern — describe what you want, agent builds it — is the same pattern your workspace automation uses. Watch Replit's enterprise offerings: if they ship team-level agent workspaces with persistent context (similar to what Anthropic just launched with Projects), it could become a viable platform for building and maintaining your reporting infrastructure.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/">Robotics Mega-Round Week — $1.2B+ Deployed Across Four Deals in Three Days</a></h3>
+    <p class="story-meta"><span class="source">Mean CEO / Crunchbase News / AI Funding Tracker</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The robotics sector entered its mega-round era with four massive raises in a single week: Mind Robotics ($500M), Rhoda AI ($450M), Sunday ($165M unicorn round for home humanoid robots), and Oxa ($103M for autonomous logistics). The $1.2B+ combined deployment signals that physical AI — robots that operate in the real world — has reached the same funding intensity that software AI saw 18 months ago. All four companies are targeting industrial, household, and logistics applications where AI agents control physical systems rather than just generating text.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/top-50-ai-startups/">Legora Closes $550M Series D — Legal AI Reaches Enterprise Scale</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker / Mean CEO</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Legora raised $550 million in Series D funding for its legal AI platform, part of a week where over $6 billion in AI capital was deployed in three days. The round reflects growing enterprise confidence in vertical AI — purpose-built models and agents for specific industries — rather than general-purpose AI tools. Legal, healthcare, and financial services are emerging as the three verticals where AI startups can command the largest rounds, driven by high-value per-transaction economics and clear automation targets.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.corporatecomplianceinsights.com/2026-operational-guide-cybersecurity-ai-governance-emerging-risks/">Pentagon Reportedly Designates Anthropic a "Supply Chain Risk" Over Military Use Restrictions</a></h3>
+    <p class="story-meta"><span class="source">Corporate Compliance Insights / IAPP / Wilson Sonsini</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Pentagon reportedly designated Anthropic a "supply chain risk" following a contract dispute where Anthropic sought to restrict how Claude could be used in military operations. The designation highlights the growing tension between AI companies' safety policies and government procurement requirements. AI governance is increasingly being shaped by procurement decisions, security exceptions, and diplomatic pressure more decisively than any regulation currently on the books. The incident raises fundamental questions about whether AI companies can maintain usage restrictions when their largest potential customer is the U.S. Department of Defense.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The Anthropic-Pentagon tension illustrates a broader dynamic: AI governance is being decided in procurement offices, not just legislatures. For businesses building on Claude, this is worth monitoring — not because military restrictions affect your car wash automation, but because how Anthropic navigates government pressure shapes the company's long-term independence, funding trajectory, and willingness to enforce (or relax) usage policies across all customers. A "supply chain risk" designation from the DoD carries significant reputational and commercial weight.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.corporatecomplianceinsights.com/2026-operational-guide-cybersecurity-ai-governance-emerging-risks/">Cyber Insurers Introduce "AI Security Riders" — Red-Teaming Now Required for Coverage</a></h3>
+    <p class="story-meta"><span class="source">Corporate Compliance Insights / OneTrust</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The cyber insurance market is undergoing an AI-related transformation, with carriers increasingly conditioning coverage on AI-specific security controls. New "AI Security Riders" require documented evidence of adversarial red-teaming and model-level risk assessments as prerequisites for coverage. The SEC has also shifted AI from an "emerging fintech area" to a clear area of operational risk, linking it to cybersecurity disclosures and internal use for critical functions. Companies deploying AI agents in production — particularly those handling financial data or customer information — will face growing pressure to demonstrate formal AI risk management practices.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.goldmansachs.com/insights/articles/why-ai-companies-may-invest-more-than-500-billion-in-2026">Enterprise AI's ROI Problem — Only 25% of Initiatives Delivering Expected Returns</a></h3>
+    <p class="story-meta"><span class="source">Goldman Sachs / Dell'Oro Group / CreditSights</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Even as hyperscalers pour $600B+ into AI infrastructure, the ROI picture remains sobering: only 25% of enterprise AI initiatives have delivered their expected returns, and fewer than 20% have been scaled across entire enterprises. AI-related cloud services generated approximately $25 billion in revenue in 2025 — roughly 10% of what hyperscalers spent on infrastructure. The gap between infrastructure investment and monetization is the defining tension of the current AI cycle. Cloud backlogs are large and growing, enterprise adoption is broadening, and inference workloads are scaling — but the path from "working prototype" to "enterprise-wide deployment" remains the primary bottleneck.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> You're in the 25% that's actually delivering ROI from AI — your 18-task automation pipeline generates real operational value daily. The 75% failure rate is largely enterprises treating AI as a technology project rather than a workflow redesign. The gap between $600B infrastructure spend and $25B revenue means hyperscalers will continue subsidizing model quality and pricing to drive adoption — which directly benefits builders like you who are already in production. Expect continued price drops and capability improvements as hyperscalers compete to close the monetization gap.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.sciencedaily.com/releases/2026/03/260321012709.htm">AI Predicts Cancer Spread with 80% Accuracy — MangroveGS Transforms Treatment Decisions</a></h3>
+    <p class="story-meta"><span class="source">ScienceDaily</span> · Mar 21 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">A new AI tool called MangroveGS can predict the risk of cancer spreading with approximately 80% accuracy across multiple cancer types. The system analyzes pathology slides and clinical data to identify which patients are likely to experience metastasis, potentially transforming how oncologists decide who needs aggressive treatment versus conservative monitoring. The research demonstrates that AI's impact on healthcare is moving beyond diagnostics into treatment planning — a higher-stakes application that requires both accuracy and explainability.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://medium.com/@Micheal-Lanham/what-is-the-next-big-thing-in-ai-as-of-march-2026-07acda2458dc">MiniMax M2.5 Emerges from China — Affordable Model Rivaling Claude Opus 4.6</a></h3>
+    <p class="story-meta"><span class="source">Medium / LLM Stats</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Chinese AI company MiniMax released M2.5, a model that benchmarks competitively against Claude Opus 4.6 at significantly lower pricing. The release continues the pattern of Chinese AI labs — DeepSeek, Qwen, and now MiniMax — producing models that match or approach Western frontier capabilities at a fraction of the cost. MiniMax M2.5 is particularly strong in code generation and multilingual tasks, making it a viable option for cost-sensitive agent deployments where absolute frontier performance isn't required.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Sunday, March 22, 2026</p>
+  <p class="sources">Sources: OpenAI, Releasebot, LLM Stats, Build Fast with AI, Renovate QR, NVIDIA GTC, Lightricks, MarkTechPost, DEV Community, SurePath AI, Ask 2026 Conference, Crunchbase News, AI Funding Tracker, Mean CEO, Corporate Compliance Insights, IAPP, Wilson Sonsini, OneTrust, Goldman Sachs, Dell'Oro Group, CreditSights, ScienceDaily, Medium, MiniMax</p>
+</div>
+
+</div>
+</body>
+</html>
