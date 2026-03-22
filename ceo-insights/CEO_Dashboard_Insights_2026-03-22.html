@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CEO Insights Dashboard — 2026-03-22</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background-color: #020617; color: #e2e8f0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px 20px; }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding: 24px 0 20px 0; border-bottom: 2px solid #1e293b; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+  .header-left .title { font-size: 28px; font-weight: 700; color: #f1f5f9; }
+  .header-left .subtitle { font-size: 16px; color: #94a3b8; margin-top: 4px; }
+  .header-left .meta { font-size: 12px; color: #64748b; margin-top: 8px; }
+  .header-right { text-align: right; }
+  .header-right .big-num { font-size: 36px; font-weight: 700; color: #f1f5f9; }
+  .header-right .big-label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .header-right .big-change { font-size: 14px; margin-top: 4px; }
+
+  /* Section titles */
+  .section-title { font-size: 20px; font-weight: 600; color: #f1f5f9; margin: 32px 0 20px 0; padding-bottom: 12px; border-bottom: 2px solid #1e293b; }
+
+  /* KPI Grid */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; }
+  .kpi-card { background-color: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; }
+  .kpi-label { font-size: 12px; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; }
+  .kpi-value { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-top: 4px; }
+  .kpi-change { font-size: 12px; margin-top: 4px; }
+
+  /* Alerts */
+  .alerts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .alert-card { background-color: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; border-left: 4px solid #64748b; }
+  .alert-card.green { border-left-color: #10b981; }
+  .alert-card.yellow { border-left-color: #f59e0b; }
+  .alert-card.red { border-left-color: #ef4444; }
+  .alert-title { font-size: 14px; font-weight: 600; color: #f1f5f9; margin-bottom: 6px; }
+  .alert-desc { font-size: 13px; color: #94a3b8; line-height: 1.5; }
+
+  /* Weather */
+  .weather-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .weather-card { background-color: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 16px; }
+
+  /* Tables */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { background-color: #0f172a; color: #94a3b8; font-size: 12px; text-transform: uppercase; padding: 10px 12px; text-align: left; letter-spacing: 0.5px; }
+  .data-table td { color: #cbd5e1; padding: 10px 12px; border-bottom: 1px solid #1e293b; font-size: 13px; }
+  .data-table tbody tr:hover { background-color: rgba(30,41,59,0.5); }
+
+  /* Site cards */
+  .site-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 16px; }
+  .site-card { background-color: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 20px; }
+  .site-metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .site-metric { display: flex; flex-direction: column; }
+  .site-metric-label { font-size: 11px; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; }
+  .site-metric-value { font-size: 18px; font-weight: 600; color: #f1f5f9; margin-top: 2px; }
+
+  /* Recommendations */
+  .rec-item { display: flex; gap: 12px; margin-bottom: 16px; padding: 12px 16px; background-color: #0f172a; border: 1px solid #1e293b; border-radius: 8px; font-size: 13px; color: #cbd5e1; line-height: 1.6; }
+  .rec-num { flex-shrink: 0; width: 28px; height: 28px; background: #1e293b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #f1f5f9; }
+
+  /* Validation */
+  .validation-bar { margin-top: 32px; padding: 12px 16px; border-radius: 8px; font-size: 12px; }
+  .validation-pass { background-color: rgba(16,185,129,0.1); border: 1px solid #10b981; color: #10b981; }
+  .validation-warn { background-color: rgba(245,158,11,0.1); border: 1px solid #f59e0b; color: #f59e0b; }
+
+  /* Footer */
+  .footer { margin-top: 40px; padding: 20px 0; border-top: 1px solid #1e293b; text-align: center; }
+  .footer-text { font-size: 11px; color: #475569; }
+
+  @media (max-width: 768px) {
+    .header { flex-direction: column; }
+    .header-right { text-align: left; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .site-cards-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- SECTION 1: HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="title">CEO Insights Dashboard</div>
+      <div class="subtitle">United Car Wash Holdings</div>
+      <div class="meta">Week of Sun Mar 15 - Sun Mar 22 &bull; Data as of 2026-03-21 &bull; 3-Site Network</div>
+    </div>
+    <div class="header-right">
+      <div class="big-label">Network Paying Subs</div>
+      <div class="big-num">3,234</div>
+      <div class="big-change" style="color:#10b981">▲ +287 (30d)</div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: EXECUTIVE SUMMARY -->
+  <div class="section-title">Executive Summary</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Paying Subs</div>
+      <div class="kpi-value">3,234</div>
+      <div class="kpi-change" style="color:#10b981">▲ +287 (30d)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Subs</div>
+      <div class="kpi-value">5,115</div>
+      <div class="kpi-change" style="color:#94a3b8;">Paying + Trial</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Revenue Per Car</div>
+      <div class="kpi-value">$7.22</div>
+      <div class="kpi-change" style="color:#94a3b8;">7-day average</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Churn Rate</div>
+      <div class="kpi-value" style="color:#f59e0b">11.9%</div>
+      <div class="kpi-change" style="color:#64748b;">Network 30d avg</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Capture Rate</div>
+      <div class="kpi-value">18.4%</div>
+      <div class="kpi-change" style="color:#94a3b8;">3-site avg (30d)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Claim Rate</div>
+      <div class="kpi-value">42.0%</div>
+      <div class="kpi-change" style="color:#94a3b8;">3-site avg (30d)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Revenue (7-Day)</div>
+      <div class="kpi-value">$45,219.30</div>
+      <div class="kpi-change" style="color:#94a3b8;">Fleet total</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Fleet Washes</div>
+      <div class="kpi-value">1,224</div>
+      <div class="kpi-change" style="color:#94a3b8;">Latest day</div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: KEY INSIGHTS -->
+  <div class="section-title">Key Insights</div>
+  <div class="alerts-grid">
+    
+    <div class="alert-card green">
+      <div class="alert-title">TX190 Opportunities Spike (+118%)</div>
+      <div class="alert-desc">TX190 30d opportunities surged to 1,959 from 897 — a pipeline explosion signaling strong traffic growth. Capitalize with targeted IC conversion campaigns.</div>
+    </div>
+    <div class="alert-card green">
+      <div class="alert-title">TX160 Leading Volume (+110% Opportunities)</div>
+      <div class="alert-desc">TX160 opportunities hit 3,047 (from 1,452), highest in network. Strong capture rate at 16.9%.</div>
+    </div>
+    <div class="alert-card green">
+      <div class="alert-title">Strong IC Signups: 86 Fleet-Wide</div>
+      <div class="alert-desc">86 new InstaClub signups across all sites — healthy membership pipeline.</div>
+    </div>
+    <div class="alert-card yellow">
+      <div class="alert-title">UT426 Claim Rate Gap (34.7% vs 45.7% TX avg)</div>
+      <div class="alert-desc">UT426 leads capture at 21.5% but claim rate lags at 34.7% vs TX fleet average ~46%. Follow-up process needs attention — prospects are entering the funnel but not converting to paid washes.</div>
+    </div>
+    <div class="alert-card yellow">
+      <div class="alert-title">TX160 Churn Elevated at 13.4%</div>
+      <div class="alert-desc">Texas 160 (Spring) churn exceeds 13% target. Lost 141 members in 30 days (from 1054 to 1171 paying subs). Review cancellation reasons and retention offers.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: WEATHER IMPACT & 5-DAY FORECAST -->
+  <div class="section-title">Weather Impact &amp; 5-Day Forecast</div>
+  
+    <div class="weather-grid">
+      <div class="weather-card">
+        <div style="font-size:16px;font-weight:600;color:#f1f5f9;margin-bottom:8px;">Houston, TX</div>
+        <div style="font-size:28px;font-weight:700;color:#f1f5f9;">86°F</div>
+        <div style="color:#94a3b8;margin-top:4px;">Overcast</div>
+        <div style="color:#64748b;font-size:12px;margin-top:4px;">Wind: 13 mph</div>
+      </div>
+      <div class="weather-card">
+        <div style="font-size:16px;font-weight:600;color:#f1f5f9;margin-bottom:8px;">Saratoga Springs, UT</div>
+        <div style="font-size:28px;font-weight:700;color:#f1f5f9;">72°F</div>
+        <div style="color:#94a3b8;margin-top:4px;">Overcast</div>
+        <div style="color:#64748b;font-size:12px;margin-top:4px;">Wind: 15 mph</div>
+      </div>
+    </div>
+    <table class="data-table" style="margin-top:16px;">
+      <thead><tr><th>Day</th><th>Houston High</th><th>Utah High</th><th>Precip</th><th>Wind</th><th>Impact</th></tr></thead>
+      <tbody><tr>
+        <td>Mon Mar 23</td>
+        <td>84°F</td>
+        <td>78°F</td>
+        <td>0.0"</td>
+        <td>16 mph</td>
+        <td style="color:#10b981">Positive</td>
+      </tr><tr>
+        <td>Tue Mar 24</td>
+        <td>86°F</td>
+        <td>79°F</td>
+        <td>0.0"</td>
+        <td>13 mph</td>
+        <td style="color:#94a3b8">Neutral</td>
+      </tr><tr>
+        <td>Wed Mar 25</td>
+        <td>87°F</td>
+        <td>84°F</td>
+        <td>0.0"</td>
+        <td>15 mph</td>
+        <td style="color:#10b981">Positive</td>
+      </tr><tr>
+        <td>Thu Mar 26</td>
+        <td>86°F</td>
+        <td>65°F</td>
+        <td>0.0"</td>
+        <td>20 mph</td>
+        <td style="color:#f59e0b">Moderate</td>
+      </tr></tbody>
+    </table>
+    <div style="color:#64748b;font-size:11px;margin-top:8px;">Note: ML wash forecast unavailable (Python not installed)</div>
+
+  <!-- SECTION 5: ACQUISITION FUNNEL -->
+  <div class="section-title">Acquisition Funnel</div>
+  
+    <table class="data-table">
+      <thead><tr><th>Site</th><th>Opportunities (30d)</th><th>Capture Rate</th><th>Claim Rate</th></tr></thead>
+      <tbody><tr style="background-color:rgba(16,185,129,0.08);">
+        <td style="font-weight:600;">TX190</td>
+        <td>1,959 <span style="color:#10b981;font-size:11px;">+1,062 (+118%)</span></td>
+        <td>16.7% <span style="color:#ef4444;font-size:11px;">-3.3pp</span></td>
+        <td>47.2% <span style="color:#10b981;font-size:11px;">+6.7pp</span></td>
+      </tr><tr>
+        <td style="font-weight:600;">TX160</td>
+        <td>3,047 <span style="color:#10b981;font-size:11px;">+1,595 (+110%)</span></td>
+        <td>16.9% <span style="color:#10b981;font-size:11px;">+2.3pp</span></td>
+        <td>44.1% <span style="color:#ef4444;font-size:11px;">-0.1pp</span></td>
+      </tr><tr style="background-color:rgba(245,158,11,0.08);">
+        <td style="font-weight:600;">UT426</td>
+        <td>1,674 <span style="color:#10b981;font-size:11px;">+420 (+33%)</span></td>
+        <td>21.5% <span style="color:#10b981;font-size:11px;">+1.9pp</span></td>
+        <td>34.7% <span style="color:#ef4444;font-size:11px;">-6.9pp</span></td>
+      </tr></tbody>
+    </table>
+    <div style="color:#f59e0b;font-size:12px;margin-top:12px;padding:8px 12px;background:rgba(245,158,11,0.08);border-radius:6px;border-left:3px solid #f59e0b;">
+      KEY INSIGHT: UT426 claim rate (34.7%) underperforms vs TX fleet avg (~45.7%) despite leading capture rate (21.5%).
+    </div>
+
+  <!-- SECTION 6: OTE INCENTIVE SCORECARD -->
+  <div class="section-title">OTE Incentive Scorecard</div>
+  
+    <table class="data-table">
+      <thead><tr><th>Site</th><th>Churn Rate</th><th>Avg Rating</th><th>Inspection %</th></tr></thead>
+      <tbody><tr>
+        <td style="font-weight:600;">TX190</td>
+        <td style="color:#f59e0b">10.2% <span style="font-size:11px;color:#64748b;">(target: ≤8%)</span></td>
+        <td style="color:#ef4444">1.0 <span style="font-size:11px;color:#64748b;">(target: ≥4.5)</span></td>
+        <td style="color:#ef4444">71.5% <span style="font-size:11px;color:#64748b;">(target: ≥90%)</span></td>
+      </tr><tr>
+        <td style="font-weight:600;">TX160</td>
+        <td style="color:#ef4444">13.4% <span style="font-size:11px;color:#64748b;">(target: ≤8%)</span></td>
+        <td style="color:#ef4444">3.7 <span style="font-size:11px;color:#64748b;">(target: ≥4.5)</span></td>
+        <td style="color:#ef4444">73.3% <span style="font-size:11px;color:#64748b;">(target: ≥90%)</span></td>
+      </tr><tr>
+        <td style="font-weight:600;">UT426</td>
+        <td style="color:#ef4444">12.1% <span style="font-size:11px;color:#64748b;">(target: ≤8%)</span></td>
+        <td style="color:#10b981">5.0 <span style="font-size:11px;color:#64748b;">(target: ≥4.5)</span></td>
+        <td style="color:#f59e0b">76.6% <span style="font-size:11px;color:#64748b;">(target: ≥90%)</span></td>
+      </tr></tbody>
+    </table>
+
+  <!-- SECTION 7: SITE PERFORMANCE -->
+  <div class="section-title">Site Performance</div>
+  <div class="site-cards-grid">
+      <div class="site-card">
+        <div style="font-size:16px;font-weight:600;color:#f1f5f9;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #1e293b;">Texas 190 (Houston)</div>
+        <div class="site-metric-grid">
+          <div class="site-metric"><span class="site-metric-label">Washes</span><span class="site-metric-value">380</span></div>
+          <div class="site-metric"><span class="site-metric-label">Gross Sales</span><span class="site-metric-value">$3,164.73</span></div>
+          <div class="site-metric"><span class="site-metric-label">Avg/Single Wash</span><span class="site-metric-value">$16.08</span></div>
+          <div class="site-metric"><span class="site-metric-label">Club %</span><span class="site-metric-value">64.5%</span></div>
+          <div class="site-metric"><span class="site-metric-label">Rewash Rate</span><span class="site-metric-value">0.3%</span></div>
+          <div class="site-metric"><span class="site-metric-label">IC Signups</span><span class="site-metric-value">27</span></div>
+          <div class="site-metric"><span class="site-metric-label">Paying Subs</span><span class="site-metric-value">1,066</span></div>
+          <div class="site-metric"><span class="site-metric-label">Churn Rate</span><span class="site-metric-value" style="color:#f59e0b">10.2%</span></div>
+        </div>
+      </div>
+      <div class="site-card">
+        <div style="font-size:16px;font-weight:600;color:#f1f5f9;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #1e293b;">Texas 160 (Spring)</div>
+        <div class="site-metric-grid">
+          <div class="site-metric"><span class="site-metric-label">Washes</span><span class="site-metric-value">545</span></div>
+          <div class="site-metric"><span class="site-metric-label">Gross Sales</span><span class="site-metric-value">$4,588.58</span></div>
+          <div class="site-metric"><span class="site-metric-label">Avg/Single Wash</span><span class="site-metric-value">$16.34</span></div>
+          <div class="site-metric"><span class="site-metric-label">Club %</span><span class="site-metric-value">66.4%</span></div>
+          <div class="site-metric"><span class="site-metric-label">Rewash Rate</span><span class="site-metric-value">0.9%</span></div>
+          <div class="site-metric"><span class="site-metric-label">IC Signups</span><span class="site-metric-value">41</span></div>
+          <div class="site-metric"><span class="site-metric-label">Paying Subs</span><span class="site-metric-value">1,171</span></div>
+          <div class="site-metric"><span class="site-metric-label">Churn Rate</span><span class="site-metric-value" style="color:#ef4444">13.4%</span></div>
+        </div>
+      </div>
+      <div class="site-card">
+        <div style="font-size:16px;font-weight:600;color:#f1f5f9;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #1e293b;">Utah 426 (Lehi)</div>
+        <div class="site-metric-grid">
+          <div class="site-metric"><span class="site-metric-label">Washes</span><span class="site-metric-value">299</span></div>
+          <div class="site-metric"><span class="site-metric-label">Gross Sales</span><span class="site-metric-value">$3,442.82</span></div>
+          <div class="site-metric"><span class="site-metric-label">Avg/Single Wash</span><span class="site-metric-value">$19.57</span></div>
+          <div class="site-metric"><span class="site-metric-label">Club %</span><span class="site-metric-value">52.8%</span></div>
+          <div class="site-metric"><span class="site-metric-label">Rewash Rate</span><span class="site-metric-value">1.0%</span></div>
+          <div class="site-metric"><span class="site-metric-label">IC Signups</span><span class="site-metric-value">18</span></div>
+          <div class="site-metric"><span class="site-metric-label">Paying Subs</span><span class="site-metric-value">997</span></div>
+          <div class="site-metric"><span class="site-metric-label">Churn Rate</span><span class="site-metric-value" style="color:#f59e0b">12.1%</span></div>
+        </div>
+      </div></div>
+
+  <!-- SECTION 8: REVENUE ANALYSIS -->
+  <div class="section-title">Revenue Analysis</div>
+  
+    <div style="margin-bottom:16px;color:#94a3b8;font-size:14px;">7-Day Fleet Revenue: <span style="color:#f1f5f9;font-weight:600;">$45,219.30</span></div>
+    <table class="data-table">
+      <thead><tr><th>Site</th><th>Gross Sales</th><th>Washes</th><th>Avg/Single</th><th>IC Revenue</th><th>IC Signups</th></tr></thead>
+      <tbody><tr>
+        <td style="font-weight:600;">TX190</td>
+        <td>$3,164.73</td>
+        <td>380</td>
+        <td>$16.08</td>
+        <td>$998.73</td>
+        <td>27</td>
+      </tr><tr>
+        <td style="font-weight:600;">TX160</td>
+        <td>$4,588.58</td>
+        <td>545</td>
+        <td>$16.34</td>
+        <td>$1,516.59</td>
+        <td>41</td>
+      </tr><tr>
+        <td style="font-weight:600;">UT426</td>
+        <td>$3,442.82</td>
+        <td>299</td>
+        <td>$19.57</td>
+        <td>$637.82</td>
+        <td>18</td>
+      </tr><tr style="border-top:2px solid #334155;font-weight:600;">
+      <td>Fleet Total</td>
+      <td>$11,196.13</td>
+      <td>1,224</td>
+      <td>$9.15</td>
+      <td>$3,153.14</td>
+      <td>86</td>
+    </tr></tbody>
+    </table>
+    
+        <canvas id="washTrendChart" style="max-height:280px;margin-top:16px;"></canvas>
+        <script>
+          new Chart(document.getElementById('washTrendChart'), {
+            type: 'line',
+            data: {
+              labels: ["Mar 15","Mar 16","Mar 17","Mar 18","Mar 19","Mar 20","Mar 21"],
+              datasets: [{"label":"TX190","data":[222,322,295,272,277,317,380],"borderColor":"#ef4444","backgroundColor":"transparent","tension":0.3},{"label":"TX160","data":[321,340,345,347,400,449,545],"borderColor":"#3b82f6","backgroundColor":"transparent","tension":0.3},{"label":"UT426","data":[146,173,180,225,223,205,299],"borderColor":"#10b981","backgroundColor":"transparent","tension":0.3}]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { labels: { color: '#94a3b8' } },
+                title: { display: true, text: '7-Day Wash Trend', color: '#f1f5f9' }
+              },
+              scales: {
+                x: { ticks: { color: '#64748b' }, grid: { color: '#1e293b' } },
+                y: { ticks: { color: '#64748b' }, grid: { color: '#1e293b' } }
+              }
+            }
+          });
+        </script>
+
+  <!-- SECTION 9: CHURN & SUBSCRIBER TRENDS -->
+  <div class="section-title">Churn &amp; Subscriber Trends</div>
+  
+    <table class="data-table">
+      <thead><tr><th>Site</th><th>Churn Rate</th><th>Paying Subs</th><th>30d Change</th><th>Lost (30d)</th><th>Active Subs</th><th>Trial Subs</th></tr></thead>
+      <tbody><tr>
+        <td style="font-weight:600;">TX190</td>
+        <td style="color:#f59e0b">10.2%</td>
+        <td>1,066</td>
+        <td style="color:#10b981">+123</td>
+        <td>96</td>
+        <td>1,651</td>
+        <td>513</td>
+      </tr><tr>
+        <td style="font-weight:600;">TX160</td>
+        <td style="color:#ef4444">13.4%</td>
+        <td>1,171</td>
+        <td style="color:#10b981">+117</td>
+        <td>141</td>
+        <td>1,969</td>
+        <td>762</td>
+      </tr><tr>
+        <td style="font-weight:600;">UT426</td>
+        <td style="color:#f59e0b">12.1%</td>
+        <td>997</td>
+        <td style="color:#10b981">+47</td>
+        <td>115</td>
+        <td>1,495</td>
+        <td>462</td>
+      </tr><tr style="border-top:2px solid #334155;font-weight:600;">
+      <td>Network</td>
+      <td style="color:#f59e0b">11.9%</td>
+      <td>3,234</td>
+      <td style="color:#10b981">+287</td>
+      <td>352</td>
+      <td>5,115</td>
+      <td>--</td>
+    </tr></tbody>
+    </table>
+
+  <!-- SECTION 10: STRATEGIC RECOMMENDATIONS -->
+  <div class="section-title">Strategic Recommendations</div>
+  <div class="rec-item"><span class="rec-num">1</span><div><strong>Close the UT426 Claim Gap:</strong> UT426 leads capture at 21.5% but claim rate is only 34.7%. Implement same-day follow-up texts and a simplified claim process. The prospects are entering the funnel — the bottleneck is post-capture conversion.</div></div><div class="rec-item"><span class="rec-num">2</span><div><strong>Capitalize on TX190 Pipeline Surge:</strong> With opportunities up 118% to 1,959, deploy additional street team resources at TX190. This traffic momentum is the highest in the network — maximize IC conversion while volume is elevated.</div></div><div class="rec-item"><span class="rec-num">3</span><div><strong>Address Elevated Churn:</strong> TX190, TX160, UT426 are running above 10% churn. Activate retention offers for members in their 2nd-3rd month (highest cancellation risk). Consider a "Win-Back Wednesday" text campaign targeting recent cancellations with a limited-time reinstatement offer.</div></div><div class="rec-item"><span class="rec-num">4</span><div><strong>Improve Inspection Compliance:</strong> TX190, TX160, UT426 are below 80% inspection completion. Tie inspection completion to daily manager accountability and incentive eligibility. Quality control drives customer satisfaction which drives retention.</div></div><div class="rec-item"><span class="rec-num">5</span><div><strong>Protect Works Premium Positioning:</strong> Works remains the #1 premium package across all sites. Maintain pricing integrity — do not discount Works below current levels. Focus upsell efforts on Quality and Super customers, positioning Works as the aspirational tier.</div></div>
+
+  <!-- VALIDATION -->
+  <div class="validation-bar validation-pass">All 7 validation checks passed.</div>
+
+  <!-- SECTION 11: FOOTER -->
+  <div class="footer">
+    <div class="footer-text">
+      UCWH CEO Insights Dashboard &bull; Generated: 2026-03-22 17:23:48 UTC<br>
+      Data sources: Tommy Manager API, UCWH Dashboard API, Open-Meteo Weather, Yext Reviews<br>
+      Cache files: tommy_daily_numbers (2026-03-21), ucwh_comparison (2026-03-22), ucwh_acquisition (2026-03-22), weather (2026-03-22), incentive_scorecard (2026-W12)
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
