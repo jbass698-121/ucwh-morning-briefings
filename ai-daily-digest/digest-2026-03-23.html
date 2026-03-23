@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 23, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Monday, March 23, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>OpenAI is acquiring Python toolmaker Astral — the company behind uv, Ruff, and ty — to integrate best-in-class developer tooling directly into Codex, which now has 2 million weekly active users. The Agentic AI Foundation surged to 146 members as JPMorgan Chase, American Express, and Autodesk joined, with 95+ sessions announced for the MCP Dev Summit in New York on April 2-3. The Trump administration released a national AI legislative framework on March 20 that would preempt all state AI laws in favor of a single federal standard — setting up a major clash with California, Colorado, and Texas whose AI laws are already taking effect. On the funding front, Yann LeCun's AMI Labs raised $1.03B in the largest European seed round ever for "world models," while Perplexity closed a $400M Series E at $24B valuation. Meanwhile, Qualys warned that MCP servers are becoming enterprise shadow IT, with most organizations lacking visibility into which AI agents are connecting to which tools — a governance gap widening faster than the security tooling meant to close it.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://openai.com/index/openai-to-acquire-astral/">OpenAI Acquires Astral — uv, Ruff, and ty Coming to Codex</a></h3>
+    <p class="story-meta"><span class="source">OpenAI / Bloomberg / The New Stack</span> · Mar 19 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI announced the acquisition of Astral, the company behind Python's most popular modern developer tools: uv (dependency/environment management), Ruff (linting/formatting), and ty (type checking). Astral's tools power millions of developer workflows and have become foundational infrastructure for Python development. The acquisition will integrate this tooling directly into Codex, which has seen 3x user growth and 5x usage increase since January, now serving over 2 million weekly active users. OpenAI committed to maintaining Astral's open-source products post-closing. The deal is subject to regulatory approval.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is OpenAI vertically integrating the Python toolchain into its coding agent. If you're building automation scripts in Python — forecast models, data parsers, financial dashboards — the tools you likely already use (uv for deps, Ruff for linting) will now be deeply wired into Codex's code generation. The strategic signal is clear: AI coding platforms are moving beyond "generate code" to "generate, lint, type-check, package, and deploy code" in a single agentic workflow. Watch for whether OpenAI keeps uv/Ruff truly open or starts gating advanced features behind Codex subscriptions.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://releasebot.io/updates/openai">GPT-5.4 Mini Rolls Out to Free and Go Users via Thinking Feature</a></h3>
+    <p class="story-meta"><span class="source">Releasebot / LLM Stats</span> · Mar 22 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">OpenAI is rolling out GPT-5.4 mini to Free and Go tier users through ChatGPT's "Thinking" feature, democratizing access to the 5.4 generation. GPT-5 Thinking mini will be retired in 30 days. The rollout extends GPT-5.4's capabilities — including its 1.05M-token context window and 33% factual error reduction over GPT-5.2 — to the broadest possible user base. Combined with the Astral acquisition, OpenAI is making an aggressive play to own both the model layer and the developer tooling layer simultaneously.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.labla.org/latest-ai-model-releases-past-24-hours/ai-model-releases-march-22-2026-the-quiet-wave-nobodys-talking-about/">Hunter Alpha Appears on OpenRouter — No Developer, No Press Release, Surprising Benchmarks</a></h3>
+    <p class="story-meta"><span class="source">Labla.org / OpenRouter</span> · Mar 22 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">A model called Hunter Alpha quietly appeared on OpenRouter without a developer name, press release, or marketing. Developers who tested it blind reported capability levels that surprised the community, sparking speculation about its origin. Anonymous model drops are becoming a recurring pattern — similar to how DeepSeek initially gained traction — and serve as a reminder that frontier capability can emerge from unexpected sources. The model's provenance remains unconfirmed.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">AAIF Surges to 146 Members — JPMorgan, AmEx, Autodesk Join; MCP Dev Summit Scheduled</a></h3>
+    <p class="story-meta"><span class="source">Linux Foundation / Anthropic / OpenAI</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Agentic AI Foundation (AAIF) — the Linux Foundation body governing MCP, goose, and AGENTS.md — added 97 new members in March alone, growing to 146 members. New Gold members include JPMorgan Chase, American Express, Autodesk, Red Hat, and ServiceNow. The AAIF also announced the MCP Dev Summit North America schedule: 95+ sessions in New York City on April 2-3. Platinum members now include AWS, Anthropic, Block, Bloomberg, Cloudflare, Google, Microsoft, and OpenAI. The speed of enterprise adoption — nearly doubling membership in a single month — signals that MCP is transitioning from developer protocol to enterprise standard.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> JPMorgan and AmEx joining AAIF means MCP is being vetted for regulated financial environments — the same compliance bar that enterprise car wash operations will eventually face. More practically, 146 members means more MCP servers, more integrations, and faster ecosystem maturity. The April 2-3 Dev Summit in NYC could be worth tracking for announcements about MCP v2 features, enterprise auth patterns, and the metadata compression that would address Perplexity's context-window criticism from last week.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.qualys.com/product-tech/2026/03/19/mcp-servers-shadow-it-ai-qualys-totalai-2026">MCP Servers Are the New Shadow IT — Qualys Warns Most Orgs Lack Visibility</a></h3>
+    <p class="story-meta"><span class="source">Qualys / TotalAI</span> · Mar 19 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Qualys published a detailed analysis warning that MCP servers have become the "new shadow IT" for AI in 2026. As MCP becomes the default wiring between AI agents and enterprise applications, most organizations lack visibility into which MCP servers are deployed, what data they can access, and which agents are connecting to them. The report highlights that MCP's rapid adoption — now embedded in 34,700+ projects — has outpaced security tooling, creating a governance gap where AI agents can access sensitive systems through unmonitored protocol connections. Qualys is positioning its TotalAI product to provide the missing visibility layer.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> You're running multiple MCP connections — Slack, Supabase, browser tools, file system access — in your automation pipeline. While your setup is single-operator (lower risk than enterprise), the underlying pattern Qualys describes is real: MCP servers grant tool access without centralized audit logging. As you scale automation, consider which MCP servers have write access to production systems (Supabase, Slack, GitHub) and whether you'd want an access log if something went wrong. This is also a business opportunity signal — MCP security/governance is an emerging market.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.contextstudios.ai/blog/mcp-ecosystem-in-2026-what-the-v127-release-actually-tells-us">OpenAI Agents SDK v0.12.x Ships MCP Fixes — Protocol Becoming Invisible Infrastructure</a></h3>
+    <p class="story-meta"><span class="source">Context Studios / OpenAI</span> · Mar 18 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The OpenAI Agents SDK's v0.12.x series, shipping rapidly through March, includes MCP-specific fixes: normalizing cancelled MCP invocations, adding retry logic for transient failures, and improving error handling for disconnected servers. The pace of iteration — multiple point releases in a single month — reflects MCP transitioning from "integration feature" to "core infrastructure" within OpenAI's agent stack. When a protocol's bug fixes make release notes, it's become load-bearing.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/">AMI Labs Raises $1.03B Seed — Largest European Seed Round Ever for "World Models"</a></h3>
+    <p class="story-meta"><span class="source">Mean CEO / Crunchbase News</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Advanced Machine Intelligence (AMI) Labs, founded by Meta's Chief AI Scientist Yann LeCun, raised $1.03 billion in seed funding at a $3.5 billion valuation — the largest seed round in European history. The company is building "world models" based on LeCun's JEPA (Joint Embedding Predictive Architecture), an alternative to the transformer-based approach that dominates current LLMs. Backers include Jeff Bezos, NVIDIA, Samsung, and Temasek. LeCun has long argued that autoregressive LLMs are a dead end for achieving true understanding, and AMI Labs is his vehicle to prove that thesis commercially.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> A $1B seed round for an architecture that explicitly competes with transformers is the biggest bet yet that the current LLM paradigm has limits. If JEPA-based world models deliver on their promise — better physical reasoning, more data-efficient learning, fewer hallucinations — they could eventually power agent systems that interact with physical operations (equipment monitoring, facility management) more reliably than current models. This is a 2-3 year horizon play, but the funding validates that serious capital sees post-transformer AI as investable.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">Perplexity Closes $400M Series E at $24B Valuation</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker / Crunchbase News</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Perplexity closed its $400 million Series E at a $24 billion valuation, providing resources to pursue an independent growth path. The company has positioned itself as the AI-native alternative to Google Search, combining real-time web access with LLM reasoning. The $24B valuation — up from $9B just months ago — reflects investor confidence that AI search can capture meaningful market share from traditional search engines. Perplexity's growth comes despite (or perhaps because of) its contrarian stance on MCP, suggesting the market rewards companies with strong product opinions.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://intellizence.com/insights/startup-funding/the-weeks-5-biggest-funding-rounds-raised-over-3b-to-scale-the-next-wave-of-ai-innovation/">March 2026 Sets Record — More $100M+ AI Rounds Than Any Comparable Period in History</a></h3>
+    <p class="story-meta"><span class="source">Intellizence / Crunchbase News</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Two and a half weeks into March, the month has already produced more $100M+ AI funding rounds than any comparable period in venture history. The top 5 rounds in the most recent week alone totaled over $3B. Nexthop AI ($500M for AI networking), Mind Robotics ($500M), and Quince ($500M for AI-powered e-commerce) each pulled in half-billion-dollar rounds. February set its own record at $189B in total startup funding globally, driven by OpenAI and Anthropic mega-rounds. The capital velocity shows no signs of cooling.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.whitehouse.gov/articles/2026/03/president-donald-j-trump-unveils-national-ai-legislative-framework/">Trump Unveils National AI Framework — Would Preempt All State AI Laws</a></h3>
+    <p class="story-meta"><span class="source">White House / CNBC / Axios</span> · Mar 20 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Trump administration released a four-page national AI legislative framework on March 20 calling on Congress to create a single federal AI regulatory standard that would preempt all state laws. The framework proposes targeted regulations in child safety, digital replicas, and AI data center permitting, while leaving copyright questions (fair use for training data) to judicial resolution. It explicitly seeks to block California's AI Transparency Act, Colorado's AI Act, and Texas's Responsible AI Governance Act from taking effect independently. Critics argue it delivers Big Tech's top policy priority — eliminating the patchwork of state regulations — under the banner of "innovation." Congress has no timeline to act.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Federal preemption of state AI laws would simplify compliance for any business using AI in operations — you wouldn't need to track whether Texas's Responsible AI Governance Act imposes requirements on your automation pipeline. But the framework is just a proposal with no bill attached. The practical impact right now is uncertainty: states are passing laws, the White House wants to override them, and Congress hasn't committed to either path. For planning purposes, continue treating state laws as the operative standard until Congress acts.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.corporatecomplianceinsights.com/2026-operational-guide-cybersecurity-ai-governance-emerging-risks/">SEC Elevates AI to Operational Risk Category — No Longer Just "Emerging Fintech"</a></h3>
+    <p class="story-meta"><span class="source">Corporate Compliance Insights / SEC</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The SEC's 2026 examination priorities represent a significant shift: AI has been reclassified from an "emerging fintech area" to a clear area of operational risk, now linked to cybersecurity disclosures and internal use for critical functions. This reclassification means companies using AI for financial reporting, customer-facing decisions, or operational automation will face direct scrutiny from SEC examiners — not as an innovation curiosity, but as a risk vector that requires documented controls, governance frameworks, and incident response plans.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.pearlcohen.com/new-privacy-data-protection-and-ai-laws-in-2026/">California Imposes Safety Requirements on AI Companion Chatbots — Minors Protection Mandated</a></h3>
+    <p class="story-meta"><span class="source">Pearl Cohen / Wilson Sonsini</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">California is implementing comprehensive safety requirements for AI companion chatbots, requiring operators to clearly disclose when users could be misled about communicating with humans. Heightened obligations apply for minor users, including measures preventing sexually explicit content and protocols for detecting and responding to suicidal ideation. This is the most specific AI product regulation in the U.S. to date — not a broad "AI governance" framework, but targeted rules for a specific product category with documented harm cases.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://futurumgroup.com/insights/ai-capex-2026-the-690b-infrastructure-sprint/">Global Data Center CapEx Crosses $1 Trillion in 2026 — 75% Goes to AI</a></h3>
+    <p class="story-meta"><span class="source">Futurum Group / Dell'Oro Group / Goldman Sachs</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Worldwide data center capital expenditures are forecast to surpass $1 trillion in 2026, with approximately 75% — roughly $750 billion — funding AI-related infrastructure. The Big Five hyperscalers (Amazon, Google, Microsoft, Meta, Oracle) alone will exceed $600 billion, a 36% increase over 2025. Oracle more than tripled its data center CapEx as it builds capacity for the Stargate project. All five major hyperscalers report that AI capacity is being absorbed as quickly as it can be deployed, with well over 10 million high-end accelerators serving as the primary CapEx driver. Inference is projected to overtake training as the larger CapEx category going forward.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The $1T CapEx figure with inference becoming the dominant driver directly benefits production AI users like you. More inference capacity means lower latency, better availability, and continued price compression for API calls. The hyperscalers are in a prisoner's dilemma — none can slow spending without ceding market share — which means the infrastructure subsidy that makes your 18-task automation pipeline economically viable will persist. The inference shift is particularly relevant: your workload is almost entirely inference (data analysis, report generation, forecasting), not training.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://devops.com/openai-bolsters-ai-coding-with-acquisition-of-python-toolmaker-astral/">Codex Hits 2M Weekly Active Users — AI Coding Crosses Enterprise Adoption Threshold</a></h3>
+    <p class="story-meta"><span class="source">DevOps.com / OpenAI</span> · Mar 19 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">OpenAI revealed during the Astral acquisition announcement that Codex has surpassed 2 million weekly active users, with 3x user growth and 5x usage increase since January 2026. The acceleration suggests AI-assisted coding has crossed from early-adopter to mainstream enterprise adoption. Combined with Replit's $9B valuation, Cursor's rapid growth, and Claude Code's expanding capabilities, the AI coding market is consolidating around a handful of platforms that are each building full-stack developer experiences — from code generation to testing to deployment.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Monday, March 23, 2026</p>
+  <p class="sources">Sources: OpenAI, Bloomberg, The New Stack, Astral, Simon Willison, Releasebot, LLM Stats, Labla.org, Linux Foundation, Anthropic, Qualys, Context Studios, Mean CEO, Crunchbase News, AI Funding Tracker, Intellizence, White House, CNBC, Axios, Corporate Compliance Insights, SEC, Pearl Cohen, Wilson Sonsini, Futurum Group, Dell'Oro Group, Goldman Sachs, DevOps.com</p>
+</div>
+
+</div>
+</body>
+</html>
