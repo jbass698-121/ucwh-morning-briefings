@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCWH Pipeline Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: #0f172a;
+    color: #f1f5f9;
+    padding: 20px;
+    line-height: 1.5;
+  }
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 30px 20px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid #334155;
+    border-radius: 12px;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
+  .header .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 16px; }
+  .header .timestamp { color: #64748b; font-size: 12px; }
+
+  /* Health Ring */
+  .health-ring {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    border: 4px solid #f59e0b;
+    margin: 12px 0;
+  }
+  .health-ring .pct { font-size: 26px; font-weight: 800; color: #f59e0b; }
+
+  /* KPI Row */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: #1e293b;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    border-left: 4px solid #334155;
+  }
+  .kpi-card .kpi-value { font-size: 28px; font-weight: 800; }
+  .kpi-card .kpi-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+  /* Section Card */
+  .section {
+    background: #1e293b;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #334155;
+  }
+  .section h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #334155;
+  }
+
+  /* Task Table */
+  .task-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .task-table th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #0f172a;
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #334155;
+  }
+  .task-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #1e293b;
+    vertical-align: middle;
+  }
+  .task-table tr { background: #1e293b; }
+  .task-table tr:nth-child(even) { background: #162032; }
+  .task-table tr:hover { background: #253349; }
+
+  .task-id { color: #64748b; font-weight: 600; font-size: 12px; }
+  .task-name { font-weight: 600; color: #f1f5f9; }
+  .task-schedule { color: #94a3b8; font-size: 12px; }
+  .task-duration { color: #cbd5e1; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+  .task-steps { color: #94a3b8; font-size: 11px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .task-cmd { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; color: #38bdf8; background: #0f172a; padding: 2px 8px; border-radius: 4px; }
+  .task-time { color: #94a3b8; font-size: 12px; }
+  .task-ago { color: #64748b; font-size: 11px; }
+  .powerbi-badge { background: #3b82f6; color: #fff; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; margin-left: 6px; }
+  .blocked-badge { background: #f59e0b; color: #1e293b; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; margin-left: 6px; }
+
+  /* Tier Header */
+  .tier-header {
+    background: #0f172a;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Pipeline Diagram */
+  .pipeline {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .pipe-tier {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-left: 3px solid #334155;
+    margin-left: 20px;
+    padding-left: 20px;
+    position: relative;
+  }
+  .pipe-tier::before {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 16px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #334155;
+    border: 2px solid #1e293b;
+  }
+  .pipe-tier.active::before { background: #10b981; }
+  .pipe-tier.fail::before { background: #ef4444; }
+  .pipe-label {
+    min-width: 120px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-top: 2px;
+  }
+  .pipe-tasks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pipe-task {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: #cbd5e1;
+  }
+  .pipe-task.pass { border-color: #10b981; }
+  .pipe-task.fail { border-color: #ef4444; }
+  .pipe-task.stale { border-color: #f59e0b; }
+  .pipe-arrow { color: #475569; font-size: 14px; padding: 0 4px; align-self: center; }
+
+  /* Failure Card */
+  .failure-card {
+    background: #1c1017;
+    border: 1px solid #7f1d1d;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .failure-card .fail-task { font-weight: 700; color: #fca5a5; margin-bottom: 4px; }
+  .failure-card .fail-error { color: #f87171; font-size: 12px; font-family: monospace; }
+  .failure-card .fail-time { color: #64748b; font-size: 11px; }
+
+  /* Upcoming */
+  .upcoming-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #253349;
+  }
+  .upcoming-item:last-child { border-bottom: none; }
+  .upcoming-name { color: #e2e8f0; font-weight: 600; font-size: 13px; }
+  .upcoming-time { color: #38bdf8; font-family: monospace; font-size: 13px; }
+  .upcoming-in { color: #64748b; font-size: 12px; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    body { padding: 10px; }
+    .task-table { font-size: 11px; }
+    .task-table th, .task-table td { padding: 6px 8px; }
+    .task-steps { display: none; }
+    .task-cmd { display: none; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* No-fail */
+  .no-items { color: #64748b; font-style: italic; padding: 12px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>UCWH Pipeline Dashboard</h1>
+    <div class="subtitle">Autonomous Reporting Infrastructure &mdash; Parallax Holdings</div>
+    <div class="health-ring"><span class="pct">89%</span></div>
+    <div style="color:#94a3b8;font-size:13px;margin-top:4px">8 of 9 tasks healthy</div>
+    <div class="timestamp">Generated 2026-03-23 09:03 CT</div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-row">
+    <div class="kpi-card" style="border-color:#10b981">
+      <div class="kpi-value" style="color:#10b981">8</div>
+      <div class="kpi-label">Passing</div>
+    </div>
+    <div class="kpi-card" style="border-color:#ef4444">
+      <div class="kpi-value" style="color:#ef4444">1</div>
+      <div class="kpi-label">Failed</div>
+    </div>
+    <div class="kpi-card" style="border-color:#f59e0b">
+      <div class="kpi-value" style="color:#f59e0b">1</div>
+      <div class="kpi-label">Stale / Blocked</div>
+    </div>
+    <div class="kpi-card" style="border-color:#64748b">
+      <div class="kpi-value" style="color:#64748b">7</div>
+      <div class="kpi-label">Never Run</div>
+    </div>
+    <div class="kpi-card" style="border-color:#3b82f6">
+      <div class="kpi-value" style="color:#3b82f6">3</div>
+      <div class="kpi-label">Power BI</div>
+    </div>
+  </div>
+
+  <!-- Task Table -->
+  <div class="section" style="padding:0;overflow:hidden">
+    <h2 style="padding:20px 20px 12px">Task Status — All 18 Tasks</h2>
+    <div style="overflow-x:auto">
+    <table class="task-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Task</th>
+          <th>Schedule</th>
+          <th>Last Run</th>
+          <th>Duration</th>
+          <th>Status</th>
+          <th>Steps</th>
+          <th>Run Command</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr><td colspan="8" class="tier-header">Tier 1 — Data Acquisition</td></tr>
+
+        <tr>
+          <td class="task-id">#1</td>
+          <td>
+            <span class="task-name">Daily Data Pull</span>
+            
+            
+          </td>
+          <td class="task-schedule">Daily 2:00 AM</td>
+          <td>
+            <div class="task-time">2026-03-23 05:55</div>
+            <div class="task-ago">3h ago</div>
+          </td>
+          <td class="task-duration">16.6s</td>
+          <td><span style="background:#10b981;color:#064e3b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">PASS</span></td>
+          <td class="task-steps" title="Tommy Auth > Tommy Data > UCWH Auth > UCWH Data > Weather > Supabase Push (non-fatal)">Tommy Auth > Tommy Data > UCWH Auth > UCWH Data > Weather > Supabase Push (non-fatal)</td>
+          <td><code class="task-cmd">.\rerun.ps1 daily</code></td>
+        </tr>
+        <tr>
+          <td class="task-id">#2</td>
+          <td>
+            <span class="task-name">Weekly Data Collector</span>
+            
+            
+          </td>
+          <td class="task-schedule">Sundays 12:00 AM</td>
+          <td>
+            <div class="task-time">2026-03-23 04:57</div>
+            <div class="task-ago">4h ago</div>
+          </td>
+          <td class="task-duration">9m 16s</td>
+          <td><span style="background:#10b981;color:#064e3b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">PASS</span></td>
+          <td class="task-steps" title="Tommy Auth > Tommy Inspections > UCWH Auth > UCWH Data > Yext Auth > Yext Reviews > Assemble Scorecard">Tommy Auth > Tommy Inspections > UCWH Auth > UCWH Data > Yext Auth > Yext Reviews > Assemble Scorecard</td>
+          <td><code class="task-cmd">.\rerun.ps1 weekly-data</code></td>
+        </tr>
+
+        <tr><td colspan="8" class="tier-header">Tier 2 — Daily Reports</td></tr>
+
+        <tr>
+          <td class="task-id">#4</td>
+          <td>
+            <span class="task-name">Morning Briefing</span>
+            
+            
+          </td>
+          <td class="task-schedule">Daily 3:30 AM</td>
+          <td>
+            <div class="task-time">2026-03-23 05:56</div>
+            <div class="task-ago">3h ago</div>
+          </td>
+          <td class="task-duration">2.7s</td>
+          <td><span style="background:#10b981;color:#064e3b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">PASS</span></td>
+          <td class="task-steps" title="Validate Cache > Generate Briefing > GitHub Upload > Slack Post">Validate Cache > Generate Briefing > GitHub Upload > Slack Post</td>
+          <td><code class="task-cmd">.\rerun.ps1 briefing</code></td>
+        </tr>
+        <tr>
+          <td class="task-id">#5</td>
+          <td>
+            <span class="task-name">Daily Coupon Report</span>
+            
+            
+          </td>
+          <td class="task-schedule">Daily 6:00 AM</td>
+          <td>
+            <div class="task-time">2026-03-23 06:00</div>
+            <div class="task-ago">3h ago</div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#10b981;color:#064e3b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">PASS</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><code class="task-cmd">.\rerun.ps1 coupon</code></td>
+        </tr>
+        <tr>
+          <td class="task-id">#6</td>
+          <td>
+            <span class="task-name">Daily AI Digest</span>
+            
+            
+          </td>
+          <td class="task-schedule">Daily 4:30 AM</td>
+          <td>
+            <div class="task-time">2026-03-23 04:30</div>
+            <div class="task-ago">4h ago</div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#10b981;color:#064e3b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">PASS</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><code class="task-cmd">.\rerun.ps1 digest</code></td>
+        </tr>
+
+        <tr><td colspan="8" class="tier-header">Tier 3 — Weekly Reports (Sunday)</td></tr>
+
+        <tr>
+          <td class="task-id">#7</td>
+          <td>
+            <span class="task-name">Operations Report (Weekly)</span>
+            <span class="powerbi-badge">PBI</span>
+            
+          </td>
+          <td class="task-schedule">Sundays 6:00 AM</td>
+          <td>
+            <div class="task-time">2026-03-23 08:12</div>
+            <div class="task-ago">50m ago</div>
+          </td>
+          <td class="task-duration">5m 2s</td>
+          <td><span style="background:#10b981;color:#064e3b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">PASS</span></td>
+          <td class="task-steps" title="Tommy Auth > Fetch Data > Power BI > PBI Merge > Generate HTML > GitHub Upload > Slack Post">Tommy Auth > Fetch Data > Power BI > PBI Merge > Generate HTML > GitHub Upload > Slack Post</td>
+          <td><code class="task-cmd">.\rerun.ps1 weekly</code></td>
+        </tr>
+        <tr>
+          <td class="task-id">#8</td>
+          <td>
+            <span class="task-name">Hourly Inspection Report</span>
+            
+            
+          </td>
+          <td class="task-schedule">Sundays 5:30 AM</td>
+          <td>
+            <div class="task-time">—</div>
+            <div class="task-ago"></div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#64748b;color:#1e293b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">NEVER RUN</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><code class="task-cmd">.\rerun.ps1 inspection</code></td>
+        </tr>
+        <tr>
+          <td class="task-id">#9</td>
+          <td>
+            <span class="task-name">Weekly Sales Report</span>
+            
+            <span class="blocked-badge">BLOCKED</span>
+          </td>
+          <td class="task-schedule">Sundays 8:00 PM</td>
+          <td>
+            <div class="task-time">—</div>
+            <div class="task-ago"></div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#f59e0b;color:#1e293b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">BLOCKED</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><span style="color:#475569">—</span></td>
+        </tr>
+        <tr>
+          <td class="task-id">#10</td>
+          <td>
+            <span class="task-name">Wash Forecast</span>
+            
+            
+          </td>
+          <td class="task-schedule">On-demand</td>
+          <td>
+            <div class="task-time">—</div>
+            <div class="task-ago"></div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#64748b;color:#1e293b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">NEVER RUN</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><code class="task-cmd">.\rerun.ps1 forecast</code></td>
+        </tr>
+
+        <tr><td colspan="8" class="tier-header">Tier 4 — Weekly Reports (Monday)</td></tr>
+
+        <tr>
+          <td class="task-id">#11</td>
+          <td>
+            <span class="task-name">Marketing Report</span>
+            
+            
+          </td>
+          <td class="task-schedule">Mondays 1:00 AM</td>
+          <td>
+            <div class="task-time">—</div>
+            <div class="task-ago"></div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#64748b;color:#1e293b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">NEVER RUN</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><code class="task-cmd">.\rerun.ps1 marketing</code></td>
+        </tr>
+        <tr>
+          <td class="task-id">#12</td>
+          <td>
+            <span class="task-name">CEO Insights Report</span>
+            <span class="powerbi-badge">PBI</span>
+            
+          </td>
+          <td class="task-schedule">Mondays 3:00 AM</td>
+          <td>
+            <div class="task-time">2026-03-23 05:10</div>
+            <div class="task-ago">3h ago</div>
+          </td>
+          <td class="task-duration">2.9s</td>
+          <td><span style="background:#10b981;color:#064e3b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">PASS</span></td>
+          <td class="task-steps" title="Generate Report > GitHub Upload > Slack Post">Generate Report > GitHub Upload > Slack Post</td>
+          <td><code class="task-cmd">.\rerun.ps1 ceo</code></td>
+        </tr>
+        <tr>
+          <td class="task-id">#13</td>
+          <td>
+            <span class="task-name">Competitive Briefing</span>
+            
+            
+          </td>
+          <td class="task-schedule">Weekly</td>
+          <td>
+            <div class="task-time">2026-03-22 05:20</div>
+            <div class="task-ago">1d ago</div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#10b981;color:#064e3b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">PASS</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><span style="color:#475569">—</span></td>
+        </tr>
+
+        <tr><td colspan="8" class="tier-header">Tier 5 — Monthly</td></tr>
+
+        <tr>
+          <td class="task-id">#14</td>
+          <td>
+            <span class="task-name">Operations Report (Monthly)</span>
+            <span class="powerbi-badge">PBI</span>
+            
+          </td>
+          <td class="task-schedule">1st of month 5:00 AM</td>
+          <td>
+            <div class="task-time">—</div>
+            <div class="task-ago"></div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#64748b;color:#1e293b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">NEVER RUN</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><code class="task-cmd">.\rerun.ps1 monthly</code></td>
+        </tr>
+        <tr>
+          <td class="task-id">#15</td>
+          <td>
+            <span class="task-name">Incentive Data Push</span>
+            
+            
+          </td>
+          <td class="task-schedule">2nd of month 9:00 AM</td>
+          <td>
+            <div class="task-time">—</div>
+            <div class="task-ago"></div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#64748b;color:#1e293b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">NEVER RUN</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><span style="color:#475569">—</span></td>
+        </tr>
+
+        <tr><td colspan="8" class="tier-header">Tier 6 — Utility / Infrastructure</td></tr>
+
+        <tr>
+          <td class="task-id">#16</td>
+          <td>
+            <span class="task-name">Nightly Index Optimizer</span>
+            
+            
+          </td>
+          <td class="task-schedule">Daily midnight</td>
+          <td>
+            <div class="task-time">2026-03-23 00:05</div>
+            <div class="task-ago">8h ago</div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#ef4444;color:#7f1d1d;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">FAIL</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><span style="color:#475569">—</span></td>
+        </tr>
+        <tr>
+          <td class="task-id">#17</td>
+          <td>
+            <span class="task-name">Portal Update</span>
+            
+            
+          </td>
+          <td class="task-schedule">After report uploads</td>
+          <td>
+            <div class="task-time">—</div>
+            <div class="task-ago"></div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#64748b;color:#1e293b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">NEVER RUN</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><span style="color:#475569">—</span></td>
+        </tr>
+        <tr>
+          <td class="task-id">#18</td>
+          <td>
+            <span class="task-name">Review Response</span>
+            
+            
+          </td>
+          <td class="task-schedule">Manual only</td>
+          <td>
+            <div class="task-time">—</div>
+            <div class="task-ago"></div>
+          </td>
+          <td class="task-duration">—</td>
+          <td><span style="background:#64748b;color:#1e293b;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:0.5px">NEVER RUN</span></td>
+          <td class="task-steps" title="">—</td>
+          <td><span style="color:#475569">—</span></td>
+        </tr>
+
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- Pipeline Dependency Diagram -->
+  <div class="section">
+    <h2>Pipeline Dependencies</h2>
+    <div class="pipeline">
+      
+    <div class="pipe-tier active">
+      <div class="pipe-label">#1 Daily Data Pull</div>
+      <span class="pipe-arrow">&rarr;</span>
+      <div class="pipe-tasks">
+        <div class="pipe-task pass">#4 Morning Briefing</div><div class="pipe-task pass">#5 Coupon Report</div><div class="pipe-task pass">#12 CEO Insights</div><div class="pipe-task ">#11 Marketing Report</div><div class="pipe-task pass">#7 Ops Weekly</div><div class="pipe-task ">#14 Ops Monthly</div>
+      </div>
+    </div>
+  
+    <div class="pipe-tier active">
+      <div class="pipe-label">#2 Weekly Data Collector</div>
+      <span class="pipe-arrow">&rarr;</span>
+      <div class="pipe-tasks">
+        <div class="pipe-task pass">#7 Ops Weekly</div><div class="pipe-task ">#8 Inspection</div><div class="pipe-task ">#11 Marketing Report</div><div class="pipe-task pass">#12 CEO Insights</div><div class="pipe-task ">#15 Incentive Push</div>
+      </div>
+    </div>
+  
+    <div class="pipe-tier active">
+      <div class="pipe-label">#10 Wash Forecast</div>
+      <span class="pipe-arrow">&rarr;</span>
+      <div class="pipe-tasks">
+        <div class="pipe-task pass">#4 Morning Briefing</div><div class="pipe-task pass">#12 CEO Insights</div>
+      </div>
+    </div>
+  
+    <div class="pipe-tier active">
+      <div class="pipe-label">#all All HTML Reports</div>
+      <span class="pipe-arrow">&rarr;</span>
+      <div class="pipe-tasks">
+        <div class="pipe-task ">#17 Portal Update</div>
+      </div>
+    </div>
+  
+    </div>
+  </div>
+
+  <!-- Recent Failures -->
+  <div class="section">
+    <h2>Recent Failures</h2>
+    
+      <div class="failure-card">
+        <div class="fail-task">#16 Nightly Index Optimizer</div>
+        <div class="fail-error">No error message captured</div>
+        <div class="fail-time">2026-03-23 00:05 (nightly-index-optimizer_2026-03-23_00-05-44.log)</div>
+      </div>
+  </div>
+
+  <!-- Upcoming Schedule -->
+  <div class="section">
+    <h2>Upcoming — Next 24 Hours</h2>
+    
+      <div class="upcoming-item">
+        <span class="upcoming-name">#16 Nightly Index Optimizer</span>
+        <span>
+          <span class="upcoming-time">2026-03-24 00:00</span>
+          <span class="upcoming-in">in 14h 57m</span>
+        </span>
+      </div>
+      <div class="upcoming-item">
+        <span class="upcoming-name">#1 Daily Data Pull</span>
+        <span>
+          <span class="upcoming-time">2026-03-24 02:00</span>
+          <span class="upcoming-in">in 16h 57m</span>
+        </span>
+      </div>
+      <div class="upcoming-item">
+        <span class="upcoming-name">#4 Morning Briefing</span>
+        <span>
+          <span class="upcoming-time">2026-03-24 03:30</span>
+          <span class="upcoming-in">in 18h 27m</span>
+        </span>
+      </div>
+      <div class="upcoming-item">
+        <span class="upcoming-name">#6 Daily AI Digest</span>
+        <span>
+          <span class="upcoming-time">2026-03-24 04:30</span>
+          <span class="upcoming-in">in 19h 27m</span>
+        </span>
+      </div>
+      <div class="upcoming-item">
+        <span class="upcoming-name">#5 Daily Coupon Report</span>
+        <span>
+          <span class="upcoming-time">2026-03-24 06:00</span>
+          <span class="upcoming-in">in 20h 57m</span>
+        </span>
+      </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center;padding:20px;color:#475569;font-size:11px">
+    UCWH Pipeline Dashboard v1.0 &mdash; Parallax Holdings &mdash; Generated by generate-task-dashboard.js
+  </div>
+
+</div>
+</body>
+</html>
