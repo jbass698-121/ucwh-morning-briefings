@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tommy's Express - Weekly Report - Week 12</title>
+
+<style>
+  body { font-family: Arial, Helvetica, sans-serif; color: #222; margin: 0; padding: 0; background: #f5f5f5; }
+  .container { max-width: 800px; margin: 0 auto; background: #fff; }
+  .header { background: #8B0000; color: #fff; padding: 28px 32px 20px; text-align: center; }
+  .header h1 { margin: 0 0 4px; font-size: 24px; letter-spacing: 0.5px; }
+  .header .subtitle { font-size: 16px; color: #ffcccc; margin: 0; }
+  .header .week { font-size: 13px; color: #ffaaaa; margin-top: 6px; }
+  .content { padding: 24px 32px; }
+  h2 { color: #8B0000; font-size: 18px; border-bottom: 2px solid #8B0000; padding-bottom: 4px; margin-top: 32px; }
+  h3 { color: #333; font-size: 15px; margin-top: 20px; margin-bottom: 8px; }
+  p { font-size: 14px; line-height: 1.5; color: #333; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 13px; }
+  th { background: #8B0000; color: #fff; padding: 8px 10px; text-align: center; font-weight: 600; font-size: 12px; }
+  td { padding: 6px 10px; text-align: center; border-bottom: 1px solid #e0e0e0; }
+  td.label { text-align: left; font-weight: 600; color: #333; }
+  td.total { font-weight: 700; }
+  .best { background: #C6EFCE !important; }
+  .warn { background: #FFC7CE !important; }
+  .totals-row td { font-weight: 700; border-top: 2px solid #8B0000; }
+  ul, ol { font-size: 14px; line-height: 1.6; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  .up { color: #2E7D32; font-size: 11px; }
+  .down { color: #C62828; font-size: 11px; }
+  .flat { color: #888; }
+  .footer { background: #f0f0f0; padding: 16px 32px; text-align: center; font-size: 11px; color: #888; border-top: 1px solid #ddd; }
+  .kpi-banner { background: #f8f8f8; border: 1px solid #ddd; border-radius: 4px; padding: 14px 20px; margin: 12px 0; display: flex; justify-content: space-around; text-align: center; }
+  .kpi-banner .kpi { flex: 1; }
+  .kpi-banner .kpi-val { font-size: 22px; font-weight: 700; color: #8B0000; }
+  .kpi-banner .kpi-label { font-size: 11px; color: #666; margin-top: 2px; }
+  .ote-green { display: inline-block; background: #dcfce7; color: #166534; border: 1px solid #16a34a; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .ote-yellow { display: inline-block; background: #fef3c7; color: #92400e; border: 1px solid #d97706; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .ote-red { display: inline-block; background: #fee2e2; color: #991b1b; border: 1px solid #dc2626; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .ote-legend { background: #f8f8f8; border: 1px solid #ddd; border-radius: 4px; padding: 10px 16px; margin: 12px 0; font-size: 12px; color: #555; }
+  .ote-legend span { margin-right: 16px; }
+  .ote-scorecard { display: flex; justify-content: space-around; margin: 12px 0; gap: 8px; }
+  .ote-site-card { flex: 1; background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; text-align: center; }
+  .ote-site-card h4 { margin: 0 0 8px; color: #8B0000; font-size: 14px; }
+  .ote-site-card .ote-metric { margin: 4px 0; font-size: 12px; }
+  .ote-badge.ote-gray, .ote-gray { display: inline-block; background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .incentive-site-block { margin: 16px 0 24px; padding: 16px; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 8px; }
+  .incentive-site-block h3 { color: #8B0000; margin: 0 0 12px; font-size: 16px; border-bottom: 1px solid #8B0000; padding-bottom: 4px; }
+  .role-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; margin: 10px 0; overflow: hidden; }
+  .role-header { background: linear-gradient(135deg, #8B0000, #a52a2a); color: #fff; padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; }
+  .role-title { font-weight: 700; font-size: 13px; }
+  .role-comp { font-size: 11px; color: #ffcccc; }
+  .role-metrics { padding: 8px 14px; }
+  .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-row.metric-highlight { background: #fffbeb; padding: 6px 4px; border-radius: 4px; font-weight: 600; }
+  .metric-name { color: #374151; flex: 1; }
+  .metric-weight { color: #9ca3af; font-size: 10px; }
+  .metric-val { text-align: right; font-weight: 600; color: #111; white-space: nowrap; }
+  .ote-orange { display: inline-block; background: #ffedd5; color: #9a3412; border: 1px solid #f97316; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  @media only screen and (max-width: 600px) {
+    .content { padding: 16px; }
+    table { font-size: 11px; }
+    th, td { padding: 4px 6px; }
+    .ote-scorecard { flex-direction: column; }
+    .role-header { flex-direction: column; gap: 2px; }
+    .metric-row { flex-direction: column; gap: 2px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>Tommy's Express Car Wash</h1>
+  <p class="subtitle">Weekly Operations Report</p>
+  <p class="week">Week 12: March 21–27, 2026</p>
+</div>
+
+<div class="content">
+
+<!-- KPI Banner -->
+<div class="kpi-banner">
+  <div class="kpi"><div class="kpi-val">2,185</div><div class="kpi-label">Total Washes</div></div>
+  <div class="kpi"><div class="kpi-val">$13,296.00</div><div class="kpi-label">Gross Revenue</div></div>
+  <div class="kpi"><div class="kpi-val">$6.09</div><div class="kpi-label">Per Wash</div></div>
+  <div class="kpi"><div class="kpi-val">—</div><div class="kpi-label">Net New Members (unavailable)</div></div>
+</div>
+
+<h2>Executive Summary</h2>
+<p>The table below compares key weekly metrics across all three sites. Green cells indicate best performance; red cells highlight areas requiring manager attention.</p>
+<table><thead><tr>
+    <th>Metric</th><th>TX160<br>Houston</th><th>TX190<br>Clear Lake</th><th>UT426<br>Saratoga</th><th>Total / Avg</th>
+  </tr></thead><tbody><tr><td class="label">Total Washes</td><td class="best">997</td><td>736</td><td>452</td><td class="total">2,185</td></tr><tr><td class="label">Gross Sales</td><td class="best">$5,151.00</td><td>$4,209.00</td><td>$3,936.00</td><td class="total">$13,296.00</td></tr><tr><td class="label">Per Wash Rev</td><td class="warn">$5.17</td><td>$5.72</td><td class="best">$8.71</td><td class="total">$6.09</td></tr><tr><td class="label">Coupons Used</td><td class="warn">187</td><td>108</td><td>137</td><td class="total">432</td></tr><tr><td class="label">Coupon Discount</td><td class="warn">$4,251.24</td><td>$2,356.59</td><td>$3,186.76</td><td class="total">$9,794.59</td></tr><tr><td class="label">Open Gate</td><td class="warn">13</td><td class="best">3</td><td>3</td><td class="total">19</td></tr><tr><td class="label">Rewashes</td><td>2</td><td class="best">0</td><td class="warn">3</td><td class="total">5</td></tr><tr><td class="label">Rewash Cost</td><td class="warn">$40.00</td><td>$0.00</td><td>$22.00</td><td class="total">$62.00</td></tr><tr><td class="label">Net New Members</td><td>—</td><td>—</td><td>—</td><td class="total">—</td></tr><tr><td class="label">Gross IC Signups</td><td class="best">0</td><td>0</td><td>0</td><td class="total">0</td></tr><tr><td class="label">IC Revenue</td><td class="best">$0.00</td><td>$0.00</td><td>$0.00</td><td class="total">$0.00</td></tr></tbody></table>
+<p><strong>Combined:</strong> 2,185 total washes | $13,296.00 gross sales | Net new members: data unavailable (requires Power BI membership snapshot)</p>
+<div class="ote-legend">
+  <strong>Incentive Plan KPI Legend:</strong>
+  <span class="ote-green">✓ At/Above Target</span>
+  <span class="ote-yellow">⚠ Below Target (Still Earning)</span>
+  <span class="ote-red">✗ Hard Floor / No Payout</span>
+  &nbsp;| Thresholds from Site Leader, Shift Manager, FD1 &amp; VacCon incentive plans.
+</div><h2>Team Incentive Scorecard</h2>
+  <p>Current performance against incentive plan tier thresholds. <strong>Green</strong> = At/Above Target, <strong>Yellow</strong> = Below Target (still earning), <strong>Red</strong> = Hard Floor ($0). Net new members shown as MTD actual when membership snapshot data is available; otherwise marked "Data Pending". Metrics marked "Data Pending" require the weekly-data-collector to have run successfully (Sunday 2 AM). Check /Data Store/weekly_incentive_data.json.</p>
+  <div class="incentive-site-block"><h3>TX160 — Houston, TX - FM 1960</h3><div class="role-card"><div class="role-header"><span class="role-title">Site Leader — Harold</span><span class="role-comp">Target: $1,213.00/mo</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(35%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(35%)</span></span><span class="metric-val">13.36% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Customer Satisfaction Rating <span class="metric-weight">(15%)</span></span><span class="metric-val">5 <span class="ote-green">✓ 100% On Target</span></span></div><div class="metric-row"><span class="metric-name">Inspection Quality & Completion <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Shift Managers</span><span class="role-comp">Target: $311.75/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(30%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">13.36% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(15%)</span></span><span class="metric-val">5.00% <span class="ote-green">✓ 100% On Target</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate (FD1 Team Avg) <span class="metric-weight">(15%)</span></span><span class="metric-val">0.00% <span class="ote-yellow">⚠ 50% Below Target</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate (FD1 + Vac Con) <span class="metric-weight">(20%)</span></span><span class="metric-val">0.00% <span class="ote-red">✗ 0% Hard Floor</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">FD1 Guest Sales Specialists</span><span class="role-comp">$3.5/member × multipliers (max $7.88)</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Members (Attributed) <span class="metric-weight">(Base)</span></span><span class="metric-val">Per-cashier — see 5Cs below <span class="ote-badge ote-gray">📊 Per Cashier</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate Multiplier</span><span class="metric-val">0.00% → 1x <span class="ote-yellow">⚠ Below Threshold</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate Multiplier</span><span class="metric-val">0.00% → 1x <span class="ote-yellow">⚠ Below Threshold</span></span></div><div class="metric-row metric-highlight"><span class="metric-name">Effective Per-Member Rate</span><span class="metric-val">$3.50/member <span class="ote-red">✗ 1x × 1x</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Vacuum Concierges</span><span class="role-comp">Target: $277.00/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(40%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate <span class="metric-weight">(30%)</span></span><span class="metric-val">0.00% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">13.36% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(10%)</span></span><span class="metric-val">5.00% <span class="ote-green">✓ 100% On Target</span></span></div></div></div></div><div class="incentive-site-block"><h3>TX190 — Clear Lake, TX - El Camino Real</h3><div class="role-card"><div class="role-header"><span class="role-title">Site Leader — Crystal</span><span class="role-comp">Target: $1,040.00/mo</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(35%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(35%)</span></span><span class="metric-val">10.16% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Customer Satisfaction Rating <span class="metric-weight">(15%)</span></span><span class="metric-val">4.84 <span class="ote-green">✓ 100% On Target</span></span></div><div class="metric-row"><span class="metric-name">Inspection Quality & Completion <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Shift Managers</span><span class="role-comp">Target: $311.75/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(30%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">10.16% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(15%)</span></span><span class="metric-val">4.84% <span class="ote-green">✓ 100% On Target</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate (FD1 Team Avg) <span class="metric-weight">(15%)</span></span><span class="metric-val">0.00% <span class="ote-yellow">⚠ 50% Below Target</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate (FD1 + Vac Con) <span class="metric-weight">(20%)</span></span><span class="metric-val">0.00% <span class="ote-red">✗ 0% Hard Floor</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">FD1 Guest Sales Specialists</span><span class="role-comp">$3.5/member × multipliers (max $7.88)</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Members (Attributed) <span class="metric-weight">(Base)</span></span><span class="metric-val">Per-cashier — see 5Cs below <span class="ote-badge ote-gray">📊 Per Cashier</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate Multiplier</span><span class="metric-val">0.00% → 1x <span class="ote-yellow">⚠ Below Threshold</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate Multiplier</span><span class="metric-val">0.00% → 1x <span class="ote-yellow">⚠ Below Threshold</span></span></div><div class="metric-row metric-highlight"><span class="metric-name">Effective Per-Member Rate</span><span class="metric-val">$3.50/member <span class="ote-red">✗ 1x × 1x</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Vacuum Concierges</span><span class="role-comp">Target: $277.00/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(40%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate <span class="metric-weight">(30%)</span></span><span class="metric-val">0.00% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">10.16% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(10%)</span></span><span class="metric-val">4.84% <span class="ote-green">✓ 100% On Target</span></span></div></div></div></div><div class="incentive-site-block"><h3>UT426 — Saratoga Springs, UT - E Crossroads Blvd</h3><div class="role-card"><div class="role-header"><span class="role-title">Shift Managers</span><span class="role-comp">Target: $311.75/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(30%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">12.09% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(15%)</span></span><span class="metric-val">4.00% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate (FD1 Team Avg) <span class="metric-weight">(15%)</span></span><span class="metric-val">0.00% <span class="ote-yellow">⚠ 50% Below Target</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate (FD1 + Vac Con) <span class="metric-weight">(20%)</span></span><span class="metric-val">0.00% <span class="ote-red">✗ 0% Hard Floor</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">FD1 Guest Sales Specialists</span><span class="role-comp">$3.5/member × multipliers (max $7.88)</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Members (Attributed) <span class="metric-weight">(Base)</span></span><span class="metric-val">Per-cashier — see 5Cs below <span class="ote-badge ote-gray">📊 Per Cashier</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate Multiplier</span><span class="metric-val">0.00% → 1x <span class="ote-yellow">⚠ Below Threshold</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate Multiplier</span><span class="metric-val">0.00% → 1x <span class="ote-yellow">⚠ Below Threshold</span></span></div><div class="metric-row metric-highlight"><span class="metric-name">Effective Per-Member Rate</span><span class="metric-val">$3.50/member <span class="ote-red">✗ 1x × 1x</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Vacuum Concierges</span><span class="role-comp">Target: $277.00/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(40%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate <span class="metric-weight">(30%)</span></span><span class="metric-val">0.00% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">12.09% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(10%)</span></span><span class="metric-val">4.00% <span class="ote-yellow">⚠ 50% Minimum</span></span></div></div></div></div><h2>Window Sales KPIs (Rolling 30-Day)</h2><div style="background:#fff3cd;border:2px solid #ffc107;border-radius:6px;padding:12px 16px;margin:8px 0;color:#856404;">
+      <strong>⚠️ Data Quality Warning:</strong> Window Sales KPIs are identical across all sites. This is almost certainly a data collection error — KPIs were likely copied from one site during Power BI scraping. Cross-site comparisons in this section are unreliable. Re-scrape independently per site to fix.
+    </div><p>Rolling 30-day performance across all sites. Green indicates best performance; red indicates worst. Arrows show period-over-period change. <strong>OTE badges</strong> show incentive tier status.</p>
+  <table><thead><tr>
+    <th>KPI</th><th>TX160</th><th>TX190</th><th>UT426</th><th>Best</th><th>Worst</th>
+  </tr></thead><tbody><tr><td class="label">R30D Capture %</td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td class="best">Tied</td><td class="warn">Tied</td></tr><tr><td class="label">R30D NM Capture %</td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td class="best">Tied</td><td class="warn">Tied</td></tr><tr><td class="label">R30D WB Capture %</td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td><td class="best">Tied</td><td class="warn">Tied</td></tr><tr><td class="label">R30D NM Claim %</td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td class="best">Tied</td><td class="warn">Tied</td></tr><tr><td class="label">R30D WB Claim %</td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td><td class="best">Tied</td><td class="warn">Tied</td></tr></tbody></table><h2>Member vs. Retail Wash Mix</h2>
+  <p>Breakdown of club member washes vs. pay-per-wash retail customers. A strong member base (&gt;75%) provides stable recurring revenue.</p>
+  <table><thead><tr>
+    <th>Site</th><th>Total Washes</th><th>Member</th><th>Member %</th><th>Retail</th><th>Health Signal</th>
+  </tr></thead><tbody><tr>
+      <td class="label">TX160</td>
+      <td>997</td><td>683</td>
+      <td class="best">68.5%</td>
+      <td>314</td>
+      <td class="" style="font-weight:bold">Healthy</td>
+    </tr><tr>
+      <td class="label">TX190</td>
+      <td>736</td><td>473</td>
+      <td>64.3%</td>
+      <td>263</td>
+      <td class="warn" style="font-weight:bold">Vulnerable</td>
+    </tr><tr>
+      <td class="label">UT426</td>
+      <td>452</td><td>249</td>
+      <td class="warn">55.1%</td>
+      <td>203</td>
+      <td class="warn" style="font-weight:bold">Vulnerable</td>
+    </tr><tr class="totals-row">
+    <td class="label">COMBINED</td><td>2,185</td><td>1,405</td>
+    <td>64.3%</td><td>780</td><td style="font-weight:bold">Vulnerable</td>
+  </tr></tbody></table><h2>Key Insights &amp; Manager Action Items</h2>
+<ul><li><strong>TX160 High Open Gate Count:</strong> 13 open gate events this week. Investigate whether these are operational necessities (stalls, misloads) or if process improvements can reduce the frequency.</li>
+<li><strong>TX190 Best Practices:</strong> 0 rewashes and lowest coupon usage (108). $5.72 per-wash revenue. This site should be benchmarked for operational discipline.</li>
+<li><strong>TX160 Volume Leader:</strong> Highest washes (997) and gross sales ($5,151.00). Net new member data unavailable.</li>
+<li><strong>Coupon Spending:</strong> $9,794.59 total coupons across all sites (73.7% of combined gross sales of $13,296.00). Evaluate ROI and consider site-specific coupon limits.</li>
+<li><strong>Membership Growth:</strong> Net new member data unavailable — requires Power BI membership snapshot. 0 gross IC plan purchases recorded (includes new signups, renewals, and reactivations — not a net growth metric). IC revenue: $0.00.</li>
+<li><strong>Strongest Membership Base: TX160</strong> at 68.5% member washes (683 of 997). This recurring revenue base protects against weather and traffic variability.</li>
+<li><strong>Membership Opportunity: UT426</strong> at 55.1% member washes — 203 retail washes represent untapped conversion potential.</li>
+<li><strong>Best Cashier Capture: TX160</strong> 0.00% capture rate. Review their techniques with other teams.</li></ul><h2>Cashier 5Cs Cross-Site Summary</h2>
+  <p>High-level comparison of cashier performance metrics across all sites.</p>
+  <table><thead><tr>
+    <th>Site</th><th>Capture %</th><th>Claim %</th><th>Conversion %</th>
+  </tr></thead><tbody><tr>
+      <td class="label">TX160</td>
+      <td class="best">0.00% <span class="ote-red">✗ 50% Below</span></td>
+      <td class="best">0.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td class="best">0.00%</td>
+    </tr><tr>
+      <td class="label">TX190</td>
+      <td>0.00% <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td>0.00%</td>
+    </tr><tr>
+      <td class="label">UT426</td>
+      <td>0.00% <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td>0.00%</td>
+    </tr></tbody></table><h2>Task Compliance &amp; Accountability</h2>
+  <p>Task completion rates across all sites, including opening and closing miss rates.</p>
+  <table><thead><tr>
+    <th>Site</th><th>Task Compl. %</th><th>Opening Miss %</th><th>Closing Miss %</th>
+  </tr></thead><tbody><tr>
+      <td class="label">TX160</td>
+      <td class="best">41.6%</td>
+      <td>0.0%</td>
+      <td>0.0%</td>
+    </tr><tr>
+      <td class="label">TX190</td>
+      <td>40.0%</td>
+      <td>0.0%</td>
+      <td>0.0%</td>
+    </tr><tr>
+      <td class="label">UT426</td>
+      <td class="warn">34.1%</td>
+      <td>0.0%</td>
+      <td>0.0%</td>
+    </tr></tbody></table><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>TX160 &mdash; Houston, TX - FM 1960</h2><p>During Week 12 (March 21–27, 2026), Houston, TX - FM 1960 (TX160) processed
+    <strong>997</strong> total washes generating <strong>$5,151.00</strong> in gross sales
+    ($5.17 per wash). Coupons: 187 used ($4,251.24 discount).
+    13 open gate events. 2 rewashes recorded ($40.00 cost). Net new members: data unavailable. Gross IC plan purchases: 0, IC Revenue: $0.00.</p><h3>Window Sales KPIs (Rolling 30-Day)</h3><p style="color:#856404;font-size:12px;"><em>⚠️ These KPIs may be inaccurate — identical values detected across all sites (possible data copy error).</em></p><table><thead><tr>
+      <th>R30D Capture %</th><th>R30D NM Capture %</th><th>R30D WB Capture %</th><th>R30D NM Claim %</th><th>R30D WB Claim %</th>
+    </tr></thead><tbody><tr>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+    </tr></tbody></table><h3>Member vs. Retail Wash Mix</h3><p>TX160 processed 997 total washes: 683 member (68.5%) and 314 retail (31.5%). Health Signal: <strong>Healthy</strong>.</p><p>Tier breakdown — Works: 468 member / 169 retail (73% member); Ultimate: 80 member / 31 retail (72% member); Super: 36 member / 45 retail (44% member); Quality: 99 member / 69 retail (59% member).</p><h3>Wash Details</h3><table><thead><tr>
+    <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
+  </tr></thead><tbody><tr>
+      <td class="label">Quality Club</td><td>99</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Quality</td><td>69</td><td>0</td>
+      <td>0</td><td>$10.0000</td><td>$690.00</td>
+    </tr><tr>
+      <td class="label">Ultimate</td><td>31</td><td>0</td>
+      <td>0</td><td>$16.0000</td><td>$496.00</td>
+    </tr><tr>
+      <td class="label">Works</td><td>169</td><td>0</td>
+      <td>0</td><td>$20.0000</td><td>$3,380.00</td>
+    </tr><tr>
+      <td class="label">Super</td><td>45</td><td>0</td>
+      <td>0</td><td>$13.0000</td><td>$585.00</td>
+    </tr><tr>
+      <td class="label">Works Club</td><td>468</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Ultimate Club</td><td>80</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Super Club</td><td>36</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Default</td><td>0</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr class="totals-row">
+    <td class="label">TOTAL</td><td>997</td>
+    <td>---</td><td>---</td><td>---</td><td>$5,151.00</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">IC2WORKSTX160</td><td>39</td><td>$662.61</td></tr><tr><td class="label">POLICEFIREMILITARY</td><td>14</td><td>$280.00</td></tr><tr><td class="label">HOUSTONMARCH26</td><td>3</td><td>$76.99</td></tr><tr><td class="label">43SR4F49GWAF</td><td>1</td><td>$20.00</td></tr><tr><td class="label">EWUNRVDAW8WE</td><td>1</td><td>$20.00</td></tr><tr><td class="label">2EV6387STWNG</td><td>1</td><td>$20.00</td></tr><tr><td class="label">JVQF26Y9K62T</td><td>1</td><td>$20.00</td></tr><tr><td class="label">7BP87GPWDXXP</td><td>1</td><td>$20.00</td></tr><tr><td class="label">58MQB5DKV2ZF</td><td>1</td><td>$20.00</td></tr><tr><td class="label">RJ9JZSTJ2KYU</td><td>1</td><td>$36.99</td></tr><tr><td class="label">VQ86JRRHAUUQ</td><td>1</td><td>$36.99</td></tr><tr><td class="label">FY3WNDFNF8D3</td><td>1</td><td>$20.00</td></tr><tr><td class="label">WXDEAV9FNH5N</td><td>1</td><td>$36.99</td></tr><tr><td class="label">Y9YFQJ6AFMU5</td><td>1</td><td>$20.00</td></tr><tr><td class="label">8YNAMEQWRACA</td><td>1</td><td>$20.00</td></tr><tr><td class="label">J4UGURMQ5SZN</td><td>1</td><td>$20.00</td></tr><tr><td class="label">93A7432GKHQM</td><td>1</td><td>$20.00</td></tr><tr><td class="label">DQ7QHNKSETQV</td><td>1</td><td>$20.00</td></tr><tr><td class="label">3U82H592KP7Y</td><td>1</td><td>$36.99</td></tr><tr><td class="label">UZVKV58GQF96</td><td>1</td><td>$20.00</td></tr><tr><td class="label">9DYTM6N48237</td><td>1</td><td>$36.99</td></tr><tr><td class="label">SQWW68NSAQSB</td><td>1</td><td>$36.99</td></tr><tr><td class="label">DT96CM6ZT6TA</td><td>1</td><td>$20.00</td></tr><tr><td class="label">DZD9RQ33WYRT</td><td>1</td><td>$20.00</td></tr><tr><td class="label">C5HZWAUDMQVS</td><td>1</td><td>$20.00</td></tr><tr><td class="label">SAYKTY63QHZN</td><td>1</td><td>$36.99</td></tr><tr><td class="label">XBVSHJSA4T98</td><td>1</td><td>$36.99</td></tr><tr><td class="label">P48QRNSZUC83</td><td>1</td><td>$20.00</td></tr><tr><td class="label">HKG44A28GMZC</td><td>1</td><td>$36.99</td></tr><tr><td class="label">3SJJJY8DCYTG</td><td>1</td><td>$20.00</td></tr><tr><td class="label">T6C9SKPCCB6S</td><td>1</td><td>$20.00</td></tr><tr><td class="label">3JBTUPD9NH35</td><td>1</td><td>$20.00</td></tr><tr><td class="label">FEXPRK5VYUEN</td><td>1</td><td>$20.00</td></tr><tr><td class="label">WAQ3BX45RZNM</td><td>1</td><td>$20.00</td></tr><tr><td class="label">CETE2YWBHBRP</td><td>1</td><td>$20.00</td></tr><tr><td class="label">4D8DR2KGWANC</td><td>1</td><td>$20.00</td></tr><tr><td class="label">WFQPTKDJ7ERW</td><td>1</td><td>$36.99</td></tr><tr><td class="label">4KVYTT86H4Z4</td><td>1</td><td>$36.99</td></tr><tr><td class="label">3K9CQS37XSKP</td><td>1</td><td>$36.99</td></tr><tr><td class="label">MSQN75FE2YVU</td><td>1</td><td>$20.00</td></tr><tr><td class="label">KPT98R988N4G</td><td>1</td><td>$36.99</td></tr><tr><td class="label">5C8GEDFBQ8MJ</td><td>1</td><td>$20.00</td></tr><tr><td class="label">PCVH5KBSZPBG</td><td>1</td><td>$20.00</td></tr><tr><td class="label">QQUKJV792MT7</td><td>1</td><td>$36.99</td></tr><tr><td class="label">2ZDSX3FWPDWM</td><td>1</td><td>$20.00</td></tr><tr><td class="label">XDHXUSWUB62M</td><td>1</td><td>$20.00</td></tr><tr><td class="label">8NMC28NAY77G</td><td>1</td><td>$20.00</td></tr><tr><td class="label">J9359VMUEBQK</td><td>1</td><td>$36.99</td></tr><tr><td class="label">XHSWHFJ5H3X8</td><td>1</td><td>$20.00</td></tr><tr><td class="label">YTQPQHPGY954</td><td>1</td><td>$20.00</td></tr><tr><td class="label">3NFG73YYEXMZ</td><td>1</td><td>$20.00</td></tr><tr><td class="label">H792BSTSM539</td><td>1</td><td>$36.99</td></tr><tr><td class="label">DV8NB24WEY25</td><td>1</td><td>$36.99</td></tr><tr><td class="label">NP4BC6R9WHW9</td><td>1</td><td>$20.00</td></tr><tr><td class="label">PKWHTW7D28HT</td><td>1</td><td>$20.00</td></tr><tr><td class="label">SK34KP33XFJM</td><td>1</td><td>$20.00</td></tr><tr><td class="label">GX4B5GPDJWGJ</td><td>1</td><td>$20.00</td></tr><tr><td class="label">TUNDQEZPGEZE</td><td>1</td><td>$20.00</td></tr><tr><td class="label">N8DVVH9ZAGDD</td><td>1</td><td>$20.00</td></tr><tr><td class="label">SKPFKD2QV3V5</td><td>1</td><td>$20.00</td></tr><tr><td class="label">7NG4ZTRQCHKQ</td><td>2</td><td>$40.00</td></tr><tr><td class="label">TH533KFR5NEP</td><td>1</td><td>$36.99</td></tr><tr><td class="label">2US9UPWHNCRM</td><td>1</td><td>$20.00</td></tr><tr><td class="label">SYXQ93B8T77X</td><td>1</td><td>$20.00</td></tr><tr><td class="label">DRMBR3QPCVW2</td><td>1</td><td>$20.00</td></tr><tr><td class="label">BKS7JASJAPBB</td><td>1</td><td>$20.00</td></tr><tr><td class="label">AXTW77AT25QU</td><td>1</td><td>$20.00</td></tr><tr><td class="label">TRGHWTFY9WAQ</td><td>1</td><td>$20.00</td></tr><tr><td class="label">CZYJG9HWWYBK</td><td>1</td><td>$36.99</td></tr><tr><td class="label">6MPMHKG3QMMQ</td><td>1</td><td>$20.00</td></tr><tr><td class="label">GM6B6MWC33YB</td><td>1</td><td>$20.00</td></tr><tr><td class="label">G4URAHC9RNJ3</td><td>1</td><td>$20.00</td></tr><tr><td class="label">DVHRK66WG26H</td><td>1</td><td>$20.00</td></tr><tr><td class="label">VA87G7FVHPJC</td><td>1</td><td>$20.00</td></tr><tr><td class="label">K3BVTRA7JM7J</td><td>1</td><td>$20.00</td></tr><tr><td class="label">VRUD7C69QP47</td><td>1</td><td>$20.00</td></tr><tr><td class="label">8CX4C6AXC4FJ</td><td>1</td><td>$20.00</td></tr><tr><td class="label">SZX7DHS4X8JB</td><td>1</td><td>$36.99</td></tr><tr><td class="label">8SBTMXT9BM9P</td><td>1</td><td>$20.00</td></tr><tr><td class="label">FPC27Z628REV</td><td>1</td><td>$20.00</td></tr><tr><td class="label">94N8DPHYUF7H</td><td>1</td><td>$20.00</td></tr><tr><td class="label">4KU3VQDPJ3UA</td><td>1</td><td>$20.00</td></tr><tr><td class="label">3ND3HTU4K9ZP</td><td>1</td><td>$36.99</td></tr><tr><td class="label">PVS7RD2QKQFD</td><td>1</td><td>$20.00</td></tr><tr><td class="label">THQR4WAJ3WZ9</td><td>1</td><td>$20.00</td></tr><tr><td class="label">K4MJ8CR2XM97</td><td>1</td><td>$36.99</td></tr><tr><td class="label">NCKYKYHUKPZQ</td><td>1</td><td>$36.99</td></tr><tr><td class="label">6SVH58AA2EN3</td><td>1</td><td>$20.00</td></tr><tr><td class="label">2QSN9JGPAJWY</td><td>1</td><td>$20.00</td></tr><tr><td class="label">5NEGM5R9XFS2</td><td>1</td><td>$20.00</td></tr><tr><td class="label">VFE5NZY4U336</td><td>1</td><td>$36.99</td></tr><tr><td class="label">35ZNZ2VS4EPY</td><td>1</td><td>$36.99</td></tr><tr><td class="label">QMT8ZBR4DMUC</td><td>1</td><td>$20.00</td></tr><tr><td class="label">YZ99ZAQF9PF2</td><td>1</td><td>$36.99</td></tr><tr><td class="label">ZCFGGDAU6ACF</td><td>1</td><td>$36.99</td></tr><tr><td class="label">356YAD6ZMH3X</td><td>1</td><td>$36.99</td></tr><tr><td class="label">DQSSA78VNHG7</td><td>1</td><td>$36.99</td></tr><tr><td class="label">KC8MK8HUE5ZC</td><td>1</td><td>$20.00</td></tr><tr><td class="label">YEAYHDBTHTSG</td><td>1</td><td>$20.00</td></tr><tr><td class="label">4F55C2U3DGJX</td><td>1</td><td>$20.00</td></tr><tr><td class="label">976RY67CSDBD</td><td>1</td><td>$20.00</td></tr><tr><td class="label">SS56JXVY9G92</td><td>1</td><td>$20.00</td></tr><tr><td class="label">RE7Y774UPF3R</td><td>1</td><td>$36.99</td></tr><tr><td class="label">GCAK3HZ9M84V</td><td>1</td><td>$20.00</td></tr><tr><td class="label">G7VPQ3PFSBJD</td><td>1</td><td>$20.00</td></tr><tr><td class="label">B7W6MQ3U2ZMF</td><td>1</td><td>$36.99</td></tr><tr><td class="label">6AWMQCHH5RGX</td><td>1</td><td>$20.00</td></tr><tr><td class="label">MWS5R3KUDGFD</td><td>2</td><td>$73.98</td></tr><tr><td class="label">GTA2DZ8SZETF</td><td>1</td><td>$20.00</td></tr><tr><td class="label">2HUS4NA8FTAC</td><td>1</td><td>$36.99</td></tr><tr><td class="label">W962JHTXEW8S</td><td>1</td><td>$20.00</td></tr><tr><td class="label">YG3TXGZPG2R3</td><td>1</td><td>$20.00</td></tr><tr><td class="label">WCJ6C9FWMCZR</td><td>1</td><td>$20.00</td></tr><tr><td class="label">3E2Q9W44FFJT</td><td>1</td><td>$20.00</td></tr><tr><td class="label">U6EX4SZ4WGR5</td><td>1</td><td>$20.00</td></tr><tr><td class="label">GFRBKJYPY8XW</td><td>1</td><td>$20.00</td></tr><tr><td class="label">DWT59JGTEQEF</td><td>1</td><td>$20.00</td></tr><tr><td class="label">QXQZS8FZJBJZ</td><td>1</td><td>$20.00</td></tr><tr><td class="label">MFDD8HA2YXHG</td><td>1</td><td>$20.00</td></tr><tr><td class="label">F3U2FNZ4QBCT</td><td>1</td><td>$20.00</td></tr><tr><td class="label">GZEGTP7UK6YH</td><td>1</td><td>$20.00</td></tr><tr><td class="label">TYVGETFE8ZUB</td><td>1</td><td>$20.00</td></tr><tr><td class="label">RU96KKV33598</td><td>1</td><td>$20.00</td></tr><tr><td class="label">P9SKE3FV2G88</td><td>1</td><td>$20.00</td></tr><tr><td class="label">EFSY953YW6S8</td><td>1</td><td>$20.00</td></tr><tr><td class="label">RGTVAHT6U4GR</td><td>1</td><td>$20.00</td></tr><tr><td class="label">JXSF6EUSRD9U</td><td>1</td><td>$36.99</td></tr><tr><td class="label">2C8H2TWZEBGN</td><td>1</td><td>$20.00</td></tr><tr><td class="label">7XCVNHQF9C2B</td><td>1</td><td>$20.00</td></tr><tr><td class="label">EDWINGREER</td><td>3</td><td>$76.99</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+    <td>187</td>
+    <td>$4,251.24</td></tr></tbody></table><h3>Open Gate &amp; Rewash Details</h3><p><strong>Open Gate:</strong> 13 (total gate opens from rewash category).</p><p><strong>Rewashes:</strong> 2 — 2 Works ($40.00). Total cost: $40.00</p><h3>Membership</h3><p><strong>Net New Paying Members:</strong> <span style="color:#C62828;">Data Unavailable</span> — Power BI membership snapshot not collected this week.</p><p>Gross IC Plan Purchases: 0 | IC Revenue: $0.00</p><p style="color:#856404;font-size:12px;"><em>Note: Gross plan purchases include new signups, renewals, and reactivations. This is NOT a net growth metric.</em></p><h3>Task Compliance</h3><p>Overall task completion rate: 41.6%
+      (195 completed, 17 expired, 257 pending).
+      Opening miss: 0.0%, Closing miss: 0.0%.</p><table><thead><tr>
+        <th>Day</th><th>Hourly Tasks</th><th>Opening</th><th>Closing</th><th>Day Compl %</th>
+      </tr></thead><tbody><tr>
+          <td class="label">Sat 3/21</td>
+          <td>0/0</td>
+          <td>32/32</td>
+          <td>32/32</td>
+          <td class="best">100%</td>
+        </tr><tr>
+          <td class="label">Sun 3/22</td>
+          <td>0/0</td>
+          <td>32/32</td>
+          <td>31/32</td>
+          <td class="best">98%</td>
+        </tr><tr>
+          <td class="label">Mon 3/23</td>
+          <td>0/0</td>
+          <td>32/32</td>
+          <td>2/32</td>
+          <td class="warn">53%</td>
+        </tr><tr>
+          <td class="label">Tue 3/24</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>1/3</td>
+          <td class="warn">33%</td>
+        </tr><tr>
+          <td class="label">Wed 3/25</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>0/2</td>
+          <td class="warn">0%</td>
+        </tr><tr>
+          <td class="label">Thu 3/26</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>0/1</td>
+          <td class="warn">0%</td>
+        </tr><tr>
+          <td class="label">Fri 3/27</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>0/1</td>
+          <td class="warn">0%</td>
+        </tr></tbody></table><h3>Most Frequently Missed Tasks</h3><ul><li><strong>Clean Flight Deck white walls:</strong> expired 2 out of 7 days</li><li><strong>Clean Combo 1 (Arches, Equipment Arms, and Foaming Inserts):</strong> expired 2 out of 7 days</li><li><strong>Clean Wheel Blasters:</strong> expired 2 out of 7 days</li><li><strong>Clean Rainbow Coat Arch, Lights, and Foaming Inserts:</strong> expired 2 out of 7 days</li><li><strong>Clean Pit Grates (COMBO 1):</strong> expired 2 out of 7 days</li></ul><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>TX190 &mdash; Clear Lake, TX - El Camino Real</h2><p>During Week 12 (March 21–27, 2026), Clear Lake, TX - El Camino Real (TX190) processed
+    <strong>736</strong> total washes generating <strong>$4,209.00</strong> in gross sales
+    ($5.72 per wash). Coupons: 108 used ($2,356.59 discount).
+    3 open gate events. Zero rewashes this week. Net new members: data unavailable. Gross IC plan purchases: 0, IC Revenue: $0.00.</p><h3>Window Sales KPIs (Rolling 30-Day)</h3><p style="color:#856404;font-size:12px;"><em>⚠️ These KPIs may be inaccurate — identical values detected across all sites (possible data copy error).</em></p><table><thead><tr>
+      <th>R30D Capture %</th><th>R30D NM Capture %</th><th>R30D WB Capture %</th><th>R30D NM Claim %</th><th>R30D WB Claim %</th>
+    </tr></thead><tbody><tr>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+    </tr></tbody></table><h3>Member vs. Retail Wash Mix</h3><p>TX190 processed 736 total washes: 473 member (64.3%) and 263 retail (35.7%). Health Signal: <strong>Vulnerable</strong>.</p><p>Tier breakdown — Works: 348 member / 133 retail (72% member); Ultimate: 25 member / 18 retail (58% member); Super: 35 member / 47 retail (43% member); Quality: 65 member / 65 retail (50% member).</p><h3>Wash Details</h3><table><thead><tr>
+    <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
+  </tr></thead><tbody><tr>
+      <td class="label">Quality Club</td><td>65</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Quality</td><td>65</td><td>0</td>
+      <td>0</td><td>$10.0000</td><td>$650.00</td>
+    </tr><tr>
+      <td class="label">Ultimate</td><td>18</td><td>0</td>
+      <td>0</td><td>$16.0000</td><td>$288.00</td>
+    </tr><tr>
+      <td class="label">Works</td><td>133</td><td>0</td>
+      <td>0</td><td>$20.0000</td><td>$2,660.00</td>
+    </tr><tr>
+      <td class="label">Super</td><td>47</td><td>0</td>
+      <td>0</td><td>$13.0000</td><td>$611.00</td>
+    </tr><tr>
+      <td class="label">Works Club</td><td>348</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Ultimate Club</td><td>25</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Super Club</td><td>35</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Vacuum</td><td>0</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Default</td><td>0</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr class="totals-row">
+    <td class="label">TOTAL</td><td>736</td>
+    <td>---</td><td>---</td><td>---</td><td>$4,209.00</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">IC2WORKSTX190</td><td>25</td><td>$424.75</td></tr><tr><td class="label">HOUSTONMARCH26</td><td>5</td><td>$150.97</td></tr><tr><td class="label">STICKY190</td><td>1</td><td>$20.00</td></tr><tr><td class="label">FH37WM2X2EAN</td><td>1</td><td>$20.00</td></tr><tr><td class="label">4ME93457T2CD</td><td>1</td><td>$20.00</td></tr><tr><td class="label">DH4T3PVWSXVR</td><td>1</td><td>$20.00</td></tr><tr><td class="label">FA3QH28TYV6A</td><td>1</td><td>$36.99</td></tr><tr><td class="label">EK9V43HXW8Z5</td><td>1</td><td>$20.00</td></tr><tr><td class="label">N6K7B3X4FZBN</td><td>1</td><td>$36.99</td></tr><tr><td class="label">N49E29PK3E7F</td><td>1</td><td>$36.99</td></tr><tr><td class="label">8YNQKX9M7TQ2</td><td>1</td><td>$36.99</td></tr><tr><td class="label">DJB2AHF2BVPD</td><td>1</td><td>$20.00</td></tr><tr><td class="label">XHUCFB24U8EN</td><td>1</td><td>$20.00</td></tr><tr><td class="label">A24GCDPEDN9D</td><td>1</td><td>$20.00</td></tr><tr><td class="label">TDQW6DSHZZ2B</td><td>1</td><td>$36.99</td></tr><tr><td class="label">Z5FQ729ASPCT</td><td>1</td><td>$36.99</td></tr><tr><td class="label">RWA6ZBJKJE4X</td><td>1</td><td>$36.99</td></tr><tr><td class="label">PRYFERPUP9HU</td><td>1</td><td>$36.99</td></tr><tr><td class="label">29WAXAHVRZSH</td><td>1</td><td>$36.99</td></tr><tr><td class="label">W42P87HEND7P</td><td>1</td><td>$36.99</td></tr><tr><td class="label">7SNE6JPYSSDS</td><td>1</td><td>$20.00</td></tr><tr><td class="label">JFDBVMTQ3M52</td><td>1</td><td>$20.00</td></tr><tr><td class="label">SQRED23HDV9H</td><td>1</td><td>$20.00</td></tr><tr><td class="label">YDSKUAQCDV8P</td><td>1</td><td>$20.00</td></tr><tr><td class="label">YHV4YZM462Q5</td><td>1</td><td>$20.00</td></tr><tr><td class="label">EPMX9XFE9GN4</td><td>1</td><td>$20.00</td></tr><tr><td class="label">XM5Y9PV3AKZY</td><td>1</td><td>$20.00</td></tr><tr><td class="label">XDEMPMVCMWBQ</td><td>1</td><td>$36.99</td></tr><tr><td class="label">UJZ77W5F9AVR</td><td>1</td><td>$20.00</td></tr><tr><td class="label">Z6ZRYG85A6G6</td><td>1</td><td>$36.99</td></tr><tr><td class="label">HGSKQAU8ZFX9</td><td>1</td><td>$20.00</td></tr><tr><td class="label">87GMGR88CJD9</td><td>1</td><td>$20.00</td></tr><tr><td class="label">N8QSHJ5DY9C7</td><td>1</td><td>$20.00</td></tr><tr><td class="label">HSGMY8RZXRQ6</td><td>1</td><td>$20.00</td></tr><tr><td class="label">VDWMBUK992JW</td><td>1</td><td>$20.00</td></tr><tr><td class="label">JMV8AHMC87X7</td><td>1</td><td>$20.00</td></tr><tr><td class="label">7MG9Q93RUCMF</td><td>2</td><td>$56.99</td></tr><tr><td class="label">7XBRC8BA53TX</td><td>1</td><td>$20.00</td></tr><tr><td class="label">CTCCD4K9UCEN</td><td>1</td><td>$20.00</td></tr><tr><td class="label">VDAUBXD8YCXQ</td><td>1</td><td>$20.00</td></tr><tr><td class="label">TZYJD7HKDMN5</td><td>1</td><td>$20.00</td></tr><tr><td class="label">VECA6MA35CPW</td><td>1</td><td>$20.00</td></tr><tr><td class="label">XNYQRYV9U6TY</td><td>1</td><td>$20.00</td></tr><tr><td class="label">PUS8QZAHX596</td><td>1</td><td>$20.00</td></tr><tr><td class="label">852Z9F8N6MBV</td><td>1</td><td>$20.00</td></tr><tr><td class="label">65QXACKMTEZC</td><td>1</td><td>$20.00</td></tr><tr><td class="label">HKEHC8CRS82H</td><td>1</td><td>$20.00</td></tr><tr><td class="label">YKCRJ27Z2AU8</td><td>1</td><td>$20.00</td></tr><tr><td class="label">RM5FFGWQ2MPK</td><td>1</td><td>$20.00</td></tr><tr><td class="label">5FX3J7RVRFZY</td><td>1</td><td>$20.00</td></tr><tr><td class="label">R6897953FE4X</td><td>1</td><td>$20.00</td></tr><tr><td class="label">DHEA9D798CF3</td><td>1</td><td>$20.00</td></tr><tr><td class="label">5GXPBWBHZ4TS</td><td>1</td><td>$20.00</td></tr><tr><td class="label">KUTC6VPTVTWB</td><td>1</td><td>$20.00</td></tr><tr><td class="label">YQE4XM832XTM</td><td>1</td><td>$20.00</td></tr><tr><td class="label">8NAFNFWR8EYD</td><td>1</td><td>$20.00</td></tr><tr><td class="label">UJH7JGUAY7X6</td><td>1</td><td>$20.00</td></tr><tr><td class="label">ST7YN6BQ2PCF</td><td>1</td><td>$20.00</td></tr><tr><td class="label">TWWZFS4W7526</td><td>1</td><td>$20.00</td></tr><tr><td class="label">T5CTPWMGMV78</td><td>1</td><td>$20.00</td></tr><tr><td class="label">ZTRCTBDHNH4Y</td><td>1</td><td>$20.00</td></tr><tr><td class="label">EQW7USBCTGJ8</td><td>1</td><td>$20.00</td></tr><tr><td class="label">J2U39HK4RV9B</td><td>1</td><td>$20.00</td></tr><tr><td class="label">RMG3KTHEZG8K</td><td>1</td><td>$20.00</td></tr><tr><td class="label">W9GY6DH5ZNZN</td><td>1</td><td>$20.00</td></tr><tr><td class="label">M2EFDMCZVKHP</td><td>1</td><td>$20.00</td></tr><tr><td class="label">ZSBMP2S9QZ25</td><td>1</td><td>$20.00</td></tr><tr><td class="label">6EP6FA5GMBC3</td><td>1</td><td>$20.00</td></tr><tr><td class="label">5YUZBRKW76NM</td><td>1</td><td>$20.00</td></tr><tr><td class="label">T9MPTKV33NWC</td><td>1</td><td>$20.00</td></tr><tr><td class="label">74T7Z2TSEBF2</td><td>1</td><td>$20.00</td></tr><tr><td class="label">A7JQ5FX73DVW</td><td>1</td><td>$20.00</td></tr><tr><td class="label">42ZQMJJ8EG5B</td><td>1</td><td>$20.00</td></tr><tr><td class="label">HJDYYW6CY6BH</td><td>1</td><td>$20.00</td></tr><tr><td class="label">4FKMTUQD5RRC</td><td>1</td><td>$20.00</td></tr><tr><td class="label">98657ZF2ZN7F</td><td>1</td><td>$20.00</td></tr><tr><td class="label">N9JR32EDV67M</td><td>1</td><td>$20.00</td></tr><tr><td class="label">TZF63ZBD2MBS</td><td>1</td><td>$20.00</td></tr><tr><td class="label">JFRTX773MF94</td><td>1</td><td>$20.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+    <td>108</td>
+    <td>$2,356.59</td></tr></tbody></table><h3>Open Gate &amp; Rewash Details</h3><p><strong>Open Gate:</strong> 3 (total gate opens from rewash category).</p><p><strong>Rewashes:</strong> None recorded this week.</p><h3>Membership</h3><p><strong>Net New Paying Members:</strong> <span style="color:#C62828;">Data Unavailable</span> — Power BI membership snapshot not collected this week.</p><p>Gross IC Plan Purchases: 0 | IC Revenue: $0.00</p><p style="color:#856404;font-size:12px;"><em>Note: Gross plan purchases include new signups, renewals, and reactivations. This is NOT a net growth metric.</em></p><h3>Task Compliance</h3><p>Overall task completion rate: 40.0%
+      (191 completed, 27 expired, 259 pending).
+      Opening miss: 0.0%, Closing miss: 0.0%.</p><table><thead><tr>
+        <th>Day</th><th>Hourly Tasks</th><th>Opening</th><th>Closing</th><th>Day Compl %</th>
+      </tr></thead><tbody><tr>
+          <td class="label">Sat 3/21</td>
+          <td>0/0</td>
+          <td>33/33</td>
+          <td>34/34</td>
+          <td class="best">100%</td>
+        </tr><tr>
+          <td class="label">Sun 3/22</td>
+          <td>0/0</td>
+          <td>33/33</td>
+          <td>33/34</td>
+          <td class="best">99%</td>
+        </tr><tr>
+          <td class="label">Mon 3/23</td>
+          <td>0/0</td>
+          <td>33/33</td>
+          <td>2/34</td>
+          <td class="warn">52%</td>
+        </tr><tr>
+          <td class="label">Tue 3/24</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>1/3</td>
+          <td class="warn">33%</td>
+        </tr><tr>
+          <td class="label">Wed 3/25</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>0/2</td>
+          <td class="warn">0%</td>
+        </tr><tr>
+          <td class="label">Thu 3/26</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>0/1</td>
+          <td class="warn">0%</td>
+        </tr><tr>
+          <td class="label">Fri 3/27</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>0/1</td>
+          <td class="warn">0%</td>
+        </tr></tbody></table><h3>Most Frequently Missed Tasks</h3><ul><li><strong>Clean Vacuum 5-8 Filters, Red Balls, Arches, Hoses, and Red Ball Trash Liners:</strong> expired 2 out of 7 days</li><li><strong>Clean Rainbow Coat Arch, Lights, Foaming inserts:</strong> expired 2 out of 7 days</li><li><strong>Clean Combo 1 (Arches, Equipment Arms, and Foaming Inserts):</strong> expired 2 out of 7 days</li><li><strong>Clean Wheel Blasters:</strong> expired 2 out of 7 days</li><li><strong>Clean Rainbow Coat Arch, Lights, and Foaming Inserts:</strong> expired 2 out of 7 days</li></ul><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>UT426 &mdash; Saratoga Springs, UT - E Crossroads Blvd</h2><p>During Week 12 (March 21–27, 2026), Saratoga Springs, UT - E Crossroads Blvd (UT426) processed
+    <strong>452</strong> total washes generating <strong>$3,936.00</strong> in gross sales
+    ($8.71 per wash). Coupons: 137 used ($3,186.76 discount).
+    3 open gate events. 3 rewashes recorded ($22.00 cost). Net new members: data unavailable. Gross IC plan purchases: 0, IC Revenue: $0.00.</p><h3>Window Sales KPIs (Rolling 30-Day)</h3><p style="color:#856404;font-size:12px;"><em>⚠️ These KPIs may be inaccurate — identical values detected across all sites (possible data copy error).</em></p><table><thead><tr>
+      <th>R30D Capture %</th><th>R30D NM Capture %</th><th>R30D WB Capture %</th><th>R30D NM Claim %</th><th>R30D WB Claim %</th>
+    </tr></thead><tbody><tr>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 50% Below</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+      <td>0.00% <span class="flat">&ndash;</span> <span class="ote-red">✗ 0% Hard Floor</span></td>
+    </tr></tbody></table><h3>Member vs. Retail Wash Mix</h3><p>UT426 processed 452 total washes: 249 member (55.1%) and 203 retail (44.9%). Health Signal: <strong>Vulnerable</strong>.</p><p>Tier breakdown — Works: 181 member / 144 retail (56% member); Ultimate: 12 member / 7 retail (63% member); Super: 24 member / 14 retail (63% member); Quality: 32 member / 38 retail (46% member).</p><h3>Wash Details</h3><table><thead><tr>
+    <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
+  </tr></thead><tbody><tr>
+      <td class="label">Quality Club</td><td>32</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Quality</td><td>38</td><td>0</td>
+      <td>0</td><td>$11.0000</td><td>$418.00</td>
+    </tr><tr>
+      <td class="label">Ultimate</td><td>7</td><td>0</td>
+      <td>0</td><td>$20.0000</td><td>$140.00</td>
+    </tr><tr>
+      <td class="label">Works</td><td>144</td><td>0</td>
+      <td>0</td><td>$22.0000</td><td>$3,168.00</td>
+    </tr><tr>
+      <td class="label">Super</td><td>14</td><td>0</td>
+      <td>0</td><td>$15.0000</td><td>$210.00</td>
+    </tr><tr>
+      <td class="label">Works Club</td><td>181</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Ultimate Club</td><td>12</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Super Club</td><td>24</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Default</td><td>0</td><td>0</td>
+      <td>0</td><td>$0.0000</td><td>$0.00</td>
+    </tr><tr class="totals-row">
+    <td class="label">TOTAL</td><td>452</td>
+    <td>---</td><td>---</td><td>---</td><td>$3,936.00</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">IC2WORKSUT426</td><td>4</td><td>$55.96</td></tr><tr><td class="label">Y6369E6TZXZX</td><td>1</td><td>$35.99</td></tr><tr><td class="label">MEFNMD5XY9QW</td><td>1</td><td>$22.00</td></tr><tr><td class="label">STREETCARDS426</td><td>8</td><td>$176.00</td></tr><tr><td class="label">IC2SUPER426</td><td>3</td><td>$32.97</td></tr><tr><td class="label">HESY2S8X4AXA</td><td>1</td><td>$22.00</td></tr><tr><td class="label">ETMTWCN9PB6T</td><td>1</td><td>$22.00</td></tr><tr><td class="label">5KSMTY7JT7AY</td><td>1</td><td>$22.00</td></tr><tr><td class="label">NUYXFCQMPSQ2</td><td>1</td><td>$22.00</td></tr><tr><td class="label">AH3KFWKAFCEC</td><td>1</td><td>$22.00</td></tr><tr><td class="label">8QFKZHXWHYBZ</td><td>1</td><td>$22.00</td></tr><tr><td class="label">NXNSFTETMBFW</td><td>1</td><td>$22.00</td></tr><tr><td class="label">FA45G58JCVYX</td><td>1</td><td>$35.99</td></tr><tr><td class="label">UYMA2F6BM453</td><td>1</td><td>$22.00</td></tr><tr><td class="label">HFFTKH7P8VFF</td><td>1</td><td>$22.00</td></tr><tr><td class="label">44DNB4N9PN5G</td><td>1</td><td>$22.00</td></tr><tr><td class="label">PRDW8UDV7MHR</td><td>1</td><td>$22.00</td></tr><tr><td class="label">VZWF4NTF4V96</td><td>1</td><td>$22.00</td></tr><tr><td class="label">2DHC79EJD5NG</td><td>1</td><td>$22.00</td></tr><tr><td class="label">NEY2NXC8TGUM</td><td>1</td><td>$35.99</td></tr><tr><td class="label">2DCTGPZYBVUT</td><td>1</td><td>$22.00</td></tr><tr><td class="label">D7U5BBU5G2MA</td><td>1</td><td>$22.00</td></tr><tr><td class="label">V5DHZQEX2BZN</td><td>1</td><td>$22.00</td></tr><tr><td class="label">SQXTW7W4TRFY</td><td>1</td><td>$22.00</td></tr><tr><td class="label">W4TZUUMA7BFU</td><td>1</td><td>$22.00</td></tr><tr><td class="label">3SDPG9VQJQ34</td><td>1</td><td>$22.00</td></tr><tr><td class="label">YVXX383ZQ4K4</td><td>1</td><td>$22.00</td></tr><tr><td class="label">TFBA9Y8UDBTM</td><td>1</td><td>$35.99</td></tr><tr><td class="label">VNQJP8JUSFUW</td><td>1</td><td>$35.99</td></tr><tr><td class="label">SUZ2VEUJM6N6</td><td>1</td><td>$35.99</td></tr><tr><td class="label">7B4FAB37656R</td><td>1</td><td>$22.00</td></tr><tr><td class="label">HY2HGHRC4596</td><td>1</td><td>$22.00</td></tr><tr><td class="label">JNWT3MZUQVT4</td><td>1</td><td>$22.00</td></tr><tr><td class="label">DYTW9JHVWTAP</td><td>1</td><td>$22.00</td></tr><tr><td class="label">VP4JGD72VA5M</td><td>1</td><td>$35.99</td></tr><tr><td class="label">ZHGN9PGBDY34</td><td>1</td><td>$22.00</td></tr><tr><td class="label">RQ8B4JTGVD3G</td><td>1</td><td>$22.00</td></tr><tr><td class="label">QNDS8YH8ZUND</td><td>1</td><td>$22.00</td></tr><tr><td class="label">3PW4MPBQBKYU</td><td>1</td><td>$22.00</td></tr><tr><td class="label">MQKTHKQJX3HK</td><td>1</td><td>$35.99</td></tr><tr><td class="label">22RS6TZ7G8VR</td><td>1</td><td>$22.00</td></tr><tr><td class="label">BQYZ3BFYEQDU</td><td>1</td><td>$22.00</td></tr><tr><td class="label">6UWVTKFA4WU7</td><td>1</td><td>$35.99</td></tr><tr><td class="label">JGHJE5B5ZPAZ</td><td>1</td><td>$22.00</td></tr><tr><td class="label">C748BBWNKVMD</td><td>1</td><td>$35.99</td></tr><tr><td class="label">E744PGRDHSYW</td><td>1</td><td>$35.99</td></tr><tr><td class="label">7Z2FDPBEHJED</td><td>1</td><td>$22.00</td></tr><tr><td class="label">NMJKSK77SX7R</td><td>1</td><td>$22.00</td></tr><tr><td class="label">3W7FQHFFEJN3</td><td>1</td><td>$22.00</td></tr><tr><td class="label">ZVKNFAMVDMEF</td><td>1</td><td>$22.00</td></tr><tr><td class="label">ZA4XAAPYRHVU</td><td>1</td><td>$22.00</td></tr><tr><td class="label">2TGZD5BGTEGC</td><td>1</td><td>$22.00</td></tr><tr><td class="label">EQSK7WAZ78K7</td><td>1</td><td>$22.00</td></tr><tr><td class="label">C85BSR37CSB8</td><td>1</td><td>$22.00</td></tr><tr><td class="label">FUG6X6BQTUBW</td><td>1</td><td>$22.00</td></tr><tr><td class="label">6ECZXJHZDUX6</td><td>1</td><td>$22.00</td></tr><tr><td class="label">T38MYPKSWJ3Q</td><td>1</td><td>$22.00</td></tr><tr><td class="label">WM2WVXX8H4QF</td><td>1</td><td>$22.00</td></tr><tr><td class="label">RCN8ZQ2FDUC3</td><td>1</td><td>$35.99</td></tr><tr><td class="label">NHM486E4V4R4</td><td>1</td><td>$22.00</td></tr><tr><td class="label">SE8PSVPZXQ2E</td><td>1</td><td>$22.00</td></tr><tr><td class="label">5HEBKE3PYBG3</td><td>1</td><td>$22.00</td></tr><tr><td class="label">6J63Z4BVXKTB</td><td>1</td><td>$22.00</td></tr><tr><td class="label">UJXVK3QWKV56</td><td>1</td><td>$22.00</td></tr><tr><td class="label">HNUP4EJARTYP</td><td>1</td><td>$22.00</td></tr><tr><td class="label">NBJBP6UVEMTN</td><td>1</td><td>$22.00</td></tr><tr><td class="label">NE5FX3RRP7SN</td><td>1</td><td>$22.00</td></tr><tr><td class="label">WE272S39BSFR</td><td>1</td><td>$22.00</td></tr><tr><td class="label">AP5ZF2ZE2G2D</td><td>1</td><td>$35.99</td></tr><tr><td class="label">ANVFRUYDX3BT</td><td>1</td><td>$22.00</td></tr><tr><td class="label">V2KRB9GUBP5R</td><td>1</td><td>$22.00</td></tr><tr><td class="label">2QYVC5BDE6W3</td><td>1</td><td>$22.00</td></tr><tr><td class="label">S6AG2NTQY5YT</td><td>1</td><td>$22.00</td></tr><tr><td class="label">DG8AE33NCV6F</td><td>1</td><td>$22.00</td></tr><tr><td class="label">992J3ENVZ4B3</td><td>1</td><td>$35.99</td></tr><tr><td class="label">6RP3FTPTHCF3</td><td>1</td><td>$22.00</td></tr><tr><td class="label">PP4BNNAX8GCT</td><td>1</td><td>$22.00</td></tr><tr><td class="label">44UBRP4AB264</td><td>1</td><td>$22.00</td></tr><tr><td class="label">AFVV8XRGDFEF</td><td>1</td><td>$22.00</td></tr><tr><td class="label">VK6QX8NHTEJY</td><td>1</td><td>$22.00</td></tr><tr><td class="label">8AA9KGVB7RDC</td><td>1</td><td>$22.00</td></tr><tr><td class="label">E2ZU24XQ3DHD</td><td>1</td><td>$22.00</td></tr><tr><td class="label">SA6MHUEMGWNB</td><td>1</td><td>$22.00</td></tr><tr><td class="label">ERGDY8CBXHDW</td><td>1</td><td>$22.00</td></tr><tr><td class="label">SFZCVX7AC2KC</td><td>1</td><td>$22.00</td></tr><tr><td class="label">B727ABU9G9NF</td><td>1</td><td>$22.00</td></tr><tr><td class="label">R6HQX65GBYNB</td><td>1</td><td>$22.00</td></tr><tr><td class="label">GVK5VKZD43A8</td><td>1</td><td>$35.99</td></tr><tr><td class="label">3ECD5E9EY8GU</td><td>1</td><td>$22.00</td></tr><tr><td class="label">VFMG98HQRHC9</td><td>1</td><td>$22.00</td></tr><tr><td class="label">SSPMGWESHDJF</td><td>1</td><td>$22.00</td></tr><tr><td class="label">XY52T86XPDVT</td><td>1</td><td>$22.00</td></tr><tr><td class="label">E7SYJQEU24XK</td><td>1</td><td>$22.00</td></tr><tr><td class="label">Z323YAVANFBT</td><td>1</td><td>$22.00</td></tr><tr><td class="label">TNP6GJWDQUKY</td><td>1</td><td>$22.00</td></tr><tr><td class="label">NXD84MS76PJ7</td><td>1</td><td>$22.00</td></tr><tr><td class="label">ZYQS8VSCM3CM</td><td>1</td><td>$22.00</td></tr><tr><td class="label">9ZPHT9EUS9JX</td><td>1</td><td>$22.00</td></tr><tr><td class="label">5FG7MEHW9QNK</td><td>1</td><td>$22.00</td></tr><tr><td class="label">EEP9TTP23V7V</td><td>1</td><td>$22.00</td></tr><tr><td class="label">EJ5XCGR5JSVE</td><td>1</td><td>$22.00</td></tr><tr><td class="label">65SS37EYEP4T</td><td>1</td><td>$22.00</td></tr><tr><td class="label">D6TWZRSNZR3E</td><td>1</td><td>$22.00</td></tr><tr><td class="label">DQJSAMD9Y5G7</td><td>1</td><td>$22.00</td></tr><tr><td class="label">6WUK38UYQ4P8</td><td>1</td><td>$22.00</td></tr><tr><td class="label">VMPY5XVYMD8U</td><td>1</td><td>$22.00</td></tr><tr><td class="label">Y8HZADSPRT2V</td><td>1</td><td>$22.00</td></tr><tr><td class="label">NDFVG58B9HSZ</td><td>1</td><td>$22.00</td></tr><tr><td class="label">X4FBVU33NPV6</td><td>1</td><td>$35.99</td></tr><tr><td class="label">DQAXNED654DT</td><td>1</td><td>$22.00</td></tr><tr><td class="label">QQ3N4S8GXSWW</td><td>1</td><td>$22.00</td></tr><tr><td class="label">47H2W545TEJJ</td><td>1</td><td>$22.00</td></tr><tr><td class="label">55XCJYE4W6BR</td><td>1</td><td>$22.00</td></tr><tr><td class="label">7JJRKH5ZYK3C</td><td>1</td><td>$22.00</td></tr><tr><td class="label">JYF58GM9V38N</td><td>1</td><td>$22.00</td></tr><tr><td class="label">BBDYYQEVKDK3</td><td>1</td><td>$35.99</td></tr><tr><td class="label">4EGCJJTKYPST</td><td>1</td><td>$22.00</td></tr><tr><td class="label">ZD3DR9DNFPXZ</td><td>1</td><td>$22.00</td></tr><tr><td class="label">5SEXA5UTZ9FA</td><td>1</td><td>$22.00</td></tr><tr><td class="label">5FUPHYE7VG26</td><td>1</td><td>$22.00</td></tr><tr><td class="label">6QSDKK7XNU52</td><td>1</td><td>$22.00</td></tr><tr><td class="label">Q3GJUP9XWDQA</td><td>1</td><td>$22.00</td></tr><tr><td class="label">9JJJMSGZ4ZJ3</td><td>1</td><td>$22.00</td></tr><tr><td class="label">4MRZEJQ3YGJ3</td><td>1</td><td>$22.00</td></tr><tr><td class="label">R72EPHXPXRWE</td><td>1</td><td>$22.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+    <td>137</td>
+    <td>$3,186.76</td></tr></tbody></table><h3>Open Gate &amp; Rewash Details</h3><p><strong>Open Gate:</strong> 3 (total gate opens from rewash category).</p><p><strong>Rewashes:</strong> 3 — 1 Works ($22.00), 2 Works Club. Total cost: $22.00</p><h3>Membership</h3><p><strong>Net New Paying Members:</strong> <span style="color:#C62828;">Data Unavailable</span> — Power BI membership snapshot not collected this week.</p><p>Gross IC Plan Purchases: 0 | IC Revenue: $0.00</p><p style="color:#856404;font-size:12px;"><em>Note: Gross plan purchases include new signups, renewals, and reactivations. This is NOT a net growth metric.</em></p><h3>Task Compliance</h3><p>Overall task completion rate: 34.1%
+      (168 completed, 14 expired, 309 pending).
+      Opening miss: 0.0%, Closing miss: 0.0%.</p><table><thead><tr>
+        <th>Day</th><th>Hourly Tasks</th><th>Opening</th><th>Closing</th><th>Day Compl %</th>
+      </tr></thead><tbody><tr>
+          <td class="label">Sat 3/21</td>
+          <td>0/0</td>
+          <td>35/35</td>
+          <td>31/34</td>
+          <td class="best">96%</td>
+        </tr><tr>
+          <td class="label">Sun 3/22</td>
+          <td>0/0</td>
+          <td>35/35</td>
+          <td>31/34</td>
+          <td class="best">96%</td>
+        </tr><tr>
+          <td class="label">Mon 3/23</td>
+          <td>0/0</td>
+          <td>0/35</td>
+          <td>0/34</td>
+          <td class="warn">0%</td>
+        </tr><tr>
+          <td class="label">Tue 3/24</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>0/3</td>
+          <td class="warn">0%</td>
+        </tr><tr>
+          <td class="label">Wed 3/25</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>0/2</td>
+          <td class="warn">0%</td>
+        </tr><tr>
+          <td class="label">Thu 3/26</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>0/1</td>
+          <td class="warn">0%</td>
+        </tr><tr>
+          <td class="label">Fri 3/27</td>
+          <td>0/0</td>
+          <td>0/0</td>
+          <td>0/1</td>
+          <td class="warn">0%</td>
+        </tr></tbody></table><h3>Most Frequently Missed Tasks</h3><ul><li><strong>Clean Front and Rear Bumper Blaster Manifold:</strong> expired 1 out of 7 days</li><li><strong>Clean Pit Grates (ENTRANCE SECTION OF WASH UP TO COMBO 1):</strong> expired 1 out of 7 days</li><li><strong>Clean Presoak Arch and Foaming Inserts:</strong> expired 1 out of 7 days</li><li><strong>Clean all Interior Wash Bay Windows:</strong> expired 1 out of 7 days</li><li><strong>Clean all Man Doors in Wash Bay :</strong> expired 1 out of 7 days</li></ul><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;">
+<h2>Strategic Recommendations</h2>
+<ol><li><strong>Coupon ROI Analysis:</strong> $9,794.59 in total coupon discounts represents 73.7% of combined gross sales. Evaluate whether campaigns drive incremental volume or simply discount existing customers.</li>
+<li><strong>Benchmark TX190 Operations:</strong> TX190's operational metrics are best-in-class. Document their procedures and create a formal best practices guide for all sites.</li>
+<li><strong>Membership Data Gap:</strong> Net new member count is unavailable because the Power BI membership snapshot was not collected. Without this, we cannot measure true member growth. Action: ensure the weekly data collection includes the Membership page KPIs (Paying Members card, visual 262b6bab5d46ad15736c).</li>
+<li><strong>Weekly Monitoring:</strong> Track rewash rate, coupon-to-gross ratio, and per-wash revenue weekly. Establish site-specific targets and accountability.</li></ol>
+</div><!-- /.content -->
+
+<div class="footer">
+  Tommy's Express Car Wash &mdash; Confidential, Internal Use Only<br>
+  Generated 2026-03-23
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>
