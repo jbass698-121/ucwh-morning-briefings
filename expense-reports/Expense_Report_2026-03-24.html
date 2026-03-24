@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCWH Daily Expense Report — March 24, 2026</title>
+<style>
+  :root {
+    --bg: #0f172a; --surface: #1e293b; --surface2: #334155;
+    --text: #f1f5f9; --muted: #94a3b8; --accent: #38bdf8;
+    --green: #4ade80; --red: #f87171; --yellow: #fbbf24;
+    --orange: #fb923c; --border: #475569;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .header { text-align: center; padding: 30px 0 20px; border-bottom: 2px solid var(--accent); margin-bottom: 30px; }
+  .header h1 { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+  .header .subtitle { color: var(--muted); font-size: 0.95rem; margin-top: 4px; }
+  .header .entity { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+
+  /* Executive Summary */
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 30px; }
+  .stat-card { background: var(--surface); border-radius: 12px; padding: 20px; text-align: center; border: 1px solid var(--border); }
+  .stat-card .value { font-size: 2rem; font-weight: 700; }
+  .stat-card .label { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+  .stat-card.red .value { color: var(--red); }
+  .stat-card.yellow .value { color: var(--yellow); }
+  .stat-card.green .value { color: var(--green); }
+  .stat-card.blue .value { color: var(--accent); }
+
+  .section { margin-bottom: 36px; }
+  .section-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .section-title .icon { font-size: 1.1rem; }
+
+  /* Person cards */
+  .person-card { background: var(--surface); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+  .person-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .person-name { font-size: 1.15rem; font-weight: 600; }
+  .person-total { font-size: 1.15rem; font-weight: 700; color: var(--accent); }
+  .person-meta { color: var(--muted); font-size: 0.8rem; }
+
+  .card-group { margin-bottom: 12px; }
+  .card-label { font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .card-label .chip { background: var(--surface2); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { text-align: left; padding: 8px 10px; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--border); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 8px 10px; border-bottom: 1px solid rgba(71,85,105,0.4); }
+  tr.flag-red { background: rgba(248,113,113,0.08); }
+  tr.flag-red td:first-child { border-left: 3px solid var(--red); }
+  tr.flag-yellow { background: rgba(251,191,36,0.08); }
+  tr.flag-yellow td:first-child { border-left: 3px solid var(--yellow); }
+  .amount { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+  .amount.negative { color: var(--green); }
+  .flag-badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+  .flag-badge.red { background: rgba(248,113,113,0.2); color: var(--red); }
+  .flag-badge.yellow { background: rgba(251,191,36,0.2); color: var(--yellow); }
+
+  /* Budget bars */
+  .budget-item { background: var(--surface); border-radius: 10px; padding: 16px; margin-bottom: 10px; border: 1px solid var(--border); }
+  .budget-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+  .budget-name { font-weight: 600; }
+  .budget-numbers { color: var(--muted); font-size: 0.82rem; }
+  .bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; transition: width 0.6s ease; }
+  .bar-fill.low { background: var(--green); }
+  .bar-fill.mid { background: var(--yellow); }
+  .bar-fill.high { background: var(--orange); }
+  .bar-fill.crit { background: var(--red); }
+  .budget-pct { text-align: right; font-size: 0.82rem; font-weight: 600; margin-top: 4px; }
+
+  /* Trends */
+  .trend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .trend-grid { grid-template-columns: 1fr; } }
+  .trend-card { background: var(--surface); border-radius: 10px; padding: 16px; border: 1px solid var(--border); }
+  .trend-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(71,85,105,0.3); font-size: 0.88rem; }
+  .trend-row:last-child { border-bottom: none; }
+  .trend-label { color: var(--muted); }
+  .trend-arrow.up { color: var(--red); }
+  .trend-arrow.down { color: var(--green); }
+  .trend-arrow.flat { color: var(--muted); }
+
+  /* Category chart */
+  .cat-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; font-size: 0.88rem; }
+  .cat-label { width: 160px; text-align: right; color: var(--muted); flex-shrink: 0; }
+  .cat-bar-track { flex: 1; height: 22px; background: var(--surface2); border-radius: 4px; overflow: hidden; position: relative; }
+  .cat-bar-fill { height: 100%; border-radius: 4px; background: var(--accent); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 0.75rem; font-weight: 600; color: var(--bg); min-width: 50px; }
+  .cat-amount { width: 90px; text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; }
+
+  .footer { text-align: center; padding: 20px 0; color: var(--muted); font-size: 0.78rem; border-top: 1px solid var(--border); margin-top: 30px; }
+  .ts { font-size: 0.72rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Daily Expense Report</h1>
+  <div class="subtitle">March 24, 2026 — Month-to-Date</div>
+  <div class="entity">United CarWash Holding, LLC</div>
+</div>
+
+<!-- SECTION 1: EXECUTIVE SUMMARY -->
+<div class="section">
+  <div class="section-title"><span class="icon">📋</span> Executive Summary</div>
+  <div class="summary-grid">
+    <div class="stat-card blue">
+      <div class="value">$4,363.49</div>
+      <div class="label">MTD Total Spend</div>
+    </div>
+    <div class="stat-card">
+      <div class="value" style="color:var(--text)">26</div>
+      <div class="label">Transactions</div>
+    </div>
+    <div class="stat-card red">
+      <div class="value">2</div>
+      <div class="label">Violations</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="value">5</div>
+      <div class="label">Suspicious</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: PER-PERSON BREAKDOWN -->
+<div class="section">
+  <div class="section-title"><span class="icon">👤</span> Per-Person Breakdown</div>
+
+  <!-- JASON BASS -->
+  <div class="person-card">
+    <div class="person-header">
+      <div>
+        <div class="person-name">Jason Bass</div>
+        <div class="person-meta">Administration · 19 transactions</div>
+      </div>
+      <div class="person-total">$2,540.20</div>
+    </div>
+
+    <!-- AI API Keys card -->
+    <div class="card-group">
+      <div class="card-label">💳 AI API Keys <span class="chip">•••5228 · Virtual</span> <span class="chip">Fund: AI Tools</span></div>
+      <table>
+        <tr><th>Date</th><th>Vendor</th><th>Category</th><th>Memo</th><th>Flags</th><th class="amount">Amount</th></tr>
+        <tr><td>Mar 5</td><td>Slack</td><td>SaaS / Software</td><td>—</td><td></td><td class="amount">$9.67</td></tr>
+        <tr class="flag-yellow"><td>Mar 24</td><td>Anthropic</td><td>SaaS / Software</td><td>—</td><td><span class="flag-badge yellow">No memo ≥$100</span></td><td class="amount">$107.45</td></tr>
+      </table>
+    </div>
+
+    <!-- Quick Books Online card -->
+    <div class="card-group">
+      <div class="card-label">💳 Quick Books Online <span class="chip">•••0444 · Virtual</span> <span class="chip">Fund: QuickBooks Online</span></div>
+      <table>
+        <tr><th>Date</th><th>Vendor</th><th>Category</th><th>Memo</th><th>Flags</th><th class="amount">Amount</th></tr>
+        <tr><td>Mar 5</td><td>Intuit</td><td>SaaS / Software</td><td>—</td><td></td><td class="amount">$17.03</td></tr>
+        <tr><td>Mar 17</td><td>Intuit</td><td>SaaS / Software</td><td>—</td><td></td><td class="amount">$80.59</td></tr>
+        <tr class="flag-yellow"><td>Mar 18</td><td>Intuit</td><td>SaaS / Software</td><td>—</td><td><span class="flag-badge yellow">Duplicate</span></td><td class="amount">$56.41</td></tr>
+        <tr class="flag-yellow"><td>Mar 18</td><td>Intuit</td><td>SaaS / Software</td><td>—</td><td><span class="flag-badge yellow">Duplicate</span></td><td class="amount">$56.41</td></tr>
+        <tr><td>Mar 24</td><td>Intuit</td><td>SaaS / Software</td><td>—</td><td></td><td class="amount">$80.59</td></tr>
+      </table>
+    </div>
+
+    <!-- General Expenses card -->
+    <div class="card-group">
+      <div class="card-label">💳 General Expenses <span class="chip">•••3881 · Physical</span> <span class="chip">Fund: General Expenses</span></div>
+      <table>
+        <tr><th>Date</th><th>Vendor</th><th>Category</th><th>Memo</th><th>Flags</th><th class="amount">Amount</th></tr>
+        <tr><td>Mar 3</td><td>Netlify</td><td>SaaS / Software</td><td>—</td><td></td><td class="amount">$9.59</td></tr>
+        <tr><td>Mar 5</td><td>Fast by Mediafire</td><td>SaaS / Software</td><td>—</td><td></td><td class="amount">$10.83</td></tr>
+        <tr><td>Mar 6</td><td>fireflies.ai</td><td>SaaS / Software</td><td>Annual meeting recording subscription 2 users</td><td></td><td class="amount">$456.00</td></tr>
+        <tr><td>Mar 12</td><td>Walmart</td><td>General Merchandise</td><td>—</td><td></td><td class="amount">$21.52</td></tr>
+        <tr class="flag-yellow"><td>Mar 13</td><td>United Airlines</td><td>Airlines</td><td>Airfare for Jason Bass: IAH to SLC</td><td><span class="flag-badge yellow">≥$500</span></td><td class="amount">$776.81</td></tr>
+        <tr><td>Mar 15</td><td>fireflies.ai</td><td>SaaS / Software</td><td>—</td><td></td><td class="amount">$5.00</td></tr>
+        <tr><td>Mar 16</td><td>Goode Company BBQ</td><td>Restaurants</td><td>—</td><td></td><td class="amount">$47.09</td></tr>
+        <tr class="flag-yellow"><td>Mar 18</td><td>Intuit</td><td>SaaS / Software</td><td>—</td><td><span class="flag-badge yellow">Duplicate</span></td><td class="amount">$56.41</td></tr>
+        <tr><td>Mar 19</td><td>Netlify</td><td>SaaS / Software</td><td>—</td><td></td><td class="amount">$5.33</td></tr>
+        <tr><td>Mar 19</td><td>Netlify</td><td>SaaS / Software</td><td>—</td><td></td><td class="amount">$10.66</td></tr>
+        <tr><td>Mar 19</td><td>Int'l Carwash Assoc.</td><td>Car services</td><td>National car wash trade show</td><td></td><td class="amount">$378.00</td></tr>
+      </table>
+    </div>
+
+    <!-- Blitz Trip card -->
+    <div class="card-group">
+      <div class="card-label">💳 Blitz Trip <span class="chip">•••6028 · Virtual</span> <span class="chip">Fund: Blitz Trip</span></div>
+      <table>
+        <tr><th>Date</th><th>Vendor</th><th>Category</th><th>Memo</th><th>Flags</th><th class="amount">Amount</th></tr>
+        <tr><td>Mar 18</td><td>United Airlines</td><td>Airlines</td><td>Airfare for Blitz Trip</td><td></td><td class="amount">$354.81</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- EDWIN GREER -->
+  <div class="person-card">
+    <div class="person-header">
+      <div>
+        <div class="person-name">Edwin Greer</div>
+        <div class="person-meta">Administration · 7 transactions</div>
+      </div>
+      <div class="person-total">$1,823.29</div>
+    </div>
+
+    <div class="card-group">
+      <div class="card-label">💳 General <span class="chip">•••3070 · Physical</span> <span class="chip">Fund: General Expenses</span></div>
+      <table>
+        <tr><th>Date</th><th>Vendor</th><th>Category</th><th>Memo</th><th>Flags</th><th class="amount">Amount</th></tr>
+        <tr class="flag-yellow"><td>Mar 12</td><td>Hertz</td><td>Car Rental</td><td>Rental car for business travel</td><td><span class="flag-badge yellow">≥$500</span></td><td class="amount">$538.79</td></tr>
+        <tr><td>Mar 13</td><td>United Airlines</td><td>Airlines</td><td>Airfare for business travel</td><td></td><td class="amount">$173.99</td></tr>
+        <tr><td>Mar 17</td><td>Hertz</td><td>Car Rental</td><td>—</td><td></td><td class="amount">$7.30</td></tr>
+        <tr class="flag-red"><td>Mar 17</td><td>Residence Inn</td><td>Lodging</td><td>—</td><td><span class="flag-badge red">Missing items</span></td><td class="amount">$410.00</td></tr>
+        <tr><td>Mar 20</td><td>Exxon</td><td>Fuel and Gas</td><td>—</td><td></td><td class="amount">$54.44</td></tr>
+        <tr class="flag-red"><td>Mar 20</td><td>SpringHill Suites</td><td>Lodging</td><td>—</td><td><span class="flag-badge red">Missing items</span> <span class="flag-badge yellow">≥$500</span></td><td class="amount">$580.00</td></tr>
+        <tr><td>Mar 20</td><td>Pappasito's Cantina</td><td>Restaurants</td><td>—</td><td></td><td class="amount">$58.77</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: BUDGET UTILIZATION -->
+<div class="section">
+  <div class="section-title"><span class="icon">📊</span> Budget Utilization — March 2026</div>
+
+  <div class="budget-item">
+    <div class="budget-header">
+      <span class="budget-name">General Expenses — Jason Bass</span>
+      <span class="budget-numbers">$1,777.24 of $25,000.00</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill low" style="width:7.1%"></div></div>
+    <div class="budget-pct" style="color:var(--green)">7.1%</div>
+  </div>
+
+  <div class="budget-item">
+    <div class="budget-header">
+      <span class="budget-name">General Expenses — Edwin Greer</span>
+      <span class="budget-numbers">$1,823.29 of $150,000.00</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill low" style="width:1.2%"></div></div>
+    <div class="budget-pct" style="color:var(--green)">1.2%</div>
+  </div>
+
+  <div class="budget-item">
+    <div class="budget-header">
+      <span class="budget-name">AI Tools — Jason Bass</span>
+      <span class="budget-numbers">$117.12 of $1,000.00</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill low" style="width:11.7%"></div></div>
+    <div class="budget-pct" style="color:var(--green)">11.7%</div>
+  </div>
+
+  <div class="budget-item">
+    <div class="budget-header">
+      <span class="budget-name">QuickBooks Online — Jason Bass</span>
+      <span class="budget-numbers">$291.03 of $500.00</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill mid" style="width:58.2%"></div></div>
+    <div class="budget-pct" style="color:var(--yellow)">58.2%</div>
+  </div>
+
+  <div class="budget-item">
+    <div class="budget-header">
+      <span class="budget-name">Blitz Trip — Jason Bass</span>
+      <span class="budget-numbers">$354.81 of $500.00</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill high" style="width:71%"></div></div>
+    <div class="budget-pct" style="color:var(--orange)">71.0%</div>
+  </div>
+
+  <div class="budget-item">
+    <div class="budget-header">
+      <span class="budget-name">Blitz Trip — Lauren Bass</span>
+      <span class="budget-numbers">$0.00 of $1,500.00</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill low" style="width:0%"></div></div>
+    <div class="budget-pct" style="color:var(--green)">0.0%</div>
+  </div>
+</div>
+
+<!-- SECTION 4: MONTH-OVER-MONTH TRENDS -->
+<div class="section">
+  <div class="section-title"><span class="icon">📈</span> Month-over-Month Trends</div>
+  <div class="trend-grid">
+    <div class="trend-card">
+      <h3 style="font-size:0.95rem; margin-bottom:10px; color:var(--muted);">By Person</h3>
+      <div class="trend-row">
+        <span>Jason Bass</span>
+        <span>Feb: $595.08 → Mar: $2,540.20 <span class="trend-arrow up">▲ 327%</span></span>
+      </div>
+      <div class="trend-row">
+        <span>Edwin Greer</span>
+        <span>Feb: $2,928.25 → Mar: $1,823.29 <span class="trend-arrow down">▼ 38%</span></span>
+      </div>
+    </div>
+    <div class="trend-card">
+      <h3 style="font-size:0.95rem; margin-bottom:10px; color:var(--muted);">Overall</h3>
+      <div class="trend-row">
+        <span>Total Spend</span>
+        <span>Feb: $3,523.33 → Mar: $4,363.49 <span class="trend-arrow up">▲ 24%</span></span>
+      </div>
+      <div class="trend-row">
+        <span>Transactions</span>
+        <span>Feb: 25 → Mar: 26 <span class="trend-arrow up">▲ 4%</span></span>
+      </div>
+      <div class="trend-row">
+        <span>Avg / Txn</span>
+        <span>Feb: $140.93 → Mar: $167.83 <span class="trend-arrow up">▲ 19%</span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: CATEGORY BREAKDOWN -->
+<div class="section">
+  <div class="section-title"><span class="icon">🏷️</span> Category Breakdown — March MTD</div>
+
+  <div class="cat-row">
+    <div class="cat-label">Airlines</div>
+    <div class="cat-bar-track"><div class="cat-bar-fill" style="width:100%; background:#38bdf8;">$1,305.61</div></div>
+    <div class="cat-amount">$1,305.61</div>
+  </div>
+  <div class="cat-row">
+    <div class="cat-label">Lodging</div>
+    <div class="cat-bar-track"><div class="cat-bar-fill" style="width:75.8%; background:#818cf8;">$990.00</div></div>
+    <div class="cat-amount">$990.00</div>
+  </div>
+  <div class="cat-row">
+    <div class="cat-label">SaaS / Software</div>
+    <div class="cat-bar-track"><div class="cat-bar-fill" style="width:73.7%; background:#a78bfa;">$961.97</div></div>
+    <div class="cat-amount">$961.97</div>
+  </div>
+  <div class="cat-row">
+    <div class="cat-label">Car Rental</div>
+    <div class="cat-bar-track"><div class="cat-bar-fill" style="width:41.8%; background:#34d399;">$546.09</div></div>
+    <div class="cat-amount">$546.09</div>
+  </div>
+  <div class="cat-row">
+    <div class="cat-label">Car services</div>
+    <div class="cat-bar-track"><div class="cat-bar-fill" style="width:29.0%; background:#fbbf24;">$378.00</div></div>
+    <div class="cat-amount">$378.00</div>
+  </div>
+  <div class="cat-row">
+    <div class="cat-label">Restaurants</div>
+    <div class="cat-bar-track"><div class="cat-bar-fill" style="width:8.1%; background:#fb923c;">$105.86</div></div>
+    <div class="cat-amount">$105.86</div>
+  </div>
+  <div class="cat-row">
+    <div class="cat-label">Fuel and Gas</div>
+    <div class="cat-bar-track"><div class="cat-bar-fill" style="width:4.2%; background:#f87171;">$54.44</div></div>
+    <div class="cat-amount">$54.44</div>
+  </div>
+  <div class="cat-row">
+    <div class="cat-label">General Merchandise</div>
+    <div class="cat-bar-track"><div class="cat-bar-fill" style="width:1.6%; background:#94a3b8;">$21.52</div></div>
+    <div class="cat-amount">$21.52</div>
+  </div>
+</div>
+
+<div class="footer">
+  UCWH Daily Expense Report · Generated March 24, 2026 · Data source: Ramp API via MCP<br>
+  Parallax Holdings · Tommy's Car Wash (UCWH)
+</div>
+
+</div>
+</body>
+</html>
