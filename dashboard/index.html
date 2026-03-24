@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<!--
+  ╔═══════════════════════════════════════════════════════════════════╗
+  ║  UCWH Report Portal — v2 (current)                              ║
+  ║  Last updated: 2026-03-20                                       ║
+  ║                                                                  ║
+  ║  ⚠️  THIS IS THE CANONICAL VERSION. Do NOT edit index-v1 files.  ║
+  ║  ⚠️  If adding report folders, edit the REPORT_FOLDERS array     ║
+  ║      (~line 1240) in THIS file, then also update index-v2.html.  ║
+  ║  ⚠️  Deploy with: netlify deploy - -prod - -dir .                ║
+  ║      (from report-portal/ directory on desktop)                  ║
+  ╚═══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UCWH Report Portal</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <style>
+    :root {
+      --bg: #0b1326;
+      --surface: #171f33;
+      --surface-alt: #222a3d;
+      --border: #2a3347;
+      --text: #dae2fd;
+      --text-muted: #88929b;
+      --accent-primary: #89ceff;
+      --accent-tertiary: #3cddc7;
+      --orange: #fb923c;
+      --blue: #3b82f6;
+      --green: #22c55e;
+      --purple: #a78bfa;
+      --rose: #fb7185;
+      --cyan: #22d3ee;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --admin-purple: #805ad5;
+      --admin-purple-light: #9f7aea;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ==================== LOGIN SCREEN ==================== */
+    .login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #0b1326 0%, #1a2a47 50%, #0f1825 100%);
+    }
+    .login-box {
+      background: var(--surface); border-radius: 16px; padding: 40px; width: 420px;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.6); text-align: center;
+      border: 1px solid var(--border);
+    }
+    .login-logo { font-size: 48px; margin-bottom: 16px; }
+    .login-box h1 { font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .login-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+    .login-error {
+      color: var(--rose); font-size: 13px; margin-top: 12px; padding: 10px 14px;
+      background: rgba(251,113,133,0.1); border-radius: 8px; border-left: 3px solid var(--rose);
+      display: none; text-align: left;
+    }
+    .login-error:not(:empty) { display: block; }
+    .google-btn {
+      width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 10px;
+      background: var(--surface-alt); cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 12px; font-size: 15px; font-weight: 600;
+      color: var(--text); transition: all 0.2s;
+    }
+    .google-btn:hover { border-color: var(--accent-primary); box-shadow: 0 4px 16px rgba(137,206,255,0.2); background: rgba(137,206,255,0.08); }
+    .google-btn svg { width: 20px; height: 20px; }
+    .login-loading { display: none; text-align: center; padding: 20px; }
+    .login-loading.active { display: block; }
+    .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top: 3px solid var(--accent-primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* ==================== MAIN APP LAYOUT ==================== */
+    #mainApp {
+      display: none;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ==================== SIDEBAR ==================== */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 260px;
+      height: 100vh;
+      background: #060e20;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      z-index: 1000;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .sidebar-branding {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .sidebar-branding-icon {
+      font-size: 24px;
+      color: var(--accent-primary);
+    }
+
+    .sidebar-branding-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.05em;
+    }
+
+    .sidebar-nav-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 0;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-nav-item:hover {
+      color: var(--text);
+      background: rgba(137,206,255,0.08);
+    }
+
+    .sidebar-nav-item.active {
+      color: var(--accent-primary);
+      background: rgba(137,206,255,0.15);
+      border-left-color: var(--accent-primary);
+    }
+
+    .sidebar-nav-icon {
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer-btn {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 8px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-footer-btn:hover {
+      border-color: var(--accent-primary);
+      background: rgba(137,206,255,0.1);
+      color: var(--accent-primary);
+    }
+
+    .sidebar-footer-link {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 8px 0;
+      transition: color 0.2s;
+    }
+
+    .sidebar-footer-link:hover {
+      color: var(--accent-primary);
+    }
+
+    /* ==================== MAIN CONTENT AREA ==================== */
+    .main-content {
+      margin-left: 260px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    /* ==================== HEADER ==================== */
+    header {
+      background: linear-gradient(135deg, rgba(25, 42, 71, 0.5) 0%, rgba(11, 19, 38, 0.5) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .header-left h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+    .header-left p { color: var(--text-muted); font-size: 0.82rem; margin-top: 2px; }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .user-info { display: flex; align-items: center; gap: 8px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border); }
+    .user-name { font-size: 0.82rem; color: var(--text-muted); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .user-role { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 4px; }
+    .user-role.admin { background: rgba(128,90,213,0.2); color: var(--admin-purple-light); }
+    .user-role.viewer { background: rgba(137,206,255,0.2); color: var(--accent-primary); }
+
+    .header-btn {
+      padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-muted); font-size: 0.78rem;
+      cursor: pointer; transition: all 0.15s; font-weight: 600;
+    }
+    .header-btn:hover { border-color: var(--accent-primary); color: var(--text); }
+    .header-btn.admin-btn { border-color: var(--admin-purple); color: var(--admin-purple-light); }
+    .header-btn.admin-btn:hover { background: rgba(128,90,213,0.1); }
+
+    /* ==================== CONTENT AREA ==================== */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 100%;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ==================== FOLDER GRID ==================== */
+    .folder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .folder-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .folder-card:hover {
+      border-color: var(--accent-primary);
+      box-shadow: 0 8px 24px rgba(137,206,255,0.15);
+      transform: translateY(-2px);
+    }
+
+    .folder-card .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .folder-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .folder-card .desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .folder-card .freq {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-tertiary);
+    }
+
+    .empty-msg {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* ==================== REPORT VIEW ==================== */
+    #reportView {
+      display: none;
+    }
+
+    #reportView.active {
+      display: block;
+    }
+
+    #folderView {
+      display: block;
+    }
+
+    #folderView.hidden {
+      display: none;
+    }
+
+    .report-header {
+      background: linear-gradient(135deg, rgba(25, 42, 71, 0.3) 0%, rgba(11, 19, 38, 0.3) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    #reportTitle {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text);
+      margin: 0 0 8px;
+    }
+
+    #reportSubtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    /* Hero Card */
+    #heroCard {
+      display: none;
+      background: linear-gradient(135deg, rgba(137,206,255,0.1) 0%, rgba(60,221,199,0.1) 100%);
+      border: 1px solid rgba(137,206,255,0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      align-items: center;
+      gap: 16px;
+    }
+
+    #heroCard:hover {
+      border-color: var(--accent-primary);
+      box-shadow: 0 8px 24px rgba(137,206,255,0.15);
+    }
+
+    #heroCard .icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+
+    #heroCard .hero-content {
+      flex: 1;
+    }
+
+    #heroTitle {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    #heroDate {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    #heroCard .hero-arrow {
+      color: var(--accent-primary);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    /* Report Toolbar */
+    #reportToolbar {
+      display: none;
+      gap: 12px;
+      margin-bottom: 2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    #reportToolbar.active {
+      display: flex;
+    }
+
+    #reportSearch {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    #reportSearch::placeholder {
+      color: var(--text-muted);
+    }
+
+    #filterChips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--accent-primary);
+      color: var(--text);
+    }
+
+    .filter-chip.active {
+      border-color: var(--accent-primary);
+      background: rgba(137,206,255,0.15);
+      color: var(--accent-primary);
+    }
+
+    #reportCount {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    /* Month Groups */
+    #monthGroups {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .month-group {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .month-header {
+      padding: 14px 16px;
+      background: var(--surface-alt);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .month-header:hover {
+      background: rgba(137,206,255,0.08);
+    }
+
+    .month-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .month-chevron {
+      display: inline-block;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+      font-size: 0.8rem;
+    }
+
+    .month-group.expanded .month-chevron {
+      transform: rotate(90deg);
+    }
+
+    .month-name {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .month-count {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .month-items {
+      display: none;
+      list-style: none;
+      padding: 0;
+    }
+
+    .month-group.expanded .month-items {
+      display: block;
+    }
+
+    .month-items li {
+      border-top: 1px solid var(--border);
+      padding: 0;
+    }
+
+    .month-items li:first-child {
+      border-top: none;
+    }
+
+    .month-items a {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      color: var(--text);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .month-items a:hover {
+      background: rgba(137,206,255,0.08);
+    }
+
+    .report-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .report-type-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .report-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .type-badge {
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .arrow {
+      color: var(--accent-primary);
+      font-size: 1rem;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+    }
+
+    .no-results-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .loading {
+      padding: 20px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .error-msg {
+      padding: 16px;
+      color: var(--rose);
+      background: rgba(251,113,133,0.1);
+      border: 1px solid var(--rose);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    /* ==================== VIEWER ==================== */
+    #viewer {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    #viewer.active {
+      display: flex;
+    }
+
+    .viewer-header {
+      background: linear-gradient(135deg, rgba(25, 42, 71, 0.5) 0%, rgba(11, 19, 38, 0.5) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .viewer-title-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .viewer-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 20px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+
+    .viewer-close-btn:hover {
+      color: var(--text);
+    }
+
+    #viewerTitle {
+      font-weight: 700;
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    #viewerExtLink {
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    #viewerExtLink:hover {
+      opacity: 0.8;
+    }
+
+    #viewerFrame {
+      flex: 1;
+      border: none;
+      background: var(--bg);
+    }
+
+    body.viewing {
+      overflow: hidden;
+    }
+
+    body.viewing .sidebar {
+      display: none;
+    }
+
+    body.viewing .main-content {
+      margin-left: 0;
+    }
+
+    /* ==================== ADMIN PANEL ==================== */
+    #adminPanel {
+      display: none;
+      padding: 2rem 1.5rem;
+    }
+
+    #adminPanel.active {
+      display: block;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .admin-header h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .admin-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 24px;
+      padding: 0;
+    }
+
+    .admin-close-btn:hover {
+      color: var(--text);
+    }
+
+    .admin-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .admin-section h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .admin-form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .admin-form-group input,
+    .admin-form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .admin-form-group input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .admin-form-group input:focus,
+    .admin-form-group select:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(137,206,255,0.1);
+    }
+
+    .admin-btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent-primary);
+      color: var(--bg);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .admin-btn:hover {
+      box-shadow: 0 4px 12px rgba(137,206,255,0.3);
+      transform: translateY(-1px);
+    }
+
+    .admin-btn-sm {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      background: var(--accent-primary);
+      color: var(--bg);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .admin-btn-sm:hover {
+      opacity: 0.8;
+    }
+
+    .admin-btn-sm.danger {
+      background: var(--rose);
+    }
+
+    .perm-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      background: var(--bg);
+    }
+
+    .perm-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .perm-name {
+      flex: 1;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-flex;
+      width: 40px;
+      height: 24px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border);
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--surface);
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--accent-primary);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(16px);
+    }
+
+    .admin-msg {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    .admin-msg:not(:empty) {
+      display: block;
+    }
+
+    .admin-msg.success {
+      background: rgba(34,197,94,0.15);
+      color: var(--green);
+      border: 1px solid rgba(34,197,94,0.3);
+    }
+
+    .admin-msg.error {
+      background: rgba(251,113,133,0.15);
+      color: var(--rose);
+      border: 1px solid rgba(251,113,133,0.3);
+    }
+
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .user-table th {
+      background: var(--bg);
+      padding: 12px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .user-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .user-table tr:hover {
+      background: rgba(137,206,255,0.05);
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .role-badge.admin {
+      background: rgba(128,90,213,0.2);
+      color: var(--admin-purple-light);
+    }
+
+    .role-badge.viewer {
+      background: rgba(137,206,255,0.2);
+      color: var(--accent-primary);
+    }
+
+    /* ==================== FOOTER ==================== */
+    footer {
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .folder-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #reportSearch {
+        min-width: 100%;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .user-info {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">🔐</div>
+    <h1>Report Portal</h1>
+    <p class="login-subtitle">UCWH Intelligence Platform</p>
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+        <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Sign in with Google
+    </button>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-loading" id="loginLoading">
+      <div class="spinner"></div>
+      <p>Signing you in...</p>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-branding">
+        <div class="sidebar-branding-icon">⚡</div>
+        <div class="sidebar-branding-text">Intelligence</div>
+      </div>
+    </div>
+
+    <div class="sidebar-content" id="sidebarNav">
+      <!-- Nav items populated by renderSidebar() -->
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-footer-btn" onclick="alert('Request feature coming soon')">
+        <span style="font-size: 16px;">+</span>
+        <span>Request New Report</span>
+      </button>
+      <a href="#" class="sidebar-footer-link" onclick="alert('Help center coming soon'); return false;">Help Center</a>
+      <a href="#" class="sidebar-footer-link" onclick="alert('API docs coming soon'); return false;">API Docs</a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <!-- HEADER -->
+    <header>
+      <div class="header-left">
+        <h1 id="headerTitle">Report Portal</h1>
+        <p id="headerSubtitle">Select a report folder to view documents</p>
+      </div>
+      <div class="header-right">
+        <div class="user-info">
+          <img id="userAvatar" class="user-avatar" style="display:none;">
+          <div>
+            <div class="user-name" id="userName">User</div>
+            <span class="user-role viewer" id="userRole">Viewer</span>
+          </div>
+        </div>
+        <button class="header-btn admin-btn" id="adminPanelBtn" style="display:none;" onclick="toggleAdminPanel()">Admin</button>
+        <button class="header-btn" onclick="signOut()">Sign Out</button>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <div class="content-area">
+      <!-- FOLDER GRID VIEW -->
+      <div id="folderView" class="container">
+        <div class="folder-grid" id="folderGrid">
+          <!-- Folders populated by renderFolders() -->
+        </div>
+      </div>
+
+      <!-- REPORT LIST VIEW -->
+      <div id="reportView">
+        <div class="report-header">
+          <h1 id="reportTitle">Folder Name</h1>
+          <p id="reportSubtitle">Folder description</p>
+        </div>
+        <div class="container">
+          <div id="heroCard" onclick="openHeroReport()">
+            <div class="icon" id="heroIcon" style="font-size: 28px;"></div>
+            <div class="hero-content">
+              <div id="heroTitle">Latest Report</div>
+              <div id="heroDate">Date info</div>
+            </div>
+            <div class="hero-arrow">›</div>
+          </div>
+          <div id="reportToolbar" class="active">
+            <input type="text" id="reportSearch" placeholder="Search reports..." onkeyup="filterReports()">
+            <div id="filterChips"></div>
+            <div id="reportCount">0 reports</div>
+          </div>
+          <div id="monthGroups">
+            <!-- Reports grouped by month -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN PANEL -->
+      <div id="adminPanel">
+        <div class="admin-header">
+          <h2>Admin Panel</h2>
+          <button class="admin-close-btn" onclick="closeAdminPanel()">×</button>
+        </div>
+
+        <!-- Add User Section -->
+        <div class="admin-section">
+          <h3>Add User</h3>
+          <div class="admin-form-group">
+            <label>Email</label>
+            <input type="email" id="addUserEmail" placeholder="user@example.com">
+          </div>
+          <div class="admin-form-group">
+            <label>Display Name (optional)</label>
+            <input type="text" id="addUserName" placeholder="John Doe">
+          </div>
+          <div class="admin-form-group">
+            <label>Role</label>
+            <select id="addUserRole" onchange="toggleFolderPerms()">
+              <option value="viewer">Viewer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div id="folderPermsSection" style="display:none;">
+            <label style="display:block; font-size:0.85rem; font-weight:600; color:var(--text); margin-bottom:1rem; text-transform:uppercase; letter-spacing:0.05em;">Select Folders</label>
+            <div id="folderPermsGrid"></div>
+          </div>
+          <button class="admin-btn" onclick="addUser()">Add User</button>
+          <div class="admin-msg" id="userMsg"></div>
+        </div>
+
+        <!-- User List -->
+        <div class="admin-section">
+          <h3>Users</h3>
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Access</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody">
+              <tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:20px;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Edit Permissions -->
+        <div id="editPermsSection" style="display:none;" class="admin-section">
+          <h3>Edit Folder Access: <span id="editPermsUserLabel">User</span></h3>
+          <div id="editPermsGrid"></div>
+          <button class="admin-btn" onclick="saveEditPerms()">Save</button>
+          <button class="admin-btn" style="background: var(--surface); color: var(--text); border: 1px solid var(--border); margin-left: 8px;" onclick="closeEditPerms()">Cancel</button>
+          <div class="admin-msg" id="editPermsMsg"></div>
+        </div>
+      </div>
+
+      <!-- REPORT VIEWER -->
+      <div id="viewer">
+        <div class="viewer-header">
+          <div class="viewer-title-section">
+            <button class="viewer-close-btn" onclick="closeViewer()">‹</button>
+            <span id="viewerTitle">Report</span>
+          </div>
+          <a class="open-ext" id="viewerExtLink" href="#" target="_blank" rel="noopener">Open in new tab ↗</a>
+        </div>
+        <iframe id="viewerFrame" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      UCWH Report Portal · Reports hosted on GitHub Pages
+    </footer>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// SUPABASE CONFIG
+// ============================================================
+const SUPABASE_URL = 'https://cvmexkjdadiseccaavzr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2bWV4a2pkYWRpc2VjY2FhdnpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MjY5MjksImV4cCI6MjA4ODIwMjkyOX0.nPizSXPmXQAXnJP2CfD_20Z2gSc_wR6sFE76GAn1bqM';
+
+let supabaseClient = null;
+let cloudEnabled = false;
+
+function initSupabase() {
+  try {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    cloudEnabled = true;
+    console.log('Supabase connected');
+  } catch(e) {
+    console.error('Supabase init error:', e);
+  }
+}
+
+// ============================================================
+// GITHUB / REPORT CONFIG
+// ============================================================
+const GITHUB_API = 'https://api.github.com/repos/jbass698-121/ucwh-morning-briefings/contents';
+const PAGES_BASE = 'https://jbass698-121.github.io/ucwh-morning-briefings';
+
+const REPORT_FOLDERS = [
+  {
+    id: 'morning-briefings', path: '', name: 'Morning Briefings',
+    desc: 'Daily operational briefings with site performance, revenue, and membership data.',
+    freq: 'Daily', icon: '☀️', materialIcon: 'sunny', color: 'rgba(251, 146, 60, 0.15)', iconColor: '#fb923c'
+  },
+  {
+    id: 'ceo-insights', path: 'ceo-insights', name: 'CEO Insights',
+    desc: 'Executive dashboard with strategic performance analysis, churn, and growth metrics.',
+    freq: 'Weekly', icon: '📈', materialIcon: 'auto_graph', color: 'rgba(59, 130, 246, 0.15)', iconColor: '#3b82f6'
+  },
+  {
+    id: 'weekly-reports', path: 'weekly-reports', name: 'Weekly Operations',
+    desc: 'Comprehensive weekly operational reports across all sites.',
+    freq: 'Weekly', icon: '📋', materialIcon: 'hub', color: 'rgba(34, 197, 94, 0.15)', iconColor: '#22c55e'
+  },
+  {
+    id: 'monthly-reports', path: 'monthly-reports', name: 'Monthly Reports',
+    desc: 'Monthly aggregate performance summaries and trend analysis.',
+    freq: 'Monthly', icon: '📅', materialIcon: 'calendar_month', color: 'rgba(167, 139, 250, 0.15)', iconColor: '#a78bfa'
+  },
+  {
+    id: 'marketing-reports', path: 'marketing-reports', name: 'Marketing Reports',
+    desc: 'Yext platform performance — reviews, GBP analytics, and competitive positioning.',
+    freq: 'Weekly', icon: '📢', materialIcon: 'campaign', color: 'rgba(251, 113, 133, 0.15)', iconColor: '#fb7185'
+  },
+  {
+    id: 'hourly-reports', path: 'hourly-reports', name: 'Hourly Inspections',
+    desc: 'Weekly hourly task inspection reports — completion rates, expiration streaks, and risk analysis.',
+    freq: 'Weekly', icon: '⏰', materialIcon: 'timer', color: 'rgba(251, 146, 60, 0.15)', iconColor: '#f97316'
+  },
+  {
+    id: 'ai-daily-digest', path: 'ai-daily-digest', name: 'AI Daily Digest',
+    desc: 'Curated AI news — model releases, agent updates, funding, and industry signals.',
+    freq: 'Daily', icon: '🤖', materialIcon: 'psychology', color: 'rgba(34, 211, 238, 0.15)', iconColor: '#22d3ee'
+  },
+  {
+    id: 'competitive-briefings', path: 'competitive-briefings', name: 'Competitive Briefings',
+    desc: 'Weekly competitive intelligence — Mister Car Wash, Quick Quack, BlueWave, Tommy\'s Corporate, and industry trends.',
+    freq: 'Weekly', icon: '🏆', materialIcon: 'radar', color: 'rgba(239, 68, 68, 0.15)', iconColor: '#ef4444'
+  },
+  {
+    id: 'sales-reports', path: 'sales-reports', name: 'Sales Reports',
+    desc: 'Weekly and monthly sales performance reports across all sites.',
+    freq: 'Weekly', icon: '💰', materialIcon: 'point_of_sale', color: 'rgba(34, 197, 94, 0.15)', iconColor: '#22c55e'
+  },
+  {
+    id: 'coupon-reports', path: 'coupon-reports', name: 'Coupon Reports',
+    desc: 'Coupon redemption analysis — usage rates, revenue impact, and campaign effectiveness.',
+    freq: 'Weekly', icon: '🏷️', materialIcon: 'local_offer', color: 'rgba(245, 158, 11, 0.15)', iconColor: '#f59e0b'
+  },
+  {
+    id: 'saratoga-reports', path: 'saratoga-reports', name: 'Saratoga Springs',
+    desc: 'Site-specific reports for UT426 Saratoga Springs — city wash data and local metrics.',
+    freq: 'Monthly', icon: '🏔️', materialIcon: 'location_city', color: 'rgba(167, 139, 250, 0.15)', iconColor: '#a78bfa'
+  },
+  {
+    id: 'expense-reports', path: 'expense-reports', name: 'Expense Reports',
+    desc: 'Daily Ramp expense analysis — violations, suspicious charges, budget utilization, and month-over-month trends.',
+    freq: 'Daily', icon: '💳', materialIcon: 'credit_score', color: 'rgba(239, 68, 68, 0.15)', iconColor: '#ef4444'
+  },
+  {
+    id: 'dashboard', path: 'dashboard', name: 'Pipeline Dashboard',
+    desc: 'Task status monitor — schedule, run history, health checks, and manual triggers for all 18 automated tasks.',
+    freq: 'Live', icon: '🔧', materialIcon: 'monitoring', color: 'rgba(99, 102, 241, 0.15)', iconColor: '#6366f1'
+  }
+];
+
+// ============================================================
+// AUTH STATE
+// ============================================================
+let currentUser = null;
+let userAuth = null;
+let isAdmin = false;
+let editingUserEmail = null;
+
+// ============================================================
+// GOOGLE OAUTH
+// ============================================================
+async function signInWithGoogle() {
+  if (!cloudEnabled) {
+    document.getElementById('loginError').textContent = 'Cloud connection required. Check Supabase config.';
+    return;
+  }
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('loginLoading').classList.add('active');
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: 'https://ucwh-report-portal.netlify.app' }
+    });
+    if (error) {
+      document.getElementById('loginLoading').classList.remove('active');
+      document.getElementById('loginError').textContent = 'Sign-in failed: ' + error.message;
+    }
+  } catch(e) {
+    document.getElementById('loginLoading').classList.remove('active');
+    document.getElementById('loginError').textContent = 'Sign-in error: ' + e.message;
+  }
+}
+
+function waitForSession(timeoutMs) {
+  return new Promise((resolve) => {
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+      if (session) { resolve(session); return; }
+      const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (session) { subscription.unsubscribe(); resolve(session); }
+      });
+      setTimeout(() => { subscription.unsubscribe(); resolve(null); }, timeoutMs || 5000);
+    });
+  });
+}
+
+async function handleAuthCallback() {
+  if (!cloudEnabled) return false;
+  try {
+    const session = await waitForSession(6000);
+    if (!session) return false;
+
+    const user = session.user;
+    const email = user.email;
+    const metadata = user.user_metadata || {};
+    currentUser = {
+      email: email,
+      name: metadata.full_name || metadata.name || email.split('@')[0],
+      avatar_url: metadata.avatar_url || metadata.picture || null
+    };
+
+    userAuth = await checkUserAuth(email);
+    if (!userAuth) {
+      document.getElementById('loginError').textContent = 'Your account (' + email + ') is not authorized to access the Report Portal. Contact your administrator.';
+      document.getElementById('loginLoading').classList.remove('active');
+      await supabaseClient.auth.signOut();
+      currentUser = null;
+      return false;
+    }
+
+    isAdmin = (userAuth.role === 'admin');
+    document.getElementById('loginLoading').classList.remove('active');
+    enterApp();
+    return true;
+  } catch(e) {
+    console.error('Auth callback error:', e);
+    document.getElementById('loginLoading').classList.remove('active');
+    return false;
+  }
+}
+
+async function checkUserAuth(email) {
+  if (!cloudEnabled) return null;
+  try {
+    const { data, error } = await supabaseClient
+      .from('report_portal_users')
+      .select('email, role, display_name, folder_access')
+      .eq('email', email.toLowerCase())
+      .single();
+    if (error) { console.error('Auth check error:', error); return null; }
+    return data;
+  } catch(e) { console.error('Auth check exception:', e); return null; }
+}
+
+async function signOut() {
+  if (cloudEnabled) await supabaseClient.auth.signOut();
+  currentUser = null;
+  userAuth = null;
+  isAdmin = false;
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('loginLoading').classList.remove('active');
+}
+
+// ============================================================
+// SIDEBAR RENDERING
+// ============================================================
+function renderSidebar() {
+  const nav = document.getElementById('sidebarNav');
+  const visible = getVisibleFolders();
+
+  let html = '<div class="sidebar-nav-label">Navigation</div>';
+  html += '<a class="sidebar-nav-item active" href="#" onclick="showFolders(); updateSidebarActive(null); return false;">';
+  html += '<span class="sidebar-nav-icon material-symbols-outlined">dashboard</span>';
+  html += '<span>Dashboard</span>';
+  html += '</a>';
+
+  visible.forEach(folder => {
+    html += '<a class="sidebar-nav-item" href="#" onclick="openFolder(\'' + folder.id + '\'); updateSidebarActive(\'' + folder.id + '\'); return false;" data-folder-id="' + folder.id + '">';
+    html += '<span class="sidebar-nav-icon material-symbols-outlined">' + folder.materialIcon + '</span>';
+    html += '<span>' + folder.name + '</span>';
+    html += '</a>';
+  });
+
+  nav.innerHTML = html;
+}
+
+function updateSidebarActive(folderId) {
+  const items = document.querySelectorAll('.sidebar-nav-item');
+  items.forEach(item => {
+    item.classList.remove('active');
+  });
+
+  if (folderId === null) {
+    items.forEach(item => {
+      if (!item.dataset.folderId) {
+        item.classList.add('active');
+      }
+    });
+  } else {
+    items.forEach(item => {
+      if (item.dataset.folderId === folderId) {
+        item.classList.add('active');
+      }
+    });
+  }
+}
+
+// ============================================================
+// ENTER APP AFTER AUTH
+// ============================================================
+function enterApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'flex';
+
+  if (currentUser.avatar_url) {
+    const av = document.getElementById('userAvatar');
+    av.src = currentUser.avatar_url;
+    av.style.display = 'block';
+  }
+  document.getElementById('userName').textContent = currentUser.name;
+  const roleEl = document.getElementById('userRole');
+  roleEl.textContent = isAdmin ? 'Admin' : 'Viewer';
+  roleEl.className = 'user-role ' + (isAdmin ? 'admin' : 'viewer');
+
+  if (isAdmin) {
+    document.getElementById('adminPanelBtn').style.display = 'inline-flex';
+  }
+
+  renderSidebar();
+  renderFolders();
+
+  var hash = window.location.hash || '';
+  if (hash.indexOf('#deeplink/') === 0) {
+    var encodedUrl = hash.substring('#deeplink/'.length);
+    try {
+      var reportUrl = decodeURIComponent(encodedUrl);
+      var slug = reportUrl.split('/').pop().replace('.html', '').replace(/_/g, ' ').replace(/-/g, ' ');
+      setTimeout(function() { openReport(reportUrl, slug); }, 200);
+      return;
+    } catch(e) { }
+  }
+
+  history.replaceState({ view: 'folders' }, '', '#');
+}
+
+// ============================================================
+// FOLDER RENDERING (with access control)
+// ============================================================
+function getVisibleFolders() {
+  if (isAdmin) return REPORT_FOLDERS;
+  const access = userAuth.folder_access || [];
+  if (access.length === 0) return [];
+  return REPORT_FOLDERS.filter(f => access.includes(f.id));
+}
+
+function renderFolders() {
+  const visible = getVisibleFolders();
+  const grid = document.getElementById('folderGrid');
+  if (visible.length === 0) {
+    grid.innerHTML = '<div class="empty-msg" style="grid-column:1/-1;">No report folders are assigned to your account yet. Contact your administrator for access.</div>';
+    return;
+  }
+  grid.innerHTML = visible.map(f => `
+    <div class="folder-card" onclick="openFolder('${f.id}')">
+      <div class="icon" style="background:${f.color}; color:${f.iconColor}">${f.icon}</div>
+      <h3>${f.name}</h3>
+      <div class="desc">${f.desc}</div>
+      <span class="freq">${f.freq}</span>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// REPORT NAVIGATION
+// ============================================================
+let currentView = 'folders';
+let currentFolderId = null;
+
+// ============================================================
+// REPORT DATA STORE
+// ============================================================
+let allReports = [];
+let activeFilter = 'all';
+let heroReportData = null;
+
+const REPORT_TYPES = {
+  'morning briefing': { label: 'Briefing', color: '#fb923c', dotColor: '#fb923c' },
+  'forecast accuracy': { label: 'Forecast', color: '#a78bfa', dotColor: '#a78bfa' },
+  'ceo insight': { label: 'CEO', color: '#3b82f6', dotColor: '#3b82f6' },
+  'weekly': { label: 'Weekly', color: '#22c55e', dotColor: '#22c55e' },
+  'marketing': { label: 'Marketing', color: '#fb7185', dotColor: '#fb7185' },
+  'hourly': { label: 'Hourly', color: '#f97316', dotColor: '#f97316' },
+  'competitive': { label: 'Competitive', color: '#ef4444', dotColor: '#ef4444' },
+  'ai daily': { label: 'AI Digest', color: '#22d3ee', dotColor: '#22d3ee' },
+  'monthly': { label: 'Monthly', color: '#a78bfa', dotColor: '#a78bfa' },
+};
+
+function detectReportType(name) {
+  const lower = name.toLowerCase();
+  for (const [key, val] of Object.entries(REPORT_TYPES)) {
+    if (lower.includes(key)) return { key, ...val };
+  }
+  return { key: 'other', label: 'Report', color: '#94a3b8', dotColor: '#94a3b8' };
+}
+
+function parseReportDate(filename) {
+  let m = filename.match(/(\d{4})[\-_\s](\d{2})[\-_\s](\d{2})/);
+  if (m) return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
+  m = filename.match(/(\d{4}-\d{2}-\d{2})/);
+  if (m) return new Date(m[1] + 'T00:00:00');
+  return null;
+}
+
+function getMonthKey(date) {
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
+}
+
+function getMonthLabel(monthKey) {
+  const [y, m] = monthKey.split('-');
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return `${months[parseInt(m)-1]} ${y}`;
+}
+
+async function openFolder(folderId, pushState = true) {
+  const folder = REPORT_FOLDERS.find(f => f.id === folderId);
+  if (!folder) return;
+  if (!isAdmin) {
+    const access = userAuth.folder_access || [];
+    if (!access.includes(folderId)) return;
+  }
+  currentFolderId = folderId;
+  currentView = 'list';
+  document.getElementById('folderView').classList.add('hidden');
+  document.getElementById('adminPanel').classList.remove('active');
+  document.getElementById('viewer').classList.remove('active');
+  document.body.classList.remove('viewing');
+  const rv = document.getElementById('reportView');
+  rv.classList.add('active');
+  document.getElementById('reportTitle').textContent = folder.name;
+  document.getElementById('reportSubtitle').textContent = folder.desc;
+  if (pushState) history.pushState({ view: 'list', folderId }, '', '#folder/' + folderId);
+
+  document.getElementById('heroCard').style.display = 'none';
+  document.getElementById('reportToolbar').style.display = 'none';
+  document.getElementById('monthGroups').innerHTML = '';
+
+  document.getElementById('headerTitle').textContent = folder.name;
+  document.getElementById('headerSubtitle').textContent = folder.desc;
+
+  // ── Pipeline Dashboard: render from Supabase task_runs ──
+  if (folderId === 'dashboard') {
+    await renderPipelineDashboard();
+    return;
+  }
+
+  try {
+    const apiUrl = folder.path ? `${GITHUB_API}/${folder.path}` : GITHUB_API;
+    const resp = await fetch(apiUrl);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const files = await resp.json();
+    const htmlFiles = files
+      .filter(f => f.name.endsWith('.html') && f.name !== 'index.html')
+      .sort((a, b) => b.name.localeCompare(a.name));
+
+    if (htmlFiles.length === 0) {
+      document.getElementById('monthGroups').innerHTML = '<div class="empty-msg">No reports found in this folder yet.</div>';
+      return;
+    }
+
+    allReports = htmlFiles.map(f => {
+      const displayName = f.name.replace('.html', '').replace(/_/g, ' ').replace(/-/g, ' ');
+      const url = folder.path ? `${PAGES_BASE}/${folder.path}/${f.name}` : `${PAGES_BASE}/${f.name}`;
+      const date = parseReportDate(f.name);
+      const type = detectReportType(displayName);
+      return {
+        name: f.name,
+        displayName,
+        url,
+        date,
+        dateStr: date ? formatDate(`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`) : '',
+        dayOfWeek: date ? ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][date.getDay()] : '',
+        type,
+        monthKey: date ? getMonthKey(date) : 'undated'
+      };
+    });
+
+    heroReportData = allReports[0];
+    if (heroReportData) {
+      document.getElementById('heroIcon').innerHTML = folder.icon;
+      document.getElementById('heroTitle').textContent = heroReportData.displayName;
+      document.getElementById('heroDate').textContent = heroReportData.dateStr ? `${heroReportData.dayOfWeek}, ${heroReportData.dateStr}` : '';
+      document.getElementById('heroCard').style.display = 'flex';
+    }
+
+    const types = [...new Set(allReports.map(r => r.type.key))];
+    activeFilter = 'all';
+    const chipsHtml = [`<span class="filter-chip active" data-filter="all" onclick="setFilter('all')">All</span>`];
+    types.forEach(t => {
+      const typeInfo = allReports.find(r => r.type.key === t).type;
+      chipsHtml.push(`<span class="filter-chip" data-filter="${t}" onclick="setFilter('${t}')" style="--chip-color:${typeInfo.color}">${typeInfo.label}</span>`);
+    });
+    if (types.length > 1) {
+      document.getElementById('filterChips').innerHTML = chipsHtml.join('');
+    } else {
+      document.getElementById('filterChips').innerHTML = '';
+    }
+
+    document.getElementById('reportSearch').value = '';
+    document.getElementById('reportToolbar').style.display = 'flex';
+    document.getElementById('reportCount').textContent = `${allReports.length} reports`;
+
+    renderGroupedReports();
+  } catch (err) {
+    const directLink = folder.path ? `${PAGES_BASE}/${folder.path}/` : `${PAGES_BASE}/`;
+    document.getElementById('monthGroups').innerHTML = `<div class="error-msg">Could not load reports. GitHub API may be rate-limited.<br>Try <a href="${directLink}" target="_blank" style="color:var(--accent-primary)">visiting directly</a>.</div>`;
+  }
+}
+
+function openHeroReport() {
+  if (heroReportData) {
+    openReport(heroReportData.url, heroReportData.displayName);
+  }
+}
+
+function setFilter(filter) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.filter === filter);
+  });
+  renderGroupedReports();
+}
+
+function filterReports() {
+  renderGroupedReports();
+}
+
+function renderGroupedReports() {
+  const searchTerm = (document.getElementById('reportSearch').value || '').toLowerCase().trim();
+
+  let filtered = allReports.filter(r => {
+    if (activeFilter !== 'all' && r.type.key !== activeFilter) return false;
+    if (searchTerm && !r.displayName.toLowerCase().includes(searchTerm) && !r.dateStr.toLowerCase().includes(searchTerm)) return false;
+    return true;
+  });
+
+  document.getElementById('reportCount').textContent = `${filtered.length} of ${allReports.length} reports`;
+
+  const container = document.getElementById('monthGroups');
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><p>No reports match your search.</p></div>`;
+    return;
+  }
+
+  const groups = {};
+  const undated = [];
+  filtered.forEach(r => {
+    if (r.monthKey === 'undated') { undated.push(r); return; }
+    if (!groups[r.monthKey]) groups[r.monthKey] = [];
+    groups[r.monthKey].push(r);
+  });
+
+  const sortedKeys = Object.keys(groups).sort((a,b) => b.localeCompare(a));
+
+  let html = '';
+  sortedKeys.forEach((key, idx) => {
+    const reports = groups[key];
+    const isFirst = idx === 0;
+    const expanded = isFirst ? ' expanded' : '';
+    html += `<div class="month-group${expanded}" id="mg-${key}">`;
+    html += `<div class="month-header" onclick="toggleMonth('${key}')">`;
+    html += `<div class="month-header-left">`;
+    html += `<span class="month-chevron">▶</span>`;
+    html += `<span class="month-name">${getMonthLabel(key)}</span>`;
+    html += `</div>`;
+    html += `<span class="month-count">${reports.length} report${reports.length!==1?'s':''}</span>`;
+    html += `</div>`;
+    html += `<ul class="month-items">`;
+    reports.forEach(r => {
+      const escapedName = r.displayName.replace(/'/g, "\\'");
+      const showTypeBadge = allReports.some(ar => ar.type.key !== reports[0].type.key);
+      html += `<li><a href="#" onclick="openReport('${r.url}', '${escapedName}'); return false;">`;
+      html += `<span class="report-name">`;
+      html += `<span class="report-type-dot" style="background:${r.type.dotColor}"></span>`;
+      html += `${r.displayName}`;
+      html += `</span>`;
+      html += `<span class="report-meta">`;
+      if (showTypeBadge) {
+        html += `<span class="type-badge" style="background:${r.type.color}20; color:${r.type.color}">${r.type.label}</span>`;
+      }
+      html += `<span class="date">${r.dayOfWeek ? r.dayOfWeek + ', ' : ''}${r.dateStr}</span>`;
+      html += `<span class="arrow">›</span>`;
+      html += `</span>`;
+      html += `</a></li>`;
+    });
+    html += `</ul></div>`;
+  });
+
+  if (undated.length > 0) {
+    html += `<div class="month-group" id="mg-undated">`;
+    html += `<div class="month-header" onclick="toggleMonth('undated')">`;
+    html += `<div class="month-header-left"><span class="month-chevron">▶</span><span class="month-name">Other</span></div>`;
+    html += `<span class="month-count">${undated.length} item${undated.length!==1?'s':''}</span>`;
+    html += `</div>`;
+    html += `<ul class="month-items">`;
+    undated.forEach(r => {
+      const escapedName = r.displayName.replace(/'/g, "\\'");
+      html += `<li><a href="#" onclick="openReport('${r.url}', '${escapedName}'); return false;">`;
+      html += `<span class="report-name"><span class="report-type-dot" style="background:${r.type.dotColor}"></span>${r.displayName}</span>`;
+      html += `<span class="report-meta"><span class="arrow">›</span></span>`;
+      html += `</a></li>`;
+    });
+    html += `</ul></div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function toggleMonth(key) {
+  const el = document.getElementById('mg-' + key);
+  if (el) el.classList.toggle('expanded');
+}
+
+function showFolders(pushState = true) {
+  document.getElementById('folderView').classList.remove('hidden');
+  document.getElementById('reportView').classList.remove('active');
+  document.getElementById('adminPanel').classList.remove('active');
+  document.getElementById('viewer').classList.remove('active');
+  document.getElementById('viewerFrame').src = '';
+  document.body.classList.remove('viewing');
+  currentView = 'folders';
+  currentFolderId = null;
+
+  document.getElementById('headerTitle').textContent = 'Report Portal';
+  document.getElementById('headerSubtitle').textContent = 'Select a report folder to view documents';
+
+  if (pushState) history.pushState({ view: 'folders' }, '', '#');
+}
+
+// ============================================================
+// PIPELINE DASHBOARD — reads from Supabase task_runs
+// ============================================================
+
+const TASK_REGISTRY = [
+  { id: 'daily-data-pull',      num: 1,  name: 'Daily Data Pull',            tier: 'Data',    freq: 'Daily',   cron: '2:00 AM' },
+  { id: 'weekly-data-pull',     num: 2,  name: 'Weekly Data Collector',      tier: 'Data',    freq: 'Sundays', cron: '12:00 AM' },
+  { id: 'morning-briefing',     num: 4,  name: 'Morning Briefing',           tier: 'Daily',   freq: 'Daily',   cron: '3:30 AM' },
+  { id: 'coupon-report',        num: 5,  name: 'Daily Coupon Report',        tier: 'Daily',   freq: 'Daily',   cron: '6:00 AM' },
+  { id: 'ai-digest',            num: 6,  name: 'Daily AI Digest',            tier: 'Daily',   freq: 'Daily',   cron: '4:30 AM' },
+  { id: 'weekly-report',        num: 7,  name: 'Weekly Operations Report',   tier: 'Weekly',  freq: 'Sundays', cron: '6:00 AM' },
+  { id: 'hourly-inspection',    num: 8,  name: 'Hourly Inspection Report',   tier: 'Weekly',  freq: 'Sundays', cron: '5:30 AM' },
+  { id: 'sales-report',         num: 9,  name: 'Weekly Sales Report',        tier: 'Weekly',  freq: 'Sundays', cron: '8:00 PM' },
+  { id: 'marketing-report',     num: 11, name: 'Marketing Report',           tier: 'Monday',  freq: 'Mondays', cron: '1:00 AM' },
+  { id: 'ceo-insights',         num: 12, name: 'CEO Insights',               tier: 'Monday',  freq: 'Mondays', cron: '3:00 AM' },
+  { id: 'competitive-briefing', num: 13, name: 'Competitive Briefing',       tier: 'Monday',  freq: 'Mondays', cron: '4:00 AM' },
+  { id: 'monthly-report',       num: 14, name: 'Monthly Operations Report',  tier: 'Monthly', freq: '1st',     cron: '5:00 AM' },
+  { id: 'nightly-optimizer',    num: 16, name: 'Nightly Index Optimizer',    tier: 'Utility', freq: 'Daily',   cron: '12:00 AM' },
+];
+
+async function renderPipelineDashboard() {
+  const container = document.getElementById('monthGroups');
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">Loading pipeline status...</div>';
+
+  let runs = [];
+  try {
+    if (!supabaseClient) throw new Error('Supabase not connected');
+    const { data, error } = await supabaseClient
+      .from('task_runs')
+      .select('*')
+      .order('finished_at', { ascending: false })
+      .limit(200);
+    if (error) throw error;
+    runs = data || [];
+  } catch (e) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--rose);">Failed to load task status: ${e.message}</div>`;
+    return;
+  }
+
+  // Build lookup: latest run per task_id
+  const latestByTask = {};
+  const recentByTask = {};
+  for (const r of runs) {
+    if (!latestByTask[r.task_id]) latestByTask[r.task_id] = r;
+    if (!recentByTask[r.task_id]) recentByTask[r.task_id] = [];
+    if (recentByTask[r.task_id].length < 5) recentByTask[r.task_id].push(r);
+  }
+
+  // Summary stats
+  const totalTasks = TASK_REGISTRY.length;
+  const tasksWithRuns = TASK_REGISTRY.filter(t => latestByTask[t.id]).length;
+  const successCount = TASK_REGISTRY.filter(t => latestByTask[t.id]?.status === 'success').length;
+  const failedCount = TASK_REGISTRY.filter(t => latestByTask[t.id]?.status === 'failed').length;
+  const neverRun = totalTasks - tasksWithRuns;
+
+  // Time formatting helpers
+  function timeAgo(isoStr) {
+    if (!isoStr) return 'Never';
+    const diff = Date.now() - new Date(isoStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + 'h ago';
+    const days = Math.floor(hrs / 24);
+    return days + 'd ago';
+  }
+  function fmtDuration(secs) {
+    if (!secs && secs !== 0) return '—';
+    if (secs < 60) return secs.toFixed(1) + 's';
+    return Math.floor(secs / 60) + 'm ' + Math.round(secs % 60) + 's';
+  }
+  function fmtTime(isoStr) {
+    if (!isoStr) return '—';
+    return new Date(isoStr).toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+  }
+  function statusDot(status) {
+    const colors = { success: 'var(--green)', failed: 'var(--red)', partial: 'var(--amber)' };
+    return `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${colors[status] || 'var(--text-muted)'};margin-right:6px;"></span>`;
+  }
+  function statusBadge(status) {
+    const colors = { success: 'var(--green)', failed: 'var(--red)', partial: 'var(--amber)' };
+    const bg = { success: 'rgba(34,197,94,0.15)', failed: 'rgba(239,68,68,0.15)', partial: 'rgba(245,158,11,0.15)' };
+    return `<span style="display:inline-block;padding:2px 10px;border-radius:4px;font-size:11px;font-weight:600;color:${colors[status] || 'var(--text-muted)'};background:${bg[status] || 'rgba(136,146,155,0.15)'}">${(status || 'never').toUpperCase()}</span>`;
+  }
+  function tierColor(tier) {
+    const m = { Data: 'var(--cyan)', Daily: 'var(--orange)', Weekly: 'var(--green)', Monday: 'var(--blue)', Monthly: 'var(--purple)', Utility: 'var(--text-muted)' };
+    return m[tier] || 'var(--text-muted)';
+  }
+
+  // Render
+  let html = '';
+
+  // Summary cards
+  html += `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px;">`;
+  html += `<div style="background:var(--surface);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--border);">
+    <div style="font-size:28px;font-weight:800;color:var(--green)">${successCount}</div>
+    <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Healthy</div></div>`;
+  html += `<div style="background:var(--surface);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--border);">
+    <div style="font-size:28px;font-weight:800;color:${failedCount > 0 ? 'var(--red)' : 'var(--text-muted)'}">${failedCount}</div>
+    <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Failed</div></div>`;
+  html += `<div style="background:var(--surface);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--border);">
+    <div style="font-size:28px;font-weight:800;color:${neverRun > 0 ? 'var(--amber)' : 'var(--text-muted)'}">${neverRun}</div>
+    <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">No Data</div></div>`;
+  html += `<div style="background:var(--surface);border-radius:12px;padding:16px;text-align:center;border:1px solid var(--border);">
+    <div style="font-size:28px;font-weight:800;color:var(--accent-primary)">${runs.length}</div>
+    <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Total Runs</div></div>`;
+  html += `</div>`;
+
+  // Group tasks by tier
+  const tiers = ['Data', 'Daily', 'Weekly', 'Monday', 'Monthly', 'Utility'];
+  for (const tier of tiers) {
+    const tasks = TASK_REGISTRY.filter(t => t.tier === tier);
+    if (tasks.length === 0) continue;
+
+    html += `<div style="margin-bottom:20px;">`;
+    html += `<div style="font-size:12px;font-weight:700;color:${tierColor(tier)};text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-left:4px;">${tier} Tasks</div>`;
+
+    for (const task of tasks) {
+      const latest = latestByTask[task.id];
+      const recent = recentByTask[task.id] || [];
+      const status = latest ? latest.status : null;
+      const isStale = latest && isTaskStale(task, latest);
+
+      html += `<div style="background:var(--surface);border-radius:10px;padding:14px 18px;margin-bottom:8px;border:1px solid ${status === 'failed' ? 'rgba(239,68,68,0.3)' : isStale ? 'rgba(245,158,11,0.3)' : 'var(--border)'};cursor:pointer;" onclick="this.querySelector('.task-detail')?.classList.toggle('expanded')">`;
+
+      // Main row
+      html += `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">`;
+      html += `<div style="display:flex;align-items:center;gap:10px;min-width:0;">`;
+      html += `<span style="font-size:11px;color:var(--text-muted);font-weight:600;width:24px;">#${task.num}</span>`;
+      html += `<span style="font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${task.name}</span>`;
+      if (isStale) html += `<span style="font-size:10px;color:var(--amber);font-weight:600;">STALE</span>`;
+      html += `</div>`;
+      html += `<div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">`;
+      html += `<span style="font-size:12px;color:var(--text-muted);">${task.cron} · ${task.freq}</span>`;
+      html += `<span style="font-size:12px;color:var(--text-muted);">${latest ? fmtDuration(parseFloat(latest.duration_secs)) : '—'}</span>`;
+      html += `<span style="font-size:12px;color:var(--text-muted);">${timeAgo(latest?.finished_at)}</span>`;
+      html += statusBadge(status);
+      // Recent run dots
+      html += `<div style="display:flex;gap:3px;" title="Last ${recent.length} runs">`;
+      for (let i = 0; i < 5; i++) {
+        if (i < recent.length) {
+          html += statusDot(recent[i].status);
+        } else {
+          html += `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--border);margin-right:3px;"></span>`;
+        }
+      }
+      html += `</div>`;
+      html += `</div></div>`;
+
+      // Expandable detail
+      html += `<div class="task-detail" style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;">`;
+      if (latest) {
+        html += `<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;">`;
+        html += `<div><strong>Last Run:</strong> ${fmtTime(latest.finished_at)}</div>`;
+        html += `<div><strong>Duration:</strong> ${fmtDuration(parseFloat(latest.duration_secs))}</div>`;
+        html += `<div><strong>Status:</strong> ${latest.status}${latest.failed_step ? ' — failed at ' + latest.failed_step : ''}</div>`;
+        if (latest.output_file) html += `<div><strong>Output:</strong> ${latest.output_file}</div>`;
+        if (latest.github_url) html += `<div><strong>URL:</strong> <a href="${latest.github_url}" target="_blank" style="color:var(--accent-primary);">View Report</a></div>`;
+        html += `</div>`;
+
+        // Run history table
+        if (recent.length > 1) {
+          html += `<div style="margin-top:10px;font-size:11px;">`;
+          html += `<table style="width:100%;border-collapse:collapse;">`;
+          html += `<tr style="color:var(--text-muted);"><td style="padding:4px 8px;">Date</td><td>Status</td><td>Duration</td><td>Output</td></tr>`;
+          for (const r of recent) {
+            html += `<tr style="border-top:1px solid var(--border);">`;
+            html += `<td style="padding:4px 8px;">${fmtTime(r.finished_at)}</td>`;
+            html += `<td>${statusDot(r.status)}${r.status}${r.failed_step ? ' (' + r.failed_step + ')' : ''}</td>`;
+            html += `<td>${fmtDuration(parseFloat(r.duration_secs))}</td>`;
+            html += `<td>${r.github_url ? '<a href="' + r.github_url + '" target="_blank" style="color:var(--accent-primary);">View</a>' : '—'}</td>`;
+            html += `</tr>`;
+          }
+          html += `</table></div>`;
+        }
+      } else {
+        html += `<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);">No run data recorded yet. This task will appear here after its next scheduled execution.</div>`;
+      }
+      html += `</div>`;
+
+      html += `</div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Auto-refresh note
+  html += `<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:11px;">
+    Data from Supabase <code>task_runs</code> table · Updated each time a task completes · <a href="#" onclick="renderPipelineDashboard();return false;" style="color:var(--accent-primary);">Refresh</a>
+  </div>`;
+
+  container.innerHTML = html;
+}
+
+function isTaskStale(task, latest) {
+  if (!latest || latest.status === 'failed') return false;
+  const age = Date.now() - new Date(latest.finished_at).getTime();
+  const hours = age / (1000 * 60 * 60);
+  if (task.freq === 'Daily' && hours > 36) return true;
+  if ((task.freq === 'Sundays' || task.freq === 'Mondays') && hours > 192) return true; // 8 days
+  if (task.freq === '1st' && hours > 768) return true; // 32 days
+  return false;
+}
+
+// CSS for expandable task detail
+(function() {
+  const style = document.createElement('style');
+  style.textContent = `.task-detail.expanded { max-height: 400px !important; }`;
+  document.head.appendChild(style);
+})();
+
+function openReport(url, title) {
+  document.getElementById('folderView').classList.add('hidden');
+  document.getElementById('reportView').classList.remove('active');
+  document.getElementById('adminPanel').classList.remove('active');
+  document.getElementById('viewer').classList.add('active');
+  document.getElementById('viewerTitle').textContent = title;
+  document.getElementById('viewerExtLink').href = url;
+  document.getElementById('viewerFrame').src = url;
+  document.body.classList.add('viewing');
+  currentView = 'viewer';
+  const slug = url.split('/').pop().replace('.html','');
+  history.pushState({ view: 'viewer', url, title, folderId: currentFolderId }, '', '#report/' + slug);
+}
+
+function closeViewer() {
+  document.getElementById('viewer').classList.remove('active');
+  document.getElementById('viewerFrame').src = '';
+  document.body.classList.remove('viewing');
+  if (currentFolderId) {
+    document.getElementById('folderView').classList.add('hidden');
+    document.getElementById('reportView').classList.add('active');
+    currentView = 'list';
+    history.pushState({ view: 'list', folderId: currentFolderId }, '', '#folder/' + currentFolderId);
+  } else { showFolders(); }
+}
+
+window.addEventListener('popstate', (e) => {
+  const state = e.state;
+  if (!state || state.view === 'folders') { showFolders(false); }
+  else if (state.view === 'list' && state.folderId) { openFolder(state.folderId, false); }
+  else if (state.view === 'viewer' && state.url) {
+    currentFolderId = state.folderId;
+    document.getElementById('folderView').classList.add('hidden');
+    document.getElementById('reportView').classList.remove('active');
+    document.getElementById('adminPanel').classList.remove('active');
+    document.getElementById('viewer').classList.add('active');
+    document.getElementById('viewerTitle').textContent = state.title;
+    document.getElementById('viewerExtLink').href = state.url;
+    document.getElementById('viewerFrame').src = state.url;
+    document.body.classList.add('viewing');
+    currentView = 'viewer';
+  }
+});
+
+function formatDate(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(m)-1]} ${parseInt(d)}, ${y}`;
+}
+
+// ============================================================
+// ADMIN PANEL — User & Folder Access Management
+// ============================================================
+function toggleAdminPanel() {
+  const panel = document.getElementById('adminPanel');
+  if (panel.classList.contains('active')) {
+    closeAdminPanel();
+  } else {
+    document.getElementById('folderView').classList.add('hidden');
+    document.getElementById('reportView').classList.remove('active');
+    panel.classList.add('active');
+
+    document.getElementById('headerTitle').textContent = 'Admin Panel';
+    document.getElementById('headerSubtitle').textContent = 'Manage users and folder permissions';
+
+    loadUserTable();
+    renderFolderPermsGrid('folderPermsGrid', REPORT_FOLDERS.map(f => f.id));
+  }
+}
+
+function closeAdminPanel() {
+  document.getElementById('adminPanel').classList.remove('active');
+  document.getElementById('editPermsSection').style.display = 'none';
+  editingUserEmail = null;
+  showFolders(false);
+}
+
+async function loadUserTable() {
+  const tbody = document.getElementById('userTableBody');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 20px;">Loading...</td></tr>';
+  try {
+    const { data, error } = await supabaseClient.from('report_portal_users').select('*').order('role').order('email');
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">No users yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(u => {
+      const folderCount = (u.role === 'admin') ? 'All' : ((u.folder_access || []).length + '/' + REPORT_FOLDERS.length);
+      const folderNames = (u.role === 'admin') ? 'All folders' : (u.folder_access || []).map(id => {
+        const f = REPORT_FOLDERS.find(rf => rf.id === id);
+        return f ? f.name : id;
+      }).join(', ') || 'None';
+      return `<tr>
+        <td style="font-weight:600; font-size:0.82rem;">${escHtml(u.email)}</td>
+        <td style="font-size:0.82rem;">${escHtml(u.display_name || '')}</td>
+        <td><span class="role-badge ${u.role}">${u.role}</span></td>
+        <td style="font-size:0.78rem; color:var(--text-muted); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escHtml(folderNames)}">${folderCount} folders</td>
+        <td style="white-space:nowrap;">
+          ${u.role !== 'admin' ? `<button class="admin-btn-sm" onclick="editUserPerms('${escHtml(u.email)}')">Edit</button>` : ''}
+          ${u.email !== currentUser.email ? `<button class="admin-btn-sm danger" onclick="removeUser('${escHtml(u.email)}')">Remove</button>` : ''}
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="5" class="error-msg">${e.message}</td></tr>`;
+  }
+}
+
+function renderFolderPermsGrid(containerId, enabledFolders) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = REPORT_FOLDERS.map(f => `
+    <div class="perm-card">
+      <span class="perm-icon">${f.icon}</span>
+      <span class="perm-name">${f.name}</span>
+      <label class="toggle-switch">
+        <input type="checkbox" data-folder-id="${f.id}" ${enabledFolders.includes(f.id) ? 'checked' : ''}>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  `).join('');
+}
+
+function getCheckedFolders(containerId) {
+  return Array.from(document.querySelectorAll(`#${containerId} input[type=checkbox]:checked`)).map(cb => cb.dataset.folderId);
+}
+
+function toggleFolderPerms() {
+  const role = document.getElementById('addUserRole').value;
+  document.getElementById('folderPermsSection').style.display = (role === 'admin') ? 'none' : 'block';
+}
+
+async function addUser() {
+  const email = document.getElementById('addUserEmail').value.trim().toLowerCase();
+  const name = document.getElementById('addUserName').value.trim();
+  const role = document.getElementById('addUserRole').value;
+  const msgEl = document.getElementById('userMsg');
+  msgEl.className = 'admin-msg'; msgEl.textContent = '';
+
+  if (!email || !email.includes('@')) {
+    msgEl.className = 'admin-msg error'; msgEl.textContent = 'Please enter a valid email.'; return;
+  }
+
+  const folderAccess = (role === 'admin') ? REPORT_FOLDERS.map(f => f.id) : getCheckedFolders('folderPermsGrid');
+
+  try {
+    const { error } = await supabaseClient.from('report_portal_users').upsert({
+      email: email,
+      role: role,
+      display_name: name || email.split('@')[0],
+      folder_access: folderAccess,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'email' });
+    if (error) throw error;
+    msgEl.className = 'admin-msg success'; msgEl.textContent = `Added ${email} as ${role}.`;
+    document.getElementById('addUserEmail').value = '';
+    document.getElementById('addUserName').value = '';
+    loadUserTable();
+  } catch(e) {
+    msgEl.className = 'admin-msg error'; msgEl.textContent = 'Error: ' + e.message;
+  }
+}
+
+async function removeUser(email) {
+  if (!confirm('Remove ' + email + ' from the portal? They will lose all access.')) return;
+  try {
+    const { error } = await supabaseClient.from('report_portal_users').delete().eq('email', email);
+    if (error) throw error;
+    loadUserTable();
+  } catch(e) { alert('Error removing user: ' + e.message); }
+}
+
+async function editUserPerms(email) {
+  editingUserEmail = email;
+  try {
+    const { data, error } = await supabaseClient.from('report_portal_users').select('*').eq('email', email).single();
+    if (error) throw error;
+    document.getElementById('editPermsSection').style.display = 'block';
+    document.getElementById('editPermsUserLabel').textContent = data.display_name || email;
+    renderFolderPermsGrid('editPermsGrid', data.folder_access || []);
+    document.getElementById('editPermsSection').scrollIntoView({ behavior: 'smooth' });
+  } catch(e) { alert('Error: ' + e.message); }
+}
+
+async function saveEditPerms() {
+  if (!editingUserEmail) return;
+  const msgEl = document.getElementById('editPermsMsg');
+  msgEl.className = 'admin-msg'; msgEl.textContent = '';
+  const folders = getCheckedFolders('editPermsGrid');
+  try {
+    const { error } = await supabaseClient.from('report_portal_users').update({
+      folder_access: folders,
+      updated_at: new Date().toISOString()
+    }).eq('email', editingUserEmail);
+    if (error) throw error;
+    msgEl.className = 'admin-msg success'; msgEl.textContent = 'Folder access updated.';
+    loadUserTable();
+    setTimeout(() => closeEditPerms(), 1500);
+  } catch(e) { msgEl.className = 'admin-msg error'; msgEl.textContent = 'Error: ' + e.message; }
+}
+
+function closeEditPerms() {
+  document.getElementById('editPermsSection').style.display = 'none';
+  editingUserEmail = null;
+}
+
+function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ============================================================
+// IFRAME AUTH RESPONDER
+// ============================================================
+window.addEventListener('message', function(ev) {
+  var allowedOrigins = [
+    'https://jbass698-121.github.io',
+    window.location.origin
+  ];
+  if (allowedOrigins.indexOf(ev.origin) === -1) return;
+
+  if (ev.data && ev.data.type === 'ucwh-auth-check') {
+    if (supabaseClient) {
+      supabaseClient.auth.getSession().then(function(res) {
+        if (res.data && res.data.session) {
+          ev.source.postMessage({ type: 'ucwh-auth-verified' }, ev.origin);
+        }
+      });
+    }
+  }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+initSupabase();
+(async () => {
+  const handled = await handleAuthCallback();
+  if (!handled) {
+    document.getElementById('loginLoading').classList.remove('active');
+  }
+})();
+</script>
+
+</body>
+</html>
