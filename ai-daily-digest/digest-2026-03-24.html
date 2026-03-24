@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 24, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Tuesday, March 24, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>Google launched an open-source MCP Server for Colab, letting any AI agent treat a GPU-backed notebook as a remote runtime — a significant unlock for agent-driven compute workflows. The Trump administration's national AI legislative framework is drawing sharper battle lines, proposing federal preemption of all state AI laws just as Colorado's AI Act heads toward its June 30 effective date. Robotics entered its mega-round era with over $1.2B raised in a single week across Mind Robotics, Rhoda AI, Sunday, and Oxa. Replit tripled its valuation to $9B in six months on the back of agentic AI software creation. Meanwhile, hyperscaler CapEx is on track to exceed $600B in 2026, with inference overtaking training as the dominant spend category — a structural tailwind for production AI users running inference-heavy automation pipelines. Xiaomi's MiMo-V2-Pro launched at 1 trillion parameters, free to use, while MiroThinker 72B's interactive scaling approach matched GPT-5 on complex reasoning benchmarks.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://llm-stats.com/ai-news">Google Gemini 3.1 Flash-Lite — 2.5x Faster, $0.25/M Input Tokens</a></h3>
+    <p class="story-meta"><span class="source">LLM Stats / Google</span> · Mar 24 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Google released Gemini 3.1 Flash-Lite, an efficiency-optimized model delivering 2.5x faster response times and 45% faster output generation compared to earlier Gemini versions, priced at just $0.25 per million input tokens. The model targets high-throughput production workloads where latency and cost matter more than peak capability — exactly the use case for automated report generation, data validation, and batch processing tasks.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> At $0.25/M input tokens, Flash-Lite is approaching the cost floor where running AI inference on every data pull, validation check, and report generation step becomes negligible. If you ever evaluate moving parts of your 18-task pipeline to API-based generation (instead of local template engines), models at this price point make it economically viable to add AI reasoning to steps that currently use deterministic logic — like cache freshness validation or anomaly detection in daily metrics.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/new-ai-model-releases-news-march-2026/">Xiaomi MiMo-V2-Pro: 1 Trillion Parameters, Free to Use</a></h3>
+    <p class="story-meta"><span class="source">Mean CEO / Xiaomi AI</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Xiaomi's AI division released MiMo-V2-Pro, a 1-trillion parameter model built by a team led by a former DeepSeek researcher. The model is free to use, continuing the trend of Chinese AI labs releasing frontier-scale models at zero cost. MiMo-V2-Pro joins a growing roster of open-weight trillion-parameter models that are compressing the capability gap between proprietary and open alternatives.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.labla.org/latest-ai-model-releases-past-24-hours/new-ai-tools-model-updates-march-23-2026-the-companies-you-havent-heard-of-yet/">MiroThinker 72B Matches GPT-5 on GAIA Benchmark with Interactive Scaling</a></h3>
+    <p class="story-meta"><span class="source">Labla.org</span> · Mar 23 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">MiroThinker 72B introduced "interactive scaling" — an approach where the model runs internal verification cycles before producing output, achieving 81.9% on the GAIA benchmark, putting it in the same range as paid GPT-5 versions on complex logical reasoning tasks. This is a smaller model (72B parameters) matching frontier performance through inference-time compute optimization rather than raw scale, validating the "think harder, not bigger" paradigm that's been gaining momentum since DeepSeek-R1.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.marktechpost.com/2026/03/19/google-colab-now-has-an-open-source-mcp-model-context-protocol-server-use-colab-runtimes-with-gpus-from-any-local-ai-agent/">Google Colab Launches Open-Source MCP Server — GPU Runtimes Accessible from Any AI Agent</a></h3>
+    <p class="story-meta"><span class="source">MarkTechPost / Google</span> · Mar 19 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Google released the Colab MCP Server, an open-source implementation of the Model Context Protocol that enables any compatible AI agent — Claude Code, Gemini CLI, or custom orchestration frameworks — to treat a Colab notebook as a remote runtime with GPU access. This means AI agents can now programmatically execute code, train models, and run compute-intensive tasks on Google's GPU infrastructure through a standardized protocol interface, eliminating the need for custom API integrations.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This directly applies to your wash forecast pipeline. Right now, model retraining runs locally via <code>retrain.py</code> on your machine. A Colab MCP server would let your <code>auto-retrain-wrapper.js</code> offload the sklearn training to a GPU-backed Colab runtime — faster retraining, no local compute dependency, and the same MCP protocol you already use for Slack and Supabase. It also means forecast model experimentation (trying XGBoost, neural nets) becomes trivial since you'd have GPU access without local setup.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://medium.com/@info_47134/mcp-security-is-becoming-the-weakest-link-in-enterprise-ai-agent-architectures-6423053ba73f">MCP Security Emerges as Enterprise AI's Weakest Link</a></h3>
+    <p class="story-meta"><span class="source">AGAT Software / Medium</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">A growing body of security research is converging on a single conclusion: MCP layers are becoming the primary attack surface for enterprise AI systems. With MCP now embedded in 34,700+ projects, the protocol sits at the boundary where "decision meets execution" — yet most organizations have no centralized visibility, access controls, or audit logging for MCP connections. The v1.27 release included auth hardening and conformance infrastructure, but adoption of security features lags far behind adoption of the protocol itself. Enterprise MCP deployments are expanding faster than the governance tooling meant to secure them.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Your automation pipeline has MCP connections to Slack (write access), Supabase (write access), browser tools, and file system. While your single-operator setup has lower attack surface than enterprise, the pattern holds: there's no audit log of what MCP tools did what, when. As Parallax Holdings scales its AI infrastructure across multiple businesses, MCP governance becomes a real concern — especially for write operations to production systems. This is also a market signal: MCP security tooling is an emerging category with clear demand and no dominant player yet.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://thenewstack.io/model-context-protocol-roadmap-2026/">MCP 2026 Roadmap: Transport Scalability, Agent Communication, Enterprise Readiness</a></h3>
+    <p class="story-meta"><span class="source">The New Stack / MCP Blog</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The official MCP 2026 roadmap prioritizes four themes: transport scalability (supporting higher-throughput connections), agent-to-agent communication (bridging MCP with A2A protocol), governance maturation (enterprise auth patterns and audit capabilities), and ecosystem standardization. The roadmap also includes guidance on Specification Enhancement Proposal (SEP) prioritization and community involvement pathways. With 146 members in the Agentic AI Foundation and the MCP Dev Summit scheduled for April 2-3 in NYC, the protocol is entering its standards-body phase.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-ai-robotics-ecommerce-quince/">Robotics Enters Mega-Round Era — $1.2B Raised in a Single Week</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase News / Intellizence</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Humanoid and industrial robotics hit an inflection point with four companies collectively raising over $1.2 billion in a single week: Mind Robotics ($500M), Rhoda AI ($450M Series A from stealth, backed by Premji Invest, training robots via hundreds of millions of videos), Sunday ($165M Series B reaching unicorn status, targeting real-world pilot deliveries by late 2026), and Oxa ($103M for autonomous logistics). The robotics sector is projected to draw $20B+ in funding in 2026, making it the breakout investment category of the year following Figure's commercial validation.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Robotics automation is following the same adoption curve as AI software automation — and car wash operations sit squarely in the intersection. Automated tunnel washes already have conveyor systems, chemical dispensing, and sensor arrays that could be enhanced with AI-vision for vehicle damage detection, equipment predictive maintenance, or dynamic wash customization. The capital flooding into "AI for physical operations" signals that the tooling will mature rapidly. Watch for robotics-adjacent AI (computer vision, predictive maintenance) becoming accessible as SaaS within 12-18 months.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://aifundingtracker.com/ai-startup-funding-news-today/">Replit Triples to $9B Valuation on Agentic AI Software Creation</a></h3>
+    <p class="story-meta"><span class="source">AI Funding Tracker / Crunchbase News</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Replit raised $400 million in Series D funding at a $9 billion valuation — up from $3 billion just six months ago — led by Georgian. The platform has positioned itself as an agentic AI software creation environment where users describe what they want built and AI agents handle the implementation. The 3x valuation jump in six months reflects the market's conviction that "AI builds software" platforms will capture a significant share of the $600B+ global software development market. Replit joins Cursor, Windsurf, and Codex in the increasingly competitive AI coding space.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/record-setting-global-funding-february-2026-openai-anthropic/">US Startup Funding Slows in March After Record-Breaking February</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase News</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">After February 2026 set an all-time record at $189B in global startup funding (driven by OpenAI and Anthropic mega-rounds), US startup funding has slowed in March. However, the slowdown is relative — March has still produced more $100M+ AI rounds than any comparable period in previous years. The pattern suggests that AI funding hasn't peaked but is becoming more concentrated in specific verticals (robotics, coding tools, infrastructure) rather than flowing broadly across all AI startups.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.whitehouse.gov/articles/2026/03/president-donald-j-trump-unveils-national-ai-legislative-framework/">Federal AI Framework Battle Lines Sharpen — State Law Preemption vs. Patchwork</a></h3>
+    <p class="story-meta"><span class="source">White House / Nextgov / Wilson Sonsini</span> · Mar 20 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Trump administration's national AI legislative framework released March 20 is drawing sharper reactions as legal analysts digest its implications. The framework would preempt California's AI Transparency Act (SB 942), Texas's Responsible AI Governance Act (RAIGA), and Colorado's AI Act — all of which are already in various stages of taking effect. The framework recommends no new federal AI rulemaking body, instead maintaining a "sector-specific" approach with existing regulators. Critics argue it delivers Big Tech's top policy priority under an innovation banner, while supporters say a unified federal standard prevents compliance chaos. Colorado's AI Act takes effect June 30, creating a deadline pressure for Congressional action.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The June 30 Colorado deadline creates a forcing function. If Congress doesn't act, businesses operating across state lines will face the patchwork the White House wants to prevent. For Parallax Holdings, the practical question is whether AI-generated reports, automated customer communications, or AI-driven business decisions trigger disclosure requirements under any of these state laws. The answer depends on how broadly "high-risk AI" is defined — and that definition is currently different in every state. Monitor but don't over-invest in compliance until the federal vs. state question resolves.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://home.treasury.gov/news/press-releases/sb0421">Treasury Launches AI Innovation Series — Financial AI Gets Regulatory Attention</a></h3>
+    <p class="story-meta"><span class="source">US Treasury / FSOC</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The Treasury Department's Financial Stability Oversight Council (FSOC) and AI Transformation Office (AITO) launched the AI Innovation Series, a public-private initiative focused on AI's role in financial services. The initiative addresses AI in fraud detection, cybersecurity, credit underwriting, and operational risk management. This is the first structured engagement between financial regulators and AI developers specifically focused on ensuring AI doesn't introduce systemic risk to financial markets — moving beyond general AI policy into sector-specific governance.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://securityboulevard.com/2026/03/ai-governance-in-2026-why-staying-current-is-no-longer-optional-for-your-business/">AI Governance Shifts from Principles to Enforceable Rules — Penalties Coming</a></h3>
+    <p class="story-meta"><span class="source">Security Boulevard</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Industry analysts are warning that 2026 marks the transition from aspirational AI governance frameworks to enforceable rules with real penalties. Organizations are now expected to maintain documented AI inventories, risk classifications, third-party due diligence, and model lifecycle controls. The EU AI Act's obligations for general-purpose AI and prohibited practices are already in force, while US state laws are adding requirements monthly. Companies that treated governance as optional are facing a structural disadvantage as enforcement ramps up.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://futurumgroup.com/insights/ai-capex-2026-the-690b-infrastructure-sprint/">Hyperscaler CapEx Exceeds $600B — Inference Overtakes Training as Primary Driver</a></h3>
+    <p class="story-meta"><span class="source">Futurum Group / Goldman Sachs / Dell'Oro Group</span> · Mar 2026 · <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Hyperscaler capital expenditure for 2026 is now projected to exceed $600 billion across the Big Five (Amazon, Google, Microsoft, Meta, Oracle), a 36% increase over 2025. Capital intensity has reached historically unprecedented levels of 45-57% of revenue. The critical shift: inference is projected to overtake training as the larger CapEx category, driven by enterprise AI workloads moving from experimentation to production. All five hyperscalers report that AI capacity is being absorbed as fast as it can be deployed, with well over 10 million high-end accelerators in service.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The inference-over-training shift is the most important signal for production AI operators. Your 18-task pipeline is 100% inference — report generation, data analysis, forecasting, validation. More inference capacity means continued price compression, lower latency, and better model availability. The hyperscaler spending war is a structural subsidy for your operations: they're spending hundreds of billions to build infrastructure that makes your automation pipeline economically viable. This spending pattern will persist as long as the competitive dynamics hold — and none of the Big Five can afford to blink first.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.sciencedaily.com/releases/2026/03/260321012709.htm">AI Predicts Cancer Spread with "Surprising Accuracy" — Healthcare AI Enters Clinical Reality</a></h3>
+    <p class="story-meta"><span class="source">ScienceDaily</span> · Mar 21 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Researchers published results showing a new AI tool can predict cancer metastasis with accuracy that surprised the research team, marking another milestone in healthcare AI moving from research to clinical deployment. The tool analyzes patterns in medical imaging that human clinicians cannot reliably detect, demonstrating AI's value in domains where pattern recognition at scale exceeds human capability. Healthcare AI is now the second-largest enterprise AI category after coding tools, with clinical applications gaining FDA clearance at an accelerating pace.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.goldmansachs.com/insights/articles/why-ai-companies-may-invest-more-than-500-billion-in-2026">Enterprise AI Surges to $37B — 76% of Use Cases Now "Buy" vs. "Build"</a></h3>
+    <p class="story-meta"><span class="source">Goldman Sachs / Menlo Ventures</span> · Mar 2026 · <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Enterprise AI spending has surged from $1.7B to $37B since 2023, capturing 6% of the global SaaS market and growing faster than any software category in history. A critical behavioral shift: 76% of AI use cases are now purchased rather than built internally, up from 47% in 2024. This "buy over build" trend reflects enterprises recognizing that AI capabilities are maturing faster as products than as custom development projects — the inverse of the early cloud adoption curve where custom was preferred.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Tuesday, March 24, 2026</p>
+  <p class="sources">Sources: LLM Stats, Google, Mean CEO, Xiaomi AI, Labla.org, MarkTechPost, AGAT Software, The New Stack, MCP Blog, Crunchbase News, Intellizence, AI Funding Tracker, White House, Nextgov, Wilson Sonsini, US Treasury, FSOC, Security Boulevard, Futurum Group, Goldman Sachs, Dell'Oro Group, ScienceDaily, Menlo Ventures</p>
+</div>
+
+</div>
+</body>
+</html>
