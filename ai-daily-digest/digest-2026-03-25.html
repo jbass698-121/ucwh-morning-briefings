@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 25, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Wednesday, March 25, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>GPT-5.4 Thinking is now OpenAI's flagship model with native computer-use capabilities and 1M token context -- a direct shot at Claude's agentic dominance. The Linux Foundation's new Agentic AI Foundation has formally unified MCP and A2A under one governance roof, with OpenAI, Anthropic, Google, Microsoft, and AWS as co-founders -- the protocol wars are officially over. Hyperscaler CapEx is on track to exceed $600B in 2026, with 75% tied directly to AI infrastructure, and data center capex forecast to surpass $1 trillion globally. Europe's largest-ever seed round landed at AMI Labs ($1.03B for world models), while Alibaba launched Wukong, a multi-agent enterprise platform signaling that China's agentic AI ecosystem is maturing fast. On the regulatory front, the collision between the White House's federal preemption framework and Colorado's June 30 AI Act deadline is creating real compliance uncertainty for multi-state operators.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://openai.com/index/introducing-gpt-5-4/">GPT-5.4 Thinking Now Flagship -- Native Computer Use, 1M Context, 33% Fewer Hallucinations</a></h3>
+    <p class="story-meta"><span class="source">OpenAI</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI's GPT-5.4 Thinking is now the flagship model across ChatGPT and the API, combining improved reasoning with native computer-use capabilities -- a first for a general-purpose model. The API supports up to 1 million tokens of context, individual claims are 33% less likely to be false, and the model can now show upfront plans of its thinking so users can redirect mid-response. It also incorporates GPT-5.3-Codex coding capabilities while solving problems with significantly fewer tokens than its predecessor. GPT-5.4 mini is available free with Thinking enabled.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Native computer use is the capability that transforms models from "tools you prompt" to "agents that operate." OpenAI is now directly competing with Anthropic's computer-use features in Claude. For your pipeline, the 1M token context window means entire weekly datasets could be fed in a single call. The 33% hallucination reduction is material for report generation where every metric needs to be accurate. Worth evaluating GPT-5.4 against Claude for specific tasks where token efficiency or computer use could reduce pipeline complexity.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.crescendo.ai/news/latest-ai-news-and-updates">Apple's AI-Powered Siri Reboot Set for 2026 -- Powered by Google Gemini</a></h3>
+    <p class="story-meta"><span class="source">Crescendo AI / Apple</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Apple confirmed that a completely reimagined Siri will debut in 2026 as a context-aware assistant with on-screen awareness and seamless cross-app integration, powered by Google's 1.2 trillion parameter Gemini model running on Apple's Private Cloud Compute infrastructure. This represents Apple's admission that its in-house AI capabilities couldn't keep pace -- and Google's model becoming the default intelligence layer for over a billion Apple devices.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.mastercard.com/us/en/news-and-trends/stories/2026/mastercard-new-generative-ai-model.html">Mastercard Launches Proprietary Gen AI Engine for Transaction Intelligence</a></h3>
+    <p class="story-meta"><span class="source">Mastercard</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Mastercard unveiled a proprietary generative AI engine built specifically for transaction data analysis, fraud pattern detection, and merchant intelligence. Rather than deploying a general-purpose LLM, Mastercard trained a domain-specific model on its transaction graph -- the same "specialized model beats generalist" pattern emerging across enterprise AI. The engine processes billions of transactions to surface anomalies, predict fraud vectors, and generate merchant-level insights in real time.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation">Linux Foundation Unifies MCP and A2A Under New Agentic AI Foundation</a></h3>
+    <p class="story-meta"><span class="source">Linux Foundation</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Linux Foundation launched the Agentic AI Foundation (AAIF), co-founded by OpenAI, Anthropic, Google, Microsoft, AWS, and Block, as the permanent governance home for both MCP (agent-to-tool) and A2A (agent-to-agent) protocols. IBM's Agent Communication Protocol merged into A2A, and the foundation's charter covers transport scalability, enterprise auth, audit trails, and configuration portability. The protocol fragmentation era is over -- MCP and A2A are now the de facto standards under neutral governance.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the "HTTP moment" for AI agents. With MCP under Linux Foundation governance and all major players co-founding, your investment in MCP-based tool connections (Supabase, Slack, Gmail) is now built on the industry standard, not a single vendor's protocol. Future integrations -- connecting new data sources, adding tools, or enabling agent-to-agent workflows between your 18 tasks -- will follow these standardized protocols. Vendor lock-in risk for your agent infrastructure just dropped significantly.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.marktechpost.com/2026/03/19/google-colab-now-has-an-open-source-mcp-model-context-protocol-server-use-colab-runtimes-with-gpus-from-any-local-ai-agent/">Google Colab Releases Open-Source MCP Server -- GPU Runtimes for Any AI Agent</a></h3>
+    <p class="story-meta"><span class="source">MarkTechPost / Google</span> &middot; Mar 19 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Google officially released the Colab MCP Server, an open-source implementation enabling any AI agent to interact directly with Google Colab environments -- including GPU runtimes. This means local AI agents can now spawn Colab notebooks, execute code on cloud GPUs, and retrieve results through standard MCP calls. MCP servers can now execute code to filter and transform data before sending it to the LLM, dramatically reducing token consumption.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Cloud GPU access via MCP opens a path for running compute-intensive tasks -- like forecast model training or large-scale data analysis -- directly from your agent pipeline without provisioning infrastructure. Your wash forecast task (#10) or any future ML-driven analytics could leverage Colab GPUs through the same MCP interface you already use for Supabase and Slack.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.crescendo.ai/news/latest-ai-news-and-updates">Alibaba Launches Wukong -- Enterprise Multi-Agent Platform for Document, Approval, and Research Workflows</a></h3>
+    <p class="story-meta"><span class="source">Crescendo AI / Alibaba</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Alibaba introduced Wukong, an enterprise AI platform designed to manage multiple specialized agents performing tasks such as document editing, approval routing, and research synthesis. Wukong coordinates agent handoffs, maintains shared context across workflows, and provides centralized monitoring -- essentially an enterprise-grade orchestration layer for multi-agent systems. China's agentic AI ecosystem is maturing rapidly, with Alibaba, Tencent (OpenClaw), and ByteDance all shipping production agent platforms.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/">AMI Labs Raises $1.03B -- Largest European Seed Round Ever -- for World Models</a></h3>
+    <p class="story-meta"><span class="source">Mean CEO / AMI Labs</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Yann LeCun's AMI Labs raised $1.03 billion in a seed round -- the largest in European history -- to build world models based on the JEPA (Joint Embedding Predictive Architecture) framework. Backed by Bezos, Nvidia, Samsung, and Temasek, AMI Labs is pursuing LeCun's long-held thesis that next-generation AI needs world models that understand physics, causality, and spatial reasoning rather than just next-token prediction. This is a massive bet on a fundamentally different AI architecture than transformers.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> World models represent the next frontier beyond LLMs -- AI that understands how physical systems work, not just how language works. For car wash operations, this matters long-term: world models could predict equipment failure from sensor patterns, simulate tunnel throughput under different configurations, or model weather impact on car counts with genuine causal reasoning rather than statistical correlation. AMI Labs is pre-product, but the $1B seed signals where the smartest capital thinks AI is heading.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.crescendo.ai/news/latest-ai-news-and-updates">OpenAI Hits $25B ARR, Takes Early Steps Toward IPO</a></h3>
+    <p class="story-meta"><span class="source">Crescendo AI</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI has surpassed $25 billion in annualized revenue and is reportedly taking early steps toward a public listing, potentially as soon as late 2026. Anthropic is approaching $19 billion ARR, with Claude Code alone contributing $2.5 billion. The two companies are now generating revenue at a pace that rivals enterprise software giants -- OpenAI's growth from $4B to $25B ARR in roughly 18 months is among the fastest in tech history.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://intellizence.com/insights/startup-funding/the-weeks-5-biggest-funding-rounds-raised-over-3b-to-scale-the-next-wave-of-ai-innovation/">Legora Closes $550M Series D for AI-Powered Legal Intelligence</a></h3>
+    <p class="story-meta"><span class="source">Intellizence</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Legal AI startup Legora raised $550M in Series D funding as part of a record-breaking week that saw over $6B in AI capital deployed in just three days (March 11-13). Legal AI has emerged as one of the fastest-growing vertical AI categories, with firms adopting AI for contract analysis, regulatory compliance, and litigation research. The funding concentration in vertical AI -- legal, healthcare, robotics -- signals that the market is moving past horizontal "AI for everything" toward domain-specific applications.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.cnbc.com/2026/03/20/trump-ai-policy-framework.html">Federal vs. State AI Law Collision: Colorado's June 30 Deadline Creates Compliance Limbo</a></h3>
+    <p class="story-meta"><span class="source">CNBC / Wilson Sonsini</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Trump administration's AI framework proposes preempting all state AI laws -- but Colorado's AI Act takes effect June 30, California's AI Transparency Act is advancing, and Texas's Responsible AI Governance Act is already shaping enforcement expectations. Congress is unlikely to act before the Colorado deadline, creating a three-month window where businesses may face binding state obligations that a future federal law could override. The "high-risk AI" definition differs across every state, compounding uncertainty for multi-state operators.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> If you operate AI-driven decision systems across states -- automated reports influencing business decisions, AI-generated customer communications, or algorithmic pricing -- the "high-risk AI" classification varies by jurisdiction. The practical move: document your AI use cases and their decision scope now, so you're ready regardless of which framework prevails. Don't over-invest in compliance tooling until Q3, but do maintain an inventory of where AI touches consequential decisions.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.corporatecomplianceinsights.com/2026-operational-guide-cybersecurity-ai-governance-emerging-risks/">Insurers Introduce "AI Security Riders" Requiring Red-Team Documentation</a></h3>
+    <p class="story-meta"><span class="source">Corporate Compliance Insights</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Insurance carriers are introducing AI Security Riders that require documented evidence of adversarial red-teaming, model-level risk assessments, and specialized safeguards before extending or renewing coverage. This is a market-driven governance mechanism: insurers are pricing AI risk directly, requiring alignment with recognized AI risk management frameworks, and potentially denying coverage for unassessed AI systems. The SEC is simultaneously shifting AI from "emerging fintech" to "clear operational risk" in its regulatory priorities.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://futurumgroup.com/insights/ai-capex-2026-the-690b-infrastructure-sprint/">Hyperscaler CapEx Hits $600B+ in 2026 -- 75% Tied to AI Infrastructure</a></h3>
+    <p class="story-meta"><span class="source">Futurum Group / IEEE ComSoc / Goldman Sachs</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Big Five hyperscaler capital expenditure is surging to $602 billion in 2026 (+36% YoY), with roughly 75% -- or $450 billion -- tied directly to AI infrastructure rather than traditional cloud. Global data center CapEx is forecast to surpass $1 trillion. Hyperscalers now spend 45-57% of revenue on capex, ratios previously unthinkable for technology companies, and raised $108B in debt during 2025 alone. The scale is staggering: more capital is being deployed for AI infrastructure in 2026 than the entire US defense budget.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> $600B in infrastructure spending means inference costs will continue falling as capacity scales. Every price drop makes it more economically viable to add AI reasoning to more steps of your pipeline -- validation, anomaly detection, natural language summaries, dynamic forecasting. The infrastructure buildout also means cloud GPU availability is improving, reducing the compute constraints that previously limited what you could run in batch processing windows like your 2:00-6:00 AM task sequence.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.crescendo.ai/news/latest-ai-news-and-updates">Disney Embeds Generative AI Across Entire Operating Structure</a></h3>
+    <p class="story-meta"><span class="source">Crescendo AI / Disney</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The Walt Disney Company has begun embedding generative AI across its entire operating structure -- content creation, post-production, and personalized guest experiences within theme parks. This represents one of the largest enterprise AI integration programs by a non-tech company, signaling that AI adoption has crossed from tech-native firms into traditional industries. Disney's approach is multi-model: different AI systems for different operational domains, coordinated through a central AI operations team.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.crescendo.ai/news/latest-ai-news-and-updates">Nvidia Partners with Alpamayo for AI-Driven Autonomous Vehicle Simulation</a></h3>
+    <p class="story-meta"><span class="source">Crescendo AI / Nvidia</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Nvidia announced a strategic partnership with Alpamayo to create hyper-realistic AI-driven simulation environments for autonomous vehicle development. The partnership combines Nvidia's Omniverse platform with Alpamayo's physics simulation capabilities, allowing developers to safely refine self-driving algorithms in virtual environments before real-world deployment. Simulation-first development is becoming the default approach for AI systems that interact with the physical world -- from autonomous vehicles to industrial robotics to warehouse automation.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass -- United Car Wash Holdings</p>
+  <p>Generated Wednesday, March 25, 2026</p>
+  <p class="sources">Sources: OpenAI, TechCrunch, Apple, Mastercard, Linux Foundation, MarkTechPost, Google, Alibaba, Crescendo AI, Mean CEO, AMI Labs, Intellizence, CNBC, Wilson Sonsini, Corporate Compliance Insights, Futurum Group, IEEE ComSoc, Goldman Sachs, Disney, Nvidia</p>
+</div>
+
+</div>
+</body>
+</html>
