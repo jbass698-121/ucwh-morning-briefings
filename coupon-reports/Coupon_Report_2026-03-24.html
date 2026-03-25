@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UCWH Coupon Report — 2026-03-24</title>
+  <style>
+    :root {
+      --primary: #1a1a2e;
+      --accent: #e94560;
+      --accent-light: #ff6b6b;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #333;
+      --text-light: #666;
+      --border: #e0e0e0;
+      --success: #2ecc71;
+      --warning: #f39c12;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #16213e 50%, #0f3460 100%);
+      color: white; padding: 32px 24px; text-align: center;
+    }
+    .hero h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+    .hero .subtitle { font-size: 1rem; opacity: 0.85; }
+    .hero .date { font-size: 0.9rem; opacity: 0.7; margin-top: 8px; }
+
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; padding: 24px; max-width: 1200px; margin: -20px auto 0;
+    }
+    .summary-card {
+      background: var(--card-bg); border-radius: 12px; padding: 20px; text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-top: 3px solid var(--accent);
+    }
+    .summary-card .value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+    .summary-card .label { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px 40px; }
+
+    .section { margin-top: 32px; }
+    .section h2 {
+      font-size: 1.2rem; font-weight: 600; color: var(--primary);
+      border-bottom: 2px solid var(--accent); padding-bottom: 8px; margin-bottom: 16px;
+    }
+
+    .card {
+      background: var(--card-bg); border-radius: 12px; padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 16px;
+    }
+    .card h3 { font-size: 1rem; font-weight: 600; color: var(--primary); margin-bottom: 12px; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th { background: var(--primary); color: white; padding: 10px 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+    td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: center; font-size: 0.9rem; }
+    tr:nth-child(even) { background: #f9f9fb; }
+    tr:hover { background: #f0f0f5; }
+
+    .site-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 16px; }
+
+    .site-summary {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: #f4f4f8; border-radius: 8px; margin-bottom: 8px;
+    }
+    .site-summary .site-name { font-weight: 600; color: var(--primary); }
+    .site-summary .site-stats { display: flex; gap: 16px; }
+    .site-summary .stat { text-align: center; }
+    .site-summary .stat .num { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
+    .site-summary .stat .lbl { font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; }
+
+    .footer { text-align: center; padding: 24px; color: var(--text-light); font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 40px; }
+
+    @media (max-width: 768px) {
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .site-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>🎟️ Daily Coupon Report</h1>
+    <div class="subtitle">UCW Tommy's Express — All Locations</div>
+    <div class="date">Tuesday, March 24, 2026</div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="value">132</div>
+      <div class="label">Coupons Yesterday</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">$2930.65</div>
+      <div class="label">Total Discount</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">$330.00</div>
+      <div class="label">Marginal Cost @ $2.50</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">6,079</div>
+      <div class="label">YTD Coupons</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">$15197.50</div>
+      <div class="label">YTD Marginal Cost</div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Site Overview -->
+    <div class="section">
+      <h2>Site Overview</h2>
+      
+      <div class="site-summary">
+        <div class="site-name">TX160 — Houston FM 1960</div>
+        <div class="site-stats">
+          <div class="stat"><div class="num">39</div><div class="lbl">Yesterday</div></div>
+          <div class="stat"><div class="num">$798.93</div><div class="lbl">Discount</div></div>
+          <div class="stat"><div class="num">$97.50</div><div class="lbl">Marg. Cost</div></div>
+          <div class="stat"><div class="num">2,298</div><div class="lbl">YTD</div></div>
+        </div>
+      </div>
+      <div class="site-summary">
+        <div class="site-name">TX190 — Clear Lake</div>
+        <div class="site-stats">
+          <div class="stat"><div class="num">36</div><div class="lbl">Yesterday</div></div>
+          <div class="stat"><div class="num">$842.81</div><div class="lbl">Discount</div></div>
+          <div class="stat"><div class="num">$90.00</div><div class="lbl">Marg. Cost</div></div>
+          <div class="stat"><div class="num">1,084</div><div class="lbl">YTD</div></div>
+        </div>
+      </div>
+      <div class="site-summary">
+        <div class="site-name">UT426 — Saratoga Springs</div>
+        <div class="site-stats">
+          <div class="stat"><div class="num">57</div><div class="lbl">Yesterday</div></div>
+          <div class="stat"><div class="num">$1288.91</div><div class="lbl">Discount</div></div>
+          <div class="stat"><div class="num">$142.50</div><div class="lbl">Marg. Cost</div></div>
+          <div class="stat"><div class="num">2,697</div><div class="lbl">YTD</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Sites Combined Table -->
+    <div class="section">
+      <h2>All Sites — Promotion Detail</h2>
+      <div class="card">
+        
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left;">Promotion</th>
+              <th>Yesterday</th>
+              <th>Discount</th>
+              <th>Marginal Cost</th>
+              <th>YTD (Jan 1 – Mar 24)</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td style="text-align: left; font-weight: 500;">UT426: March 2026 mailer</td>
+              <td>50</td>
+              <td>$1169.95</td>
+              <td>$125.00</td>
+              <td>468</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">TX160: March 2026 mailer</td>
+              <td>24</td>
+              <td>$513.98</td>
+              <td>$60.00</td>
+              <td>340</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">TX190: March 2026 mailer</td>
+              <td>23</td>
+              <td>$595.92</td>
+              <td>$57.50</td>
+              <td>278</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+              <td>18</td>
+              <td>$296.82</td>
+              <td>$45.00</td>
+              <td>1,599</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">TX160 (Houston): Service Member</td>
+              <td>9</td>
+              <td>$180.00</td>
+              <td>$22.50</td>
+              <td>391</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">TX160/TX190: March street card blitz</td>
+              <td>2</td>
+              <td>$56.99</td>
+              <td>$5.00</td>
+              <td>44</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">UT426 (Saratoga Springs): Operational Site Street Cards</td>
+              <td>2</td>
+              <td>$44.00</td>
+              <td>$5.00</td>
+              <td>233</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">TX190/TX160/UT426: Edwin Greer free Works wash</td>
+              <td>1</td>
+              <td>$20.00</td>
+              <td>$2.50</td>
+              <td>48</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">TX190 (Houston): Sticky Note Street Card</td>
+              <td>1</td>
+              <td>$20.00</td>
+              <td>$2.50</td>
+              <td>66</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All Sites: TX-M-1562</td>
+              <td>1</td>
+              <td>$22.00</td>
+              <td>$2.50</td>
+              <td>13</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">UT426: IC2 on Super/Ultimate</td>
+              <td>1</td>
+              <td>$10.99</td>
+              <td>$2.50</td>
+              <td>62</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All sites: 2025 4th national mailer</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>2,453</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">TX190/TX160: Pollen free Works</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>25</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All Sites (National Promo): From Us to You 4</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>19</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">TX190 (Houston El Camino): Doorhanger Works Wash</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>13</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All Sites (CP-18): SMS Acquisition Free Works Wash</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>11</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">TX190: Street Cards for June Deployment</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All Sites: TX-M-1562 Free Works Wash Card Bulk Order</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All Sites (National Promo): From Us to You</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All Sites: TX "Try Us Free Single Works Wash Coupon" TX-M-1562</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All Sites: 2026 Valentines Day BOGO wash</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All sites: Free Detail Kit SMS</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">All Sites: standard free wash cards TX-M-1562</td>
+              <td>0</td>
+              <td>$0.00</td>
+              <td>$0.00</td>
+              <td>1</td>
+            </tr>
+            <tr style="font-weight: 700; background: #eef;">
+              <td style="text-align: left;">TOTAL</td>
+              <td>132</td>
+              <td>$2930.65</td>
+              <td>$330.00</td>
+              <td>6,079</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Per-Site Breakdown -->
+    <div class="section">
+      <h2>Per-Site Breakdown</h2>
+      <div class="site-grid">
+        
+        <div class="card">
+          <h3>TX160 — Houston FM 1960</h3>
+          
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align: left;">Promotion</th>
+            <th>Yesterday</th>
+            <th>Discount</th>
+            <th>Marginal Cost</th>
+            <th>YTD Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX160: March 2026 mailer</td>
+            <td>24</td>
+            <td>$513.98</td>
+            <td>$60.00</td>
+            <td>340</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX160 (Houston): Service Member</td>
+            <td>9</td>
+            <td>$180.00</td>
+            <td>$22.50</td>
+            <td>391</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+            <td>5</td>
+            <td>$84.95</td>
+            <td>$12.50</td>
+            <td>694</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX190/TX160/UT426: Edwin Greer free Works wash</td>
+            <td>1</td>
+            <td>$20.00</td>
+            <td>$2.50</td>
+            <td>44</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites (CP-18): SMS Acquisition Free Works Wash</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites (National Promo): From Us to You</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites (National Promo): From Us to You 4</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>18</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: TX "Try Us Free Single Works Wash Coupon" TX-M-1562</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All sites: 2025 4th national mailer</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>776</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX160/TX190: March street card blitz</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>16</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX190/TX160: Pollen free Works</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>9</td>
+          </tr>
+        </tbody>
+      </table>
+        </div>
+        <div class="card">
+          <h3>TX190 — Clear Lake</h3>
+          
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align: left;">Promotion</th>
+            <th>Yesterday</th>
+            <th>Discount</th>
+            <th>Marginal Cost</th>
+            <th>YTD Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX190: March 2026 mailer</td>
+            <td>23</td>
+            <td>$595.92</td>
+            <td>$57.50</td>
+            <td>278</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+            <td>10</td>
+            <td>$169.90</td>
+            <td>$25.00</td>
+            <td>662</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX160/TX190: March street card blitz</td>
+            <td>2</td>
+            <td>$56.99</td>
+            <td>$5.00</td>
+            <td>28</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX190 (Houston): Sticky Note Street Card</td>
+            <td>1</td>
+            <td>$20.00</td>
+            <td>$2.50</td>
+            <td>66</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites (CP-18): SMS Acquisition Free Works Wash</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites (National Promo): From Us to You 4</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: 2026 Valentines Day BOGO wash</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: TX-M-1562 Free Works Wash Card Bulk Order</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All sites: 2025 4th national mailer</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All sites: Free Detail Kit SMS</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX190 (Houston El Camino): Doorhanger Works Wash</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>13</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX190/TX160/UT426: Edwin Greer free Works wash</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX190/TX160: Pollen free Works</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>16</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX190: Street Cards for June Deployment</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>8</td>
+          </tr>
+        </tbody>
+      </table>
+        </div>
+        <div class="card">
+          <h3>UT426 — Saratoga Springs</h3>
+          
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align: left;">Promotion</th>
+            <th>Yesterday</th>
+            <th>Discount</th>
+            <th>Marginal Cost</th>
+            <th>YTD Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td style="text-align: left; font-weight: 500;">UT426: March 2026 mailer</td>
+            <td>50</td>
+            <td>$1169.95</td>
+            <td>$125.00</td>
+            <td>468</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+            <td>3</td>
+            <td>$41.97</td>
+            <td>$7.50</td>
+            <td>243</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">UT426 (Saratoga Springs): Operational Site Street Cards</td>
+            <td>2</td>
+            <td>$44.00</td>
+            <td>$5.00</td>
+            <td>233</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: TX-M-1562</td>
+            <td>1</td>
+            <td>$22.00</td>
+            <td>$2.50</td>
+            <td>13</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">UT426: IC2 on Super/Ultimate</td>
+            <td>1</td>
+            <td>$10.99</td>
+            <td>$2.50</td>
+            <td>62</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites (CP-18): SMS Acquisition Free Works Wash</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: standard free wash cards TX-M-1562</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">All sites: 2025 4th national mailer</td>
+            <td>0</td>
+            <td>$0.00</td>
+            <td>$0.00</td>
+            <td>1,675</td>
+          </tr>
+        </tbody>
+      </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Generated 2026-03-25T11:00:36.104Z | Data source: Tommy Manager API /integrations/daily-numbers/discounts | UCW Holdings
+  </div>
+</body>
+</html>
