@@ -1636,10 +1636,16 @@ async function openFolder(folderId, pushState = true) {
           style="width:100%;min-height:800px;border:1px solid var(--border);border-radius:12px;background:#fff;"
           allowfullscreen allow="geolocation; microphone; camera"
         ></iframe>
-        <script>
-          if(window.addEventListener){window.addEventListener("message",function(e){if(e.data&&typeof e.data==='string'){try{var d=JSON.parse(e.data);if(d.action==='submission-completed'){document.getElementById('JotFormIFrame-260833587633061').style.minHeight='400px';}}catch(err){}}var ifr=document.getElementById('JotFormIFrame-260833587633061');if(e.data&&typeof e.data==='object'&&e.data.frameHeight){ifr.style.height=e.data.frameHeight+'px';}},false);}
-        </script>
       </div>`;
+    // Jotform auto-resize listener (attached in JS to avoid <script> inside innerHTML)
+    window.addEventListener('message', function(e) {
+      var ifr = document.getElementById('JotFormIFrame-260833587633061');
+      if (!ifr) return;
+      if (e.data && typeof e.data === 'string') {
+        try { var d = JSON.parse(e.data); if (d.action === 'submission-completed') { ifr.style.minHeight = '400px'; } } catch(err) {}
+      }
+      if (e.data && typeof e.data === 'object' && e.data.frameHeight) { ifr.style.height = e.data.frameHeight + 'px'; }
+    }, false);
     return;
   }
 
