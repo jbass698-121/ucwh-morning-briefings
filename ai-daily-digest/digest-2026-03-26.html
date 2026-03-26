@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 26, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Thursday, March 26, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>Anthropic's legal battle with the Pentagon over AI weapons restrictions could set the defining precedent for whether AI companies can enforce ethical use policies against government customers. OpenAI's acquisition spree continues with six deals in 2026 already, snapping up open-source tooling companies Astral and Promptfoo to vertically integrate its developer ecosystem. Alibaba's Qwen 3.5 Small is punching far above its weight -- the 9B parameter model beats GPT-OSS-120B on graduate-level reasoning while staying natively multimodal. The MCP roadmap for 2026 reveals the protocol's biggest production gaps: stateful sessions, horizontal scaling, and service discovery. Meanwhile, Replit tripled its valuation to $9B in six months on the back of agentic software creation, and the White House unveiled a national AI legislative framework that could preempt the patchwork of state AI laws -- if Congress acts before Colorado's June 30 deadline.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.buildfastwithai.com/blogs/ai-models-march-2026-releases">Alibaba Qwen 3.5 Small: 9B Model Beats GPT-OSS-120B on Graduate Reasoning</a></h3>
+    <p class="story-meta"><span class="source">BuildFastWithAI / Alibaba</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Alibaba released Qwen 3.5 Small with four dense models (0.8B, 2B, 4B, 9B parameters), all natively multimodal across text, images, and video through the same weights. The 9B model scores 81.7 on GPQA Diamond (graduate-level reasoning), decisively surpassing GPT-OSS-120B's 71.5 -- a 13x smaller model outperforming on one of the hardest reasoning benchmarks. Every variant is open-weight, continuing the trend of Chinese labs releasing frontier-competitive models as open source.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Small, capable open models change the economics of always-on AI tasks. A 9B model that handles multimodal input and strong reasoning could run locally for tasks like coupon image validation, receipt parsing, or equipment photo analysis -- eliminating per-call API costs for high-frequency operations. Worth evaluating for any pipeline step where you're paying per token but the task doesn't require frontier-scale intelligence.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://llm-stats.com/llm-updates">Google Gemini 3.1 Flash-Lite: 2.5x Faster, $0.25/M Input Tokens</a></h3>
+    <p class="story-meta"><span class="source">LLM Stats / Google</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Google launched Gemini 3.1 Flash-Lite, an efficiency-focused model delivering 2.5x faster response times and 45% faster output generation compared to earlier Gemini versions. At $0.25 per million input tokens, it's positioned as the cheapest frontier-adjacent model on the market -- undercutting both GPT-5.3 Instant and Claude Haiku on price while maintaining competitive quality for structured tasks.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> At $0.25/M input tokens, Flash-Lite could dramatically reduce costs for your high-volume daily tasks -- data validation, report formatting, and Slack message composition. For your 19-task pipeline running daily/weekly, even a 50% cost reduction on the commodity steps would compound meaningfully over a year. Test it on structured extraction tasks where you don't need deep reasoning.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://releasebot.io/updates/openai/chatgpt">ChatGPT Legacy Deep Research Mode Retired Today</a></h3>
+    <p class="story-meta"><span class="source">Releasebot / OpenAI</span> &middot; Mar 26, 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">OpenAI officially retired the legacy deep research mode in ChatGPT as of today, March 26. Users are migrated to the GPT-5.4 Thinking model, which integrates research capabilities natively rather than as a separate mode. The move consolidates OpenAI's product around fewer, more capable models rather than maintaining specialized modes -- a pattern that mirrors Anthropic's approach with Claude.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="http://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/">MCP 2026 Roadmap: Stateful Sessions, Horizontal Scaling, and Service Discovery</a></h3>
+    <p class="story-meta"><span class="source">MCP Blog</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The official MCP 2026 roadmap reveals the protocol's most critical production gaps. Streamable HTTP unlocked remote MCP servers, but running at scale has surfaced consistent problems: stateful sessions conflict with load balancers, horizontal scaling requires workarounds, and there's no standard way for a registry or crawler to discover what a server offers without connecting to it. The roadmap prioritizes these three gaps alongside enterprise auth integration and configuration portability -- moving MCP from "works in dev" to "works in production at scale."</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> These are exactly the problems you'd hit scaling your MCP-based pipeline. Service discovery means your orchestrators could automatically find and connect to new tool servers. Horizontal scaling support means your 2:00-6:00 AM batch window could parallelize more aggressively. And stateful session fixes would improve reliability for multi-step operations like your daily data pull that chains multiple MCP calls. Watch for these features landing -- they'll directly unblock pipeline optimization.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.solo.io/blog/aaif-announcement-agentgateway">Solo.io Launches AgentGateway for Secure Enterprise MCP Traffic</a></h3>
+    <p class="story-meta"><span class="source">Solo.io</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Solo.io released AgentGateway, an enterprise-grade gateway that sits between AI agents and MCP servers to enforce security policies, audit logging, SSO-integrated auth, and rate limiting. The product addresses the enterprise deployment gap: companies want to use MCP in production but need the same visibility and control they have over traditional API traffic. AgentGateway logs every tool call, enforces RBAC on MCP operations, and provides a central control plane for managing which agents can access which tools.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://thenewstack.io/model-context-protocol-roadmap-2026/">MCP's Production Growing Pains: Enterprise Auth, Audit Trails, and Config Portability</a></h3>
+    <p class="story-meta"><span class="source">The New Stack</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">A deep analysis of MCP's enterprise adoption challenges finds that the protocol is now less "new magic" and more "boring integration done consistently" -- fewer bespoke bridges, clearer ownership of side effects, and realistic expectations that the same tool server runs across IDE, desktop assistant, and production pipeline. The biggest friction points: enterprises need audit trails for compliance, SSO-integrated authentication for security, and portable configuration so MCP setups don't differ between development and production environments.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://beamstart.com/news/data-openai-has-already-done-17744373453346">OpenAI's 2026 Acquisition Spree: Six Deals Including Astral and Promptfoo</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase / BEAMSTART</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI has completed six acquisitions in 2026 alone, matching its entire 2025 M&amp;A count in under three months. The latest: Astral (open-source developer tools, announced March 19) and Promptfoo (open-source AI testing). The pattern is clear -- OpenAI is vertically integrating the developer toolchain, acquiring the open-source projects that developers already use to build, test, and deploy AI applications. This "buy the ecosystem" strategy mirrors Microsoft's GitHub/npm playbook, raising questions about the future independence of open-source AI tooling.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> If you use any open-source AI development tools, check whether they've been acquired or are acquisition targets. The Promptfoo acquisition is particularly relevant -- if you're using any open-source testing or evaluation tools in your pipeline, their roadmap and pricing may shift under OpenAI ownership. Diversify critical tooling dependencies away from any single vendor's orbit.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/ai/humans-raises-huge-seed-round-unicorn-valuation/">Humans& Raises $480M Seed at $4.48B Valuation for 'Human-Centric AI Lab'</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Humans&amp; raised a $480 million seed round at a $4.48 billion valuation -- one of the largest seed rounds ever -- for what it calls a "human-centric AI lab" focused on AI systems that maintain human agency and control. The round signals investor appetite for AI companies that differentiate on safety and human alignment rather than pure capability. Seed rounds above $100M are becoming routine in AI, with five such rounds closing in March alone.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-ai-robotics-ecommerce-quince/">Replit Triples to $9B Valuation on $400M Series D -- Agentic Software Creation</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Replit raised $400 million in Series D funding at a $9 billion valuation, tripling from $3 billion just six months ago. The platform has evolved from a browser-based IDE into an agentic software creation tool where AI agents write, test, and deploy applications with minimal human intervention. Replit's growth validates the "AI writes the code" thesis -- the company is growing faster than any developer tools company in history, driven by non-programmers building software through AI agents.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Replit's trajectory confirms that agentic code generation is a durable category, not a novelty. The "non-programmers building software" angle is directly relevant to Parallax's AI-first strategy -- more of your team can build internal tools and automations without deep coding expertise. The $9B valuation also signals that developer productivity through AI agents is where the market sees massive value creation.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.aljazeera.com/economy/2026/3/25/anthropics-case-against-the-pentagon-could-open-space-for-ai-regulation">Anthropic vs. Pentagon: Landmark Case Over AI Weapons Restrictions</a></h3>
+    <p class="story-meta"><span class="source">Al Jazeera</span> &middot; Mar 25, 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">A federal judge suggested the Department of Defense may be illegally trying to punish Anthropic for restricting the use of its AI models for autonomous weapons without human supervision, saying "It looks like an attempt to cripple Anthropic." The case could set a defining legal precedent: can AI companies enforce ethical use policies against government customers, or does government procurement authority override vendor restrictions? The outcome will shape whether AI companies retain the ability to set red lines on how their models are used.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This case has implications beyond defense. If the precedent establishes that vendors can enforce use restrictions, it strengthens your position when negotiating AI vendor contracts -- you'll know their safety commitments are legally enforceable. If the precedent goes the other way, AI companies may lose the ability to prevent misuse of their models, potentially increasing the risk profile of AI-dependent businesses.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.whitehouse.gov/articles/2026/03/president-donald-j-trump-unveils-national-ai-legislative-framework/">White House Unveils National AI Legislative Framework -- Federal Preemption Push</a></h3>
+    <p class="story-meta"><span class="source">White House</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Trump administration released a comprehensive national AI legislative framework addressing safety, transparency, and innovation policy. The framework pushes for federal preemption of state AI laws -- a direct challenge to Colorado's AI Act (effective June 30), California's AI Transparency Act, and Texas's Responsible AI Governance Act. If enacted, it would replace the current patchwork of state regulations with a single federal standard, but Congressional timelines make passage before June 30 unlikely.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://home.treasury.gov/news/press-releases/sb0421">Treasury Launches AI Innovation Series for Financial System Resilience</a></h3>
+    <p class="story-meta"><span class="source">U.S. Treasury</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The Treasury Department's AI Transformation Office and FSOC launched the AI Innovation Series, a public-private initiative focused on AI's role in financial system resilience. The program signals regulators are moving from "watch and warn" to "engage and shape" -- actively partnering with financial institutions to develop AI governance frameworks rather than waiting to enforce rules after problems emerge. Financial AI regulation is increasingly diverging from tech-sector regulation in both pace and approach.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.cnbc.com/2025/12/25/how-the-ai-market-could-splinter-in-2026-.html">The AI Monetization Gap: $600B in Spend, $25B in Revenue</a></h3>
+    <p class="story-meta"><span class="source">CNBC / Morningstar</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">While hyperscalers pour $600B+ into AI infrastructure, AI-related cloud services are generating only ~$25B in annual revenue -- a 24:1 spend-to-revenue ratio. Only 25% of enterprise AI initiatives are delivering expected ROI, and fewer than 20% have been scaled across entire enterprises. Morningstar warns that if 2026 ends without clearer monetization signals, market sentiment could reverse dramatically. The "monetizers vs. manufacturers" split is emerging: companies that sell AI infrastructure are thriving, while companies trying to profit from AI applications face a harder path.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The monetization gap is a timing opportunity for AI-first businesses. While large enterprises struggle to scale AI initiatives past pilot, your operation already runs 19 automated tasks in production daily. The gap between "AI experimenter" and "AI operator" is widening -- companies that have working AI infrastructure (like yours) will compound their advantage as competitors remain stuck in proof-of-concept mode. Keep building; the market hasn't caught up yet.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.sciencedaily.com/releases/2026/03/260321012709.htm">New AI Tool Predicts Cancer Metastasis with Breakthrough Accuracy</a></h3>
+    <p class="story-meta"><span class="source">ScienceDaily</span> &middot; Mar 21, 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Researchers published a new AI system that predicts cancer metastasis -- the spread of cancer from its origin to other parts of the body -- with accuracy levels described as "surprising" by the research team. The tool analyzes medical imaging and genomic data to identify patients at high risk of metastasis before clinical symptoms appear. Healthcare AI continues to produce some of the most tangible, measurable impact of any AI application domain, with diagnostic and prognostic tools moving from research papers to clinical deployment.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-space-tech-sierra-ai-ayar/">Robotics Investment Surge: $1.2B Raised in a Single Week Across Four Startups</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Mind Robotics ($500M), Rhoda AI ($450M), Sunday ($165M, unicorn), and Oxa ($103M) collectively raised over $1.2 billion in a single week for AI-powered robots targeting industrial, household, and logistics use cases. Humanoid robotics is projected to draw $20B+ in funding in 2026, making it the breakout investment category of the year. The convergence of improved foundation models, cheaper sensors, and commercial validation from companies like Figure is turning robotics from a "someday" category into an active deployment race.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Thursday, March 26, 2026</p>
+  <p class="sources">Sources: Al Jazeera, Alibaba, BEAMSTART, BuildFastWithAI, CNBC, Crunchbase, Google, LLM Stats, MCP Blog, Morningstar, OpenAI, Releasebot, ScienceDaily, Solo.io, The New Stack, U.S. Treasury, White House</p>
+</div>
+
+</div>
+</body>
+</html>
