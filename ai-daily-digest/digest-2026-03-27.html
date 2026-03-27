@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 27, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Friday, March 27, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>OpenAI pulled the plug on Sora after burning an estimated $15M per day on inference costs, collapsing a $1B Disney partnership in the process -- a stark reminder that even frontier labs can't brute-force product-market fit. Mistral fired back with Voxtral TTS, a 4B-parameter open-source speech model that claims to beat ElevenLabs on quality while running on consumer hardware. Yann LeCun's AMI Labs closed a record-breaking $1.03B European seed round to build world models on JEPA architecture, betting that the next AI paradigm isn't language at all. MCP crossed 97 million monthly installs with every major AI provider now shipping compatible tooling, while Perplexity's Computer agent moved into the enterprise at $325/seat/month after reportedly completing 3.25 years of work in four weeks for early customers. Oracle jumped into the agentic database space with AI Database 26ai, featuring persistent agent memory and a no-code Agent Factory.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/26/mistral-releases-a-new-open-source-model-for-speech-generation/">Mistral Voxtral TTS: 4B Open-Source Speech Model Claims to Beat ElevenLabs</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / Mistral</span> &middot; Mar 26, 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Mistral released Voxtral TTS, a 4-billion-parameter open-weight text-to-speech model supporting nine languages with 90ms time-to-first-audio and a 6x real-time factor. The model can clone a voice from under five seconds of audio, capturing accents, inflections, and natural speech irregularities. Mistral is releasing the full model weights under an open license, inviting companies to run it on their own servers or even smartphones -- no audio data ever leaves the device. The company claims it matches or exceeds ElevenLabs on naturalness benchmarks while being fully self-hostable.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> A self-hostable, open-weight TTS model at 4B parameters changes the economics of voice-enabled automation. If you ever want to add audio summaries to your morning briefings or Slack notifications, Voxtral could run locally without per-minute API costs. The 90ms latency also makes it viable for real-time customer-facing applications at the car wash -- think voice-guided membership upsells or automated phone responses.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.digitalapplied.com/blog/march-2026-ai-roundup-month-that-changed-everything">GPT-5.4 Thinking: OpenAI's Unified Flagship With 1M Token Context</a></h3>
+    <p class="story-meta"><span class="source">Digital Applied / OpenAI</span> &middot; Mar 17, 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">GPT-5.4 Thinking has emerged as OpenAI's consolidated flagship, merging reasoning, coding, and agentic capabilities into a single model with up to 1 million tokens of context. OpenAI retired the legacy deep research mode on March 26, migrating all users to the integrated model. The consolidation mirrors the broader industry pattern of collapsing specialized modes into unified, more capable models rather than maintaining separate product surfaces.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.aiandnews.com/blog/latest-ai-news-march-2026-5/">Oracle AI Database 26ai: Persistent Agent Memory and No-Code Agent Factory</a></h3>
+    <p class="story-meta"><span class="source">AI and News / Oracle</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Oracle launched AI Database 26ai with two notable features: persistent memory for AI agents across sessions, and a no-code Private Agent Factory that lets enterprises build custom AI agents without writing code. The database natively stores agent state, conversation history, and learned preferences alongside structured data -- positioning the database itself as the agent's long-term memory layer rather than requiring external memory solutions.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.vantaverse.site/blog/mcp-model-context-protocol-ai-agents-2026">MCP Crosses 97 Million Monthly Installs -- Now Foundational Infrastructure</a></h3>
+    <p class="story-meta"><span class="source">Vantaverse / Linux Foundation</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The Model Context Protocol crossed 97 million monthly SDK downloads (Python + TypeScript combined) in March 2026, with every major AI provider -- Anthropic, OpenAI, Google, Microsoft, Amazon -- now shipping MCP-compatible tooling. The ecosystem has grown to 270+ MCP servers. The protocol has decisively won the "tool connectivity" layer of the agentic stack, with the remaining battles playing out in agent-to-agent communication (A2A), commerce (ACP/UCP), and enterprise governance.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Your pipeline already runs on MCP. At 97M installs, the ecosystem has hit escape velocity -- expect dramatically better tooling, more community servers, and faster bug fixes. The 270+ server ecosystem means almost any external service you'd want to integrate (new data sources, monitoring tools, CRM systems) likely has an MCP server already built. The protocol lock-in risk you might have worried about a year ago is now a strategic advantage.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://venturebeat.com/technology/perplexity-takes-its-computer-ai-agent-into-the-enterprise-taking-aim/">Perplexity Computer Enterprise: 19 Models, 3.25 Years of Work in 4 Weeks</a></h3>
+    <p class="story-meta"><span class="source">VentureBeat / PYMNTS</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Perplexity expanded its Computer AI agent to enterprise customers at $325/seat/month, following early results where the agent reportedly completed 3.25 years of projected work in four weeks. Computer orchestrates 19 AI models in parallel, routing each subtask to the best-suited model, maintaining persistent memory across sessions, and connecting to hundreds of external services. The enterprise version adds SOC 2 compliance, SSO integration, and audit logging -- the same governance requirements surfaced in the MCP enterprise adoption discussion.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Perplexity's multi-model orchestration approach validates the architecture pattern you're already using -- routing different tasks to different models based on capability and cost. The "3.25 years in 4 weeks" claim is marketing, but the underlying pattern of autonomous agents completing complex multi-step workflows is exactly what your 19-task pipeline demonstrates. Watch their enterprise pricing -- $325/seat/month suggests the market is pricing agentic productivity at roughly 10x the cost of a ChatGPT Pro subscription.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.digitalapplied.com/blog/ai-agent-protocol-ecosystem-map-2026-mcp-a2a-acp-ucp">The 2026 Agent Protocol Stack: MCP + A2A + ACP + UCP</a></h3>
+    <p class="story-meta"><span class="source">Digital Applied</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The enterprise agent protocol stack is crystallizing around four complementary layers: MCP for tool access, Google's A2A for agent-to-agent coordination, ACP for agent commerce, and UCP for universal connectivity. All four protocols are now under the Linux Foundation's Agentic AI Foundation (AAIF). The emerging consensus: a production enterprise agent deployment in 2026 needs all four layers, with MCP as the established foundation and A2A as the fastest-growing complement.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/09/yann-lecuns-ami-labs-raises-1-03-billion-to-build-world-models/">AMI Labs Raises $1.03B Seed -- Yann LeCun Bets on World Models Over Language</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch</span> &middot; Mar 9, 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Yann LeCun's AMI Labs closed a $1.03 billion seed round at a $3.5 billion pre-money valuation -- the largest seed round in European history -- to build world models based on Joint Embedding Predictive Architecture (JEPA). Backed by Bezos Expeditions, NVIDIA, Samsung, and Temasek, AMI is betting that the next breakthrough in AI won't come from scaling language models but from systems that learn physics and causality from reality itself. LeCun left Meta to lead AMI, with labs in Paris, New York, Montreal, and Singapore.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> AMI's thesis is a contrarian bet worth tracking: if world models succeed, the entire AI infrastructure stack shifts from text-centric to multimodal-physical. For your operations, world models could eventually enable AI systems that understand physical car wash processes -- equipment wear patterns, customer flow dynamics, weather impact on operations -- far better than language models analyzing tabular data. This is a 3-5 year horizon play, but the $1B seed signals serious conviction.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/record-setting-global-funding-february-2026-openai-anthropic/">AI Startup Funding Hits $189B Record in February -- March Accelerating</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Global AI startup funding set a record at $189 billion in February 2026, driven by mega-rounds from OpenAI and Anthropic (which closed its $30B Series G at $380B post-money). March is on pace to exceed February, with five seed rounds above $100M closing in the first three weeks alone. The funding surge is increasingly bifurcated: foundation model companies and infrastructure plays attract massive rounds, while application-layer startups face a more selective market.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.wsgr.com/en/insights/2026-year-in-preview-ai-regulatory-developments-for-companies-to-watch-out-for.html">Colorado AI Act Goes Live June 30 -- Federal Preemption Race Heats Up</a></h3>
+    <p class="story-meta"><span class="source">Wilson Sonsini</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Colorado's AI Act takes effect June 30, 2026, making it the first comprehensive state-level AI regulation in the U.S. -- unless the White House's national AI framework preempts it first. The Act requires companies deploying "high-risk AI systems" to conduct impact assessments, implement governance programs, and notify consumers when AI is making consequential decisions. Texas's Responsible AI Governance Act and California's AI Transparency Act are close behind. For multi-state businesses using AI in operations, the patchwork of state laws creates compliance complexity that federal preemption would resolve.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> If your AI-driven operations touch customers in Colorado or Texas (even indirectly through marketing, pricing, or membership decisions), you may need to document your AI systems and their decision-making processes by June 30. Start inventorying which of your 19 automated tasks could be classified as "high-risk" under these frameworks -- anything that affects pricing, membership eligibility, or employee performance tracking. Better to prepare now than scramble at deadline.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.corporatecomplianceinsights.com/2026-operational-guide-cybersecurity-ai-governance-emerging-risks/">2026 AI Governance Shifts From Principles to Enforceable Rules</a></h3>
+    <p class="story-meta"><span class="source">Corporate Compliance Insights</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Enterprise AI governance in 2026 is transitioning from aspirational principles to enforceable requirements: documented AI inventories, risk classifications for each AI system, third-party model due diligence, and full lifecycle controls from development through retirement. The EU AI Act's prohibited and high-risk obligations are now in force, and U.S. regulators are adopting similar frameworks. Companies using AI operationally are expected to maintain auditable records of what AI systems do, what data they access, and what decisions they influence.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://techcrunch.com/2026/03/24/openais-sora-was-the-creepiest-app-on-your-phone-now-its-shutting-down/">OpenAI Shuts Down Sora: $15M/Day Inference, $2.1M Total Revenue, Disney Deal Dead</a></h3>
+    <p class="story-meta"><span class="source">TechCrunch / Bloomberg / Variety</span> &middot; Mar 24, 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI confirmed the complete shutdown of Sora -- app, web, and API -- after burning an estimated $15 million per day on inference costs while generating only $2.1 million in total lifetime revenue. Downloads had plunged 75% from their November peak. The most striking casualty: Disney's $1 billion AI video partnership, announced in December 2025, is being wound down entirely. OpenAI says it's reallocating Sora's compute toward "world simulation for robotics" -- effectively pivoting the same technology from consumer entertainment to industrial applications.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Sora's failure is a masterclass in unit economics. Even OpenAI can't sustain a product that costs $15M/day to run with no viable monetization path. The lesson for AI-first businesses: always validate that your AI pipeline's compute costs scale proportionally to the value delivered. Your pipeline works because each automated task has a clear ROI -- operational reports, data pulls, and briefings replace hours of manual work. The Sora shutdown validates your approach of building AI around concrete business workflows rather than speculative consumer products.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.a16z.news/p/top-100-gen-ai-consumer-apps-march">a16z Top 100 Gen AI Consumer Apps: March 2026 Rankings</a></h3>
+    <p class="story-meta"><span class="source">a16z / Olivia Moore</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Andreessen Horowitz published its March 2026 Top 100 Gen AI Consumer Apps ranking, the most widely tracked benchmark for consumer AI adoption. The list continues to show consolidation at the top -- ChatGPT, Claude, and Gemini dominate general-purpose usage -- while vertical-specific AI tools (coding, design, music, video) are fragmenting into specialized niches. The pattern mirrors the early web: a few horizontal platforms capture most traffic while long-tail specialists serve specific workflows.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.digitalapplied.com/blog/march-2026-ai-roundup-month-that-changed-everything">NVIDIA GTC 2026: NeMoCLAW and Enterprise Agent Orchestration Take Center Stage</a></h3>
+    <p class="story-meta"><span class="source">Digital Applied / NVIDIA</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">NVIDIA's GTC 2026 conference was dominated by enterprise agentic deployments rather than model announcements. NeMoCLAW and OpenCLAW frameworks for enterprise agent orchestration drew the largest attendance, signaling that the AI industry's center of gravity is shifting from "train bigger models" to "deploy agents that actually work in production." NVIDIA is positioning its hardware + software stack as the full-stack enterprise agent platform, from GPU training to inference to orchestration runtime.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Friday, March 27, 2026</p>
+  <p class="sources">Sources: a16z, AI and News, Bloomberg, CNN, Corporate Compliance Insights, Crunchbase, Digital Applied, Linux Foundation, Mistral, NVIDIA, Oracle, OpenAI, Perplexity, PYMNTS, TechCrunch, Variety, VentureBeat, Vantaverse, Wilson Sonsini</p>
+</div>
+
+</div>
+</body>
+</html>
