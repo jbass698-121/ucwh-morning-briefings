@@ -76,6 +76,10 @@ table tr.fleet-total td { font-weight:700; background:#e8eaf6; border-top:2px so
     <div class="alert-text">29 new members across the fleet generating $1,058.71 in IC revenue. Top performer: TX190 with 16 signups.</div>
   </div>
   <div class="alert alert-warning">
+    <div class="alert-title">Capture Rate (R30D)</div>
+    <div class="alert-text">Fleet avg 12.6% capture. TX190: 17.4% | TX160: 7.8% | UT426: 12.5%. TX190 leads at 17.4%, TX160 trails at 7.8%.</div>
+  </div>
+  <div class="alert alert-warning">
     <div class="alert-title">Trial Dependency Risk</div>
     <div class="alert-text">Fleet trial-to-club ratio: 32.2%. TX190 has 32.9% trial washes (75 of 228 club); TX160 has 35.3% trial washes (76 of 215 club); UT426 has 23.1% trial washes (21 of 91 club). High trial dependency = future churn risk if conversion rates slip.</div>
   </div>
@@ -222,6 +226,40 @@ table tr.fleet-total td { font-weight:700; background:#e8eaf6; border-top:2px so
     <div class="fb-item"><div class="fb-label">% of Gross</div><div class="fb-value">21.3%</div></div>
     <div class="fb-item"><div class="fb-label">Top Performer</div><div class="fb-value">TX190</div></div>
   </div>
+  <h2>Capture &amp; Claim Rates (Rolling 30-Day)</h2>
+  <p style="font-size:12px;color:#888;margin-bottom:12px;">Rolling 30-day acquisition performance from UCWH Analytics DB. Capture = opportunity-to-member conversion. Claim = new member first wash redemption.</p>
+  <div class="site-cards">
+    <div class="site-card">
+      <h3>Texas 190 (Houston)</h3>
+      <div class="metric"><span class="label">Capture Rate (R30D)</span><span class="val">17.4% <span class="badge badge-yellow">Average</span></span></div>
+      <div class="metric"><span class="label">Claim Rate (R30D)</span><span class="val">46.7% <span class="badge badge-yellow">Average</span></span></div>
+      <div class="metric"><span class="label">Same-Day Claim</span><span class="val">31.3%</span></div>
+      <div class="metric"><span class="label">Next-Day Claim</span><span class="val">50.0%</span></div>
+      <div class="metric"><span class="label">Trial Conversion (R30D)</span><span class="val">32.1%</span></div>
+    </div>
+    <div class="site-card">
+      <h3>Texas 160 (Spring)</h3>
+      <div class="metric"><span class="label">Capture Rate (R30D)</span><span class="val">7.8% <span class="badge badge-red">Below Target</span></span></div>
+      <div class="metric"><span class="label">Claim Rate (R30D)</span><span class="val">43.8% <span class="badge badge-yellow">Average</span></span></div>
+      <div class="metric"><span class="label">Same-Day Claim</span><span class="val">77.8%</span></div>
+      <div class="metric"><span class="label">Next-Day Claim</span><span class="val">50.0%</span></div>
+      <div class="metric"><span class="label">Trial Conversion (R30D)</span><span class="val">29.9%</span></div>
+    </div>
+    <div class="site-card">
+      <h3>Utah 426 (Lehi)</h3>
+      <div class="metric"><span class="label">Capture Rate (R30D)</span><span class="val">12.5% <span class="badge badge-red">Below Target</span></span></div>
+      <div class="metric"><span class="label">Claim Rate (R30D)</span><span class="val">36.0% <span class="badge badge-yellow">Average</span></span></div>
+      <div class="metric"><span class="label">Same-Day Claim</span><span class="val">25.0%</span></div>
+      <div class="metric"><span class="label">Next-Day Claim</span><span class="val">20.0%</span></div>
+      <div class="metric"><span class="label">Trial Conversion (R30D)</span><span class="val">26.3%</span></div>
+    </div>
+  </div>
+  <div class="fleet-bar">
+    <div class="fb-item"><div class="fb-label">Fleet Avg Capture</div><div class="fb-value">12.6%</div></div>
+    <div class="fb-item"><div class="fb-label">Fleet Avg Claim</div><div class="fb-value">42.2%</div></div>
+    <div class="fb-item"><div class="fb-label">Trial Conversion</div><div class="fb-value">29.4%</div></div>
+    <div class="fb-item"><div class="fb-label">Top Capture</div><div class="fb-value">TX190</div></div>
+  </div>
   <h2>Subscriber Metrics</h2>
   <table>
     <tr><th>Site</th><th>Paying Subs</th><th>Trial Subs</th><th>Active Subs</th></tr>
@@ -311,25 +349,25 @@ table tr.fleet-total td { font-weight:700; background:#e8eaf6; border-top:2px so
     <div class="action-text">30-day churn rate is 13.3% with 39 members lost in the last 7 days and 0 cancellations. Pull the cancellation reason report, check for billing failures, and consider a save-offer for at-risk members.</div>
   </div>
   <div class="action-item">
-    <div class="action-title">4. TX190 — Convert Trial Members</div>
+    <div class="action-title">4. TX160 — Improve Capture Rate</div>
+    <div class="action-text">R30D capture rate is 7.8% (below 15% target). Claim rate: 43.8%. Trial conversion: 29.9%. Review window attendant scripting and incentive alignment.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">5. UT426 — Improve Capture Rate</div>
+    <div class="action-text">R30D capture rate is 12.5% (below 15% target). Claim rate: 36.0%. Trial conversion: 26.3%. Review window attendant scripting and incentive alignment.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">6. TX190 — Convert Trial Members</div>
     <div class="action-text">32.9% of club washes are trials (75 trial vs 153 paid). Deploy targeted conversion touches: day-14 upgrade text, attendant pitch at second visit, and limited-time lock-in pricing before trial expiry.</div>
   </div>
   <div class="action-item">
-    <div class="action-title">5. TX160 — Convert Trial Members</div>
+    <div class="action-title">7. TX160 — Convert Trial Members</div>
     <div class="action-text">35.3% of club washes are trials (76 trial vs 139 paid). Deploy targeted conversion touches: day-14 upgrade text, attendant pitch at second visit, and limited-time lock-in pricing before trial expiry.</div>
-  </div>
-  <div class="action-item">
-    <div class="action-title">6. TX190 — Improve Same-Day Claim Rate</div>
-    <div class="action-text">Only 5 of 24 captured customers used their wash same-day (20.8%). Captured members who don't claim quickly are at risk of never activating. Send immediate welcome text with "your first wash is waiting" CTA within 1 hour of signup.</div>
-  </div>
-  <div class="action-item">
-    <div class="action-title">7. UT426 — Increase Volume</div>
-    <div class="action-text">Utah 426 (Lehi) recorded 132 washes vs TX160's 357. Review staffing levels, signage visibility, and local promotions to close the gap.</div>
   </div>
 
   <div class="footer">
     <div>Data Sources: Tommy Daily: 3/27/26, 7:19 AM | Tommy Discounts: 3/27/26, 7:19 AM | UCWH Comparison: 3/27/26, 7:27 AM | UCWH Sites: 3/27/26, 7:27 AM | Weather: 3/27/26, 7:19 AM | Power BI: 3/26/26, 7:06 AM</div>
-    <div>Generated March 27, 2026 at 7:39 AM CT</div>
+    <div>Generated March 27, 2026 at 7:46 AM CT</div>
   </div>
 </div>
 </body>
