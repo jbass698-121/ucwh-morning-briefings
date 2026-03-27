@@ -75,6 +75,18 @@ table tr.fleet-total td { font-weight:700; background:#e8eaf6; border-top:2px so
     <div class="alert-title">InstaClub Signups</div>
     <div class="alert-text">29 new members across the fleet generating $1,058.71 in IC revenue. Top performer: TX190 with 16 signups.</div>
   </div>
+  <div class="alert alert-warning">
+    <div class="alert-title">Trial Dependency Risk</div>
+    <div class="alert-text">Fleet trial-to-club ratio: 32.2%. TX190 has 32.9% trial washes (75 of 228 club); TX160 has 35.3% trial washes (76 of 215 club); UT426 has 23.1% trial washes (21 of 91 club). High trial dependency = future churn risk if conversion rates slip.</div>
+  </div>
+  <div class="alert alert-danger">
+    <div class="alert-title">Elevated Churn Detected</div>
+    <div class="alert-text">TX190 30-day churn: 10.7% (29 lost in 7 days, 0 cancellations); TX160 30-day churn: 14.1% (45 lost in 7 days, 0 cancellations); UT426 30-day churn: 13.3% (39 lost in 7 days, 0 cancellations). Investigate service quality, billing issues, or competitive pressure.</div>
+  </div>
+  <div class="alert alert-info">
+    <div class="alert-title">Truck/SUV Customer Base</div>
+    <div class="alert-text">TX190: 60.6% trucks/SUVs, TX160: 58.5% trucks/SUVs, UT426: 74.2% trucks/SUVs. Heavy vehicle mix supports premium package upsells (Super/Works) -- these customers value thoroughness over speed.</div>
+  </div>
   <div class="alert alert-info">
     <div class="alert-title">Weather Outlook — Today</div>
     <div class="alert-text">Houston: Overcast, High 85.7°F, Precip 0". Favorable wash weather.</div>
@@ -132,6 +144,33 @@ table tr.fleet-total td { font-weight:700; background:#e8eaf6; border-top:2px so
       <div class="metric"><span class="label">Rewash Rate</span><span class="val">0.8%</span></div>
       <div class="metric"><span class="label">IC Signups</span><span class="val">4</span></div>
     </div>
+  </div>
+  <h2>Wash Mix &amp; Revenue Breakdown</h2>
+  <p style="font-size:12px;color:#888;margin-bottom:12px;">Yesterday's wash volume by customer type and revenue split. Source: UCWH Analytics DB.</p>
+  <table>
+    <tr><th>Site</th><th>Club Paid</th><th>Trial</th><th>Single</th><th>Team</th><th>Club Rev</th><th>Single Rev</th><th>Club %</th></tr>
+    <tr><td>TX190</td><td>153</td><td>75</td><td>80</td><td>0</td><td>$930.21</td><td>$986.00</td><td>74%</td></tr>
+    <tr><td>TX160</td><td>139</td><td>76</td><td>115</td><td>0</td><td>$985.72</td><td>$1,222.00</td><td>64%</td></tr>
+    <tr><td>UT426</td><td>70</td><td>21</td><td>34</td><td>0</td><td>$1,136.64</td><td>$184.00</td><td>73%</td></tr>
+    <tr class="fleet-total"><td>Fleet</td><td>362</td><td>172</td><td>229</td><td>0</td><td>$3,052.57</td><td>$2,392.00</td><td>70%</td></tr>
+  </table>
+  <div class="fleet-bar" style="margin-top:8px;">
+    <div class="fb-item"><div class="fb-label">Fleet Revenue Split</div><div class="fb-value">Club 56% | Single 44%</div></div>
+    <div class="fb-item"><div class="fb-label">Club Revenue</div><div class="fb-value">$3,052.57</div></div>
+    <div class="fb-item"><div class="fb-label">Single Revenue</div><div class="fb-value">$2,392.00</div></div>
+  </div>
+  <h2>Acquisition Funnel</h2>
+  <p style="font-size:12px;color:#888;margin-bottom:12px;">Yesterday's customer acquisition: opportunities created, captures by channel, and same-day claims.</p>
+  <table>
+    <tr><th>Site</th><th>Opportunities</th><th>Window Capture</th><th>Online Capture</th><th>Total Captured</th><th>Same-Day Claims</th><th>Claim Rate</th></tr>
+    <tr><td>TX190</td><td>92</td><td>16</td><td>8</td><td>24</td><td>5</td><td>21%</td></tr>
+    <tr><td>TX160</td><td>116</td><td>9</td><td>10</td><td>19</td><td>7</td><td>37%</td></tr>
+    <tr><td>UT426</td><td>32</td><td>4</td><td>0</td><td>4</td><td>1</td><td>25%</td></tr>
+    <tr class="fleet-total"><td>Fleet</td><td>240</td><td>29</td><td>18</td><td>47</td><td>13</td><td>28%</td></tr>
+  </table>
+  <div class="fleet-bar" style="margin-top:8px;">
+    <div class="fb-item"><div class="fb-label">Channel Split</div><div class="fb-value">Window 62% | Online 38%</div></div>
+    <div class="fb-item"><div class="fb-label">Conversion Rate</div><div class="fb-value">20%</div></div>
   </div>
   <h2>Rewash &amp; Coupon Analysis</h2>
   <h3>Rewash Summary</h3>
@@ -260,29 +299,37 @@ table tr.fleet-total td { font-weight:700; background:#e8eaf6; border-top:2px so
   <p style="font-size:11px;color:#888;margin-top:6px;font-style:italic;">Model v2.3 | Confidence: <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:3px;"></span>TX190: low (30.1%) &nbsp;|&nbsp; <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-right:3px;"></span>TX160: medium (23.8%) &nbsp;|&nbsp; <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;margin-right:3px;"></span>UT426: high (19.1%)</p>
   <h2>Recommended Actions</h2>
   <div class="action-item">
-    <div class="action-title">1. UT426 — Increase Volume</div>
+    <div class="action-title">1. TX190 — Reduce Member Churn</div>
+    <div class="action-text">30-day churn rate is 10.7% with 29 members lost in the last 7 days and 0 cancellations. Pull the cancellation reason report, check for billing failures, and consider a save-offer for at-risk members.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">2. TX160 — Reduce Member Churn</div>
+    <div class="action-text">30-day churn rate is 14.1% with 45 members lost in the last 7 days and 0 cancellations. Pull the cancellation reason report, check for billing failures, and consider a save-offer for at-risk members.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">3. UT426 — Reduce Member Churn</div>
+    <div class="action-text">30-day churn rate is 13.3% with 39 members lost in the last 7 days and 0 cancellations. Pull the cancellation reason report, check for billing failures, and consider a save-offer for at-risk members.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">4. TX190 — Convert Trial Members</div>
+    <div class="action-text">32.9% of club washes are trials (75 trial vs 153 paid). Deploy targeted conversion touches: day-14 upgrade text, attendant pitch at second visit, and limited-time lock-in pricing before trial expiry.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">5. TX160 — Convert Trial Members</div>
+    <div class="action-text">35.3% of club washes are trials (76 trial vs 139 paid). Deploy targeted conversion touches: day-14 upgrade text, attendant pitch at second visit, and limited-time lock-in pricing before trial expiry.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">6. TX190 — Improve Same-Day Claim Rate</div>
+    <div class="action-text">Only 5 of 24 captured customers used their wash same-day (20.8%). Captured members who don't claim quickly are at risk of never activating. Send immediate welcome text with "your first wash is waiting" CTA within 1 hour of signup.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">7. UT426 — Increase Volume</div>
     <div class="action-text">Utah 426 (Lehi) recorded 132 washes vs TX160's 357. Review staffing levels, signage visibility, and local promotions to close the gap.</div>
-  </div>
-  <div class="action-item">
-    <div class="action-title">2. TX160 — Boost IC Conversions</div>
-    <div class="action-text">Only 9 IC signups on 115 single washes (7.8% conversion). Ensure attendants are pitching Quality or Super memberships to every single-wash customer.</div>
-  </div>
-  <div class="action-item">
-    <div class="action-title">3. TX190 — Improve Window Capture Rate</div>
-    <div class="action-text">R30D capture rate is 0.0% (below 15% target). NM capture: 0.0%, WB capture: 0.0%. Review window attendant scripting and incentive alignment.</div>
-  </div>
-  <div class="action-item">
-    <div class="action-title">4. TX160 — Improve Window Capture Rate</div>
-    <div class="action-text">R30D capture rate is 0.0% (below 15% target). NM capture: 0.0%, WB capture: 0.0%. Review window attendant scripting and incentive alignment.</div>
-  </div>
-  <div class="action-item">
-    <div class="action-title">5. UT426 — Improve Window Capture Rate</div>
-    <div class="action-text">R30D capture rate is 0.0% (below 15% target). NM capture: 0.0%, WB capture: 0.0%. Review window attendant scripting and incentive alignment.</div>
   </div>
 
   <div class="footer">
-    <div>Data Sources: Tommy Daily: 3/27/26, 7:19 AM | Tommy Discounts: 3/27/26, 7:19 AM | UCWH Comparison: 3/27/26, 7:19 AM | UCWH Sites: 3/27/26, 7:19 AM | Weather: 3/27/26, 7:19 AM | Power BI: 3/26/26, 7:06 AM</div>
-    <div>Generated March 27, 2026 at 7:20 AM CT</div>
+    <div>Data Sources: Tommy Daily: 3/27/26, 7:19 AM | Tommy Discounts: 3/27/26, 7:19 AM | UCWH Comparison: 3/27/26, 7:27 AM | UCWH Sites: 3/27/26, 7:27 AM | Weather: 3/27/26, 7:19 AM | Power BI: 3/26/26, 7:06 AM</div>
+    <div>Generated March 27, 2026 at 7:39 AM CT</div>
   </div>
 </div>
 </body>
