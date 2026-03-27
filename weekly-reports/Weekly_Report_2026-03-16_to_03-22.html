@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tommy's Express - Weekly Report - Week 12</title>
+
+<style>
+  body { font-family: Arial, Helvetica, sans-serif; color: #222; margin: 0; padding: 0; background: #f5f5f5; }
+  .container { max-width: 800px; margin: 0 auto; background: #fff; }
+  .header { background: #8B0000; color: #fff; padding: 28px 32px 20px; text-align: center; }
+  .header h1 { margin: 0 0 4px; font-size: 24px; letter-spacing: 0.5px; }
+  .header .subtitle { font-size: 16px; color: #ffcccc; margin: 0; }
+  .header .week { font-size: 13px; color: #ffaaaa; margin-top: 6px; }
+  .content { padding: 24px 32px; }
+  h2 { color: #8B0000; font-size: 18px; border-bottom: 2px solid #8B0000; padding-bottom: 4px; margin-top: 32px; }
+  h3 { color: #333; font-size: 15px; margin-top: 20px; margin-bottom: 8px; }
+  p { font-size: 14px; line-height: 1.5; color: #333; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 13px; }
+  th { background: #8B0000; color: #fff; padding: 8px 10px; text-align: center; font-weight: 600; font-size: 12px; }
+  td { padding: 6px 10px; text-align: center; border-bottom: 1px solid #e0e0e0; }
+  td.label { text-align: left; font-weight: 600; color: #333; }
+  td.total { font-weight: 700; }
+  .best { background: #C6EFCE !important; }
+  .warn { background: #FFC7CE !important; }
+  .totals-row td { font-weight: 700; border-top: 2px solid #8B0000; }
+  ul, ol { font-size: 14px; line-height: 1.6; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  .up { color: #2E7D32; font-size: 11px; }
+  .down { color: #C62828; font-size: 11px; }
+  .flat { color: #888; }
+  .footer { background: #f0f0f0; padding: 16px 32px; text-align: center; font-size: 11px; color: #888; border-top: 1px solid #ddd; }
+  .kpi-banner { background: #f8f8f8; border: 1px solid #ddd; border-radius: 4px; padding: 14px 20px; margin: 12px 0; display: flex; justify-content: space-around; text-align: center; }
+  .kpi-banner .kpi { flex: 1; }
+  .kpi-banner .kpi-val { font-size: 22px; font-weight: 700; color: #8B0000; }
+  .kpi-banner .kpi-label { font-size: 11px; color: #666; margin-top: 2px; }
+  .ote-green { display: inline-block; background: #dcfce7; color: #166534; border: 1px solid #16a34a; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .ote-yellow { display: inline-block; background: #fef3c7; color: #92400e; border: 1px solid #d97706; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .ote-red { display: inline-block; background: #fee2e2; color: #991b1b; border: 1px solid #dc2626; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .ote-legend { background: #f8f8f8; border: 1px solid #ddd; border-radius: 4px; padding: 10px 16px; margin: 12px 0; font-size: 12px; color: #555; }
+  .ote-legend span { margin-right: 16px; }
+  .ote-scorecard { display: flex; justify-content: space-around; margin: 12px 0; gap: 8px; }
+  .ote-site-card { flex: 1; background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 12px; text-align: center; }
+  .ote-site-card h4 { margin: 0 0 8px; color: #8B0000; font-size: 14px; }
+  .ote-site-card .ote-metric { margin: 4px 0; font-size: 12px; }
+  .ote-badge.ote-gray, .ote-gray { display: inline-block; background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .incentive-site-block { margin: 16px 0 24px; padding: 16px; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 8px; }
+  .incentive-site-block h3 { color: #8B0000; margin: 0 0 12px; font-size: 16px; border-bottom: 1px solid #8B0000; padding-bottom: 4px; }
+  .role-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; margin: 10px 0; overflow: hidden; }
+  .role-header { background: linear-gradient(135deg, #8B0000, #a52a2a); color: #fff; padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; }
+  .role-title { font-weight: 700; font-size: 13px; }
+  .role-comp { font-size: 11px; color: #ffcccc; }
+  .role-metrics { padding: 8px 14px; }
+  .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-row.metric-highlight { background: #fffbeb; padding: 6px 4px; border-radius: 4px; font-weight: 600; }
+  .metric-name { color: #374151; flex: 1; }
+  .metric-weight { color: #9ca3af; font-size: 10px; }
+  .metric-val { text-align: right; font-weight: 600; color: #111; white-space: nowrap; }
+  .ote-orange { display: inline-block; background: #ffedd5; color: #9a3412; border: 1px solid #f97316; border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 600; white-space: nowrap; margin-left: 4px; }
+  .enrichment-guidance { background: #f0f4ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 10px 14px; margin: 10px 0 20px; font-size: 12px; color: #1e40af; line-height: 1.5; }
+  .enrichment-guidance strong { color: #1e3a8a; }
+  .enrichment-kpi-row { display: flex; justify-content: space-around; background: #f8f8f8; border: 1px solid #e0e0e0; border-radius: 6px; padding: 14px 10px; margin: 10px 0; text-align: center; }
+  .enrichment-kpi { flex: 1; }
+  .enrichment-kpi-val { font-size: 20px; font-weight: 700; color: #333; }
+  .enrichment-kpi-val.positive { color: #166534; }
+  .enrichment-kpi-val.negative { color: #991b1b; }
+  .enrichment-kpi-label { font-size: 11px; color: #666; margin-top: 2px; }
+  .funnel-visual { display: flex; gap: 12px; margin: 12px 0; }
+  .funnel-site { flex: 1; text-align: center; }
+  .funnel-site h4 { margin: 0 0 8px; color: #8B0000; font-size: 13px; }
+  .funnel-step { background: linear-gradient(135deg, #8B0000, #c0392b); color: #fff; padding: 6px 8px; margin: 4px auto; border-radius: 4px; font-size: 11px; display: flex; justify-content: space-between; min-width: 60%; }
+  .funnel-label { font-weight: 600; }
+  .funnel-val { }
+  .section-enrichment { border-top: 2px solid #1e40af; margin-top: 28px; padding-top: 8px; }
+  .section-enrichment h2 { color: #1e40af; border-bottom-color: #1e40af; }
+  @media only screen and (max-width: 600px) {
+    .content { padding: 16px; }
+    table { font-size: 11px; }
+    th, td { padding: 4px 6px; }
+    .ote-scorecard { flex-direction: column; }
+    .role-header { flex-direction: column; gap: 2px; }
+    .metric-row { flex-direction: column; gap: 2px; align-items: flex-start; }
+    .enrichment-kpi-row { flex-direction: column; gap: 8px; }
+    .funnel-visual { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>Tommy's Express Car Wash</h1>
+  <p class="subtitle">Weekly Operations Report</p>
+  <p class="week">Week 12: March 16–22, 2026</p>
+</div>
+
+<div class="content">
+
+<!-- KPI Banner -->
+<div class="kpi-banner">
+  <div class="kpi"><div class="kpi-val">6,609</div><div class="kpi-label">Total Washes</div></div>
+  <div class="kpi"><div class="kpi-val">$47,323.34</div><div class="kpi-label">Gross Revenue</div></div>
+  <div class="kpi"><div class="kpi-val">$7.16</div><div class="kpi-label">Per Wash</div></div>
+  <div class="kpi"><div class="kpi-val">—</div><div class="kpi-label">Net New Members (unavailable)</div></div>
+</div>
+
+<h2>Executive Summary</h2>
+<p>The table below compares key weekly metrics across all three sites. Green cells indicate best performance; red cells highlight areas requiring manager attention.</p>
+<table><thead><tr>
+    <th>Metric</th><th>TX160<br>Houston</th><th>TX190<br>Clear Lake</th><th>UT426<br>Saratoga</th><th>Total / Avg</th>
+  </tr></thead><tbody><tr><td class="label">Total Washes</td><td class="best">2,913</td><td>2,236</td><td>1,460</td><td class="total">6,609</td></tr><tr><td class="label">Gross Sales</td><td class="best">$19,368.38</td><td>$17,149.84</td><td>$10,805.12</td><td class="total">$47,323.34</td></tr><tr><td class="label">Per Wash Rev</td><td class="warn">$6.65</td><td class="best">$7.67</td><td>$7.4</td><td class="total">$7.16</td></tr><tr><td class="label">Coupons Used</td><td class="warn">749</td><td>496</td><td>577</td><td class="total">1,822</td></tr><tr><td class="label">Coupon Discount</td><td class="warn">$19,751.90</td><td>$13,205.79</td><td>$15,016.33</td><td class="total">$47,974.02</td></tr><tr><td class="label">Open Gate</td><td class="warn">70</td><td>28</td><td class="best">4</td><td class="total">102</td></tr><tr><td class="label">Rewashes</td><td class="warn">35</td><td>14</td><td class="best">2</td><td class="total">51</td></tr><tr><td class="label">Rewash Cost</td><td class="warn">$0.00</td><td>$0.00</td><td>$0.00</td><td class="total">$0.00</td></tr><tr><td class="label">Net New Members</td><td>—</td><td>—</td><td>—</td><td class="total">—</td></tr><tr><td class="label">Gross IC Signups</td><td class="best">99</td><td>79</td><td>55</td><td class="total">233</td></tr><tr><td class="label">IC Revenue</td><td class="best">$8,912.43</td><td>$8,849.97</td><td>$7,277.92</td><td class="total">$25,040.32</td></tr></tbody></table>
+<p><strong>Combined:</strong> 6,609 total washes | $47,323.34 gross sales | Net new members: data unavailable (requires Power BI membership snapshot)</p>
+<div class="ote-legend">
+  <strong>Incentive Plan KPI Legend:</strong>
+  <span class="ote-green">✓ At/Above Target</span>
+  <span class="ote-yellow">⚠ Below Target (Still Earning)</span>
+  <span class="ote-red">✗ Hard Floor / No Payout</span>
+  &nbsp;| Thresholds from Site Leader, Shift Manager, FD1 &amp; VacCon incentive plans.
+</div><h2>Team Incentive Scorecard</h2>
+  <p>Current performance against incentive plan tier thresholds. <strong>Green</strong> = At/Above Target, <strong>Yellow</strong> = Below Target (still earning), <strong>Red</strong> = Hard Floor ($0). Net new members shown as MTD actual when membership snapshot data is available; otherwise marked "Data Pending". Metrics marked "Data Pending" require the weekly-data-collector to have run successfully (Sunday 2 AM). Check /Data Store/weekly_incentive_data.json.</p>
+  <div class="incentive-site-block"><h3>TX160 — Houston, TX - FM 1960</h3><div class="role-card"><div class="role-header"><span class="role-title">Site Leader — Harold</span><span class="role-comp">Target: $1,213.00/mo</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(35%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(35%)</span></span><span class="metric-val">13.36% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Customer Satisfaction Rating <span class="metric-weight">(15%)</span></span><span class="metric-val">5 <span class="ote-green">✓ 100% On Target</span></span></div><div class="metric-row"><span class="metric-name">Inspection Quality & Completion <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Shift Managers</span><span class="role-comp">Target: $311.75/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(30%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">13.36% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(15%)</span></span><span class="metric-val">5.00% <span class="ote-green">✓ 100% On Target</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate (FD1 Team Avg) <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate (FD1 + Vac Con) <span class="metric-weight">(20%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">FD1 Guest Sales Specialists</span><span class="role-comp">$3.5/member × multipliers (max $7.88)</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Members (Attributed) <span class="metric-weight">(Base)</span></span><span class="metric-val">Per-cashier — see 5Cs below <span class="ote-badge ote-gray">📊 Per Cashier</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate Multiplier</span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate Multiplier</span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Vacuum Concierges</span><span class="role-comp">Target: $277.00/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(40%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate <span class="metric-weight">(30%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">13.36% <span class="ote-red">✗ 0% Hard Floor</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(10%)</span></span><span class="metric-val">5.00% <span class="ote-green">✓ 100% On Target</span></span></div></div></div></div><div class="incentive-site-block"><h3>TX190 — Clear Lake, TX - El Camino Real</h3><div class="role-card"><div class="role-header"><span class="role-title">Site Leader — Crystal</span><span class="role-comp">Target: $1,040.00/mo</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(35%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(35%)</span></span><span class="metric-val">10.16% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Customer Satisfaction Rating <span class="metric-weight">(15%)</span></span><span class="metric-val">4.84 <span class="ote-green">✓ 100% On Target</span></span></div><div class="metric-row"><span class="metric-name">Inspection Quality & Completion <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Shift Managers</span><span class="role-comp">Target: $311.75/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(30%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">10.16% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(15%)</span></span><span class="metric-val">4.84% <span class="ote-green">✓ 100% On Target</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate (FD1 Team Avg) <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate (FD1 + Vac Con) <span class="metric-weight">(20%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">FD1 Guest Sales Specialists</span><span class="role-comp">$3.5/member × multipliers (max $7.88)</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Members (Attributed) <span class="metric-weight">(Base)</span></span><span class="metric-val">Per-cashier — see 5Cs below <span class="ote-badge ote-gray">📊 Per Cashier</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate Multiplier</span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate Multiplier</span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Vacuum Concierges</span><span class="role-comp">Target: $277.00/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(40%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate <span class="metric-weight">(30%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">10.16% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(10%)</span></span><span class="metric-val">4.84% <span class="ote-green">✓ 100% On Target</span></span></div></div></div></div><div class="incentive-site-block"><h3>UT426 — Saratoga Springs, UT - E Crossroads Blvd</h3><div class="role-card"><div class="role-header"><span class="role-title">Shift Managers</span><span class="role-comp">Target: $311.75/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(30%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">12.09% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(15%)</span></span><span class="metric-val">4.00% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate (FD1 Team Avg) <span class="metric-weight">(15%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate (FD1 + Vac Con) <span class="metric-weight">(20%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">FD1 Guest Sales Specialists</span><span class="role-comp">$3.5/member × multipliers (max $7.88)</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Members (Attributed) <span class="metric-weight">(Base)</span></span><span class="metric-val">Per-cashier — see 5Cs below <span class="ote-badge ote-gray">📊 Per Cashier</span></span></div><div class="metric-row"><span class="metric-name">Capture Rate Multiplier</span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate Multiplier</span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div></div></div><div class="role-card"><div class="role-header"><span class="role-title">Vacuum Concierges</span><span class="role-comp">Target: $277.00/mo ea × 2</span></div><div class="role-metrics"><div class="metric-row"><span class="metric-name">Net New Paying Members <span class="metric-weight">(40%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Claim Rate <span class="metric-weight">(30%)</span></span><span class="metric-val">— <span class="ote-badge ote-gray">📊 Data Pending</span></span></div><div class="metric-row"><span class="metric-name">Member Retention (Churn) <span class="metric-weight">(20%)</span></span><span class="metric-val">12.09% <span class="ote-yellow">⚠ 50% Minimum</span></span></div><div class="metric-row"><span class="metric-name">Customer Reviews <span class="metric-weight">(10%)</span></span><span class="metric-val">4.00% <span class="ote-yellow">⚠ 50% Minimum</span></span></div></div></div></div><h2>Key Insights &amp; Manager Action Items</h2>
+<ul><li><strong>TX160 CRITICAL - Quality Audit Required:</strong> 35 rewashes ($0.00 cost) this week. Combined with 749 coupons costing $19,751.90 (102.0% of gross sales), immediate investigation of equipment, chemicals, and coupon strategy is needed.</li>
+<li><strong>TX160 High Open Gate Count:</strong> 70 open gate events this week. Investigate whether these are operational necessities (stalls, misloads) or if process improvements can reduce the frequency.</li>
+<li><strong>UT426 Best Practices:</strong> 2 rewashes and lowest coupon usage (577). $7.40 per-wash revenue. This site should be benchmarked for operational discipline.</li>
+<li><strong>TX160 Volume Leader:</strong> Highest washes (2,913) and gross sales ($19,368.38). Net new member data unavailable.</li>
+<li><strong>Coupon Spending:</strong> $47,974.02 total coupons across all sites (101.4% of combined gross sales of $47,323.34). Evaluate ROI and consider site-specific coupon limits.</li>
+<li><strong>Membership Growth:</strong> Net new member data unavailable — requires Power BI membership snapshot. 233 gross IC plan purchases recorded (includes new signups, renewals, and reactivations — not a net growth metric). IC revenue: $25,040.32.</li></ul><hr style="margin:32px 0; border:none; border-top:3px solid #1e40af;"><div class="section-enrichment">
+    <h2>Actionable Intelligence</h2>
+    <p>AI-generated insights from deep analytics. Each item includes a specific action for site leaders.</p>
+    <div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#9888; TX160 — Member Retention:</strong> 30 members at high churn risk. Revenue at risk: $4,701.19/mo.
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: Prioritize personal outreach to at-risk members. Check for service issues.</em></div>
+    </div><div style="background:#dcfce7;border-left:4px solid #16a34a;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#10004; TX160 — Member Retention:</strong> 32 members reactivated this week. Reactivation pool: 1158 former members.
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: Continue reactivation campaigns. Each reactivation = ~$${membership.avg_subscription_revenue_30d}/mo revenue.</em></div>
+    </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#9888; TX160 — Acquisition:</strong> 102 new customers this week never completed a wash (208.2% of first-timers).
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: These are captured leads who left without washing. Check claim-to-wash handoff process.</em></div>
+    </div><div style="background:#e0e7ff;border-left:4px solid #6366f1;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#128161; TX160 — Acquisition:</strong> 741 captured customers have never claimed their trial.
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: Send SMS/email reminders to unclaimed customers. This is low-hanging conversion fruit.</em></div>
+    </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#9888; TX160 — Revenue:</strong> Average single wash realization is $11.76 vs $14.75 standard. Cashiers may be under-upselling.
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: Review per-tier realization. Coach cashiers to recommend Works ($20) over Quality ($10).</em></div>
+    </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#9888; TX190 — Member Retention:</strong> 38 members at high churn risk. Revenue at risk: $3,232.59/mo.
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: Prioritize personal outreach to at-risk members. Check for service issues.</em></div>
+    </div><div style="background:#dcfce7;border-left:4px solid #16a34a;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#10004; TX190 — Member Retention:</strong> 27 members reactivated this week. Reactivation pool: 1154 former members.
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: Continue reactivation campaigns. Each reactivation = ~$${membership.avg_subscription_revenue_30d}/mo revenue.</em></div>
+    </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#9888; TX190 — Acquisition:</strong> 81 new customers this week never completed a wash (197.6% of first-timers).
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: These are captured leads who left without washing. Check claim-to-wash handoff process.</em></div>
+    </div><div style="background:#e0e7ff;border-left:4px solid #6366f1;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#128161; TX190 — Acquisition:</strong> 1195 captured customers have never claimed their trial.
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: Send SMS/email reminders to unclaimed customers. This is low-hanging conversion fruit.</em></div>
+    </div><div style="background:#dcfce7;border-left:4px solid #16a34a;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#10004; UT426 — Member Retention:</strong> 13 members reactivated this week. Reactivation pool: 934 former members.
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: Continue reactivation campaigns. Each reactivation = ~$${membership.avg_subscription_revenue_30d}/mo revenue.</em></div>
+    </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#9888; UT426 — Acquisition:</strong> 169 new customers this week never completed a wash (482.9% of first-timers).
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: These are captured leads who left without washing. Check claim-to-wash handoff process.</em></div>
+    </div><div style="background:#e0e7ff;border-left:4px solid #6366f1;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#128161; UT426 — Acquisition:</strong> 1441 captured customers have never claimed their trial.
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: Send SMS/email reminders to unclaimed customers. This is low-hanging conversion fruit.</em></div>
+    </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:10px 14px;margin:8px 0;font-size:13px;">
+      <strong>&#9888; UT426 — Revenue:</strong> Average single wash realization is $6.71 vs $14.75 standard. Cashiers may be under-upselling.
+      <div style="color:#555;font-size:12px;margin-top:4px;"><em>Action: Review per-tier realization. Coach cashiers to recommend Works ($20) over Quality ($10).</em></div>
+    </div></div><div class="section-enrichment">
+    <h2>Membership Health Dashboard</h2>
+    <p>Real-time membership dynamics across all sites. Tracks net growth, churn risk, and the dollar impact of member gains/losses on monthly recurring revenue. Aligned to <strong>OTE Member Retention</strong> metric.</p>
+    <table><thead><tr>
+    <th>Metric</th><th>TX160</th><th>TX190</th><th>UT426</th><th>Fleet</th>
+  </tr></thead><tbody><tr><td class="label">Active Members</td><td class="best">1,173</td><td>1,074</td><td class="warn">996</td><td class="total">3,243</td></tr><tr><td class="label">Net Change (7d)</td><td class="best">+54 <span class="up">&#9650;</span></td><td class="best">+46 <span class="up">&#9650;</span></td><td class="best">+22 <span class="up">&#9650;</span></td><td class="total">+122</td></tr><tr><td class="label">New (7d)</td><td>92</td><td>72</td><td>52</td><td class="total">216</td></tr><tr><td class="label">Lost (7d)</td><td class="warn">38</td><td class="warn">26</td><td class="warn">30</td><td class="total">94</td></tr><tr><td class="label">Reactivated (7d)</td><td>32</td><td>27</td><td>13</td><td class="total">72</td></tr><tr><td class="label">Churn Rate (30d)</td><td>10.7% <span class="ote-yellow">⚠ 50% Minimum</span></td><td>8.2% <span class="ote-yellow">⚠ 75% Below Target</span></td><td>10.4% <span class="ote-yellow">⚠ 50% Minimum</span></td><td class="total">9.8%</td></tr><tr><td class="label">High Churn Risk</td><td class="warn">30</td><td class="warn">38</td><td>18</td><td class="total">86</td></tr><tr><td class="label">Revenue Impact (Net 7d)</td><td class="best">+$1,800.46</td><td class="best">+$1,548.95</td><td class="best">+$711.69</td><td class="total">+$4,061.10</td></tr></tbody></table><div class="enrichment-guidance">
+    <strong>How to use this data:</strong> Net change tells you if your site is growing or shrinking <em>this week</em>.
+    If net is negative, check the Lost vs New ratio. High churn risk members need personal outreach before they cancel.
+    Revenue impact shows the dollar consequence of member gains/losses on your monthly recurring revenue.
+  </div></div><div class="section-enrichment">
+    <h2>Acquisition Funnel (5Cs Pipeline)</h2>
+    <p>Tracks the customer journey from Create (window interaction) through Capture (trial start) to Claim (first wash). Directly drives the <strong>OTE Capture Rate &amp; Claim Rate</strong> incentive metrics.</p>
+    <div class="funnel-visual"><div class="funnel-site">
+      <h4>TX160</h4>
+      <div class="funnel-step" style="width:100%"><span class="funnel-label">Created</span><span class="funnel-val">1,011</span></div>
+      <div class="funnel-step" style="width:79.19999999999999%"><span class="funnel-label">Captured</span><span class="funnel-val">267 (26.4%)</span></div>
+      <div class="funnel-step" style="width:32.93768545994065%"><span class="funnel-label">Claimed</span><span class="funnel-val">111</span></div>
+    </div><div class="funnel-site">
+      <h4>TX190</h4>
+      <div class="funnel-step" style="width:100%"><span class="funnel-label">Created</span><span class="funnel-val">694</span></div>
+      <div class="funnel-step" style="width:76.19999999999999%"><span class="funnel-label">Captured</span><span class="funnel-val">176 (25.4%)</span></div>
+      <div class="funnel-step" style="width:27.665706051873197%"><span class="funnel-label">Claimed</span><span class="funnel-val">64</span></div>
+    </div><div class="funnel-site">
+      <h4>UT426</h4>
+      <div class="funnel-step" style="width:100%"><span class="funnel-label">Created</span><span class="funnel-val">558</span></div>
+      <div class="funnel-step" style="width:76.19999999999999%"><span class="funnel-label">Captured</span><span class="funnel-val">142 (25.4%)</span></div>
+      <div class="funnel-step" style="width:22.580645161290324%"><span class="funnel-label">Claimed</span><span class="funnel-val">42</span></div>
+    </div></div><table><thead><tr>
+    <th>Metric</th><th>TX160</th><th>TX190</th><th>UT426</th><th>Fleet</th>
+  </tr></thead><tbody><tr><td class="label">Capture Rate</td><td class="best">26.4% <span class="ote-green">✓ 125% Stretch</span></td><td class="warn">25.4% <span class="ote-green">✓ 125% Stretch</span></td><td>25.4% <span class="ote-green">✓ 125% Stretch</span></td><td class="total">25.7%</td></tr><tr><td class="label">Claim Rate (30d)</td><td>43.5% <span class="ote-red">✗ 0% Hard Floor</span></td><td class="best">47.8% <span class="ote-red">✗ 0% Hard Floor</span></td><td class="warn">35.3% <span class="ote-red">✗ 0% Hard Floor</span></td><td class="total">42.2%</td></tr><tr><td class="label">Window Captures</td><td>66.6% (174)</td><td>70.2% (117)</td><td>71.5% (101)</td><td class="total">—</td></tr><tr><td class="label">Online Captures</td><td>33.3% (93)</td><td>29.6% (59)</td><td>27.8% (41)</td><td class="total">—</td></tr><tr><td class="label">Unclaimed Outstanding</td><td class="warn">741</td><td class="warn">1,195</td><td class="warn">1,441</td><td class="total">3,377</td></tr><tr><td class="label">First-Time Customers</td><td>49</td><td>41</td><td>35</td><td class="total">125</td></tr></tbody></table><div class="enrichment-guidance">
+    <strong>How to use this data:</strong> The funnel shows how efficiently you move customers from Create (window interaction) to Capture (trial started) to Claim (first wash).
+    A low capture rate means cashiers need coaching on the offer pitch. High unclaimed counts mean customers signed up but never came back for their first wash — follow up with SMS/email.
+  </div></div><div class="section-enrichment">
+    <h2>Revenue Intelligence</h2>
+    <p>Revenue breakdown by source (club vs. single wash), per-tier price realization, and margin indicators. Shows whether cashiers are upselling effectively and if discounts are eroding value.</p>
+    <table><thead><tr>
+    <th>Metric</th><th>TX160</th><th>TX190</th><th>UT426</th><th>Fleet</th>
+  </tr></thead><tbody><tr><td class="label">Avg Ticket (Gross)</td><td class="warn">$19.74</td><td>$20.22</td><td class="best">$25.41</td><td class="total">$21.79</td></tr><tr><td class="label">Revenue/Wash (7d)</td><td>$6.05</td><td class="warn">$5.75</td><td class="best">$8.37</td><td class="total">$6.72</td></tr><tr><td class="label">Club Revenue %</td><td class="">46%</td><td class="">51.6%</td><td class="best">67.4%</td><td class="total">52.9%</td></tr><tr><td class="label">Avg Subscription Rev (30d)</td><td>$33.34</td><td class="best">$33.67</td><td class="warn">$32.35</td><td class="total">$33.12</td></tr><tr><td class="label">Refunds</td><td>$269.95 (10)</td><td>$56.98 (2)</td><td>$274.90 (9)</td><td class="total">$601.83</td></tr><tr><td colspan="5" style="background:#f8f8f8;font-weight:600;text-align:left;font-size:12px;padding:8px 10px;">Per-Tier Realization (7d avg vs. standard pricing)</td></tr><tr><td class="label" style="padding-left:20px">Quality ($10)</td><td class="best">$9.82 <span style="font-size:10px;color:#666">(98%)</span></td><td class="best">$9.94 <span style="font-size:10px;color:#666">(99%)</span></td><td class="best">$10.27 <span style="font-size:10px;color:#666">(103%)</span></td><td class="total">$10.01</td></tr><tr><td class="label" style="padding-left:20px">Works ($20)</td><td class="warn">$11.53 <span style="font-size:10px;color:#666">(58%)</span></td><td class="warn">$13.15 <span style="font-size:10px;color:#666">(66%)</span></td><td class="warn">$3.58 <span style="font-size:10px;color:#666">(18%)</span></td><td class="total">$9.42</td></tr><tr><td class="label" style="padding-left:20px">Super ($13)</td><td class="best">$13.14 <span style="font-size:10px;color:#666">(101%)</span></td><td class="best">$13.00 <span style="font-size:10px;color:#666">(100%)</span></td><td class="best">$20.25 <span style="font-size:10px;color:#666">(156%)</span></td><td class="total">$15.46</td></tr><tr><td class="label" style="padding-left:20px">Ultimate ($16)</td><td class="best">$16.74 <span style="font-size:10px;color:#666">(105%)</span></td><td class="best">$16.34 <span style="font-size:10px;color:#666">(102%)</span></td><td class="best">$21.11 <span style="font-size:10px;color:#666">(132%)</span></td><td class="total">$18.06</td></tr></tbody></table><div class="enrichment-guidance">
+    <strong>How to use this data:</strong> Per-tier realization shows what customers actually pay vs. the menu price.
+    If realization is below 80% of standard, heavy couponing or discounting is eroding margin. Club Revenue % indicates
+    how much of your income is predictable recurring revenue vs. volatile retail. Target: 60%+ club.
+  </div></div><div class="section-enrichment">
+    <h2>Trial Conversion Pipeline</h2>
+    <p>Tracks trial-to-active conversion by customer segment (first-timers, retriers, winbacks). The bridge between acquisition and long-term retention. Includes early churn risk flags.</p>
+    <table><thead><tr>
+    <th>Metric</th><th>TX160</th><th>TX190</th><th>UT426</th><th>Fleet Avg</th>
+  </tr></thead><tbody><tr><td class="label">Overall Conversion (30d)</td><td class="best">30.2%</td><td class="">28.2%</td><td class="">25.7%</td><td class="total">28.0%</td></tr><tr><td class="label">First-Timer Conv.</td><td class="best">30.8%</td><td>28%</td><td class="warn">25.6%</td><td class="total">28.1%</td></tr><tr><td class="label">Retrier Conv.</td><td class="best">0%</td><td>0%</td><td>0%</td><td class="total">0.0%</td></tr><tr><td class="label">Winback Conv.</td><td class="warn">16.7%</td><td class="best">100%</td><td>100%</td><td class="total">72.2%</td></tr><tr><td colspan="5" style="background:#f8f8f8;font-weight:600;text-align:left;font-size:12px;padding:8px 10px;">This Week's Trial Activity</td></tr><tr><td class="label">Trials Started</td><td>238</td><td>168</td><td>136</td><td class="total">542</td></tr><tr><td class="label">Trials Ended</td><td>108</td><td>65</td><td>87</td><td class="total">260</td></tr><tr><td class="label">Converted to Active</td><td class="best">28</td><td>18</td><td>24</td><td class="total">70</td></tr><tr><td colspan="5" style="background:#f8f8f8;font-weight:600;text-align:left;font-size:12px;padding:8px 10px;">Retention Risk Signals</td></tr><tr><td class="label">Early Churn Risk</td><td class="warn">20</td><td class="warn">23</td><td class="warn">33</td><td class="total">76</td></tr><tr><td class="label">QTD Retention Rate</td><td class="best">80.2%</td><td class="best">85.3%</td><td class="">72.9%</td><td class="total">79.5%</td></tr></tbody></table><div class="enrichment-guidance">
+    <strong>How to use this data:</strong> Trial conversion is the bridge between acquisition and retention.
+    First-timer conversion tells you how well you onboard brand-new customers. Retrier conversion shows effectiveness
+    at winning back lapsed customers. Early churn risk flags new members who may cancel within their first 30 days —
+    prioritize personal check-ins with these members.
+  </div></div><div class="section-enrichment">
+    <h2>Customer Health Snapshot</h2>
+    <p>Full customer base classification, growth trends, engagement segments, and marketing reach. Shows who your customers are and how to reach them.</p>
+    <table><thead><tr>
+    <th>Classification</th><th>TX160</th><th>TX190</th><th>UT426</th><th>Fleet</th>
+  </tr></thead><tbody><tr><td class="label">Active Subscribers</td><td>1,047</td><td>994</td><td>903</td><td class="total">2,944</td></tr><tr><td class="label">Trial Members</td><td>795</td><td>516</td><td>435</td><td class="total">1,746</td></tr><tr><td class="label">Former Members</td><td>1,128</td><td>1,123</td><td>911</td><td class="total">3,162</td></tr><tr><td class="label">Single Wash Only</td><td>244</td><td>359</td><td>108</td><td class="total">711</td></tr><tr><td class="label">No Activity</td><td>757</td><td>506</td><td>460</td><td class="total">1,723</td></tr><tr><td colspan="5" style="background:#f8f8f8;font-weight:600;text-align:left;font-size:12px;padding:8px 10px;">Customer Growth</td></tr><tr><td class="label">Growth Rate (7d)</td><td class="best">+4.5%</td><td class="best">+4.4%</td><td class="best">+2.2%</td><td class="total">3.7%</td></tr><tr><td class="label">Growth Rate (YoY)</td><td class="best">+132.7%</td><td class="best">+79.8%</td><td class="best">+821.4%</td><td class="total">344.6%</td></tr><tr><td colspan="5" style="background:#f8f8f8;font-weight:600;text-align:left;font-size:12px;padding:8px 10px;">Engagement Segments</td></tr><tr><td class="label">High Frequency</td><td class="best">176</td><td>144</td><td>87</td><td class="total">407</td></tr><tr><td class="label">Dormant</td><td>89</td><td>91</td><td>73</td><td class="total">253</td></tr><tr><td class="label">Email Opted-In</td><td>4,528</td><td>3,932</td><td>3,066</td><td class="total">11,526</td></tr><tr><td class="label">SMS Opted-In</td><td>4,588</td><td>3,996</td><td>3,185</td><td class="total">11,769</td></tr></tbody></table><div class="enrichment-guidance">
+    <strong>How to use this data:</strong> Former members are your reactivation pipeline — target them with win-back offers.
+    Dormant customers haven't visited recently; an SMS blast can re-engage them. High frequency customers are your champions —
+    recognize them and protect them from churning. Email/SMS opted-in counts tell you how many customers you can actually reach.
+  </div></div><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>TX160 &mdash; Houston, TX - FM 1960</h2><p>During Week 12 (March 16–22, 2026), Houston, TX - FM 1960 (TX160) processed
+    <strong>2,913</strong> total washes generating <strong>$19,368.38</strong> in gross sales
+    ($6.65 per wash). Coupons: 749 used ($19,751.90 discount).
+    70 open gate events. 35 rewashes recorded ($0.00 cost). Net new members: data unavailable. Gross IC plan purchases: 99, IC Revenue: $8,912.43.</p><h3>Wash Details</h3><table><thead><tr>
+    <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
+  </tr></thead><tbody><tr>
+      <td class="label">Works Club</td><td>1363</td><td>0</td>
+      <td>0</td><td>---</td><td>$5,647.91</td>
+    </tr><tr>
+      <td class="label">Quality Club</td><td>323</td><td>0</td>
+      <td>0</td><td>---</td><td>$1,613.45</td>
+    </tr><tr>
+      <td class="label">Super Club</td><td>110</td><td>0</td>
+      <td>0</td><td>---</td><td>$467.92</td>
+    </tr><tr>
+      <td class="label">Ultimate Club</td><td>197</td><td>0</td>
+      <td>0</td><td>---</td><td>$1,109.17</td>
+    </tr><tr>
+      <td class="label">Works</td><td>465</td><td>0</td>
+      <td>0</td><td>---</td><td>$5,360.00</td>
+    </tr><tr>
+      <td class="label">Quality</td><td>222</td><td>0</td>
+      <td>0</td><td>---</td><td>$2,179.99</td>
+    </tr><tr>
+      <td class="label">Super</td><td>125</td><td>0</td>
+      <td>0</td><td>---</td><td>$1,641.99</td>
+    </tr><tr>
+      <td class="label">Ultimate</td><td>73</td><td>0</td>
+      <td>0</td><td>---</td><td>$1,221.98</td>
+    </tr><tr>
+      <td class="label">Open Gate</td><td>35</td><td>0</td>
+      <td>0</td><td>---</td><td>$0.00</td>
+    </tr><tr class="totals-row">
+    <td class="label">TOTAL</td><td>2913</td>
+    <td>---</td><td>---</td><td>---</td><td>$10,403.96</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">Works Discount</td><td>479</td><td>$10,404.22</td></tr><tr><td class="label">Subscription payment Discount</td><td>261</td><td>$9,209.88</td></tr><tr><td class="label">Subscription upgrade Discount</td><td>4</td><td>$84.80</td></tr><tr><td class="label">Quality Discount</td><td>4</td><td>$40.00</td></tr><tr><td class="label">Super Discount</td><td>1</td><td>$13.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+    <td>749</td>
+    <td>$19,751.90</td></tr></tbody></table><h3>Open Gate &amp; Rewash Details</h3><p><strong>Open Gate:</strong> 70 (total gate opens from rewash category).</p><p><strong>Rewashes:</strong> 35 — 35 Open Gate (approx). Total cost: $0.00</p><h3>Membership</h3><p><strong>Net New Paying Members:</strong> <span style="color:#C62828;">Data Unavailable</span> — Power BI membership snapshot not collected this week.</p><p>Gross IC Plan Purchases: 99 | IC Revenue: $8,912.43</p><p style="color:#856404;font-size:12px;"><em>Note: Gross plan purchases include new signups, renewals, and reactivations. This is NOT a net growth metric.</em></p><h3>Membership Health</h3><div class="enrichment-kpi-row">
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">1,173</div><div class="enrichment-kpi-label">Active Members</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val positive">+54</div><div class="enrichment-kpi-label">Net Change (7d)</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">30</div><div class="enrichment-kpi-label">Churn Risk</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val positive">+$1,800.46</div><div class="enrichment-kpi-label">Rev Impact (7d)</div></div>
+    </div><p style="font-size:12px;color:#666;">New: 92 | Lost: 38 | Reactivated: 32 | 30d net: +118</p><h3>Acquisition Funnel</h3><div class="enrichment-kpi-row">
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">1,011</div><div class="enrichment-kpi-label">Created</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">267 (26.4%)</div><div class="enrichment-kpi-label">Captured</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">111</div><div class="enrichment-kpi-label">Claimed</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">30.2%</div><div class="enrichment-kpi-label">Conv Rate (30d)</div></div>
+    </div><p style="font-size:12px;color:#666;">Channel: Window 66.6% | Online 33.3% | Admin 0.1% | Unclaimed outstanding: 741</p><h3>Trial Pipeline</h3><table><thead><tr>
+      <th>Segment</th><th>Conversion Rate</th><th>This Week Started</th><th>30d Volume</th>
+    </tr></thead><tbody><tr><td class="label">First-Timers</td><td>30.8%</td><td>230</td><td>335 trials / 103 conv</td></tr><tr><td class="label">Retriers</td><td>0%</td><td>3</td><td>3 trials / 0 conv</td></tr><tr><td class="label">Winbacks</td><td>16.7%</td><td>5</td><td>6 trials / 1 conv</td></tr><tr class="totals-row"><td class="label">Overall</td><td>30.2%</td><td>238</td><td>Early churn risk: 20 | QTD retention: 80.2%</td></tr></tbody></table><h3>Actionable Insights</h3><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#9888; Member Retention:</strong> 30 members at high churn risk. Revenue at risk: $4,701.19/mo.
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: Prioritize personal outreach to at-risk members. Check for service issues.</em></div>
+        </div><div style="background:#dcfce7;border-left:4px solid #16a34a;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#10004; Member Retention:</strong> 32 members reactivated this week. Reactivation pool: 1158 former members.
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: Continue reactivation campaigns. Each reactivation = ~$${membership.avg_subscription_revenue_30d}/mo revenue.</em></div>
+        </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#9888; Acquisition:</strong> 102 new customers this week never completed a wash (208.2% of first-timers).
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: These are captured leads who left without washing. Check claim-to-wash handoff process.</em></div>
+        </div><div style="background:#e0e7ff;border-left:4px solid #6366f1;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#128161; Acquisition:</strong> 741 captured customers have never claimed their trial.
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: Send SMS/email reminders to unclaimed customers. This is low-hanging conversion fruit.</em></div>
+        </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#9888; Revenue:</strong> Average single wash realization is $11.76 vs $14.75 standard. Cashiers may be under-upselling.
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: Review per-tier realization. Coach cashiers to recommend Works ($20) over Quality ($10).</em></div>
+        </div><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>TX190 &mdash; Clear Lake, TX - El Camino Real</h2><p>During Week 12 (March 16–22, 2026), Clear Lake, TX - El Camino Real (TX190) processed
+    <strong>2,236</strong> total washes generating <strong>$17,149.84</strong> in gross sales
+    ($7.67 per wash). Coupons: 496 used ($13,205.79 discount).
+    28 open gate events. 14 rewashes recorded ($0.00 cost). Net new members: data unavailable. Gross IC plan purchases: 79, IC Revenue: $8,849.97.</p><h3>Wash Details</h3><table><thead><tr>
+    <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
+  </tr></thead><tbody><tr>
+      <td class="label">Works Club</td><td>1148</td><td>0</td>
+      <td>0</td><td>---</td><td>$6,272.09</td>
+    </tr><tr>
+      <td class="label">Quality Club</td><td>241</td><td>0</td>
+      <td>0</td><td>---</td><td>$1,274.36</td>
+    </tr><tr>
+      <td class="label">Super Club</td><td>106</td><td>0</td>
+      <td>0</td><td>---</td><td>$798.69</td>
+    </tr><tr>
+      <td class="label">Ultimate Club</td><td>85</td><td>0</td>
+      <td>0</td><td>---</td><td>$504.83</td>
+    </tr><tr>
+      <td class="label">Works</td><td>338</td><td>0</td>
+      <td>0</td><td>---</td><td>$4,445.00</td>
+    </tr><tr>
+      <td class="label">Quality</td><td>154</td><td>0</td>
+      <td>0</td><td>---</td><td>$1,530.00</td>
+    </tr><tr>
+      <td class="label">Super</td><td>99</td><td>0</td>
+      <td>0</td><td>---</td><td>$1,287.00</td>
+    </tr><tr>
+      <td class="label">Ultimate</td><td>47</td><td>0</td>
+      <td>0</td><td>---</td><td>$768.00</td>
+    </tr><tr>
+      <td class="label">Open Gate</td><td>14</td><td>0</td>
+      <td>0</td><td>---</td><td>$0.00</td>
+    </tr><tr>
+      <td class="label">Vacuum</td><td>4</td><td>0</td>
+      <td>0</td><td>---</td><td>$0.00</td>
+    </tr><tr class="totals-row">
+    <td class="label">TOTAL</td><td>2236</td>
+    <td>---</td><td>---</td><td>---</td><td>$8,030.00</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">Works Discount</td><td>307</td><td>$6,724.82</td></tr><tr><td class="label">Subscription payment Discount</td><td>188</td><td>$6,460.97</td></tr><tr><td class="label">Detail Kit Discount</td><td>1</td><td>$20.00</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+    <td>496</td>
+    <td>$13,205.79</td></tr></tbody></table><h3>Open Gate &amp; Rewash Details</h3><p><strong>Open Gate:</strong> 28 (total gate opens from rewash category).</p><p><strong>Rewashes:</strong> 14 — 14 Open Gate (approx). Total cost: $0.00</p><h3>Membership</h3><p><strong>Net New Paying Members:</strong> <span style="color:#C62828;">Data Unavailable</span> — Power BI membership snapshot not collected this week.</p><p>Gross IC Plan Purchases: 79 | IC Revenue: $8,849.97</p><p style="color:#856404;font-size:12px;"><em>Note: Gross plan purchases include new signups, renewals, and reactivations. This is NOT a net growth metric.</em></p><h3>Membership Health</h3><div class="enrichment-kpi-row">
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">1,074</div><div class="enrichment-kpi-label">Active Members</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val positive">+46</div><div class="enrichment-kpi-label">Net Change (7d)</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">38</div><div class="enrichment-kpi-label">Churn Risk</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val positive">+$1,548.95</div><div class="enrichment-kpi-label">Rev Impact (7d)</div></div>
+    </div><p style="font-size:12px;color:#666;">New: 72 | Lost: 26 | Reactivated: 27 | 30d net: +129</p><h3>Acquisition Funnel</h3><div class="enrichment-kpi-row">
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">694</div><div class="enrichment-kpi-label">Created</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">176 (25.4%)</div><div class="enrichment-kpi-label">Captured</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">64</div><div class="enrichment-kpi-label">Claimed</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">28.2%</div><div class="enrichment-kpi-label">Conv Rate (30d)</div></div>
+    </div><p style="font-size:12px;color:#666;">Channel: Window 70.2% | Online 29.6% | Admin 0.2% | Unclaimed outstanding: 1,195</p><h3>Trial Pipeline</h3><table><thead><tr>
+      <th>Segment</th><th>Conversion Rate</th><th>This Week Started</th><th>30d Volume</th>
+    </tr></thead><tbody><tr><td class="label">First-Timers</td><td>28%</td><td>156</td><td>271 trials / 76 conv</td></tr><tr><td class="label">Retriers</td><td>0%</td><td>8</td><td>1 trials / 0 conv</td></tr><tr><td class="label">Winbacks</td><td>100%</td><td>4</td><td>1 trials / 1 conv</td></tr><tr class="totals-row"><td class="label">Overall</td><td>28.2%</td><td>168</td><td>Early churn risk: 23 | QTD retention: 85.3%</td></tr></tbody></table><h3>Actionable Insights</h3><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#9888; Member Retention:</strong> 38 members at high churn risk. Revenue at risk: $3,232.59/mo.
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: Prioritize personal outreach to at-risk members. Check for service issues.</em></div>
+        </div><div style="background:#dcfce7;border-left:4px solid #16a34a;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#10004; Member Retention:</strong> 27 members reactivated this week. Reactivation pool: 1154 former members.
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: Continue reactivation campaigns. Each reactivation = ~$${membership.avg_subscription_revenue_30d}/mo revenue.</em></div>
+        </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#9888; Acquisition:</strong> 81 new customers this week never completed a wash (197.6% of first-timers).
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: These are captured leads who left without washing. Check claim-to-wash handoff process.</em></div>
+        </div><div style="background:#e0e7ff;border-left:4px solid #6366f1;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#128161; Acquisition:</strong> 1195 captured customers have never claimed their trial.
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: Send SMS/email reminders to unclaimed customers. This is low-hanging conversion fruit.</em></div>
+        </div><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;"><h2>UT426 &mdash; Saratoga Springs, UT - E Crossroads Blvd</h2><p>During Week 12 (March 16–22, 2026), Saratoga Springs, UT - E Crossroads Blvd (UT426) processed
+    <strong>1,460</strong> total washes generating <strong>$10,805.12</strong> in gross sales
+    ($7.40 per wash). Coupons: 577 used ($15,016.33 discount).
+    4 open gate events. 2 rewashes recorded ($0.00 cost). Net new members: data unavailable. Gross IC plan purchases: 55, IC Revenue: $7,277.92.</p><h3>Wash Details</h3><table><thead><tr>
+    <th>Wash Type</th><th>Ctrl Count</th><th>POP Count</th><th>Diff</th><th>Price</th><th>Total</th>
+  </tr></thead><tbody><tr>
+      <td class="label">Works Club</td><td>672</td><td>0</td>
+      <td>0</td><td>---</td><td>$4,986.00</td>
+    </tr><tr>
+      <td class="label">Quality Club</td><td>104</td><td>0</td>
+      <td>0</td><td>---</td><td>$775.64</td>
+    </tr><tr>
+      <td class="label">Super Club</td><td>110</td><td>0</td>
+      <td>0</td><td>---</td><td>$547.72</td>
+    </tr><tr>
+      <td class="label">Ultimate Club</td><td>46</td><td>0</td>
+      <td>0</td><td>---</td><td>$154.95</td>
+    </tr><tr>
+      <td class="label">Works</td><td>369</td><td>0</td>
+      <td>0</td><td>---</td><td>$1,320.00</td>
+    </tr><tr>
+      <td class="label">Quality</td><td>99</td><td>0</td>
+      <td>0</td><td>---</td><td>$1,016.37</td>
+    </tr><tr>
+      <td class="label">Super</td><td>40</td><td>0</td>
+      <td>0</td><td>---</td><td>$810.00</td>
+    </tr><tr>
+      <td class="label">Ultimate</td><td>18</td><td>0</td>
+      <td>0</td><td>---</td><td>$380.00</td>
+    </tr><tr>
+      <td class="label">Open Gate</td><td>2</td><td>0</td>
+      <td>0</td><td>---</td><td>$0.00</td>
+    </tr><tr class="totals-row">
+    <td class="label">TOTAL</td><td>1460</td>
+    <td>---</td><td>---</td><td>---</td><td>$3,527.20</td>
+  </tr></tbody></table><h3>Coupons Used</h3><table><thead><tr><th>Coupon Name</th><th>Uses</th><th>Discount</th></tr></thead><tbody><tr><td class="label">Works Discount</td><td>410</td><td>$9,951.13</td></tr><tr><td class="label">Subscription payment Discount</td><td>144</td><td>$4,805.21</td></tr><tr><td class="label">Super Discount</td><td>17</td><td>$190.84</td></tr><tr><td class="label">Ultimate Discount</td><td>3</td><td>$41.98</td></tr><tr><td class="label">Quality Discount</td><td>2</td><td>$22.00</td></tr><tr><td class="label">Subscription upgrade Discount</td><td>1</td><td>$5.17</td></tr><tr class="totals-row"><td class="label">TOTAL</td>
+    <td>577</td>
+    <td>$15,016.33</td></tr></tbody></table><h3>Open Gate &amp; Rewash Details</h3><p><strong>Open Gate:</strong> 4 (total gate opens from rewash category).</p><p><strong>Rewashes:</strong> 2 — 2 Open Gate (approx). Total cost: $0.00</p><h3>Membership</h3><p><strong>Net New Paying Members:</strong> <span style="color:#C62828;">Data Unavailable</span> — Power BI membership snapshot not collected this week.</p><p>Gross IC Plan Purchases: 55 | IC Revenue: $7,277.92</p><p style="color:#856404;font-size:12px;"><em>Note: Gross plan purchases include new signups, renewals, and reactivations. This is NOT a net growth metric.</em></p><h3>Membership Health</h3><div class="enrichment-kpi-row">
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">996</div><div class="enrichment-kpi-label">Active Members</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val positive">+22</div><div class="enrichment-kpi-label">Net Change (7d)</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">18</div><div class="enrichment-kpi-label">Churn Risk</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val positive">+$711.69</div><div class="enrichment-kpi-label">Rev Impact (7d)</div></div>
+    </div><p style="font-size:12px;color:#666;">New: 52 | Lost: 30 | Reactivated: 13 | 30d net: +45</p><h3>Acquisition Funnel</h3><div class="enrichment-kpi-row">
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">558</div><div class="enrichment-kpi-label">Created</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">142 (25.4%)</div><div class="enrichment-kpi-label">Captured</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">42</div><div class="enrichment-kpi-label">Claimed</div></div>
+      <div class="enrichment-kpi"><div class="enrichment-kpi-val">25.7%</div><div class="enrichment-kpi-label">Conv Rate (30d)</div></div>
+    </div><p style="font-size:12px;color:#666;">Channel: Window 71.5% | Online 27.8% | Admin 0.8% | Unclaimed outstanding: 1,441</p><h3>Trial Pipeline</h3><table><thead><tr>
+      <th>Segment</th><th>Conversion Rate</th><th>This Week Started</th><th>30d Volume</th>
+    </tr></thead><tbody><tr><td class="label">First-Timers</td><td>25.6%</td><td>125</td><td>379 trials / 97 conv</td></tr><tr><td class="label">Retriers</td><td>0%</td><td>7</td><td>2 trials / 0 conv</td></tr><tr><td class="label">Winbacks</td><td>100%</td><td>4</td><td>1 trials / 1 conv</td></tr><tr class="totals-row"><td class="label">Overall</td><td>25.7%</td><td>136</td><td>Early churn risk: 33 | QTD retention: 72.9%</td></tr></tbody></table><h3>Actionable Insights</h3><div style="background:#dcfce7;border-left:4px solid #16a34a;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#10004; Member Retention:</strong> 13 members reactivated this week. Reactivation pool: 934 former members.
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: Continue reactivation campaigns. Each reactivation = ~$${membership.avg_subscription_revenue_30d}/mo revenue.</em></div>
+        </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#9888; Acquisition:</strong> 169 new customers this week never completed a wash (482.9% of first-timers).
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: These are captured leads who left without washing. Check claim-to-wash handoff process.</em></div>
+        </div><div style="background:#e0e7ff;border-left:4px solid #6366f1;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#128161; Acquisition:</strong> 1441 captured customers have never claimed their trial.
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: Send SMS/email reminders to unclaimed customers. This is low-hanging conversion fruit.</em></div>
+        </div><div style="background:#fff3cd;border-left:4px solid #ffc107;border-radius:4px;padding:8px 12px;margin:6px 0;font-size:12px;">
+          <strong>&#9888; Revenue:</strong> Average single wash realization is $6.71 vs $14.75 standard. Cashiers may be under-upselling.
+          <div style="color:#555;font-size:11px;margin-top:2px;"><em>Action: Review per-tier realization. Coach cashiers to recommend Works ($20) over Quality ($10).</em></div>
+        </div><hr style="margin:32px 0; border:none; border-top:2px solid #8B0000;">
+<h2>Strategic Recommendations</h2>
+<ol><li><strong>TX160 Quality Audit:</strong> 35 rewashes in one week requires investigation of equipment maintenance, chemical ratios, and operator training. Target: reduce below 5 rewashes/week within 2 weeks.</li>
+<li><strong>Coupon ROI Analysis:</strong> $47,974.02 in total coupon discounts represents 101.4% of combined gross sales. Evaluate whether campaigns drive incremental volume or simply discount existing customers.</li>
+<li><strong>Benchmark UT426 Operations:</strong> UT426's operational metrics are best-in-class. Document their procedures and create a formal best practices guide for all sites.</li>
+<li><strong>Membership Data Gap:</strong> Net new member count is unavailable because the Power BI membership snapshot was not collected. Without this, we cannot measure true member growth. Action: ensure the weekly data collection includes the Membership page KPIs (Paying Members card, visual 262b6bab5d46ad15736c).</li>
+<li><strong>Weekly Monitoring:</strong> Track rewash rate, coupon-to-gross ratio, and per-wash revenue weekly. Establish site-specific targets and accountability.</li></ol>
+<div style="margin-top:28px;padding:14px 18px;background:#1a1a2e;border:1px solid #333;border-radius:8px;font-size:12px;color:#999;">
+  <strong style="color:#ccc;">Data Windows</strong><br>
+  <span style="color:#8B0000;">&#9632;</span> Operations &amp; Sales: <span style="color:#ccc;">March 16–22, 2026</span> (PostgreSQL primary, Tommy API supplement)<br>
+  <span style="color:#8B0000;">&#9632;</span> Inspections: <span style="color:#ccc;">Sun-Sat: 2026-03-15 to 2026-03-21</span> (Tommy API)<br>
+  <span style="color:#8B0000;">&#9632;</span> Reviews: <span style="color:#ccc;">Mon-Sun: 2026-03-16 to 2026-03-22</span><br>
+  <span style="color:#8B0000;">&#9632;</span> Churn: <span style="color:#ccc;">rolling 30 days as of collection date</span><br>
+  <span style="color:#1e40af;">&#9632;</span> Deep Analytics: <span style="color:#ccc;">PostgreSQL (UCWH Analytics DB) &mdash; membership, funnel, revenue, trials, customer health</span>
+</div>
+</div><!-- /.content -->
+
+<div class="footer">
+  Tommy's Express Car Wash &mdash; Confidential, Internal Use Only<br>
+  Generated 2026-03-27
+</div>
+
+</div><!-- /.container -->
+</body>
+</html>
