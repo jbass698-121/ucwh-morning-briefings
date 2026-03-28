@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Digest — March 28, 2026</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; color: #1a1a1a; }
+  .container { max-width: 680px; margin: 0 auto; background: #ffffff; }
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 40px 32px; text-align: center; }
+  .header h1 { color: #ffffff; font-size: 28px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -0.5px; }
+  .header .date { color: #a8b2d1; font-size: 14px; margin: 0; }
+  .header .tagline { color: #64ffda; font-size: 13px; margin-top: 12px; font-style: italic; }
+  .exec-summary { background: #f8f9ff; padding: 24px 32px; border-left: 4px solid #0f3460; margin: 24px 32px; border-radius: 0 8px 8px 0; }
+  .exec-summary h2 { font-size: 16px; color: #0f3460; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 1px; }
+  .exec-summary p { font-size: 15px; line-height: 1.6; color: #333; margin: 0; }
+  .section { padding: 0 32px; margin-bottom: 32px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e8e8e8; }
+  .section-header .icon { font-size: 20px; }
+  .section-header h2 { font-size: 18px; color: #1a1a2e; margin: 0; font-weight: 700; }
+  .story { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+  .story:last-child { border-bottom: none; }
+  .story-title { font-size: 16px; font-weight: 600; margin: 0 0 6px 0; }
+  .story-title a { color: #0f3460; text-decoration: none; }
+  .story-title a:hover { text-decoration: underline; }
+  .story-meta { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .story-meta .source { font-weight: 600; color: #555; }
+  .relevance-high { display: inline-block; background: #fee2e2; color: #dc2626; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .relevance-medium { display: inline-block; background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .story-summary { font-size: 14px; line-height: 1.6; color: #444; margin: 0; }
+  .callout { background: #ecfdf5; border-left: 3px solid #10b981; padding: 12px 16px; margin-top: 10px; border-radius: 0 6px 6px 0; }
+  .callout p { font-size: 13px; color: #065f46; margin: 0; line-height: 1.5; }
+  .callout strong { color: #047857; }
+  .footer { background: #f8f9fa; padding: 24px 32px; text-align: center; border-top: 1px solid #e8e8e8; }
+  .footer p { font-size: 12px; color: #888; margin: 4px 0; }
+  .footer .sources { font-size: 11px; color: #aaa; margin-top: 12px; }
+  .divider { height: 1px; background: #e8e8e8; margin: 0 32px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>AI Daily Digest</h1>
+  <p class="date">Saturday, March 28, 2026</p>
+  <p class="tagline">Curated for builders of AI-first businesses, agents &amp; infrastructure</p>
+</div>
+
+<div class="exec-summary">
+  <h2>Executive Summary</h2>
+  <p>The White House dropped its National AI Legislative Framework this week, explicitly pushing for federal preemption of the state-level regulatory patchwork -- a move that could simplify compliance for AI-first businesses operating across state lines. Amazon and OpenAI announced a partnership to build a Stateful Runtime Environment on Bedrock, embedding persistent memory and tool-use infrastructure directly into the cloud platform. Hyperscaler CapEx is now projected to hit $602 billion in 2026, with 75% earmarked for AI infrastructure, yet only 25% of enterprise AI initiatives have delivered expected ROI -- a tension that will define the year. OpenAI continued its acquisition spree with Astral (open-source developer tools), its sixth buy of 2026. Meanwhile, the MCP ecosystem quietly crossed 4,000 published servers and shipped Security Standard v1.1, hardening the protocol layer that increasingly underpins production agent deployments.</p>
+</div>
+
+<!-- MODEL & PLATFORM UPDATES -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#129504;</span>
+    <h2>Model &amp; Platform Updates</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.crescendo.ai/news/latest-ai-news-and-updates">Amazon + OpenAI Partner on Stateful Runtime Environment for Bedrock</a></h3>
+    <p class="story-meta"><span class="source">Crescendo AI / Amazon</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">Amazon announced a strategic partnership with OpenAI to co-create a Stateful Runtime Environment on Amazon Bedrock, positioning persistent memory and tool-use infrastructure as the foundation of the next AI stack. The runtime allows agents to maintain state across sessions, remember context from previous interactions, and manage tool orchestration natively within the Bedrock platform -- eliminating the need for developers to build custom memory layers. This is the first time Amazon and OpenAI have collaborated on core infrastructure rather than competing head-to-head.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Persistent agent memory is exactly the pattern your 19-task pipeline needs at scale. Right now your orchestrators manage state through local cache files and Supabase writes. A native stateful runtime on Bedrock could eventually replace that plumbing with a managed service -- agents that remember yesterday's data pull results, know which reports failed, and pick up where they left off without custom session management code.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.digitalapplied.com/blog/march-2026-ai-roundup-month-that-changed-everything">Google Gemini 3.1 Flash-Lite: 2.5x Faster at $0.25 per Million Tokens</a></h3>
+    <p class="story-meta"><span class="source">Digital Applied / Google</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Google introduced Gemini 3.1 Flash-Lite, a new efficiency-focused model delivering 2.5x faster response times and 45% faster output generation compared to earlier Gemini versions. Priced at just $0.25 per million input tokens, it targets high-volume, latency-sensitive workloads where frontier-level reasoning isn't required -- data extraction, classification, summarization, and structured output generation. Google is positioning Flash-Lite as the default model for agentic tool calls where speed matters more than depth.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.buildez.ai/blog/what-ai-trends-this-month-march-2026">Mamba Architecture Emerges as Transformer Alternative: 14x Faster, 5x Less Memory</a></h3>
+    <p class="story-meta"><span class="source">BuildEZ / Research</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">New research benchmarks show Mamba-based architectures running 14 times faster than Transformers while using 5 times less GPU memory, reigniting the debate over whether attention-based models will remain dominant. Mamba uses structured state space models (SSMs) instead of self-attention, enabling linear-time sequence processing rather than the quadratic scaling that limits Transformer context windows. Several research labs are now training Mamba variants at scale, though no production frontier model has adopted the architecture yet.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AGENT ECOSYSTEM & INFRASTRUCTURE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#9881;&#65039;</span>
+    <h2>Agent Ecosystem &amp; Infrastructure</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://use-apify.com/blog/mcp-standard-ecosystem-2026">MCP Server Registry Hits 4,000+ -- Security Standard v1.1 Ships</a></h3>
+    <p class="story-meta"><span class="source">Apify / MCP Working Group</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The MCP server registry crossed 4,000 published servers in March, covering SaaS platforms, enterprise systems, development tools, and specialized data sources. Simultaneously, the MCP working group published Security Standard v1.1, addressing prompt injection via tool outputs, server authentication requirements, and scope limitation. The security update reflects enterprise demand: companies deploying MCP in production need guarantees that tool outputs can't be weaponized to hijack agent behavior, and that server-to-server communication is authenticated and auditable.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> Your pipeline connects to multiple MCP servers (Slack, Supabase, Gmail, Notion). Security Standard v1.1 directly hardens the attack surface of your automation -- particularly the prompt injection protections, which prevent a compromised tool output from redirecting your agents mid-task. As you add more MCP integrations, the 4,000-server ecosystem means you're increasingly likely to find pre-built connectors rather than building custom ones.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://earezki.com/ai-news/2026-03-25-network-automation-infrastructure-mcp-servers-multi-vendor-management-netbox-and-digital-twins/">25+ MCP Servers Now Enable AI-Driven Network Infrastructure Management</a></h3>
+    <p class="story-meta"><span class="source">Dev|Journal</span> &middot; Mar 25, 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">A new wave of MCP servers enables AI agents to manage multi-vendor network infrastructure through natural language -- configuring routers, monitoring uptime, managing digital twins, and interfacing with NetBox for inventory management. This represents MCP's expansion beyond software development tools into physical infrastructure operations, where agents interact with hardware through standardized protocol layers rather than vendor-specific APIs.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://en.antaranews.com/news/410178/mwc-2026-preparing-for-ai-calling-ooklas-vision-for-updated-voice-quality-standards">MWC 2026: Ookla Introduces AI Calling Voice Quality Framework</a></h3>
+    <p class="story-meta"><span class="source">ANTARA News / Ookla</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">At MWC 2026, Ookla introduced a new voice experience evaluation framework specifically designed for AI-generated calling. As AI voice agents increasingly handle customer-facing phone interactions, existing telecom quality metrics (MOS scores, jitter, latency) don't capture the nuances of AI-human voice conversations. Ookla's framework adds metrics for naturalness, turn-taking latency, context retention, and emotional tone detection -- creating a standardized way to benchmark AI voice agent quality across carriers.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FUNDING & DEALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128176;</span>
+    <h2>Funding &amp; Deals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/ma/data-openai-2023-2026-acquisitions-open-source-astral-promptfoo/">OpenAI Acquires Astral -- Sixth Acquisition of 2026</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> &middot; Mar 19, 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">OpenAI announced the acquisition of Astral, creators of popular open-source developer tools including the Ruff Python linter and uv package manager. This marks OpenAI's sixth acquisition of 2026, nearly matching its total for all of 2025 in just three months. The Astral deal signals OpenAI's strategy to own developer workflow tooling -- not just the models that power code generation, but the entire toolchain developers use daily. Combined with its earlier PromptFoo acquisition, OpenAI is building an end-to-end developer platform.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> If you use Ruff or uv in your Python workflows (and at this point, most Python developers do), OpenAI now controls those tools. Watch for integration with ChatGPT and Codex -- OpenAI likely plans to make these tools AI-native, with models that understand your linting rules, dependency graphs, and project structure. The broader signal: the AI giants are acquiring open-source developer infrastructure to create lock-in at the tooling layer.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/ai/humans-raises-huge-seed-round-unicorn-valuation/">Humans& Raises $480M Seed at $4.48B Valuation for 'Human-Centric AI'</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Humans& closed a $480 million seed round at a $4.48 billion valuation, making it an instant unicorn focused on "human-centric AI" -- systems designed to augment human decision-making rather than replace it. The round follows AMI Labs' $1.03B seed earlier this month, continuing the trend of AI companies raising unprecedented amounts at the earliest stages. The seed round market has fundamentally changed: what used to be $2-5M is now routinely $50-500M for AI companies with strong founding teams.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.crunchbase.com/venture/biggest-funding-rounds-ai-robotics-ecommerce-quince/">Robotics Mega-Round Week: $1.2B Raised Across Four Deals</a></h3>
+    <p class="story-meta"><span class="source">Crunchbase</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">In a single week, four robotics companies raised over $1.2 billion combined: Mind Robotics ($500M), Rhoda AI ($450M), Sunday ($165M, achieving unicorn status), and Oxa ($103M). The cluster of mega-rounds signals that investors view physical AI -- robots that operate in the real world -- as the next frontier after language models. The deals span warehouse automation, autonomous delivery, agricultural robotics, and general-purpose humanoid systems.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECURITY & GOVERNANCE -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128737;&#65039;</span>
+    <h2>Security &amp; Governance</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.whitehouse.gov/releases/2026/03/president-donald-j-trump-unveils-national-ai-legislative-framework/">White House Releases National AI Legislative Framework -- Federal Preemption of State Laws</a></h3>
+    <p class="story-meta"><span class="source">White House / WilmerHale</span> &middot; Mar 20, 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The White House released its National Policy Framework for Artificial Intelligence, explicitly pushing for broad federal preemption of state AI laws that "impose undue burdens" on developers and deployers. The framework calls for precluding states from regulating AI model development or imposing liability on AI developers for unlawful third-party use of their systems. It favors existing sector-specific regulators and industry-led standards over a new centralized AI authority. If Congress acts on these recommendations, the patchwork of state laws (Colorado, Texas, California) could be superseded by a single federal standard.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> This is the best possible outcome for a multi-state AI-first business. If federal preemption passes, you won't need to navigate separate compliance regimes in Colorado (June 30 deadline), Texas, and California for your automated operations. The framework's preference for industry-led standards over a new regulatory body also suggests lighter-touch oversight for operational AI like your pipeline. Still worth tracking -- Congress hasn't acted yet, and state AGs may push back hard.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://home.treasury.gov/news/press-releases/sb0421">Treasury Launches AI Innovation Series for Financial Sector Governance</a></h3>
+    <p class="story-meta"><span class="source">U.S. Treasury</span> &middot; Mar 23, 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">The Treasury Department's AI Transformation Office and the Financial Stability Oversight Council launched the AI Innovation Series, a public-private initiative to develop governance frameworks for AI in financial services. The program will address AI risk assessment, model validation requirements, and systemic risk from concentrated AI infrastructure dependencies. This is the first sector-specific AI governance program launched under the new National AI Framework, signaling that financial services will be the testing ground for federal AI compliance standards.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.akhia.com/insights/benthinking/bold-ai-predictions-coming-true-and-its-only-march">Washington State Passes Two AI Bills on Disclosure and Chatbot Safety</a></h3>
+    <p class="story-meta"><span class="source">AKHIA</span> &middot; Mar 12, 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Washington state passed two AI bills on March 12: one requiring disclosure when consumers interact with AI systems, and another establishing safety requirements for AI chatbots. The disclosure bill mandates that any customer-facing AI interaction must be clearly identified as non-human within the first exchange. The chatbot safety bill requires companies to implement guardrails preventing AI systems from providing harmful advice in healthcare, financial, and legal contexts. Washington joins Colorado and Texas in the growing patchwork of state-level AI regulation.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INDUSTRY SIGNALS -->
+<div class="section">
+  <div class="section-header">
+    <span class="icon">&#128225;</span>
+    <h2>Industry Signals</h2>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://futurumgroup.com/insights/ai-capex-2026-the-690b-infrastructure-sprint/">Hyperscaler AI CapEx Hits $602B in 2026 -- But Only 25% of AI Projects Deliver ROI</a></h3>
+    <p class="story-meta"><span class="source">Futurum / Goldman Sachs / MUFG</span> &middot; Mar 2026 &middot; <span class="relevance-high">HIGH</span></p>
+    <p class="story-summary">The top five hyperscalers are projected to spend $602 billion in 2026, a 36% year-over-year increase, with approximately 75% ($450B) earmarked for AI-specific infrastructure. Microsoft alone spent $34.9 billion in a single quarter -- a 74% YoY jump. Yet the demand side tells a sobering story: AI-related cloud services generated only about $25 billion in 2025 revenue (roughly 10% of infrastructure spend), and fewer than 25% of enterprise AI initiatives have delivered expected ROI. The gap between infrastructure investment and realized returns is the defining tension of 2026.</p>
+    <div class="callout"><p><strong>Why this matters for you:</strong> The ROI gap is your competitive advantage. While enterprises struggle to get value from AI (75% of projects underdelivering), your pipeline generates measurable daily returns -- automated reports, data pulls, and operational intelligence that would otherwise require hours of manual work. The $602B in infrastructure spending means the tools, APIs, and compute you depend on will keep getting cheaper and better. You're on the right side of this equation: a proven AI deployment generating real value while the hyperscalers subsidize your infrastructure with their CapEx race.</p></div>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://www.goldmansachs.com/insights/articles/why-ai-companies-may-invest-more-than-500-billion-in-2026">Global AI Spending Projected at $2.52 Trillion in 2026 -- Up 44% YoY</a></h3>
+    <p class="story-meta"><span class="source">Goldman Sachs</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">Worldwide spending on AI across hardware, software, and services is set to reach $2.52 trillion in 2026, a 44% increase from 2025. The spending is increasingly bifurcated: infrastructure and foundation model companies attract the lion's share, while application-layer companies face a more selective funding environment. Gartner predicts that 40% of enterprise applications will incorporate task-specific AI agents by year-end 2026, up from less than 5% in 2025 -- the steepest adoption curve in enterprise software history.</p>
+  </div>
+
+  <div class="story">
+    <h3 class="story-title"><a href="https://news.un.org/en/story/2026/03/1167075">UN Report: AI Already Reshaping Working Conditions Globally</a></h3>
+    <p class="story-meta"><span class="source">UN News</span> &middot; Mar 2026 &middot; <span class="relevance-medium">MEDIUM</span></p>
+    <p class="story-summary">A new United Nations report documents how AI is already transforming working conditions across industries -- not in the hypothetical future, but right now. The report finds that AI-driven automation is shifting job roles faster than retraining programs can adapt, with the most significant impacts in data processing, customer service, content creation, and operational management. The report recommends that governments establish AI workforce transition funds and mandate employer disclosure of AI-driven role changes.</p>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Curated for Jason Bass — United Car Wash Holdings</p>
+  <p>Generated Saturday, March 28, 2026</p>
+  <p class="sources">Sources: AKHIA, ANTARA News, Apify, BuildEZ, Crunchbase, Crescendo AI, Dev|Journal, Digital Applied, Futurum Group, Goldman Sachs, Google, MUFG, MCP Working Group, Ookla, OpenAI, U.S. Treasury, UN News, White House, WilmerHale</p>
+</div>
+
+</div>
+</body>
+</html>
