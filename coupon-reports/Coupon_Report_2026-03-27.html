@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UCWH Coupon Report v5 - 2026-03-27</title>
+  <style>
+    :root {
+      --primary: #1a1a2e;
+      --accent: #e94560;
+      --accent-light: #ff6b6b;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #333;
+      --text-light: #666;
+      --border: #e0e0e0;
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --info: #3498db;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #16213e 50%, #0f3460 100%);
+      color: white; padding: 32px 24px; text-align: center;
+    }
+    .hero h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+    .hero .subtitle { font-size: 1rem; opacity: 0.85; }
+    .hero .date { font-size: 0.9rem; opacity: 0.7; margin-top: 8px; }
+    .hero .version-badge {
+      display: inline-block; margin-top: 8px; padding: 2px 10px;
+      background: rgba(255,255,255,0.15); border-radius: 12px;
+      font-size: 0.75rem; letter-spacing: 0.5px;
+    }
+
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; padding: 24px; max-width: 1200px; margin: -20px auto 0;
+    }
+    .summary-card {
+      background: var(--card-bg); border-radius: 12px; padding: 20px; text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-top: 3px solid var(--accent);
+    }
+    .summary-card .value { font-size: 2rem; font-weight: 700; color: var(--primary); }
+    .summary-card .label { font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px 40px; }
+
+    .section { margin-top: 32px; }
+    .section h2 {
+      font-size: 1.2rem; font-weight: 600; color: var(--primary);
+      border-bottom: 2px solid var(--accent); padding-bottom: 8px; margin-bottom: 16px;
+    }
+
+    .card {
+      background: var(--card-bg); border-radius: 12px; padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 16px;
+    }
+    .card h3 { font-size: 1rem; font-weight: 600; color: var(--primary); margin-bottom: 12px; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th { background: var(--primary); color: white; padding: 10px 12px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+    td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: center; font-size: 0.9rem; }
+    tr:nth-child(even) { background: #f9f9fb; }
+    tr:hover { background: #f0f0f5; }
+
+    .site-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 16px; }
+
+    .site-summary {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: #f4f4f8; border-radius: 8px; margin-bottom: 8px;
+    }
+    .site-summary .site-name { font-weight: 600; color: var(--primary); }
+    .site-summary .site-stats { display: flex; gap: 16px; }
+    .site-summary .stat { text-align: center; }
+    .site-summary .stat .num { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
+    .site-summary .stat .lbl { font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; }
+
+    /* v5 Enrichment Styles */
+    .context-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+    .context-card {
+      background: var(--card-bg); border-radius: 10px; padding: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid var(--info);
+    }
+    .context-site { font-weight: 700; color: var(--primary); margin-bottom: 8px; font-size: 0.95rem; }
+    .context-metrics { display: flex; gap: 16px; flex-wrap: wrap; }
+    .ctx-metric { text-align: center; }
+    .ctx-val { display: block; font-size: 1.1rem; font-weight: 700; color: var(--primary); }
+    .ctx-lbl { font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; }
+
+    .type-bar {
+      display: flex; height: 24px; border-radius: 12px; overflow: hidden;
+      margin: 12px 0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .type-segment { transition: width 0.3s; }
+    .type-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+    .legend-item { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; }
+
+    .enrichment-divider {
+      text-align: center; margin: 40px 0 8px; padding: 8px;
+      font-size: 0.75rem; color: var(--text-light); letter-spacing: 1px;
+      text-transform: uppercase; border-top: 2px dashed var(--info);
+    }
+
+    .footer { text-align: center; padding: 24px; color: var(--text-light); font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 40px; }
+
+    @media (max-width: 768px) {
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .site-grid { grid-template-columns: 1fr; }
+      .context-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>Daily Coupon Report</h1>
+    <div class="subtitle">UCW Tommy's Express - All Locations</div>
+    <div class="date">Friday, March 27, 2026</div>
+    <div class="version-badge">v5 ENRICHED | via PostgreSQL</div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="value">159</div>
+      <div class="label">Coupons Yesterday</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">$3555.39</div>
+      <div class="label">Total Discount</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">$397.50</div>
+      <div class="label">Marginal Cost @ $2.50</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">0</div>
+      <div class="label">YTD Coupons</div>
+    </div>
+    <div class="summary-card">
+      <div class="value">$0.00</div>
+      <div class="label">YTD Marginal Cost</div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Site Overview (same as v4) -->
+    <div class="section">
+      <h2>Site Overview</h2>
+      
+      <div class="site-summary">
+        <div class="site-name">TX190 - Texas 190 (Houston)</div>
+        <div class="site-stats">
+          <div class="stat"><div class="num">40</div><div class="lbl">Yesterday</div></div>
+          <div class="stat"><div class="num">$882.81</div><div class="lbl">Discount</div></div>
+          <div class="stat"><div class="num">$100.00</div><div class="lbl">Marg. Cost</div></div>
+          <div class="stat"><div class="num">0</div><div class="lbl">YTD</div></div>
+        </div>
+      </div>
+      <div class="site-summary">
+        <div class="site-name">TX160 - Texas 160 (Spring)</div>
+        <div class="site-stats">
+          <div class="stat"><div class="num">69</div><div class="lbl">Yesterday</div></div>
+          <div class="stat"><div class="num">$1544.75</div><div class="lbl">Discount</div></div>
+          <div class="stat"><div class="num">$172.50</div><div class="lbl">Marg. Cost</div></div>
+          <div class="stat"><div class="num">0</div><div class="lbl">YTD</div></div>
+        </div>
+      </div>
+      <div class="site-summary">
+        <div class="site-name">UT426 - Utah 426 (Lehi)</div>
+        <div class="site-stats">
+          <div class="stat"><div class="num">50</div><div class="lbl">Yesterday</div></div>
+          <div class="stat"><div class="num">$1127.83</div><div class="lbl">Discount</div></div>
+          <div class="stat"><div class="num">$125.00</div><div class="lbl">Marg. Cost</div></div>
+          <div class="stat"><div class="num">0</div><div class="lbl">YTD</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Sites Combined Table (same as v4) -->
+    <div class="section">
+      <h2>All Sites - Promotion Detail</h2>
+      <div class="card">
+        
+        <table>
+          <thead><tr>
+            <th style="text-align: left;">Promotion</th>
+            <th>Yesterday</th><th>Discount</th><th>Marginal Cost</th>
+            <th>YTD (Jan 1 - Mar 27)</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td style="text-align: left; font-weight: 500;">TX160: March 2026 mailer</td>
+              <td>46</td>
+              <td>$1089.90</td>
+              <td>$115.00</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">UT426: March 2026 mailer</td>
+              <td>36</td>
+              <td>$889.93</td>
+              <td>$90.00</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+              <td>31</td>
+              <td>$531.69</td>
+              <td>$77.50</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">TX190: March 2026 mailer</td>
+              <td>25</td>
+              <td>$618.93</td>
+              <td>$62.50</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">TX160 (Houston): Service Member</td>
+              <td>6</td>
+              <td>$120.00</td>
+              <td>$15.00</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">UT426: IC2 on Super/Ultimate</td>
+              <td>4</td>
+              <td>$43.96</td>
+              <td>$10.00</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">TX160/TX190: March street card blitz</td>
+              <td>2</td>
+              <td>$56.99</td>
+              <td>$5.00</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">TX190 (Houston): Sticky Note Street Card</td>
+              <td>2</td>
+              <td>$40.00</td>
+              <td>$5.00</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">All sites: 2025 4th national mailer</td>
+              <td>2</td>
+              <td>$55.99</td>
+              <td>$5.00</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">All Sites (CP-18): SMS Acquisition Free Works Wash</td>
+              <td>2</td>
+              <td>$44.00</td>
+              <td>$5.00</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">UT426 (Saratoga Springs): Operational Site Street Cards</td>
+              <td>2</td>
+              <td>$44.00</td>
+              <td>$5.00</td>
+              <td>0</td>
+            </tr><tr>
+              <td style="text-align: left; font-weight: 500;">All Sites (National Promo): From Us to You</td>
+              <td>1</td>
+              <td>$20.00</td>
+              <td>$2.50</td>
+              <td>0</td>
+            </tr>
+            <tr style="font-weight: 700; background: #eef;">
+              <td style="text-align: left;">TOTAL</td>
+              <td>159</td>
+              <td>$3555.39</td>
+              <td>$397.50</td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- v5 Enrichment Sections -->
+    <div class="enrichment-divider">Customer Intelligence (UCWH Analytics DB)</div>
+    
+        <div class="section">
+          <h2>Operational Context</h2>
+          <div class="context-grid">
+            
+              <div class="context-card">
+                <div class="context-site">TX190 - Texas 190 (Houston)</div>
+                <div class="context-metrics">
+                  <div class="ctx-metric">
+                    <span class="ctx-val">340</span>
+                    <span class="ctx-lbl">Washes</span>
+                  </div>
+                  <div class="ctx-metric">
+                    <span class="ctx-val">40</span>
+                    <span class="ctx-lbl">Coupons</span>
+                  </div>
+                  <div class="ctx-metric">
+                    <span class="ctx-val" style="color: inherit;">11.8%</span>
+                    <span class="ctx-lbl">Coupon %</span>
+                  </div>
+                  
+                  
+                  
+                  
+                  
+                  <div class="ctx-metric">
+                    <span class="ctx-val">$12.48</span>
+                    <span class="ctx-lbl">Rev/Car</span>
+                  </div>
+                </div>
+              </div>
+              <div class="context-card">
+                <div class="context-site">TX160 - Texas 160 (Spring)</div>
+                <div class="context-metrics">
+                  <div class="ctx-metric">
+                    <span class="ctx-val">500</span>
+                    <span class="ctx-lbl">Washes</span>
+                  </div>
+                  <div class="ctx-metric">
+                    <span class="ctx-val">69</span>
+                    <span class="ctx-lbl">Coupons</span>
+                  </div>
+                  <div class="ctx-metric">
+                    <span class="ctx-val" style="color: inherit;">13.8%</span>
+                    <span class="ctx-lbl">Coupon %</span>
+                  </div>
+                  
+                  
+                  
+                  
+                  
+                  <div class="ctx-metric">
+                    <span class="ctx-val">$11.48</span>
+                    <span class="ctx-lbl">Rev/Car</span>
+                  </div>
+                </div>
+              </div>
+              <div class="context-card">
+                <div class="context-site">UT426 - Utah 426 (Lehi)</div>
+                <div class="context-metrics">
+                  <div class="ctx-metric">
+                    <span class="ctx-val">203</span>
+                    <span class="ctx-lbl">Washes</span>
+                  </div>
+                  <div class="ctx-metric">
+                    <span class="ctx-val">50</span>
+                    <span class="ctx-lbl">Coupons</span>
+                  </div>
+                  <div class="ctx-metric">
+                    <span class="ctx-val" style="color: var(--accent);">24.6%</span>
+                    <span class="ctx-lbl">Coupon %</span>
+                  </div>
+                  
+                  
+                  
+                  
+                  
+                  <div class="ctx-metric">
+                    <span class="ctx-val">$6.76</span>
+                    <span class="ctx-lbl">Rev/Car</span>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Site Coupon Efficiency</h2>
+          <div class="card">
+            <h3>Coupon Cost vs. Gross Sales (Yesterday)</h3>
+            <table>
+              <thead><tr>
+                <th style="text-align: left;">Site</th><th>Washes</th><th>Coupons</th>
+                <th>Coupon %</th><th>Discount</th><th>Gross Sales</th><th>Discount/Gross</th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                    <td style="text-align: left; font-weight: 600;">TX190</td>
+                    <td>340</td>
+                    <td>40</td>
+                    <td>11.8%</td>
+                    <td>$882.81</td>
+                    <td>---</td>
+                    <td style="color: var(--success); font-weight: 600;">---%</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 600;">TX160</td>
+                    <td>500</td>
+                    <td>69</td>
+                    <td>13.8%</td>
+                    <td>$1544.75</td>
+                    <td>---</td>
+                    <td style="color: var(--success); font-weight: 600;">---%</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 600;">UT426</td>
+                    <td>203</td>
+                    <td>50</td>
+                    <td>24.6%</td>
+                    <td>$1127.83</td>
+                    <td>---</td>
+                    <td style="color: var(--success); font-weight: 600;">---%</td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Coupon Customer Intelligence</h2>
+          <div class="card">
+            <h3>Who's Using Coupons? (9,035 customers with active coupons)</h3>
+            <div class="type-bar">
+              <div class="type-segment" style="width: 61.99225235196458%; background: #888;" title="trial_not_converted: 5601"></div><div class="type-segment" style="width: 17.996679579413392%; background: #e74c3c;" title="Former Members: 1626"></div><div class="type-segment" style="width: 13.491975650249033%; background: #2ecc71;" title="Active Members: 1219"></div><div class="type-segment" style="width: 6.297731045932485%; background: #3498db;" title="Trial Members: 569"></div>
+            </div>
+            <div class="type-legend">
+              <div class="legend-item">
+                  <span style="color: #888; font-size: 1.2rem;">&#9679;</span>
+                  <span><strong>trial_not_converted</strong>: 5,601 (62.0%) | Avg LTV: $1</span>
+                </div><div class="legend-item">
+                  <span style="color: #e74c3c; font-size: 1.2rem;">&#9679;</span>
+                  <span><strong>Former Members</strong>: 1,626 (18.0%) | Avg LTV: $93</span>
+                </div><div class="legend-item">
+                  <span style="color: #2ecc71; font-size: 1.2rem;">&#9679;</span>
+                  <span><strong>Active Members</strong>: 1,219 (13.5%) | Avg LTV: $204</span>
+                </div><div class="legend-item">
+                  <span style="color: #3498db; font-size: 1.2rem;">&#9679;</span>
+                  <span><strong>Trial Members</strong>: 569 (6.3%) | Avg LTV: $10</span>
+                </div><div class="legend-item">
+                  <span style="color: #888; font-size: 1.2rem;">&#9679;</span>
+                  <span><strong>non_paying_subscription</strong>: 20 (0.2%) | Avg LTV: $41</span>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Promotion ROI Analysis</h2>
+          <div class="card">
+            <h3>Top Promotions by Customer Lifetime Value</h3>
+            <table>
+              <thead><tr>
+                <th style="text-align: left;">Promotion</th>
+                <th>Site</th>
+                <th>Customers</th>
+                <th>Active Subs</th>
+                <th>Conv Rate</th>
+                <th>Avg LTV</th>
+                <th>Avg Washes</th>
+                <th>Total LTV</th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                    <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+                    <td>TX190</td>
+                    <td>2,864</td>
+                    <td>315</td>
+                    <td style="color: var(--accent); font-weight: 600;">11.0%</td>
+                    <td>$55</td>
+                    <td>4.9</td>
+                    <td style="font-weight: 600;">$158,794</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+                    <td>TX160</td>
+                    <td>2,131</td>
+                    <td>344</td>
+                    <td style="color: var(--accent); font-weight: 600;">16.1%</td>
+                    <td>$49</td>
+                    <td>5.4</td>
+                    <td style="font-weight: 600;">$103,935</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+                    <td>UT426</td>
+                    <td>901</td>
+                    <td>165</td>
+                    <td style="color: var(--accent); font-weight: 600;">18.3%</td>
+                    <td>$44</td>
+                    <td>5.0</td>
+                    <td style="font-weight: 600;">$40,167</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">[deleted] FF</td>
+                    <td>TX160</td>
+                    <td>333</td>
+                    <td>45</td>
+                    <td style="color: var(--accent); font-weight: 600;">13.5%</td>
+                    <td>$82</td>
+                    <td>13.1</td>
+                    <td style="font-weight: 600;">$27,488</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">[deleted] UT426GOFOUNDERS</td>
+                    <td>UT426</td>
+                    <td>141</td>
+                    <td>23</td>
+                    <td style="color: var(--accent); font-weight: 600;">16.3%</td>
+                    <td>$81</td>
+                    <td>13.6</td>
+                    <td style="font-weight: 600;">$11,369</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">TX190 (El Camino Real): Additional Vehicle Free Month</td>
+                    <td>TX190</td>
+                    <td>85</td>
+                    <td>26</td>
+                    <td style="color: var(--warning); font-weight: 600;">30.6%</td>
+                    <td>$86</td>
+                    <td>6.6</td>
+                    <td style="font-weight: 600;">$7,494</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">TX190 (El Camino Real): Public Service Industry Discount</td>
+                    <td>TX190</td>
+                    <td>29</td>
+                    <td>13</td>
+                    <td style="color: var(--warning); font-weight: 600;">44.8%</td>
+                    <td>$209</td>
+                    <td>32.4</td>
+                    <td style="font-weight: 600;">$6,677</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">TX160: Additional Car</td>
+                    <td>TX160</td>
+                    <td>124</td>
+                    <td>46</td>
+                    <td style="color: var(--warning); font-weight: 600;">37.1%</td>
+                    <td>$50</td>
+                    <td>5.9</td>
+                    <td style="font-weight: 600;">$6,665</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">UCWH: 3 months for 50% off win back</td>
+                    <td>TX160</td>
+                    <td>40</td>
+                    <td>38</td>
+                    <td style="color: var(--success); font-weight: 600;">95.0%</td>
+                    <td>$86</td>
+                    <td>4.7</td>
+                    <td style="font-weight: 600;">$3,693</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">All Sites: Free Month Voucher Codes</td>
+                    <td>TX190</td>
+                    <td>11</td>
+                    <td>11</td>
+                    <td style="color: var(--success); font-weight: 600;">100.0%</td>
+                    <td>$310</td>
+                    <td>52.4</td>
+                    <td style="font-weight: 600;">$3,415</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">[deleted] FOUNDERS426</td>
+                    <td>UT426</td>
+                    <td>21</td>
+                    <td>7</td>
+                    <td style="color: var(--warning); font-weight: 600;">33.3%</td>
+                    <td>$129</td>
+                    <td>24.2</td>
+                    <td style="font-weight: 600;">$2,843</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">[deleted] VKITGMCE</td>
+                    <td>TX190</td>
+                    <td>28</td>
+                    <td>3</td>
+                    <td style="color: var(--accent); font-weight: 600;">10.7%</td>
+                    <td>$99</td>
+                    <td>13.0</td>
+                    <td style="font-weight: 600;">$2,774</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">TX190/TX160: Pollen free Works</td>
+                    <td>TX160</td>
+                    <td>106</td>
+                    <td>0</td>
+                    <td style="color: var(--accent); font-weight: 600;">0.0%</td>
+                    <td>$23</td>
+                    <td>2.2</td>
+                    <td style="font-weight: 600;">$2,449</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">UCWH: 3 months for 50% off win back</td>
+                    <td>TX190</td>
+                    <td>27</td>
+                    <td>26</td>
+                    <td style="color: var(--success); font-weight: 600;">96.3%</td>
+                    <td>$87</td>
+                    <td>2.6</td>
+                    <td style="font-weight: 600;">$2,445</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">TX190/TX160: Pollen free Works</td>
+                    <td>TX190</td>
+                    <td>81</td>
+                    <td>1</td>
+                    <td style="color: var(--accent); font-weight: 600;">1.2%</td>
+                    <td>$26</td>
+                    <td>2.7</td>
+                    <td style="font-weight: 600;">$2,120</td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="section">
+          <h2>Trial Conversion Context (30-Day Rolling)</h2>
+          <div class="site-grid">
+            
+            <div class="card">
+              <h3>TX160</h3>
+              <table>
+                <thead><tr>
+                  <th style="text-align: left;">Category</th>
+                  <th>Trials</th>
+                  <th>Conv Rate</th>
+                  <th>M1 Retention</th>
+                </tr></thead>
+                <tbody>
+                  <tr>
+                    <td style="text-align: left; font-weight: 500;">first_timer</td>
+                    <td>862</td>
+                    <td style="font-weight: 600;">33.3%</td>
+                    <td>0.4%</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">retrier</td>
+                    <td>3</td>
+                    <td style="font-weight: 600;">0.0%</td>
+                    <td>0.0%</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">winback</td>
+                    <td>10</td>
+                    <td style="font-weight: 600;">33.3%</td>
+                    <td>0.0%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <h3>TX190</h3>
+              <table>
+                <thead><tr>
+                  <th style="text-align: left;">Category</th>
+                  <th>Trials</th>
+                  <th>Conv Rate</th>
+                  <th>M1 Retention</th>
+                </tr></thead>
+                <tbody>
+                  <tr>
+                    <td style="text-align: left; font-weight: 500;">first_timer</td>
+                    <td>585</td>
+                    <td style="font-weight: 600;">34.8%</td>
+                    <td>0.2%</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">retrier</td>
+                    <td>6</td>
+                    <td style="font-weight: 600;">0.0%</td>
+                    <td>0.0%</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">winback</td>
+                    <td>10</td>
+                    <td style="font-weight: 600;">38.9%</td>
+                    <td>0.0%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <h3>UT426</h3>
+              <table>
+                <thead><tr>
+                  <th style="text-align: left;">Category</th>
+                  <th>Trials</th>
+                  <th>Conv Rate</th>
+                  <th>M1 Retention</th>
+                </tr></thead>
+                <tbody>
+                  <tr>
+                    <td style="text-align: left; font-weight: 500;">first_timer</td>
+                    <td>398</td>
+                    <td style="font-weight: 600;">44.3%</td>
+                    <td>1.3%</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">retrier</td>
+                    <td>4</td>
+                    <td style="font-weight: 600;">0.0%</td>
+                    <td>0.0%</td>
+                  </tr><tr>
+                    <td style="text-align: left; font-weight: 500;">winback</td>
+                    <td>10</td>
+                    <td style="font-weight: 600;">20.0%</td>
+                    <td>0.0%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+    <!-- Per-Site Breakdown (same as v4) -->
+    <div class="section">
+      <h2>Per-Site Breakdown</h2>
+      <div class="site-grid">
+        
+        <div class="card">
+          <h3>TX190 - Texas 190 (Houston)</h3>
+          
+      <table>
+        <thead><tr>
+          <th style="text-align: left;">Promotion</th>
+          <th>Yesterday</th><th>Discount</th><th>Marginal Cost</th><th>YTD Count</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX190: March 2026 mailer</td>
+            <td>25</td>
+            <td>$618.93</td>
+            <td>$62.50</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+            <td>12</td>
+            <td>$203.88</td>
+            <td>$30.00</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">TX190 (Houston): Sticky Note Street Card</td>
+            <td>2</td>
+            <td>$40.00</td>
+            <td>$5.00</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">TX160/TX190: March street card blitz</td>
+            <td>1</td>
+            <td>$20.00</td>
+            <td>$2.50</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+        </div>
+        <div class="card">
+          <h3>TX160 - Texas 160 (Spring)</h3>
+          
+      <table>
+        <thead><tr>
+          <th style="text-align: left;">Promotion</th>
+          <th>Yesterday</th><th>Discount</th><th>Marginal Cost</th><th>YTD Count</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">TX160: March 2026 mailer</td>
+            <td>46</td>
+            <td>$1089.90</td>
+            <td>$115.00</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+            <td>14</td>
+            <td>$257.86</td>
+            <td>$35.00</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">TX160 (Houston): Service Member</td>
+            <td>6</td>
+            <td>$120.00</td>
+            <td>$15.00</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">All Sites (National Promo): From Us to You</td>
+            <td>1</td>
+            <td>$20.00</td>
+            <td>$2.50</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">All sites: 2025 4th national mailer</td>
+            <td>1</td>
+            <td>$20.00</td>
+            <td>$2.50</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">TX160/TX190: March street card blitz</td>
+            <td>1</td>
+            <td>$36.99</td>
+            <td>$2.50</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+        </div>
+        <div class="card">
+          <h3>UT426 - Utah 426 (Lehi)</h3>
+          
+      <table>
+        <thead><tr>
+          <th style="text-align: left;">Promotion</th>
+          <th>Yesterday</th><th>Discount</th><th>Marginal Cost</th><th>YTD Count</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="text-align: left; font-weight: 500;">UT426: March 2026 mailer</td>
+            <td>36</td>
+            <td>$889.93</td>
+            <td>$90.00</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td>
+            <td>5</td>
+            <td>$69.95</td>
+            <td>$12.50</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">UT426: IC2 on Super/Ultimate</td>
+            <td>4</td>
+            <td>$43.96</td>
+            <td>$10.00</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">All Sites (CP-18): SMS Acquisition Free Works Wash</td>
+            <td>2</td>
+            <td>$44.00</td>
+            <td>$5.00</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">UT426 (Saratoga Springs): Operational Site Street Cards</td>
+            <td>2</td>
+            <td>$44.00</td>
+            <td>$5.00</td>
+            <td>0</td>
+          </tr><tr>
+            <td style="text-align: left; font-weight: 500;">All sites: 2025 4th national mailer</td>
+            <td>1</td>
+            <td>$35.99</td>
+            <td>$2.50</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Generated 2026-03-28T12:15:04.899Z | Coupon data: Tommy Manager API (Washcounts) |
+    Enrichment: UCWH Analytics PostgreSQL (full) | UCW Holdings | v5
+  </div>
+</body>
+</html>
