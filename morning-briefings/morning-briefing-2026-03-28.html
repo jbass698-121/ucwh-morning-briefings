@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCWH Morning Briefing — Saturday, March 28, 2026</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#f0f2f5; color:#333; line-height:1.6; }
+.container { max-width:1100px; margin:0 auto; padding:20px; }
+h2 { color:#1a237e; margin:24px 0 12px; font-size:18px; border-bottom:2px solid #e8eaf6; padding-bottom:6px; }
+h3 { color:#1a237e; margin:16px 0 8px; font-size:16px; }
+.header { background:linear-gradient(135deg,#1a237e,#283593); color:#fff; padding:32px; border-radius:16px; margin-bottom:24px; }
+.header h1 { font-size:26px; margin-bottom:4px; }
+.header .subtitle { opacity:0.85; font-size:14px; }
+.kpi-row { display:flex; gap:16px; margin:16px 0; flex-wrap:wrap; }
+.kpi-card { flex:1; min-width:200px; background:#fff; border-radius:10px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.kpi-card .label { font-size:12px; color:#666; text-transform:uppercase; letter-spacing:0.5px; }
+.kpi-card .value { font-size:24px; font-weight:700; color:#1a237e; margin:4px 0; }
+.kpi-card .sub { font-size:12px; color:#888; }
+.site-cards { display:flex; gap:16px; margin:16px 0; flex-wrap:wrap; }
+.site-card { flex:1; min-width:280px; background:#fff; border-radius:10px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.site-card h3 { margin-top:0; font-size:15px; color:#1a237e; border-bottom:2px solid #e8eaf6; padding-bottom:4px; }
+.site-card .metric { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f0f0f0; font-size:14px; }
+.site-card .metric:last-child { border-bottom:none; }
+.site-card .metric .label { color:#666; }
+.site-card .metric .val { font-weight:600; color:#333; }
+table { width:100%; border-collapse:collapse; margin:12px 0; font-size:14px; }
+table th { background:#1a237e; color:#fff; padding:10px 12px; text-align:left; font-weight:600; }
+table td { padding:10px 12px; border-bottom:1px solid #eee; }
+table tr:nth-child(even) td { background:#f9f9f9; }
+table tr.fleet-total td { font-weight:700; background:#e8eaf6; border-top:2px solid #1a237e; }
+.badge { display:inline-block; padding:2px 10px; border-radius:4px; font-size:12px; font-weight:600; }
+.badge-green { background:#d4edda; color:#28a745; }
+.badge-yellow { background:#fff3cd; color:#856404; }
+.badge-red { background:#f8d7da; color:#dc3545; }
+.badge-blue { background:#d1ecf1; color:#17a2b8; }
+.alert { padding:16px 20px; border-radius:10px; margin:10px 0; border-left:4px solid; }
+.alert-success { background:#d4edda; border-color:#28a745; }
+.alert-warning { background:#fff3cd; border-color:#ffc107; }
+.alert-info { background:#d1ecf1; border-color:#17a2b8; }
+.alert-danger { background:#f8d7da; border-color:#dc3545; }
+.alert .alert-title { font-weight:700; margin-bottom:4px; font-size:14px; }
+.alert .alert-text { font-size:13px; color:#555; }
+.weather-row { display:flex; gap:12px; margin:16px 0; flex-wrap:wrap; }
+.weather-card { flex:1; min-width:160px; background:#fff; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center; }
+.weather-card .day { font-weight:700; font-size:14px; color:#1a237e; }
+.weather-card .desc { font-size:12px; color:#666; margin:4px 0; }
+.weather-card .temps { font-size:13px; margin:4px 0; }
+.weather-card .precip { font-size:11px; color:#888; }
+.fleet-bar { background:#fff; border-radius:10px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); margin:16px 0; display:flex; gap:24px; flex-wrap:wrap; align-items:center; }
+.fleet-bar .fb-item { text-align:center; }
+.fleet-bar .fb-label { font-size:11px; color:#666; text-transform:uppercase; }
+.fleet-bar .fb-value { font-size:20px; font-weight:700; color:#1a237e; }
+.action-item { background:#fff; border-radius:10px; padding:16px 20px; margin:10px 0; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.action-item .action-title { font-weight:700; color:#1a237e; font-size:14px; margin-bottom:4px; }
+.action-item .action-text { font-size:13px; color:#555; }
+.footer { text-align:center; padding:24px; color:#888; font-size:12px; margin-top:24px; }
+.validation-banner { background:#fff3cd; border:1px solid #ffc107; border-radius:10px; padding:12px 20px; margin-bottom:16px; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>UCWH Morning Briefing &mdash; Saturday, Saturday, March 28, 2026</h1>
+    <div class="subtitle">Data for yesterday (Friday, Friday, March 27, 2026)</div>
+  </div>
+  <h2>AI Insights</h2>
+  <div class="alert alert-success">
+    <div class="alert-title">Strong Fleet Volume</div>
+    <div class="alert-text">Fleet delivered 1,043 washes with $6,990.39 gross revenue. TX190: 340 | TX160: 500 | UT426: 203</div>
+  </div>
+  <div class="alert alert-success">
+    <div class="alert-title">InstaClub Signups</div>
+    <div class="alert-text">61 new members across the fleet generating $2,204.39 in IC revenue. Top performer: TX160 with 25 signups.</div>
+  </div>
+  <div class="alert alert-success">
+    <div class="alert-title">Capture Rate (R30D)</div>
+    <div class="alert-text">Fleet avg 21.9% capture. TX190: 18.1% | TX160: 16.0% | UT426: 31.5%. UT426 leads at 31.5%, TX160 trails at 16.0%.</div>
+  </div>
+  <div class="alert alert-warning">
+    <div class="alert-title">Trial Dependency Risk</div>
+    <div class="alert-text">Fleet trial-to-club ratio: 36.3%. TX190 has 37.6% trial washes (86 of 229 club); TX160 has 38.7% trial washes (128 of 331 club); UT426 has 29.0% trial washes (42 of 145 club). High trial dependency = future churn risk if conversion rates slip.</div>
+  </div>
+  <div class="alert alert-danger">
+    <div class="alert-title">Elevated Churn Detected</div>
+    <div class="alert-text">TX190 30-day churn: 10.7% (102 lost in 30 days, 32 in last 7 days, 1,107 paying subs); TX160 30-day churn: 13.7% (146 lost in 30 days, 43 in last 7 days, 1,194 paying subs); UT426 30-day churn: 13.2% (126 lost in 30 days, 42 in last 7 days, 996 paying subs). Investigate service quality, billing issues, or competitive pressure.</div>
+  </div>
+  <div class="alert alert-info">
+    <div class="alert-title">Truck/SUV Customer Base</div>
+    <div class="alert-text">TX190: 61.4% trucks/SUVs, TX160: 58.1% trucks/SUVs, UT426: 68.8% trucks/SUVs. Heavy vehicle mix supports premium package upsells (Super/Works) -- these customers value thoroughness over speed.</div>
+  </div>
+  <div class="alert alert-info">
+    <div class="alert-title">Weather Outlook — Today</div>
+    <div class="alert-text">Houston: Overcast, High 76.7°F, Precip 0". Favorable wash weather.</div>
+  </div>
+  <h2>Wash Performance Scorecard</h2>
+  <h3>Fleet Summary</h3>
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="label">Total Washes</div>
+      <div class="value">1,043</div>
+      <div class="sub">All sites combined</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Gross Sales</div>
+      <div class="value">$6,990.39</div>
+      <div class="sub">All revenue streams</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Avg Wash Price</div>
+      <div class="value">$10.89</div>
+      <div class="sub">UCWH Dashboard 7-day avg</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Rewash Rate</div>
+      <div class="value">1.2%</div>
+      <div class="sub">13 rewashes</div>
+    </div>
+  </div>
+  <h3>Per-Site Breakdown</h3>
+  <div class="site-cards">
+    <div class="site-card">
+      <h3>Texas 190 (Houston)</h3>
+      <div class="metric"><span class="label">Washes</span><span class="val">340 <span style="color:#28a745;font-size:12px;">&#9650; 7.3%</span></span></div>
+      <div class="metric"><span class="label">Gross Sales</span><span class="val">$2,087.81</span></div>
+      <div class="metric"><span class="label">Avg Wash Price</span><span class="val">$12.48</span></div>
+      <div class="metric"><span class="label">Club %</span><span class="val">72.9%</span></div>
+      <div class="metric"><span class="label">Rewash Rate</span><span class="val">1.2%</span></div>
+      <div class="metric"><span class="label">IC Signups</span><span class="val">19</span></div>
+    </div>
+    <div class="site-card">
+      <h3>Texas 160 (Spring)</h3>
+      <div class="metric"><span class="label">Washes</span><span class="val">500 <span style="color:#28a745;font-size:12px;">&#9650; 11.4%</span></span></div>
+      <div class="metric"><span class="label">Gross Sales</span><span class="val">$3,266.75</span></div>
+      <div class="metric"><span class="label">Avg Wash Price</span><span class="val">$11.48</span></div>
+      <div class="metric"><span class="label">Club %</span><span class="val">72.0%</span></div>
+      <div class="metric"><span class="label">Rewash Rate</span><span class="val">1.6%</span></div>
+      <div class="metric"><span class="label">IC Signups</span><span class="val">25</span></div>
+    </div>
+    <div class="site-card">
+      <h3>Utah 426 (Lehi)</h3>
+      <div class="metric"><span class="label">Washes</span><span class="val">203 <span style="color:#dc3545;font-size:12px;">&#9660; 1.0%</span></span></div>
+      <div class="metric"><span class="label">Gross Sales</span><span class="val">$1,635.83</span></div>
+      <div class="metric"><span class="label">Avg Wash Price</span><span class="val">$6.76</span></div>
+      <div class="metric"><span class="label">Club %</span><span class="val">77.3%</span></div>
+      <div class="metric"><span class="label">Rewash Rate</span><span class="val">0.5%</span></div>
+      <div class="metric"><span class="label">IC Signups</span><span class="val">17</span></div>
+    </div>
+  </div>
+  <h2>Wash Mix &amp; Revenue Breakdown</h2>
+  <p style="font-size:12px;color:#888;margin-bottom:12px;">Yesterday's wash volume by customer type and revenue split. Source: UCWH Analytics DB.</p>
+  <table>
+    <tr><th>Site</th><th>Club Paid</th><th>Trial</th><th>Single</th><th>Team</th><th>Club Rev</th><th>Single Rev</th><th>Club %</th></tr>
+    <tr><td>TX190</td><td>143</td><td>86</td><td>92</td><td>0</td><td>$1,140.19</td><td>$1,160.00</td><td>71%</td></tr>
+    <tr><td>TX160</td><td>203</td><td>128</td><td>140</td><td>0</td><td>$1,255.48</td><td>$1,597.00</td><td>70%</td></tr>
+    <tr><td>UT426</td><td>103</td><td>42</td><td>46</td><td>0</td><td>$966.16</td><td>$365.00</td><td>76%</td></tr>
+    <tr class="fleet-total"><td>Fleet</td><td>449</td><td>256</td><td>278</td><td>0</td><td>$3,361.83</td><td>$3,122.00</td><td>72%</td></tr>
+  </table>
+  <div class="fleet-bar" style="margin-top:8px;">
+    <div class="fb-item"><div class="fb-label">Fleet Revenue Split</div><div class="fb-value">Club 52% | Single 48%</div></div>
+    <div class="fb-item"><div class="fb-label">Club Revenue</div><div class="fb-value">$3,361.83</div></div>
+    <div class="fb-item"><div class="fb-label">Single Revenue</div><div class="fb-value">$3,122.00</div></div>
+  </div>
+  <h2>Acquisition Funnel</h2>
+  <p style="font-size:12px;color:#888;margin-bottom:12px;">Yesterday's customer acquisition: opportunities created, captures by channel, and same-day claims.</p>
+  <table>
+    <tr><th>Site</th><th>Opportunities</th><th>Window Capture</th><th>Online Capture</th><th>Total Captured</th><th>Same-Day Claims</th><th>Claim Rate</th></tr>
+    <tr><td>TX190</td><td>105</td><td>19</td><td>3</td><td>22</td><td>10</td><td>45%</td></tr>
+    <tr><td>TX160</td><td>156</td><td>25</td><td>12</td><td>37</td><td>10</td><td>27%</td></tr>
+    <tr><td>UT426</td><td>54</td><td>17</td><td>3</td><td>20</td><td>7</td><td>35%</td></tr>
+    <tr class="fleet-total"><td>Fleet</td><td>315</td><td>61</td><td>18</td><td>79</td><td>27</td><td>34%</td></tr>
+  </table>
+  <div class="fleet-bar" style="margin-top:8px;">
+    <div class="fb-item"><div class="fb-label">Channel Split</div><div class="fb-value">Window 77% | Online 23%</div></div>
+    <div class="fb-item"><div class="fb-label">Conversion Rate</div><div class="fb-value">25%</div></div>
+  </div>
+  <h2>Rewash &amp; Coupon Analysis</h2>
+  <h3>Rewash Summary</h3>
+  <table>
+    <tr><th>Site</th><th>Rewashes</th><th>Rate</th><th>Cost</th><th>Status</th></tr>
+    <tr><td>TX190</td><td>4</td><td>1.2%</td><td>$30.00</td><td><span class="badge badge-green">Good</span></td></tr>
+    <tr><td>TX160</td><td>8</td><td>1.6%</td><td>$0.00</td><td><span class="badge badge-green">Good</span></td></tr>
+    <tr><td>UT426</td><td>1</td><td>0.5%</td><td>$22.00</td><td><span class="badge badge-green">Good</span></td></tr>
+    <tr class="fleet-total"><td>Fleet</td><td>13</td><td>1.2%</td><td>$52.00</td><td></td></tr>
+  </table>
+  <h3>Top Coupons / Promotions</h3>
+  <table>
+    <tr><th>Promotion</th><th>Site</th><th>Uses</th><th>Total Discount</th></tr>
+    <tr><td>TX160: March 2026 mailer</td><td>TX160</td><td>46</td><td>$1,089.90</td></tr>
+    <tr><td>UT426: March 2026 mailer</td><td>UT426</td><td>36</td><td>$889.93</td></tr>
+    <tr><td>TX190: March 2026 mailer</td><td>TX190</td><td>25</td><td>$618.93</td></tr>
+    <tr><td>All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td><td>TX160</td><td>14</td><td>$257.86</td></tr>
+    <tr><td>All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td><td>TX190</td><td>12</td><td>$203.88</td></tr>
+    <tr><td>TX160 (Houston): Service Member</td><td>TX160</td><td>6</td><td>$120.00</td></tr>
+    <tr><td>All Sites: INSTA CLUB 2.0 WORKS BOGO CODES</td><td>UT426</td><td>5</td><td>$69.95</td></tr>
+    <tr><td>UT426: IC2 on Super/Ultimate</td><td>UT426</td><td>4</td><td>$43.96</td></tr>
+    <tr><td>TX190 (Houston): Sticky Note Street Card</td><td>TX190</td><td>2</td><td>$40.00</td></tr>
+    <tr><td>All Sites (CP-18): SMS Acquisition Free Works Wash</td><td>UT426</td><td>2</td><td>$44.00</td></tr>
+  </table>
+  <h2>InstaClub Membership</h2>
+  <div class="site-cards">
+    <div class="site-card">
+      <h3>Texas 190 (Houston)</h3>
+      <div class="metric"><span class="label">New Members</span><span class="val">19</span></div>
+      <div class="metric"><span class="label">IC Revenue</span><span class="val">$702.81</span></div>
+      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:12px;">19 Works</span></div>
+    </div>
+    <div class="site-card">
+      <h3>Texas 160 (Spring)</h3>
+      <div class="metric"><span class="label">New Members</span><span class="val">25</span></div>
+      <div class="metric"><span class="label">IC Revenue</span><span class="val">$924.75</span></div>
+      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:12px;">25 Works</span></div>
+    </div>
+    <div class="site-card">
+      <h3>Utah 426 (Lehi)</h3>
+      <div class="metric"><span class="label">New Members</span><span class="val">17</span></div>
+      <div class="metric"><span class="label">IC Revenue</span><span class="val">$576.83</span></div>
+      <div class="metric"><span class="label">Plan Mix</span><span class="val" style="font-size:12px;">13 Works &middot; 1 Ultimate &middot; 3 Super</span></div>
+    </div>
+  </div>
+  <div class="fleet-bar">
+    <div class="fb-item"><div class="fb-label">Fleet New Members</div><div class="fb-value">61</div></div>
+    <div class="fb-item"><div class="fb-label">Fleet IC Revenue</div><div class="fb-value">$2,204.39</div></div>
+    <div class="fb-item"><div class="fb-label">% of Gross</div><div class="fb-value">31.5%</div></div>
+    <div class="fb-item"><div class="fb-label">Top Performer</div><div class="fb-value">TX160</div></div>
+  </div>
+  <h2>Capture &amp; Claim Rates (Rolling 30-Day)</h2>
+  <p style="font-size:12px;color:#888;margin-bottom:12px;">Rolling 30-day acquisition performance from UCWH Analytics DB. Capture = opportunity-to-member conversion. Claim = new member first wash redemption.</p>
+  <div class="site-cards">
+    <div class="site-card">
+      <h3>Texas 190 (Houston)</h3>
+      <div class="metric"><span class="label">Capture Rate (R30D)</span><span class="val">18.1% <span class="badge badge-yellow">Average</span></span></div>
+      <div class="metric"><span class="label">Claim Rate (R30D)</span><span class="val">47.3% <span class="badge badge-yellow">Average</span></span></div>
+      <div class="metric"><span class="label">Same-Day Claim</span><span class="val">52.6%</span></div>
+      <div class="metric"><span class="label">Next-Day Claim</span><span class="val">31.3%</span></div>
+      <div class="metric"><span class="label">Trial Conversion (R30D)</span><span class="val">32.1%</span></div>
+    </div>
+    <div class="site-card">
+      <h3>Texas 160 (Spring)</h3>
+      <div class="metric"><span class="label">Capture Rate (R30D)</span><span class="val">16.0% <span class="badge badge-yellow">Average</span></span></div>
+      <div class="metric"><span class="label">Claim Rate (R30D)</span><span class="val">44.4% <span class="badge badge-yellow">Average</span></span></div>
+      <div class="metric"><span class="label">Same-Day Claim</span><span class="val">40.0%</span></div>
+      <div class="metric"><span class="label">Next-Day Claim</span><span class="val">77.8%</span></div>
+      <div class="metric"><span class="label">Trial Conversion (R30D)</span><span class="val">29.6%</span></div>
+    </div>
+    <div class="site-card">
+      <h3>Utah 426 (Lehi)</h3>
+      <div class="metric"><span class="label">Capture Rate (R30D)</span><span class="val">31.5% <span class="badge badge-green">Strong</span></span></div>
+      <div class="metric"><span class="label">Claim Rate (R30D)</span><span class="val">36.4% <span class="badge badge-yellow">Average</span></span></div>
+      <div class="metric"><span class="label">Same-Day Claim</span><span class="val">41.2%</span></div>
+      <div class="metric"><span class="label">Next-Day Claim</span><span class="val">50.0%</span></div>
+      <div class="metric"><span class="label">Trial Conversion (R30D)</span><span class="val">26.1%</span></div>
+    </div>
+  </div>
+  <div class="fleet-bar">
+    <div class="fb-item"><div class="fb-label">Fleet Avg Capture</div><div class="fb-value">21.9%</div></div>
+    <div class="fb-item"><div class="fb-label">Fleet Avg Claim</div><div class="fb-value">42.7%</div></div>
+    <div class="fb-item"><div class="fb-label">Trial Conversion</div><div class="fb-value">29.3%</div></div>
+    <div class="fb-item"><div class="fb-label">Top Capture</div><div class="fb-value">UT426</div></div>
+  </div>
+  <h2>Subscriber Metrics</h2>
+  <table>
+    <tr><th>Site</th><th>Paying Subs</th><th>Trial Subs</th><th>Active Subs</th></tr>
+    <tr><td>TX190</td><td>1,107</td><td>565</td><td>1,744</td></tr>
+    <tr><td>TX160</td><td>1,194</td><td>834</td><td>2,065</td></tr>
+    <tr><td>UT426</td><td>996</td><td>429</td><td>1,461</td></tr>
+    <tr class="fleet-total"><td>Fleet</td><td>3,297</td><td>1,828</td><td>5,270</td></tr>
+  </table>
+  <h2>5-Day Weather Outlook</h2>
+  <div class="weather-row">
+    <div class="weather-card" style="border-top:3px solid #ffc107; background:#fff3cd20;">
+      <div class="day">Today</div>
+      <div class="desc">Overcast</div>
+      <div class="temps"><strong>Houston:</strong> 76.7°/60.7°F</div>
+      <div class="temps"><strong>Utah:</strong> 80.4°/42.5°F</div>
+      <div class="precip">Precip: None | Wind: 13 mph</div>
+    </div>
+    <div class="weather-card" style="border-top:3px solid #28a745; background:#d4edda20;">
+      <div class="day">Mar 29</div>
+      <div class="desc">Mainly clear</div>
+      <div class="temps"><strong>Houston:</strong> 83.7°/54.5°F</div>
+      <div class="temps"><strong>Utah:</strong> 79.3°/48.3°F</div>
+      <div class="precip">Precip: None | Wind: 12.2 mph</div>
+    </div>
+    <div class="weather-card" style="border-top:3px solid #ffc107; background:#fff3cd20;">
+      <div class="day">Mar 30</div>
+      <div class="desc">Overcast</div>
+      <div class="temps"><strong>Houston:</strong> 86.1°/64.8°F</div>
+      <div class="temps"><strong>Utah:</strong> 71.1°/53.3°F</div>
+      <div class="precip">Precip: None | Wind: 13.7 mph</div>
+    </div>
+    <div class="weather-card" style="border-top:3px solid #28a745; background:#d4edda20;">
+      <div class="day">Mar 31</div>
+      <div class="desc">Partly cloudy</div>
+      <div class="temps"><strong>Houston:</strong> 87.5°/67.5°F</div>
+      <div class="temps"><strong>Utah:</strong> 60.7°/46.8°F</div>
+      <div class="precip">Precip: None | Wind: 15.2 mph</div>
+    </div>
+    <div class="weather-card" style="border-top:3px solid #ffc107; background:#fff3cd20;">
+      <div class="day">Apr 1</div>
+      <div class="desc">Light drizzle</div>
+      <div class="temps"><strong>Houston:</strong> 86.6°/70.4°F</div>
+      <div class="temps"><strong>Utah:</strong> 58.5°/47.7°F</div>
+      <div class="precip">Precip: Trace | Wind: 14.9 mph</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;font-size:14px;font-weight:600;color:#1a237e;">Wash Volume Forecast (V2.2 ML Model)</div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:8px;">
+    <div style="background:white;border-radius:8px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+      <div style="font-size:11px;color:#666;font-weight:600;">Saturday</div>
+      <div style="font-size:18px;font-weight:700;color:#1a237e;margin:4px 0;">882</div>
+      <div style="font-size:10px;color:#888;">fleet washes</div>
+    </div>
+    <div style="background:white;border-radius:8px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+      <div style="font-size:11px;color:#666;font-weight:600;">Sunday</div>
+      <div style="font-size:18px;font-weight:700;color:#1a237e;margin:4px 0;">578</div>
+      <div style="font-size:10px;color:#888;">fleet washes</div>
+    </div>
+    <div style="background:white;border-radius:8px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+      <div style="font-size:11px;color:#666;font-weight:600;">Monday</div>
+      <div style="font-size:18px;font-weight:700;color:#1a237e;margin:4px 0;">648</div>
+      <div style="font-size:10px;color:#888;">fleet washes</div>
+    </div>
+    <div style="background:white;border-radius:8px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+      <div style="font-size:11px;color:#666;font-weight:600;">Tuesday</div>
+      <div style="font-size:18px;font-weight:700;color:#1a237e;margin:4px 0;">630</div>
+      <div style="font-size:10px;color:#888;">fleet washes</div>
+    </div>
+    <div style="background:white;border-radius:8px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+      <div style="font-size:11px;color:#666;font-weight:600;">Wednesday</div>
+      <div style="font-size:18px;font-weight:700;color:#1a237e;margin:4px 0;">565</div>
+      <div style="font-size:10px;color:#888;">fleet washes</div>
+    </div>
+  </div>
+  <p style="font-size:11px;color:#888;margin-top:6px;font-style:italic;">Model v2.3 | Confidence: <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:3px;"></span>TX190: low (30.1%) &nbsp;|&nbsp; <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-right:3px;"></span>TX160: medium (23.8%) &nbsp;|&nbsp; <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;margin-right:3px;"></span>UT426: high (19.1%)</p>
+  <h2>Recommended Actions</h2>
+  <div class="action-item">
+    <div class="action-title">1. TX190 — Reduce Member Churn</div>
+    <div class="action-text">30-day churn rate is 10.7% -- 102 members lost in 30 days (32 in the last 7 days) out of 1,107 paying subs. Pull the cancellation reason report, check for billing failures, and consider a save-offer for at-risk members.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">2. TX160 — Reduce Member Churn</div>
+    <div class="action-text">30-day churn rate is 13.7% -- 146 members lost in 30 days (43 in the last 7 days) out of 1,194 paying subs. Pull the cancellation reason report, check for billing failures, and consider a save-offer for at-risk members.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">3. UT426 — Reduce Member Churn</div>
+    <div class="action-text">30-day churn rate is 13.2% -- 126 members lost in 30 days (42 in the last 7 days) out of 996 paying subs. Pull the cancellation reason report, check for billing failures, and consider a save-offer for at-risk members.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">4. TX190 — Convert Trial Members</div>
+    <div class="action-text">37.6% of club washes are trials (86 trial vs 143 paid). Deploy targeted conversion touches: day-14 upgrade text, attendant pitch at second visit, and limited-time lock-in pricing before trial expiry.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">5. TX160 — Convert Trial Members</div>
+    <div class="action-text">38.7% of club washes are trials (128 trial vs 203 paid). Deploy targeted conversion touches: day-14 upgrade text, attendant pitch at second visit, and limited-time lock-in pricing before trial expiry.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">6. UT426 — Convert Trial Members</div>
+    <div class="action-text">29.0% of club washes are trials (42 trial vs 103 paid). Deploy targeted conversion touches: day-14 upgrade text, attendant pitch at second visit, and limited-time lock-in pricing before trial expiry.</div>
+  </div>
+  <div class="action-item">
+    <div class="action-title">7. TX160 — Improve Same-Day Claim Rate</div>
+    <div class="action-text">Only 10 of 37 captured customers used their wash same-day (27.0%). Captured members who don't claim quickly are at risk of never activating. Send immediate welcome text with "your first wash is waiting" CTA within 1 hour of signup.</div>
+  </div>
+
+  <div class="footer">
+    <div>Data Sources: Tommy Daily: 3/28/26, 6:00 AM | Tommy Discounts: 3/28/26, 6:00 AM | UCWH Comparison: 3/28/26, 6:00 AM | UCWH Sites: 3/28/26, 6:00 AM | Weather: 3/28/26, 6:00 AM | Power BI: 3/27/26, 9:34 AM</div>
+    <div>Generated March 28, 2026 at 7:02 AM CT</div>
+  </div>
+</div>
+</body>
+</html>
